@@ -47,8 +47,7 @@ export const colors = {
   offWhite: '#F7F7F7',
   darkGray: '#5B5B5B',
   mediumGray: '#7F7F7F',
-  lightGray: '#F4F4F4',
-  lightGrey: '#E6E6E6',
+  lightGray: '#AEAEAE',
   borderGray: '#EEEEEE',
   gray: '#ADADAD',
   paleGray: '#EBEBEB',
@@ -76,4 +75,5 @@ export const colors = {
   fuchsia: '#F14E79',
   red: '#D21F3c',
   blue: '#0F52BA',
+  lightGrayCircle: '#D4D4D4',
 };

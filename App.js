@@ -5,6 +5,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import {LogBox} from 'react-native';
+import LoginScreen from './src/screen/loginScreen';
+import VerificationScreen from './src/screen/verificationScreen';
+import SetPasswordScreen from './src/screen/setPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +25,24 @@ const App = () => {
         <Stack.Screen
           name="RegistrationScreen"
           component={RegistrationScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="VerificationScreen"
+          component={VerificationScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
+          name="SetPasswordScreen"
+          component={SetPasswordScreen}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

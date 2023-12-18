@@ -9,6 +9,7 @@ const Button = ({
   containerStyle,
   buttonName,
   buttonTextStyle,
+  buttonIcon,
 }) => {
   return (
     <TouchableOpacity
@@ -20,8 +21,9 @@ const Button = ({
         <Text style={[style.buttonTextStyle, buttonTextStyle]}>
           {buttonName}
         </Text>
-
-        <Image source={images.rightArrowLogo} style={style.rightArrowStyle} />
+        {buttonIcon && (
+          <Image source={images.rightArrowLogo} style={style.rightArrowStyle} />
+        )}
       </View>
     </TouchableOpacity>
   );
