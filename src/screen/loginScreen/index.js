@@ -6,13 +6,12 @@ import TextInput from '../../components/TextInput';
 import {colors} from '../../utils/colors';
 import GradientButton from '../../components/GradientButton';
 
-const RegistrationScreen = ({navigation}) => {
+const LoginScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-
   return (
     <SafeAreaView style={style.container}>
       <Image
@@ -20,38 +19,42 @@ const RegistrationScreen = ({navigation}) => {
         style={style.headerLogoStyle}
       />
 
-      <Text style={style.signUpTextStyle}>Sign Up</Text>
-
-      <TextInput
-        IconNameDesign={icons.profileLogo}
-        placeholder={'Enter Your Name'}
-        editable={true}
-        iconSources
-        iconSource={icons.profileLogo}
-      />
+      <View style={style.headingContainer}>
+        <Text style={style.headingTextStyle}>Welcome back</Text>
+        <Text style={style.headingTextStyle}>to Happy Milan</Text>
+      </View>
 
       <TextInput
         IconNameDesign={icons.profileLogo}
         placeholder={'Enter Your Email'}
         editable={true}
-        iconSources
+        iconSource={icons.profileLogo}
+        textInputStyle={style.textInputStyle}
+        containerStyle={style.containerStyle}
+      />
+
+      <TextInput
+        IconNameDesign={icons.profileLogo}
+        placeholder={'Enter Password'}
+        editable={true}
         iconSource={icons.mailLogo}
         iconSecures
         iconSecure={icons.secureEyeLogo}
-        containerStyle={style.textInputContainerStyle}
-        secureTextEntry={isPasswordVisible}
+        secureTextEntry={!isPasswordVisible}
         // placeHolderTextInputStyle={{color: colors.red}}
+        textInputStyle={{textAlign: 'center', marginLeft: 20}}
         onIconPress={togglePasswordVisibility}
+        containerStyle={style.passwordContainerStyle}
       />
 
       <GradientButton
-        buttonName={'Send Code'}
-        containerStyle={style.gradientButtonContainerStyle}
+        buttonName={'Login'}
+        containerStyle={style.gradientContainerStyle}
         buttonTextStyle={{color: colors.white}}
-        onPress={() => navigation.navigate('VerificationScreen')}
+        // onPress={() => navigation.navigate('RegistrationScreen')}
       />
 
-      <Text style={style.continueWithTextStyle}>or continue with</Text>
+      <Text style={style.orLoginTextStyle}>or login with</Text>
 
       <View style={style.socialMediaLogoContainer}>
         <TouchableOpacity>
@@ -95,20 +98,15 @@ const RegistrationScreen = ({navigation}) => {
 
       <View style={style.bottomUnderLineStyle} />
 
-      <View style={style.memberLoginTextContainer}>
-        <Text style={style.loginTextStyle}>Member Login</Text>
+      <View style={style.bottomTextContainer}>
+        <Text style={style.bottomTextStyle}>New Member? </Text>
         <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('LoginScreen');
-          }}>
-          <Image
-            source={images.profileVectorLogo}
-            style={style.profileVectorStyle}
-          />
+          onPress={() => navigation.navigate('RegistrationScreen')}>
+          <Text style={style.signUpTextStyle}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 };
 
-export default RegistrationScreen;
+export default LoginScreen;

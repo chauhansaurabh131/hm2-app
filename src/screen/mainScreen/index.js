@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, TouchableOpacity} from 'react-native';
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '../../assets';
@@ -33,15 +33,21 @@ const MainScreen = ({navigation}) => {
         buttonName={'Free Registration'}
         buttonTextStyle={style.buttonTextStyle}
         containerStyle={{marginTop: 40}}
+        buttonIcon={true}
         onPress={() => navigation.navigate('RegistrationScreen')}
       />
 
       <View style={style.memberLoginTextContainer}>
         <Text style={style.loginTextStyle}>Member Login</Text>
-        <Image
-          source={images.profileVectorLogo}
-          style={style.profileVectorStyle}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('LoginScreen');
+          }}>
+          <Image
+            source={images.profileVectorLogo}
+            style={style.profileVectorStyle}
+          />
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );

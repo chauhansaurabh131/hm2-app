@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 
 const style = StyleSheet.create({
   container: {
@@ -13,41 +13,35 @@ const style = StyleSheet.create({
     marginTop: hp(29),
     marginLeft: wp(33),
   },
-  signUpTextStyle: {
+  headingContainer: {
+    alignItems: 'center',
+    marginTop: hp(100),
+    alignSelf: 'center',
+  },
+  headingTextStyle: {
     color: colors.blue,
-    textAlign: 'center',
-    marginTop : isIOS ? hp(110) : hp(150),
     fontSize: fontSize(24),
+    lineHeight: hp(36),
     fontWeight: '700',
-    // marginBottom: wp(30),
-    marginBottom : isIOS ? wp(70) : wp(30),
     fontFamily: fontFamily.nunito400,
   },
-  textInputStyle: {
-    height: hp(50),
-    width: wp(270),
-    backgroundColor: colors.white,
-    flexDirection: 'row',
-    marginHorizontal: hp(15),
-    borderWidth: 1.5,
-    alignItems: 'center',
-    borderRadius: hp(10),
-    borderColor: colors.blue,
+  textInputStyle: {textAlign: 'center'},
+  containerStyle: {
+    marginTop: hp(50),
   },
-  textInputContainerStyle: {
+  passwordContainerStyle: {
     marginTop: isIOS ? hp(20) : hp(-20),
   },
-  gradientButtonContainerStyle: {
-    marginTop: hp(15),
+  gradientContainerStyle: {
+    marginTop: isIOS ? hp(20) : hp(2),
   },
-  continueWithTextStyle: {
+  orLoginTextStyle: {
+    marginTop: hp(20),
+    color: colors.black,
+    textAlign: 'center',
     fontSize: fontSize(12),
     lineHeight: hp(18),
-    marginTop: hp(20),
-    textAlign: 'center',
-    color: colors.black,
-    fontWeight: '400',
-    fontFamily: fontFamily.inter400,
+    fontFamily: fontFamily.nunito400,
   },
   socialMediaLogoContainer: {
     flexDirection: 'row',
@@ -99,6 +93,7 @@ const style = StyleSheet.create({
     fontWeight: '400',
     fontFamily: fontFamily.nunito400,
   },
+
   bottomUnderLineStyle: {
     height: 2,
     backgroundColor: '#E1E1E1',
@@ -107,20 +102,20 @@ const style = StyleSheet.create({
     marginRight: wp(50),
     marginTop: hp(25),
   },
-  memberLoginTextContainer: {
+  bottomTextContainer: {
     flexDirection: 'row',
     alignSelf: 'center',
-    marginTop: hp(25),
   },
-  loginTextStyle: {
+  bottomTextStyle: {
     color: colors.black,
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+    fontWeight: '400',
+    fontFamily: fontFamily.nunito400,
   },
-  profileVectorStyle: {
-    width: wp(16),
-    height: hp(16),
-    marginLeft: wp(10),
-    top: 2,
-    tintColor: colors.black,
+  signUpTextStyle: {
+    color: colors.blue,
+    top: isIOS ? hp(3) : hp(0),
   },
 });
 
