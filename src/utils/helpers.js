@@ -8,12 +8,17 @@ import {
 
 export const wp = val => {
   const valInPercentage = (val * 100) / STANDARD_SCREEN_WIDTH;
+  console.log(' === WIDTH ===> ', widthPercentageToDP(valInPercentage));
   return widthPercentageToDP(valInPercentage);
+  // return val;
 };
 
 export const hp = val => {
   const valInPercentage = (val * 100) / STANDARD_SCREEN_HEIGHT;
+  console.log(' === HEIGHT ===> ', heightPercentageToDP(valInPercentage));
+  // return heightPercentageToDP(valInPercentage);
   return heightPercentageToDP(valInPercentage);
+  // return val;
 };
 
 export const fontSize = value => RFValue(value, STANDARD_SCREEN_HEIGHT);
@@ -31,6 +36,12 @@ export const fontFamily = {
   inter600: isAndroid ? 'inter_semi_bold' : 'Inter SemiBold',
   inter500: isAndroid ? 'inter_medium' : 'Inter Medium',
   inter400: isAndroid ? 'inter_regular' : 'Inter Regular',
+
+  poppins700: isAndroid ? 'poppins_bold' : 'Poppins Bold',
+  poppins600: isAndroid ? 'poppins_semi_bold' : 'Poppins SemiBold',
+  poppins500: isAndroid ? 'poppins_medium' : 'Poppins Medium',
+  poppins400: isAndroid ? 'poppins_regular' : 'Poppins Regular',
+
   bebesneue400: isAndroid ? 'bebasneue_regular' : 'Bebas Neue',
   nunito200: isAndroid ? 'nunito_extra_light' : 'Nunito ExtraLight',
   nunito300: isAndroid ? 'nunito_light' : 'Nunito Light',

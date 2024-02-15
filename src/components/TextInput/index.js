@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
+import style from './style';
 
 const MyTextInput = ({
   iconSource,
@@ -20,6 +21,10 @@ const MyTextInput = ({
   iconSecure,
   containerStyle,
   textInputStyle,
+  inputContainer,
+  maxLength,
+  keyboardType,
+  iconStyle,
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -28,24 +33,26 @@ const MyTextInput = ({
   };
 
   return (
-    <SafeAreaView style={[styles.container, containerStyle]}>
-      <View style={styles.inputContainer}>
+    <SafeAreaView style={[style.container, containerStyle]}>
+      <View style={[style.inputContainer, inputContainer]}>
         {iconSources && (
           <View>
-            <Image source={iconSource} style={styles.icon} />
+            <Image source={iconSource} style={[style.icon, iconStyle]} />
           </View>
         )}
         <TextInput
-          style={[styles.input, textInputStyle]}
+          style={[style.input, textInputStyle]}
           placeholder={placeholder}
           secureTextEntry={secureTextEntry}
           onChangeText={handleInputChange}
           value={inputValue}
           placeholderTextColor="black"
+          maxLength={maxLength}
+          keyboardType={keyboardType}
         />
         {iconSecures && (
           <TouchableOpacity onPress={onIconPress}>
-            <Image source={iconSecure} style={styles.secureIconStyle} />
+            <Image source={iconSecure} style={style.secureIconStyle} />
           </TouchableOpacity>
         )}
       </View>
@@ -53,46 +60,46 @@ const MyTextInput = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.blue,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    width: wp(270),
-    height: hp(50),
-    alignSelf: 'center',
-  },
-  icon: {
-    width: 18,
-    height: 18,
-    marginRight: 10,
-    resizeMode: 'stretch',
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    color: colors.black,
-  },
-  textInputStyle: {
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
-    color: colors.black,
-    fontWeight: '400',
-    fontFamily: fontFamily.nunito400,
-  },
-  secureIconStyle: {
-    width: 18,
-    height: 18,
-    marginRight: 3,
-    resizeMode: 'stretch',
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     padding: 20,
+//   },
+//   inputContainer: {
+//     width: wp(270),
+//     height: hp(50),
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     borderWidth: 1,
+//     borderColor: colors.blue,
+//     borderRadius: 10,
+//     paddingVertical: 10,
+//     paddingHorizontal: 15,
+//     alignSelf: 'center',
+//   },
+//   icon: {
+//     width: hp(17.5),
+//     height: hp(16),
+//     marginRight: 10,
+//     resizeMode: 'stretch',
+//   },
+//   input: {
+//     flex: 1,
+//     height: hp(40),
+//     color: colors.black,
+//   },
+//   textInputStyle: {
+//     fontSize: fontSize(16),
+//     lineHeight: hp(24),
+//     color: colors.black,
+//     fontWeight: '400',
+//     fontFamily: fontFamily.nunito400,
+//   },
+//   secureIconStyle: {
+//     width: hp(18),
+//     height: hp(18),
+//     marginRight: 3,
+//     resizeMode: 'stretch',
+//   },
+// });
 
 export default MyTextInput;

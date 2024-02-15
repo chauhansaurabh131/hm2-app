@@ -12,6 +12,7 @@ const style = StyleSheet.create({
     height: isIOS ? hp(26) : hp(24),
     marginTop: hp(29),
     marginLeft: wp(33),
+    resizeMode: 'stretch',
   },
   signUpTextStyle: {
     color: colors.blue,
@@ -19,8 +20,9 @@ const style = StyleSheet.create({
     marginTop: isIOS ? hp(110) : hp(150),
     fontSize: fontSize(24),
     fontWeight: '700',
-    marginBottom: isIOS ? wp(70) : wp(30),
+    // marginBottom: isIOS ? wp(70) : wp(30),
     fontFamily: fontFamily.nunito400,
+    marginBottom: hp(50),
   },
   verificationTextStyle: {
     color: colors.black,
@@ -42,24 +44,22 @@ const style = StyleSheet.create({
     marginTop: isIOS ? hp(25) : hp(20),
   },
   validationTextStyle: {
+    fontSize: fontSize(10),
+    lineHeight: hp(15),
+    // textAlign: 'center',
     color: colors.black,
-    fontSize: fontSize(8),
-    lineHeight: hp(12),
-    fontWeight: '400',
-    fontFamily: fontFamily.inter400,
-    textAlign: 'center',
-    marginTop: isIOS ? hp(10) : hp(-10),
+    fontFamily: fontFamily.poppins400,
+    marginTop: hp(19),
   },
   validationSecondTextStyle: {
     color: colors.black,
-    fontSize: fontSize(8),
-    lineHeight: hp(12),
-    fontWeight: '400',
-    fontFamily: fontFamily.nunito700,
-    textAlign: 'center',
+    fontSize: fontSize(10),
+    lineHeight: hp(15),
+    extAlign: 'center',
+    fontFamily: fontFamily.poppins400,
   },
   passwordTextInputContainerStyle: {
-    marginTop: isIOS ? hp(10) : hp(-10),
+    // marginTop: isIOS ? hp(10) : hp(-10),
   },
   gradientButtonContainerStyle: {
     marginTop: isIOS ? hp(20) : hp(2),
@@ -81,12 +81,14 @@ const style = StyleSheet.create({
     color: colors.black,
   },
   profileVectorStyle: {
-    width: wp(16),
+    width: hp(16),
     height: hp(16),
     marginLeft: wp(10),
     top: 2,
     tintColor: colors.black,
+    resizeMode: 'stretch',
   },
+  iconStyle: {width: hp(13.72), height: hp(17.62)},
 });
 
 export default style;

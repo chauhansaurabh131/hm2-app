@@ -73,7 +73,10 @@ export const colors = {
   silverAlpha80: '#C4C4C4CC',
   lightPink: '#FFB0C4',
   fuchsia: '#F14E79',
-  red: '#D21F3c',
+  red: '#D90202',
   blue: '#0F52BA',
   lightGrayCircle: '#D4D4D4',
+  lightWhite: '#F8F8F8',
+  lightGreen: '#17C270',
+  darkBlue: '#120FBA',
 };

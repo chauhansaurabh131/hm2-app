@@ -2,9 +2,13 @@ import React, {useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import TextInput from '../../components/TextInput';
 import {colors} from '../../utils/colors';
 import GradientButton from '../../components/GradientButton';
+import {hp, wp} from '../../utils/helpers';
+import TextInput from '../../components/TextInput';
+import TextInputWithIcons from '../../components/textInputWithIcons';
+import LinearGradient from 'react-native-linear-gradient';
+import CommonGradientButton from '../../components/commonGradientButton';
 
 const RegistrationScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -22,34 +26,89 @@ const RegistrationScreen = ({navigation}) => {
 
       <Text style={style.signUpTextStyle}>Sign Up</Text>
 
-      <TextInput
-        IconNameDesign={icons.profileLogo}
-        placeholder={'Enter Your Name'}
-        editable={true}
-        iconSources
-        iconSource={icons.profileLogo}
-      />
+      <View
+        style={{
+          marginTop: hp(64),
+          backgroundColor: 'red',
+          marginHorizontal: 52,
+        }}>
+        <TextInputWithIcons
+          iconSources={true}
+          iconSource={icons.profileLogo}
+          placeholder={'Enter Your name'}
+          textInputStyle={{marginLeft: 10}}
+          inputContainerStyle={{width: '100%'}}
+        />
 
-      <TextInput
-        IconNameDesign={icons.profileLogo}
-        placeholder={'Enter Your Email'}
-        editable={true}
-        iconSources
-        iconSource={icons.mailLogo}
-        iconSecures
-        iconSecure={icons.secureEyeLogo}
-        containerStyle={style.textInputContainerStyle}
-        secureTextEntry={isPasswordVisible}
-        // placeHolderTextInputStyle={{color: colors.red}}
-        onIconPress={togglePasswordVisibility}
-      />
+        <TextInputWithIcons
+          IconNameDesign={icons.profileLogo}
+          placeholder={'Enter Your Email'}
+          editable={true}
+          iconSources
+          iconSource={icons.mailLogo}
+          iconSecures
+          iconSecure={icons.secureEyeLogo}
+          containerStyle={style.textInputContainerStyle}
+          secureTextEntry={isPasswordVisible}
+          onIconPress={togglePasswordVisibility}
+          iconStyle={style.iconStyle}
+          textInputStyle={{marginLeft: 10}}
+          inputContainerStyle={{marginTop: 20, width: '100%'}}
+        />
 
-      <GradientButton
-        buttonName={'Send Code'}
-        containerStyle={style.gradientButtonContainerStyle}
-        buttonTextStyle={{color: colors.white}}
-        onPress={() => navigation.navigate('VerificationScreen')}
-      />
+        {/*<TouchableOpacity>*/}
+        {/*  <LinearGradient*/}
+        {/*    colors={['#0D4EB3', '#9413D0']}*/}
+        {/*    start={{x: 0, y: 0}}*/}
+        {/*    end={{x: 1, y: 0}}*/}
+        {/*    style={{*/}
+        {/*      width: '100%',*/}
+        {/*      height: hp(50),*/}
+        {/*      borderRadius: 10,*/}
+        {/*      marginTop: hp(20),*/}
+        {/*    }}>*/}
+        {/*    <Text>asjb</Text>*/}
+        {/*  </LinearGradient>*/}
+        {/*</TouchableOpacity>*/}
+
+        <CommonGradientButton
+          buttonName={'Send Code'}
+          containerStyle={{width: '100%', marginTop: hp(20)}}
+          onPress={() => navigation.navigate('VerificationScreen')}
+        />
+
+        {/*<TextInput*/}
+        {/*  IconNameDesign={icons.profileLogo}*/}
+        {/*  placeholder={'Enter Your Name'}*/}
+        {/*  editable={true}*/}
+        {/*  iconSources*/}
+        {/*  iconSource={icons.profileLogo}*/}
+        {/*  textInputStyle={{marginLeft: 10}}*/}
+        {/*  containerStyle={{padding: 0, marginBottom: 20}}*/}
+        {/*/>*/}
+
+        {/*<TextInput*/}
+        {/*  IconNameDesign={icons.profileLogo}*/}
+        {/*  placeholder={'Enter Your Email'}*/}
+        {/*  editable={true}*/}
+        {/*  iconSources*/}
+        {/*  iconSource={icons.mailLogo}*/}
+        {/*  iconSecures*/}
+        {/*  iconSecure={icons.secureEyeLogo}*/}
+        {/*  containerStyle={style.textInputContainerStyle}*/}
+        {/*  secureTextEntry={isPasswordVisible}*/}
+        {/*  onIconPress={togglePasswordVisibility}*/}
+        {/*  iconStyle={style.iconStyle}*/}
+        {/*  textInputStyle={{marginLeft: 10}}*/}
+        {/*/>*/}
+
+        {/*<GradientButton*/}
+        {/*  buttonName={'Send Code'}*/}
+        {/*  containerStyle={style.gradientButtonContainerStyle}*/}
+        {/*  buttonTextStyle={{color: colors.white}}*/}
+        {/*  onPress={() => navigation.navigate('VerificationScreen')}*/}
+        {/*/>*/}
+      </View>
 
       <Text style={style.continueWithTextStyle}>or continue with</Text>
 
@@ -66,7 +125,10 @@ const RegistrationScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('NumberRegistrationScreen');
+          }}>
           <View style={style.socialMediaCircleStyle}>
             <Image source={icons.phoneLogo} style={style.logoStyle} />
           </View>

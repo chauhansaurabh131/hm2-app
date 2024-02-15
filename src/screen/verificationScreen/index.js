@@ -4,6 +4,8 @@ import style from './style';
 import {images} from '../../assets';
 import {colors} from '../../utils/colors';
 import GradientButton from '../../components/GradientButton';
+import {hp, wp} from '../../utils/helpers';
+import CommonGradientButton from '../../components/commonGradientButton';
 
 const VerificationScreen = ({navigation}) => {
   return (
@@ -23,18 +25,40 @@ const VerificationScreen = ({navigation}) => {
         Verification code sent roh******tel@gmail.com
       </Text>
 
-      <Text style={style.resendTextStyle}>Resend ofter 57 s</Text>
+      <View style={{marginHorizontal: wp(52), backgroundColor: 'lightgreen'}}>
+        <View style={style.underLineContainer}>
+          <View style={style.line} />
+          <View style={style.line} />
+          <View style={style.line} />
+          <View style={style.line} />
+        </View>
 
-      <TouchableOpacity>
-        <Text style={style.notNowTextStyle}>NOT NOW</Text>
-      </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: hp(35),
+          }}>
+          <Text style={style.resendTextStyle}>Resend ofter 57 s</Text>
 
-      <GradientButton
-        buttonName={'Verify Code'}
-        containerStyle={style.gradientButtonContainerStyle}
-        buttonTextStyle={{color: colors.white}}
-        onPress={() => navigation.navigate('SetPasswordScreen')}
-      />
+          <TouchableOpacity>
+            <Text style={style.notNowTextStyle}>Resend</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/*<GradientButton*/}
+        {/*  buttonName={'Verify Code'}*/}
+        {/*  containerStyle={{width: wp(280), marginTop: hp(35)}}*/}
+        {/*  buttonTextStyle={{color: colors.white}}*/}
+        {/*  onPress={() => navigation.navigate('SetPasswordScreen')}*/}
+        {/*/>*/}
+
+        <CommonGradientButton
+          buttonName={'Verify Code'}
+          containerStyle={{width: '100%', marginTop: hp(35)}}
+          onPress={() => navigation.navigate('SetPasswordScreen')}
+        />
+      </View>
 
       <View style={style.bottomUnderLineStyle} />
 

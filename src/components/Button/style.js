@@ -22,7 +22,8 @@ const style = StyleSheet.create({
   buttonTextStyle: {
     color: colors.black,
     fontSize: fontSize(18),
-    lineHeight:wp(24),
+    // lineHeight: '24',
+    lineHeight: hp(24),
     fontFamily: fontFamily.nunito200,
   },
   rightArrowStyle: {

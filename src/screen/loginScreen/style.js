@@ -8,10 +8,11 @@ const style = StyleSheet.create({
     backgroundColor: colors.white,
   },
   headerLogoStyle: {
-    width: isIOS ? hp(110) : hp(100),
-    height: isIOS ? hp(26) : hp(24),
+    width: isIOS ? hp(110) : hp(99),
+    height: isIOS ? hp(26) : hp(27),
     marginTop: hp(29),
     marginLeft: wp(33),
+    resizeMode: 'stretch',
   },
   headingContainer: {
     alignItems: 'center',
@@ -30,7 +31,7 @@ const style = StyleSheet.create({
     marginTop: hp(50),
   },
   passwordContainerStyle: {
-    marginTop: isIOS ? hp(20) : hp(-20),
+    // marginTop: isIOS ? hp(20) : hp(-20),
   },
   gradientContainerStyle: {
     marginTop: isIOS ? hp(20) : hp(2),
@@ -51,7 +52,7 @@ const style = StyleSheet.create({
     marginBottom: hp(20),
   },
   socialMediaCircleStyle: {
-    width: wp(44),
+    width: hp(44),
     height: hp(44),
     borderRadius: hp(50),
     borderColor: colors.lightGrayCircle,
@@ -65,7 +66,7 @@ const style = StyleSheet.create({
     resizeMode: 'contain',
   },
   socialMediaLogoContainers: {
-    width: wp(44),
+    width: hp(44),
     height: hp(44),
     borderRadius: hp(50),
     borderColor: '#D4D4D4',
