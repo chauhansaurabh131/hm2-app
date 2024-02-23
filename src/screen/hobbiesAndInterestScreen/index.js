@@ -5,10 +5,14 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import style from './style';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
+import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
+import {RELIGION_LIST} from '../../utils/data';
+import DropDownMutipleValueComponent from '../../components/DropDownMutipleValueComponent';
 
 const HobbiesAndInterestScreen = () => {
   const CREATIVE = [
@@ -198,31 +202,80 @@ const HobbiesAndInterestScreen = () => {
   );
 
   return (
-    <SafeAreaView style={style.container}>
-      <View style={style.containerBodyStyle}>
-        <View style={style.headingTextContainer}>
-          <Text style={style.headingTextStyle}>Creative</Text>
-          <Text style={style.headingTotalSelectedTextStyle}>
-            Selected: {selectedItems.length}/5
-          </Text>
-        </View>
-        <FlatList
-          data={CREATIVE}
-          renderItem={renderItem}
-          keyExtractor={item => item.value}
-          numColumns={3}
-          columnWrapperStyle={{top: 5}}
-        />
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+      <View style={{marginHorizontal: wp(17)}}>
+        {/*<View*/}
+        {/*  style={{*/}
+        {/*    flexDirection: 'row',*/}
+        {/*    justifyContent: 'space-between',*/}
+        {/*    marginTop: hp(15),*/}
+        {/*    alignItems: 'center',*/}
+        {/*  }}>*/}
+        {/*  <Text*/}
+        {/*    style={{*/}
+        {/*      color: colors.black,*/}
+        {/*      fontSize: fontSize(14),*/}
+        {/*      lineHeight: hp(21),*/}
+        {/*      fontFamily: fontFamily.poppins400,*/}
+        {/*    }}>*/}
+        {/*    Creative*/}
+        {/*  </Text>*/}
+        {/*  <Text*/}
+        {/*    style={{*/}
+        {/*      color: colors.black,*/}
+        {/*      fontSize: fontSize(11),*/}
+        {/*      lineHeight: hp(16.5),*/}
+        {/*      fontFamily: fontFamily.poppins400,*/}
+        {/*    }}>*/}
+        {/*    Selected: {selectedItems.length}/5*/}
+        {/*  </Text>*/}
+        {/*</View>*/}
+        {/*<FlatList*/}
+        {/*  data={CREATIVE}*/}
+        {/*  renderItem={renderItem}*/}
+        {/*  keyExtractor={item => item.value}*/}
+        {/*  numColumns={3}*/}
+        {/*  columnWrapperStyle={{top: 5}}*/}
+        {/*/>*/}
 
-        <Text style={style.funTextTittleStyle}>Fun</Text>
+        {/*<Text*/}
+        {/*  style={{*/}
+        {/*    color: colors.black,*/}
+        {/*    fontSize: fontSize(14),*/}
+        {/*    lineHeight: hp(21),*/}
+        {/*    fontFamily: fontFamily.poppins400,*/}
+        {/*    marginTop: hp(10),*/}
+        {/*    marginBottom: hp(4),*/}
+        {/*  }}>*/}
+        {/*  Fun*/}
+        {/*</Text>*/}
 
-        <FlatList
-          data={Fun}
-          renderItem={renderItemFun}
-          keyExtractor={item => item.value}
-          numColumns={3}
-          columnWrapperStyle={{top: 5}}
-        />
+        {/*<FlatList*/}
+        {/*  data={Fun}*/}
+        {/*  renderItem={renderItemFun}*/}
+        {/*  keyExtractor={item => item.value}*/}
+        {/*  numColumns={3}*/}
+        {/*  columnWrapperStyle={{top: 5}}*/}
+        {/*/>*/}
+
+        {/*<Text*/}
+        {/*  style={{*/}
+        {/*    color: colors.black,*/}
+        {/*    fontSize: fontSize(14),*/}
+        {/*    lineHeight: hp(21),*/}
+        {/*    fontFamily: fontFamily.poppins400,*/}
+        {/*    marginTop: hp(10),*/}
+        {/*  }}>*/}
+        {/*  Fitness*/}
+        {/*</Text>*/}
+
+        {/*<FlatList*/}
+        {/*  data={Fitness}*/}
+        {/*  renderItem={renderItemFitness}*/}
+        {/*  keyExtractor={item => item.value}*/}
+        {/*  numColumns={3}*/}
+        {/*  columnWrapperStyle={{top: 5}}*/}
+        {/*/>*/}
 
         <Text
           style={{
@@ -230,18 +283,41 @@ const HobbiesAndInterestScreen = () => {
             fontSize: fontSize(14),
             lineHeight: hp(21),
             fontFamily: fontFamily.poppins400,
-            marginTop: hp(10),
+            marginTop: hp(31),
+            marginBottom: hp(11),
+          }}>
+          Creative
+        </Text>
+
+        <DropDownMutipleValueComponent data={CREATIVE} height={50} />
+
+        <Text
+          style={{
+            color: colors.black,
+            fontSize: fontSize(14),
+            lineHeight: hp(21),
+            fontFamily: fontFamily.poppins400,
+            marginTop: hp(20),
+            marginBottom: hp(11),
+          }}>
+          Fun
+        </Text>
+
+        <DropDownMutipleValueComponent data={Fun} height={50} />
+
+        <Text
+          style={{
+            color: colors.black,
+            fontSize: fontSize(14),
+            lineHeight: hp(21),
+            fontFamily: fontFamily.poppins400,
+            marginTop: hp(20),
+            marginBottom: hp(11),
           }}>
           Fitness
         </Text>
 
-        <FlatList
-          data={Fitness}
-          renderItem={renderItemFitness}
-          keyExtractor={item => item.value}
-          numColumns={3}
-          columnWrapperStyle={{top: 5}}
-        />
+        <DropDownMutipleValueComponent data={Fitness} height={50} />
       </View>
     </SafeAreaView>
   );

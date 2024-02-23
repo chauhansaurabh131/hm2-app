@@ -46,6 +46,8 @@ const HomeTopSheetComponent = ({
     setModalVisible(!isModalVisible);
   };
 
+  // const privacyPolicyPress = () => {};
+
   return (
     <SafeAreaView>
       <TouchableOpacity onPress={toggleModal} />
@@ -161,7 +163,7 @@ const HomeTopSheetComponent = ({
                 activeOpacity={0.7}
                 onPress={() => {
                   navigation.navigate('AccountsScreen');
-                  toggleModal(); // Close the modal after navigation
+                  toggleModal();
                 }}>
                 <View
                   style={{
@@ -191,32 +193,40 @@ const HomeTopSheetComponent = ({
                 </View>
               </TouchableOpacity>
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginBottom: hp(19),
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  navigation.navigate('PrivacyScreen');
+                  console.log(' press> ', 'press');
+                  toggleModal(); // Close the modal after navigation
                 }}>
-                <Image
-                  source={icons.logLogo}
+                <View
                   style={{
-                    width: hp(12.44),
-                    height: hp(16),
-                    tintColor: colors.black,
-                    resizeMode: 'stretch',
-                  }}
-                />
-                <Text
-                  style={{
-                    color: colors.black,
-                    marginLeft: hp(21.56),
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontWeight: '400',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: hp(19),
                   }}>
-                  Privacy Policy
-                </Text>
-              </View>
+                  <Image
+                    source={icons.logLogo}
+                    style={{
+                      width: hp(12.44),
+                      height: hp(16),
+                      tintColor: colors.black,
+                      resizeMode: 'stretch',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colors.black,
+                      marginLeft: hp(21.56),
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontWeight: '400',
+                    }}>
+                    Privacy Policy
+                  </Text>
+                </View>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 activeOpacity={0.5}

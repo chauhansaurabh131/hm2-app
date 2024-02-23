@@ -8,17 +8,17 @@ const style = StyleSheet.create({
     backgroundColor: colors.white,
   },
   bodyContainerStyle: {
-    // backgroundColor: 'lightgreen',
     flex: 1,
     marginHorizontal: wp(18),
     marginTop: hp(8),
+    // backgroundColor: 'lightgreen',
   },
   fillUpTextStyle: {
-    color: colors.black,
-    fontFamily: fontFamily.poppins400,
     fontSize: hp(12),
     lineHeight: hp(18),
     marginTop: hp(16),
+    color: colors.black,
+    fontFamily: fontFamily.poppins400,
   },
   textInputBodyStyle: {
     width: '100%',

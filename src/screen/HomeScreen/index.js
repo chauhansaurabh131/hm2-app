@@ -23,6 +23,7 @@ import {NEW_MATCHES, userData} from '../../utils/data';
 import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatListComponent';
 import {fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import FastImage from 'react-native-fast-image';
+import CommonGradientButton from '../../components/commonGradientButton';
 
 const HomeScreen = ({navigation}) => {
   const [showModal, setShowModal] = useState(true);
@@ -42,7 +43,7 @@ const HomeScreen = ({navigation}) => {
 
   const verificationModalToggle = () => {
     setCompleteModalModalVisible(false);
-    // navigation.navigate('GeneralInformationScreen');
+    navigation.navigate('GeneralInformationScreen');
   };
 
   const openTopSheetModal = () => {
@@ -58,7 +59,16 @@ const HomeScreen = ({navigation}) => {
     <SafeAreaView style={style.container}>
       <View style={{marginHorizontal: 10}}>
         <View style={style.headerViewContainer}>
-          <CustomHeaderLogo headerImage={style.headerImageStyle} />
+          {/*<CustomHeaderLogo headerImage={style.headerImageStyle} />*/}
+          <Image
+            source={images.happyMilanColorLogo}
+            style={{
+              width: wp(96),
+              height: hp(24),
+              resizeMode: 'stretch',
+              marginTop: hp(5),
+            }}
+          />
 
           <TouchableOpacity
             activeOpacity={0.7}
@@ -100,6 +110,7 @@ const HomeScreen = ({navigation}) => {
                   marginTop: 34,
                   alignItems: 'center',
                   // marginTop: -110,
+                  // backgroundColor: 'green',
                 }}>
                 <Text style={style.modalSubTitleTextStyle}>
                   "New Beginnings, New Possibilities!
@@ -110,11 +121,21 @@ const HomeScreen = ({navigation}) => {
                 <Text style={style.modalSubTitleTextStyle}>HappyMilan</Text>
               </View>
 
-              <GradientButton
+              {/*<GradientButton*/}
+              {/*  buttonName={'Start Exploring'}*/}
+              {/*  containerStyle={style.gradientButtonContainerStyle}*/}
+              {/*  buttonTextStyle={{color: colors.white}}*/}
+              {/*  onPress={closeWelcomeModal}*/}
+              {/*/>*/}
+
+              <CommonGradientButton
                 buttonName={'Start Exploring'}
-                containerStyle={style.gradientButtonContainerStyle}
-                buttonTextStyle={{color: colors.white}}
                 onPress={closeWelcomeModal}
+                containerStyle={{
+                  width: wp(280),
+                  height: hp(50),
+                  marginTop: hp(50),
+                }}
               />
             </View>
           </View>
@@ -184,6 +205,9 @@ const HomeScreen = ({navigation}) => {
               data={userData}
               isOnline
               shareButtonPress={completeOpenModal}
+              // shareButtonPress={() => {
+              //   console.log(' === var ===> ', 'press');
+              // }}
             />
           </View>
 
@@ -197,7 +221,12 @@ const HomeScreen = ({navigation}) => {
           </View>
 
           {/*<NewMatchesFlatlistComponent />*/}
-          <PremiumMatchesFlatlistComponent data={NEW_MATCHES} />
+          <PremiumMatchesFlatlistComponent
+            data={NEW_MATCHES}
+            shareButtonPress={() => {
+              console.log(' === var ===> ', 'New Matches Share Button Press');
+            }}
+          />
 
           <TouchableOpacity activeOpacity={0.7}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>
@@ -261,17 +290,27 @@ const HomeScreen = ({navigation}) => {
                     <Text style={style.verificationDescriptionText}>
                       that we deliver tailored results to you.
                     </Text>
-                    <GradientButton
+                    {/*<GradientButton*/}
+                    {/*  buttonName={'Let’s do it'}*/}
+                    {/*  onPress={verificationModalToggle}*/}
+                    {/*  containerStyle={{*/}
+                    {/*    width: isIOS ? wp(270) : wp(250),*/}
+                    {/*    height: hp(50),*/}
+                    {/*    marginTop: hp(20),*/}
+                    {/*  }}*/}
+                    {/*  // containerStyle={style.gradientButtonContainerStyle}*/}
+                    {/*  // buttonTextStyle={{color: colors.white}}*/}
+                    {/*  // onPress={closeWelcomeModal}*/}
+                    {/*/>*/}
+
+                    <CommonGradientButton
                       buttonName={'Let’s do it'}
-                      onPress={verificationModalToggle}
                       containerStyle={{
-                        width: isIOS ? wp(270) : wp(250),
+                        width: wp(270),
                         height: hp(50),
                         marginTop: hp(20),
                       }}
-                      // containerStyle={style.gradientButtonContainerStyle}
-                      // buttonTextStyle={{color: colors.white}}
-                      // onPress={closeWelcomeModal}
+                      onPress={verificationModalToggle}
                     />
                   </View>
                 </View>

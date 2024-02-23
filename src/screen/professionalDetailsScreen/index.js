@@ -4,24 +4,47 @@ import {colors} from '../../utils/colors';
 import style from './style';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import {ANNUAL_SALARY, COUNTRY_LIST, RELIGION_LIST} from '../../utils/data';
-import {hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 
 const ProfessionalsDetailsScreen = () => {
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={style.containerBodyStyle}>
-          <Text style={style.headingTittleText}>
+        <View style={{marginHorizontal: wp(17)}}>
+          <Text
+            style={{
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(19),
+            }}>
             Current Designation (Job Title)
           </Text>
 
           <TextInput
             placeholder={'Type'}
-            style={style.textInputBodyStyle}
+            style={{
+              width: '100%',
+              height: hp(50),
+              borderColor: colors.lightGreyBorder,
+              borderRadius: 10,
+              borderWidth: 1,
+              marginTop: hp(7),
+              padding: 10,
+            }}
             placeholderTextColor={colors.black}
           />
 
-          <Text style={style.textInputDropdownTextTittleBodyStyle}>
+          <Text
+            style={{
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(15),
+              marginBottom: hp(12),
+            }}>
             Job Type
           </Text>
 
@@ -31,15 +54,40 @@ const ProfessionalsDetailsScreen = () => {
             height={50}
           />
 
-          <Text style={style.headingTittleText}>Company Name</Text>
+          <Text
+            style={{
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(19),
+            }}>
+            Company Name
+          </Text>
 
           <TextInput
             placeholder={'Enter Name Here'}
-            style={style.textInputBodyStyle}
             placeholderTextColor={colors.black}
+            style={{
+              width: '100%',
+              height: hp(50),
+              borderColor: colors.lightGreyBorder,
+              borderRadius: 10,
+              borderWidth: 1,
+              marginTop: hp(7),
+              padding: 10,
+            }}
           />
 
-          <Text style={style.textInputDropdownTextTittleBodyStyle}>
+          <Text
+            style={{
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(15),
+              marginBottom: hp(12),
+            }}>
             Annual Salary
           </Text>
 
@@ -49,7 +97,15 @@ const ProfessionalsDetailsScreen = () => {
             height={50}
           />
 
-          <Text style={style.textInputDropdownTextTittleBodyStyle}>
+          <Text
+            style={{
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(15),
+              marginBottom: hp(12),
+            }}>
             Work In City
           </Text>
 
@@ -59,7 +115,15 @@ const ProfessionalsDetailsScreen = () => {
             height={50}
           />
 
-          <Text style={style.textInputDropdownTextTittleBodyStyle}>
+          <Text
+            style={{
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(15),
+              marginBottom: hp(12),
+            }}>
             Work In Country
           </Text>
 

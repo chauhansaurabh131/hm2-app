@@ -36,10 +36,12 @@ const AccountsScreen = ({navigation}) => {
             navigation.navigate('CredentialsScreen');
           }}>
           <View style={style.bodyDescription}>
-            <Image
-              source={icons.credentials_icon}
-              style={style.credentialsIconStyle}
-            />
+            <View style={{width: 25}}>
+              <Image
+                source={icons.credentials_icon}
+                style={style.credentialsIconStyle}
+              />
+            </View>
 
             <Image
               source={icons.rightSideIcon}
@@ -64,10 +66,12 @@ const AccountsScreen = ({navigation}) => {
             navigation.navigate('HideDeleteProfileScreen');
           }}>
           <View style={style.bodyDescription}>
-            <Image
-              source={icons.delete_Profile_icon}
-              style={style.deleteProfileIconStyle}
-            />
+            <View style={{width: 25}}>
+              <Image
+                source={icons.delete_Profile_icon}
+                style={style.deleteProfileIconStyle}
+              />
+            </View>
 
             <Image
               source={icons.rightSideIcon}
@@ -94,7 +98,9 @@ const AccountsScreen = ({navigation}) => {
             navigation.navigate('PrivacyScreen');
           }}>
           <View style={style.bodyDescription}>
-            <Image source={icons.logLogo} style={style.privacyIconStyle} />
+            <View style={{width: 25}}>
+              <Image source={icons.logLogo} style={style.privacyIconStyle} />
+            </View>
 
             <Image
               source={icons.rightSideIcon}
@@ -112,12 +118,19 @@ const AccountsScreen = ({navigation}) => {
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <TouchableOpacity activeOpacity={0.5} style={{marginTop: hp(16)}}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={{marginTop: hp(16)}}
+          onPress={() => {
+            navigation.navigate('EmailSmsAlertScreen');
+          }}>
           <View style={style.bodyDescription}>
-            <Image
-              source={icons.email_sms_icon}
-              style={style.emailSmsIconStyle}
-            />
+            <View style={{width: 25}}>
+              <Image
+                source={icons.email_sms_icon}
+                style={style.emailSmsIconStyle}
+              />
+            </View>
 
             <Image
               source={icons.rightSideIcon}

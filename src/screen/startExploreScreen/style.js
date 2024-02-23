@@ -74,10 +74,9 @@ const style = StyleSheet.create({
   buttonTextStyle: {
     textAlign: 'center',
     color: colors.white,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontWeight: '400',
-    fontFamily: fontFamily.nunito400,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
   },
   selectedBox: {
     borderWidth: 0,

@@ -62,44 +62,21 @@ const style = StyleSheet.create({
     flex: 1,
     marginHorizontal: wp(17),
     marginTop: hp(14),
-    // backgroundColor: 'grey',
   },
   bodyTittleTextStyle: {
     color: colors.black,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
   },
 
-  bodyTittleDescriptionText: {
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-    color: '#8F8F8F',
-    marginTop: hp(9),
-  },
-  bodyTittleDescriptionTexts: {
-    color: colors.blue,
-  },
-  descriptionBodyUnderlineStyle: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#E7E7E7',
-    marginTop: hp(23),
-  },
   descriptionBodyUnderlineStyleDropdown: {
     width: '100%',
     borderWidth: 1,
     borderColor: '#E7E7E7',
-    marginTop: hp(21),
+    marginTop: hp(13),
   },
-  deleteProfileTextStyle: {
-    marginTop: hp(20),
-    color: colors.black,
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
-  },
+
   deleteButtonStyle: {
     width: '100%',
     height: hp(50),
@@ -108,51 +85,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.red,
   },
-  deleteButtonTextStyle: {
-    textAlign: 'center',
-    color: colors.white,
-    fontSize: fontSize(18),
-    lineHeight: hp(27),
-    fontFamily: fontFamily.poppins400,
-    alignItems: 'center',
-  },
-  hideShowButtonContainer: {
-    marginTop: hp(24),
-    flexDirection: 'row',
-    marginLeft: wp(1),
-  },
-  ButtonStyle: {
-    width: wp(95),
-    height: hp(50),
-    borderRadius: 10,
-    justifyContent: 'center',
-  },
-  hideButtonTextStyle: {
-    textAlign: 'center',
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
-  },
-  showButtonTextStyle: {
-    textAlign: 'center',
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
-  },
-  hideTittleTextDescriptionStyle: {
-    color: colors.black,
-    fontSize: fontSize(15),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-    marginTop: hp(16),
-  },
-  hideTextDescriptionStyle: {
-    marginTop: hp(3),
-    fontSize: fontSize(12),
-    lineHeight: hp(18),
-    fontFamily: fontFamily.poppins400,
-    color: '#949494',
-  },
+
   dropDownContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -195,32 +128,7 @@ const style = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
-  deleteDescriptionText: {
-    marginTop: hp(28),
-    color: colors.black,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-  },
-  processDeleteButtonContainer: {
-    marginTop: hp(19),
-  },
-  processDeleteButtonStyle: {
-    width: '100%',
-    height: hp(50),
-    borderRadius: 10,
-    justifyContent: 'center',
-  },
-  processDeleteButtonText: {
-    textAlign: 'center',
-    color: colors.white,
-    fontSize: fontSize(16),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-  },
-  screenBottomSpace: {
-    height: hp(150),
-  },
+
   modalContainer: {
     flex: 1,
     alignItems: 'center',
@@ -263,7 +171,7 @@ const style = StyleSheet.create({
     marginTop: hp(66),
   },
   confirmButtonStyle: {
-    width: wp(178),
+    width: wp(126),
     height: hp(50),
     borderRadius: 10,
     justifyContent: 'center',
@@ -274,6 +182,14 @@ const style = StyleSheet.create({
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins600,
+  },
+  tittleDescriptionTextContainer: {
+    marginTop: hp(8),
+    marginBottom: hp(15),
+  },
+  tittleDescriptionTextStyle: {
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
   },
 });
 

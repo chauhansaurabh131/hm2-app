@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {
   Image,
   Modal,
+  Pressable,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -11,38 +13,63 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import style from './style';
 import {icons, images} from '../../assets';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
-import NewTextInputWithDropDownComponents from '../../components/newTextInputWithDropDownComponents';
 import {colors} from '../../utils/colors';
+
+import {CurrentCity} from '../../utils/data';
+import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
+import CommonGradientButton from '../../components/commonGradientButton';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
-  const [hideButtonGradient, setHideButtonGradient] = useState(true);
-  const [showButtonGradient, setShowButtonGradient] = useState(false);
-  const [showText, setShowText] = useState(true);
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectDurationModal, setSelectDurationModal] = useState(false);
 
-  const dropdownItems = ['Option 1', 'Option 2', 'Option 3'];
+  const [hideButtonGradient, setHideButtonGradient] = useState(false);
+  const [showButtonGradient, setShowButtonGradient] = useState(true);
+  const [showText, setShowText] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isDeleteButtonPressed, setIsDeleteButtonPressed] = useState(false);
 
-  const handleHidePress = () => {
-    setHideButtonGradient(true);
-    setShowButtonGradient(false);
-    setShowText(true); // Show the text when Hide button is pressed
-    // Your hide functionality here
-  };
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTabBarVisible, setIsTabBarVisible] = useState(true);
 
-  const handleShowPress = () => {
-    setShowButtonGradient(true);
-    setHideButtonGradient(false);
-    setShowText(false); // Hide the text when Show button is pressed
-    // Your show functionality here
-  };
+  const SELECT_DURATION = [
+    {label: '1 Week', value: '1'},
+    {label: '2 Week', value: '2'},
+    {label: '1 Month', value: '3'},
+    {label: '3 Month', value: '4'},
+    {label: '6 Month', value: '5'},
+  ];
 
-  const handleDeleteProfile = () => {
-    setShowDeleteConfirmation(true); // Show delete confirmation text
-  };
+  const SELECT_REASON = [
+    {label: 'Found My Match', value: '1'},
+    {label: 'Wants to take a break', value: '2'},
+    {label: 'Not Satisfied by matches', value: '3'},
+    {label: 'Other Reason', value: '4'},
+  ];
+
+  // const handleBackdropPress = () => {
+  //   setIsOpen(false);
+  // };
+
+  // const handleHidePress = () => {
+  //   setHideButtonGradient(true);
+  //   setShowButtonGradient(false);
+  //   setShowText(true);
+  // };
+
+  // const handleShowPress = () => {
+  //   setShowButtonGradient(true);
+  //   setHideButtonGradient(false);
+  //   setShowText(false);
+  // };
+
+  // const handleDeleteProfile = () => {
+  //   setShowDeleteConfirmation(true);
+  //   setIsDeleteButtonPressed(true);
+  // };
 
   const handleDeleteButtonPress = () => {
     setModalVisible(true);
@@ -50,6 +77,14 @@ const HideDeleteProfileScreen = () => {
 
   const handleModalClose = () => {
     setModalVisible(false);
+  };
+
+  const selectSetDurationModalOPen = () => {
+    setSelectDurationModal(true);
+  };
+
+  const SelectSetDurationModalClose = () => {
+    setSelectDurationModal(false);
   };
 
   return (
@@ -88,134 +123,88 @@ const HideDeleteProfileScreen = () => {
         <View style={style.bodyContainerView}>
           <Text style={style.bodyTittleTextStyle}>Hide Profile</Text>
 
-          <Text style={style.bodyTittleDescriptionText}>
-            Your Profile is currently{' '}
-            <Text style={style.bodyTittleDescriptionTexts}>Visible</Text>
-          </Text>
+          <View style={style.tittleDescriptionTextContainer}>
+            <Text style={style.tittleDescriptionTextStyle}>
+              Taking this action makes your profile
+            </Text>
+            <Text style={style.tittleDescriptionTextStyle}>
+              temporarily invisible. Invites or chats are
+            </Text>
+            <Text style={style.tittleDescriptionTextStyle}>inaccessible</Text>
+          </View>
 
-          <View style={style.hideShowButtonContainer}>
-            <TouchableOpacity onPress={handleHidePress} activeOpacity={0.7}>
-              <LinearGradient
-                colors={
-                  hideButtonGradient
-                    ? ['#0D4EB3', '#9413D0']
-                    : ['#F7F7F7', '#F7F7F7']
-                }
-                start={{x: 0, y: 0}}
-                end={{x: 1.1, y: 0}}
-                style={style.ButtonStyle}>
-                <Text
-                  style={[
-                    style.hideButtonTextStyle,
-                    {color: hideButtonGradient ? 'white' : 'black'},
-                  ]}>
-                  Hide
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+          <DropDownTextInputComponent
+            data={SELECT_DURATION}
+            placeholder={'Select Duration'}
+            searchPlaceholder={'Search Select Duration'}
+            height={55}
+            placeholderStyle={{color: colors.black, marginLeft: 15}}
+          />
+
+          <View style={{flex: 1, alignItems: 'flex-end'}}>
+            <CommonGradientButton
+              onPress={selectSetDurationModalOPen}
+              buttonName={'Hide'}
+              containerStyle={{
+                width: wp(107),
+                height: hp(50),
+                marginTop: hp(15),
+              }}
+            />
+          </View>
+
+          <View style={style.descriptionBodyUnderlineStyleDropdown} />
+
+          <View style={{marginTop: hp(19)}}>
+            <Text style={style.bodyTittleTextStyle}>Delete Your Profile</Text>
+
+            <Text
+              style={[style.tittleDescriptionTextStyle, {marginTop: hp(9)}]}>
+              You'll lose all profile details, Match interactions,
+            </Text>
+            <Text
+              style={[
+                style.tittleDescriptionTextStyle,
+                {marginBottom: hp(16)},
+              ]}>
+              and paid memberships permanently.
+            </Text>
+
+            <DropDownTextInputComponent
+              data={SELECT_REASON}
+              placeholder={'Select Reason'}
+              searchPlaceholder={'Search Select Reason'}
+              height={55}
+              placeholderStyle={{
+                color: colors.black,
+                marginLeft: hp(15),
+              }}
+            />
 
             <TouchableOpacity
-              onPress={handleShowPress}
-              style={{marginLeft: wp(2)}}>
+              onPress={handleDeleteButtonPress}
+              activeOpacity={0.7}
+              style={{flex: 1, alignItems: 'flex-end', marginTop: hp(15)}}>
               <LinearGradient
-                colors={
-                  showButtonGradient
-                    ? ['#0D4EB3', '#9413D0']
-                    : ['#F7F7F7', '#F7F7F7']
-                }
+                colors={['#0D4EB3', '#9413D0']}
                 start={{x: 0, y: 0}}
-                end={{x: 1.1, y: 0}}
-                style={style.ButtonStyle}>
-                <Text
-                  style={[
-                    style.showButtonTextStyle,
-                    {color: showButtonGradient ? 'white' : 'black'},
-                  ]}>
-                  Show
+                end={{x: 0.9, y: 0.7}}
+                style={{
+                  width: wp(107),
+                  height: hp(50),
+                  borderRadius: 10,
+                  justifyContent: 'center',
+                }}>
+                <Text style={{color: colors.white, textAlign: 'center'}}>
+                  Delete
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
-
-          {/* Conditional rendering of text */}
-          {showText && (
-            <>
-              <View style={style.descriptionBodyUnderlineStyle} />
-              <Text style={style.hideTittleTextDescriptionStyle}>
-                How long would you like to hide your Profile for?
-              </Text>
-              <Text style={style.hideTextDescriptionStyle}>
-                Hiding your Profile will make it invisible temporarily.{' '}
-                <Text>
-                  Other members will not be able to send you Invitations
-                </Text>
-                <Text>or Messages or chat.</Text>
-              </Text>
-
-              {/*TEXT INPUT DROPDOWN*/}
-              <View style={style.dropDownContainer}>
-                <NewTextInputWithDropDownComponents
-                  dropdownItems={dropdownItems}
-                  placeholder="Select Duration"
-                  editable={false}
-                />
-              </View>
-            </>
-          )}
-
-          <View style={style.descriptionBodyUnderlineStyleDropdown} />
-
-          <Text style={style.deleteProfileTextStyle}>Delete Your Profile</Text>
-
-          <TouchableOpacity
-            style={style.deleteButtonStyle}
-            activeOpacity={0.7}
-            onPress={handleDeleteProfile}>
-            <Text style={style.deleteButtonTextStyle}>Delete My Profile</Text>
-          </TouchableOpacity>
-
-          {showDeleteConfirmation && (
-            <>
-              <Text style={style.deleteDescriptionText}>
-                Let us know why you wish to delete your
-              </Text>
-              <Text style={[style.deleteDescriptionText, {marginTop: 0}]}>
-                profile?
-              </Text>
-
-              <View style={{marginTop: hp(15)}}>
-                <NewTextInputWithDropDownComponents
-                  dropdownItems={dropdownItems}
-                  placeholder="Found my Match on happymilan.com"
-                  editable={false}
-                />
-              </View>
-
-              <View
-                style={[style.descriptionBodyUnderlineStyle, {marginTop: 19}]}
-              />
-
-              <TouchableOpacity
-                style={style.processDeleteButtonContainer}
-                activeOpacity={0.7}
-                onPress={handleDeleteButtonPress}>
-                <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1.1, y: 0}}
-                  style={style.processDeleteButtonStyle}>
-                  <Text style={style.processDeleteButtonText}>
-                    Proceed to Delete
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-              <View style={style.screenBottomSpace} />
-            </>
-          )}
         </View>
       </ScrollView>
 
-      {/*MODAL*/}
+      {/*MODAL FOR DELETE*/}
 
       <View style={style.modalContainer}>
         <Modal
@@ -240,7 +229,7 @@ const HideDeleteProfileScreen = () => {
                   <LinearGradient
                     colors={['#0D4EB3', '#9413D0']}
                     style={{
-                      width: wp(98),
+                      width: wp(126),
                       height: hp(50),
                       borderRadius: 10,
                       borderWidth: 1,
@@ -276,9 +265,110 @@ const HideDeleteProfileScreen = () => {
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}
                     style={style.confirmButtonStyle}>
-                    <Text style={style.confirmButtonTextStyle}>Confirm</Text>
+                    <Text style={style.confirmButtonTextStyle}>Yes, Hide</Text>
                   </LinearGradient>
                 </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={selectDurationModal}
+          onRequestClose={SelectSetDurationModalClose}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}>
+            <View
+              style={{
+                width: wp(340),
+                height: hp(264),
+                backgroundColor: 'white',
+                padding: 20,
+                borderRadius: 10,
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: fontSize(20),
+                  lineHeight: hp(30),
+                  color: colors.black,
+                }}>
+                Are you sure want
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  color: colors.black,
+                  marginTop: hp(3),
+                }}>
+                Delete Your Profile?
+              </Text>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 50,
+                  justifyContent: 'space-evenly',
+                  // backgroundColor: 'grey',
+                  // marginHorizontal: 34,
+                }}>
+                {/*<CommonGradientButton*/}
+                {/*  buttonName={'not now'}*/}
+                {/*  containerStyle={{width: wp(126), height: hp(50)}}*/}
+                {/*/>*/}
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={SelectSetDurationModalClose}>
+                  <LinearGradient
+                    colors={['#0D4EB3', '#9413D0']}
+                    style={{
+                      width: wp(126),
+                      height: hp(50),
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      justifyContent: 'center',
+                      borderColor: 'transparent', // Set border color to transparent
+                    }}>
+                    <View
+                      style={{
+                        borderRadius: 10, // <-- Inner Border Radius
+                        flex: 1,
+                        backgroundColor: colors.white,
+                        justifyContent: 'center',
+                        margin: isIOS ? 0 : 1,
+                      }}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          backgroundColor: 'transparent',
+                          color: colors.black,
+                          margin: 10,
+                          fontSize: fontSize(14),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins600,
+                        }}>
+                        Not Now
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                <CommonGradientButton
+                  onPress={SelectSetDurationModalClose}
+                  buttonName={'Yes, Hide'}
+                  containerStyle={{width: wp(126), height: hp(50)}}
+                />
               </View>
             </View>
           </View>

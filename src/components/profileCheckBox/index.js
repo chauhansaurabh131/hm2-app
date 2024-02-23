@@ -12,10 +12,9 @@ const ProfileCheckboxGroup = ({data, styleRow}) => {
 
   return (
     <View>
-      <View style={styles.row}>
-        {data.slice(0, 2).map(item => (
+      {data.map(item => (
+        <View key={item.id} style={styles.row}>
           <TouchableOpacity
-            key={item.id}
             onPress={() => handleCheckboxChange(item.id)}
             style={styles.checkboxContainer}>
             <View
@@ -24,42 +23,27 @@ const ProfileCheckboxGroup = ({data, styleRow}) => {
                 selectedId === item.id && styles.checked,
               ]}
             />
-            <Text style={styles.label}>{item.label}</Text>
           </TouchableOpacity>
-        ))}
-      </View>
-      <View style={[styles.row, styleRow]}>
-        {data.slice(2, 4).map(item => (
-          <TouchableOpacity
-            key={item.id}
-            onPress={() => handleCheckboxChange(item.id)}
-            style={styles.checkboxContainer}>
-            <View
-              style={[
-                styles.checkbox,
-                selectedId === item.id && styles.checked,
-              ]}
-            />
+          <View style={styles.textContainer}>
             <Text style={styles.label}>{item.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+            {item.subTitle && (
+              <Text style={styles.subTitle}>{item.subTitle}</Text>
+            )}
+          </View>
+        </View>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   row: {
-    // flexDirection: 'row',
-    marginBottom: 10,
-    // backgroundColor: 'silver',
-  },
-  checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10,
+  },
+  checkboxContainer: {
     marginRight: 10,
-    backgroundColor: 'red',
-    // width: '45%',
   },
   checkbox: {
     width: 16,
@@ -72,11 +56,21 @@ const styles = StyleSheet.create({
   checked: {
     backgroundColor: '#000',
   },
+  textContainer: {
+    flex: 1,
+  },
   label: {
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
+  },
+  subTitle: {
+    fontSize: fontSize(10),
+    lineHeight: hp(14),
+    // fontFamily: fontFamily.poppins400,
+    // color: colors.gray,
+    color: '#464646',
   },
 });
 

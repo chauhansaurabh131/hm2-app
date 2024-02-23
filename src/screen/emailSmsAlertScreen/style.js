@@ -31,7 +31,7 @@ const style = StyleSheet.create({
     marginTop: hp(31),
   },
   headingCredentialsImageStyle: {
-    width: hp(21.2),
+    width: hp(14),
     height: hp(14),
     tintColor: colors.black,
   },
@@ -55,25 +55,54 @@ const style = StyleSheet.create({
     height: 1,
     borderWidth: 1,
     borderColor: '#F2F2F2',
-    // borderColor: 'red',
     marginTop: hp(12),
   },
   bodyContainer: {
     flex: 1,
-    marginTop: hp(14),
     marginHorizontal: wp(17),
+    marginTop: hp(14),
   },
   bodyTittleTextStyle: {
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins600,
     color: colors.black,
+    marginBottom: hp(8),
   },
-  descriptionBodyUnderlineStyle: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#E7E7E7',
-    marginTop: hp(15),
+  bodySubTittleTextStyle: {
+    fontSize: fontSize(11),
+    lineHeight: hp(17),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  checkBoxContainer: {
+    flexDirection: 'row',
+    marginTop: hp(5),
+  },
+  checkBoxTittleText: {
+    marginLeft: wp(13),
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  checkBoxBodyContainer: {
+    flexDirection: 'row',
+    marginTop: hp(5),
+    backgroundColor: 'orange',
+  },
+  checkBoxTextStyle: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+    width: wp(100),
+    marginLeft: wp(10),
+    alignSelf: 'center',
+  },
+  checkBoxBodyWrapContainer: {
+    flexDirection: 'row',
+    marginLeft: wp(15),
   },
 });
 

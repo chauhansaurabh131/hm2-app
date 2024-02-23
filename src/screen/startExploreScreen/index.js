@@ -71,6 +71,7 @@ const StartExploreScreen = ({navigation}) => {
           marginLeft: wp(33),
           width: wp(96),
           height: hp(24),
+          resizeMode: 'stretch',
         }}
       />
       <View style={style.bodyContainer}>

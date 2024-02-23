@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-native-gesture-handler';
 import {NavigationContainer, useTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -24,33 +25,35 @@ import {fontSize, hp, isIOS} from './src/utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import AddPersonalInfo from './src/screen/addPersonalInfo';
 import SetProfilePictureScreen from './src/screen/setProfilePictureScreen';
-import UserDetailScreen from './src/screen/userDetailScreen';
 import AccountsScreen from './src/screen/accountsScreen';
 import CredentialsScreen from './src/screen/CredentialsScreen';
 import HideDeleteProfileScreen from './src/screen/hideDeleteProfileScreen';
 import PrivacyScreen from './src/screen/privacyScreen';
 import MainScreenDemo from './src/screen/mainScreenDemo';
 import Xyz from './src/screen/xyz';
+import EmailSmsAlertScreen from './src/screen/emailSmsAlertScreen';
+import UserDetailsScreen from './src/screen/userDetailsScreen';
 
 LogBox.ignoreAllLogs();
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const ExtraStack = createStackNavigator();
+const ExtrasStack = createStackNavigator();
 
 const MainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="MainScreen">
-      <Stack.Screen
-        name="MainScreen"
-        component={MainScreen}
-        options={{headerShown: false}}
-      />
+    <Stack.Navigator initialRouteName="StartExploreScreen">
       {/*<Stack.Screen*/}
-      {/*  name="MainScreenDemo"*/}
-      {/*  component={MainScreenDemo}*/}
+      {/*  name="MainScreen"*/}
+      {/*  component={MainScreen}*/}
       {/*  options={{headerShown: false}}*/}
       {/*/>*/}
+      <Stack.Screen
+        name="MainScreenDemo"
+        component={MainScreenDemo}
+        options={{headerShown: false}}
+      />
 
       <Stack.Screen name="Xyz" component={Xyz} options={{headerShown: false}} />
 
@@ -80,6 +83,7 @@ const MainStack = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        // name="GeneralInformationScreen"
         name="GeneralInformationScreen"
         component={AddPersonalInfo}
         options={{headerShown: false}}
@@ -108,12 +112,6 @@ const MainStack = () => {
       <Stack.Screen
         name="SetProfilePictureScreen"
         component={SetProfilePictureScreen}
-        options={{headerShown: false}}
-      />
-
-      <Stack.Screen
-        name="UserDetailScreen"
-        component={UserDetailScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
@@ -152,8 +150,25 @@ const ExtraScreens = () => {
         component={PrivacyScreen}
         options={{headerShown: false}}
       />
-      {/* Add other screens in this stack navigator if needed */}
+
+      <ExtraStack.Screen
+        name="EmailSmsAlertScreen"
+        component={EmailSmsAlertScreen}
+        options={{headerShown: false}}
+      />
     </ExtraStack.Navigator>
+  );
+};
+
+const ExtrasScreens = () => {
+  return (
+    <ExtrasStack.Navigator>
+      <ExtrasStack.Screen
+        name="UserDetailsScreen"
+        component={UserDetailsScreen}
+        options={{headerShown: false}}
+      />
+    </ExtrasStack.Navigator>
   );
 };
 
@@ -381,6 +396,11 @@ const HomeTabs = () => {
       <Tab.Screen
         name="AccountsScreen"
         component={ExtraScreens}
+        options={{tabBarButton: () => null, headerShown: false}}
+      />
+      <Tab.Screen
+        name="UserDetailsScreen"
+        component={ExtrasScreens}
         options={{tabBarButton: () => null, headerShown: false}}
       />
     </Tab.Navigator>

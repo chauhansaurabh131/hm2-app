@@ -224,7 +224,7 @@ const styles = {
     padding: 10,
     width: '100%',
     height: 50,
-    borderColor: colors.blue,
+    borderColor: colors.lightGreyBorder,
   },
   dropdownIconContainer: {
     marginLeft: -35,

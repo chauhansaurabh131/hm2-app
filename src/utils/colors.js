@@ -79,4 +79,5 @@ export const colors = {
   lightWhite: '#F8F8F8',
   lightGreen: '#17C270',
   darkBlue: '#120FBA',
+  lightGreyBorder: '#E6E6E6',
 };

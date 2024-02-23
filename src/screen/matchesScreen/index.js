@@ -12,8 +12,10 @@ import style from './style';
 import {icons, images} from '../../assets';
 import {hp, wp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import {useNavigation} from '@react-navigation/native';
 
 const MatchesScreen = ({navigation}) => {
+  // const navigation = useNavigation();
   const [selectedTab, setSelectedTab] = useState('new'); // Default selected tab is 'new'
   const [topModalVisible, setTopModalVisible] = useState(false);
 
@@ -109,16 +111,14 @@ const MatchesScreen = ({navigation}) => {
   const renderItem = ({item}) => (
     <TouchableOpacity
       activeOpacity={0.7}
-      // onPress={() => {
-      //   navigation.navigate('UserDetailScreen', {
-      //     userImage: item.image,
-      //     userName: item.name,
-      //     userGender: item.gender,
-      //     userAge: item.age,
-      //     userHeight: item.height,
-      //   });
-      // }}
-    >
+      onPress={() => {
+        navigation.navigate(
+          'UserDetailsScreen',
+          //   {
+          //   userName: 'saurabh',
+          // }
+        );
+      }}>
       <Image source={item.image} style={style.userImageStyle} />
 
       <View style={style.UserDetailsContainer}>
@@ -126,11 +126,7 @@ const MatchesScreen = ({navigation}) => {
           <Text style={style.bodyTextStyle}>Online</Text>
         </View>
 
-        <TouchableOpacity
-          // onPress={() => {`
-          //   navigation.navigate('UserDetailScreen');
-          // }}
-          onPress={() => navigation.navigate('UserDetailScreen')}>
+        <TouchableOpacity>
           <Text style={style.userNameTextStyle}>{item.name}</Text>
 
           <View style={style.userDetailsDescriptionContainer}>
@@ -156,7 +152,10 @@ const MatchesScreen = ({navigation}) => {
         </TouchableOpacity>
 
         <View style={style.bottomImageContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              console.log(' === var ===> ', '.....');
+            }}>
             <Image
               source={icons.image_icon}
               style={{

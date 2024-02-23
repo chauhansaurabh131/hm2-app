@@ -8,14 +8,14 @@ import {
 
 export const wp = val => {
   const valInPercentage = (val * 100) / STANDARD_SCREEN_WIDTH;
-  console.log(' === WIDTH ===> ', widthPercentageToDP(valInPercentage));
+  // console.log(' === WIDTH ===> ', widthPercentageToDP(valInPercentage));
   return widthPercentageToDP(valInPercentage);
   // return val;
 };
 
 export const hp = val => {
   const valInPercentage = (val * 100) / STANDARD_SCREEN_HEIGHT;
-  console.log(' === HEIGHT ===> ', heightPercentageToDP(valInPercentage));
+  // console.log(' === HEIGHT ===> ', heightPercentageToDP(valInPercentage));
   // return heightPercentageToDP(valInPercentage);
   return heightPercentageToDP(valInPercentage);
   // return val;

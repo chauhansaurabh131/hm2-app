@@ -45,6 +45,7 @@ const style = StyleSheet.create({
     flex: 1,
     marginHorizontal: wp(17),
     marginTop: hp(19),
+
     // backgroundColor: 'gray',
   },
   bodyDescription: {
@@ -106,7 +107,7 @@ const style = StyleSheet.create({
   },
 
   emailSmsIconStyle: {
-    width: hp(10.97),
+    width: hp(14),
     height: hp(14),
     resizeMode: 'contain',
     top: 4,

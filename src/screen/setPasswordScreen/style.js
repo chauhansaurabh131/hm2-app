@@ -17,12 +17,13 @@ const style = StyleSheet.create({
   signUpTextStyle: {
     color: colors.blue,
     textAlign: 'center',
-    marginTop: isIOS ? hp(110) : hp(150),
+    // marginTop: isIOS ? hp(110) : hp(150),
     fontSize: fontSize(24),
     fontWeight: '700',
     // marginBottom: isIOS ? wp(70) : wp(30),
     fontFamily: fontFamily.nunito400,
     marginBottom: hp(50),
+    marginTop: hp(120),
   },
   verificationTextStyle: {
     color: colors.black,
@@ -65,17 +66,18 @@ const style = StyleSheet.create({
     marginTop: isIOS ? hp(20) : hp(2),
   },
   bottomUnderLineStyle: {
-    height: 2,
+    height: 1,
     backgroundColor: '#E1E1E1',
     marginVertical: wp(10),
-    marginLeft: wp(50),
+    // marginLeft: wp(50),
     marginRight: wp(50),
-    marginTop: hp(95),
+    marginTop: hp(85),
+    width: '100%',
   },
   memberLoginTextContainer: {
     flexDirection: 'row',
     alignSelf: 'center',
-    marginTop: hp(25),
+    marginTop: hp(45),
   },
   loginTextStyle: {
     color: colors.black,

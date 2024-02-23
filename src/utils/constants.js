@@ -1,10 +1,10 @@
-import AddPersonalInfo from '../screen/addPersonalInfo';
+import {Dimensions} from 'react-native';
 import AddressDetailsScreen from '../screen/addressDetailsScreen';
 import ContactDetailsScreen from '../screen/contactDetailsScreen';
 import EducationDetailsScreen from '../screen/educationDetailsScreen';
 import ProfessionalsDetailsScreen from '../screen/professionalDetailsScreen';
 import HobbiesAndInterestScreen from '../screen/hobbiesAndInterestScreen';
-import GeneralInformationScreen from '../screen/generalInformationScreen';
+
 import GeneralInformationDetailsScreen from '../screen/generalInformationDetailsScreen';
 
 export const STANDARD_SCREEN_HEIGHT = 764;

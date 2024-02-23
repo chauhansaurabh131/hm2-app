@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {colors} from '../../utils/colors';
-import {hp, wp} from '../../utils/helpers';
+import {fontSize, hp, wp} from '../../utils/helpers';
 
 const DropdownComponent = ({
   dropdownStyle,
@@ -16,7 +16,7 @@ const DropdownComponent = ({
   width,
   height,
 }) => {
-  const [value, setValue] = useState(null);
+  const [selectedValues, setSelectedValues] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
 
   const handleDropdownChange = item => {
@@ -46,8 +46,17 @@ const DropdownComponent = ({
             key={value}
             onPress={() => removeSelectedValue(value)}
             style={styles.selectedItem}>
-            <Text>{label}</Text>
-            <Text style={styles.removeButton}>X</Text>
+            <Text style={styles.selectedText}>{label}</Text>
+            <View
+              style={{
+                backgroundColor: '#E2E2E2',
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                justifyContent: 'center',
+              }}>
+              <Text style={styles.removeButton}>X</Text>
+            </View>
           </TouchableOpacity>
         );
       });
@@ -72,17 +81,13 @@ const DropdownComponent = ({
         iconColor={colors.blue}
         labelField="label"
         valueField="value"
-        // placeholder={!isFocus ? 'Select item' : 'Select item'}
-        placeholder={placeholder}
-        // searchPlaceholder="Search..."
+        placeholder={getPlaceholderText()}
         searchPlaceholder={searchPlaceholder}
-        value={value}
+        value={selectedValues}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
-        onChange={item => {
-          setValue(item.value);
-          setIsFocus(false);
-        }}
+        onChange={handleDropdownChange}
+        multiselect
       />
     </View>
   );
@@ -91,10 +96,7 @@ const DropdownComponent = ({
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-  container: {
-    // backgroundColor: 'white',
-    // padding: 16,
-  },
+  container: {},
   dropdown: {
     height: hp(50),
     width: wp(339),
@@ -102,25 +104,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 8,
-    // marginTop: 10,
   },
-  dropdownFocused: {
-    // Additional styles for the focused state
-    // For example:
-    // borderColor: 'red',
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
+  dropdownFocused: {},
   placeholderStyle: {
     fontSize: 16,
     color: colors.black,
@@ -137,5 +122,23 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 16,
     color: colors.black,
+  },
+  selectedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
+    padding: 4,
+    backgroundColor: 'white', // Background color for selected item
+    borderRadius: 10,
+  },
+  selectedText: {
+    marginRight: 8,
+    color: colors.black,
+  },
+  removeButton: {
+    color: colors.black, // Color for 'X' button
+    fontSize: fontSize(11),
+    alignItems: 'center',
+    textAlign: 'center',
   },
 });

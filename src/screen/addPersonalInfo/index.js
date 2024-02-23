@@ -12,12 +12,13 @@ import {PersonalInfoPhases} from '../../utils/constants';
 
 import React, {useReducer} from 'react';
 import GradientButton from '../../components/GradientButton';
-import {hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Progress from 'react-native-progress';
 import CustomHeaderLogo from '../../components/customHeaderLogo';
 import {images} from '../../assets';
+import CommonGradientButton from '../../components/commonGradientButton';
 
 const NEXT_SCREEN = 'NEXT_SCREEN';
 const NUMBER_SCREEN = 'NUMBER_SCREEN';
@@ -111,13 +112,26 @@ const AddPersonalInfo = ({navigation}) => {
 
   const RenderComp = () => PersonalInfoPhases[activeIndex].component;
 
-  const navigateToNext = () => {
-    dispatch({type: NEXT_SCREEN});
-  };
-
   const navigateToScreen = screenNumber => {
     dispatch({type: NUMBER_SCREEN, screenNumber});
   };
+
+  // const navigateToNext = () => {
+  //   dispatch({type: NEXT_SCREEN});
+  //
+  //   console.log(' === var ===> ', NEXT_SCREEN);
+  // };
+
+  const navigateToNext = () => {
+    if (activeIndex === PersonalInfoPhases.length - 1) {
+      // Navigate to XYZScreen when on the last screen
+      navigation.navigate('SetProfilePictureScreen');
+    } else {
+      // Proceed to the next screen if not on the last screen
+      dispatch({type: NEXT_SCREEN});
+    }
+  };
+
   const navigateToBack = () => {
     if (activeIndex > 0) {
       dispatch({type: BACK_SCREEN});
@@ -129,12 +143,15 @@ const AddPersonalInfo = ({navigation}) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <CustomHeaderLogo
-        headerImage={{
-          backgroundColor: 'white',
-          top: -10,
-          left: -15,
-          marginBottom: hp(10),
+      <Image
+        source={images.happyMilanColorLogo}
+        style={{
+          width: wp(96),
+          height: hp(24),
+          resizeMode: 'stretch',
+          marginTop: hp(15),
+          marginLeft: wp(18),
+          marginBottom: hp(20),
         }}
       />
 
@@ -146,8 +163,6 @@ const AddPersonalInfo = ({navigation}) => {
             flex: 1,
             height: hp(48),
             justifyContent: 'space-evenly',
-            // backgroundColor: colors.white,
-            // backgroundColor: 'red',
           }}
           data={PersonalInfoPhases}
           renderItem={({item, index}) =>
@@ -186,25 +201,55 @@ const AddPersonalInfo = ({navigation}) => {
           height: hp(87),
           alignItems: 'center',
         }}>
-        <GradientButton
-          buttonName={'Back'}
-          containerStyle={{
+        {/*<GradientButton*/}
+        {/*  buttonName={'Back'}*/}
+        {/*  containerStyle={{*/}
+        {/*    width: wp(162),*/}
+        {/*    height: hp(50),*/}
+        {/*    borderColor: colors.blue,*/}
+        {/*    borderWidth: 1,*/}
+        {/*  }}*/}
+        {/*  buttonTextStyle={{color: colors.black}}*/}
+        {/*  whiteBackground*/}
+        {/*  onPress={navigateToBack}*/}
+        {/*/>*/}
+
+        {/*<GradientButton*/}
+        {/*  disable={activeIndex === PersonalInfoPhases.length - 1}*/}
+        {/*  buttonName={'Next'}*/}
+        {/*  containerStyle={{width: wp(162), height: hp(50)}}*/}
+        {/*  buttonTextStyle={{color: colors.white}}*/}
+        {/*  onPress={navigateToNext}*/}
+        {/*/>*/}
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={{
             width: wp(162),
             height: hp(50),
-            borderColor: colors.blue,
+            borderRadius: 10,
             borderWidth: 1,
+            borderColor: colors.blue,
+            justifyContent: 'center',
           }}
-          buttonTextStyle={{color: colors.black}}
-          whiteBackground
-          onPress={navigateToBack}
-        />
+          onPress={navigateToBack}>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: fontSize(14),
+              lineHeight: hp(21),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+            }}>
+            Back
+          </Text>
+        </TouchableOpacity>
 
-        <GradientButton
-          disable={activeIndex === PersonalInfoPhases.length - 1}
+        <CommonGradientButton
           buttonName={'Next'}
           containerStyle={{width: wp(162), height: hp(50)}}
-          buttonTextStyle={{color: colors.white}}
           onPress={navigateToNext}
+          // disable={activeIndex === PersonalInfoPhases.length - 1}
         />
       </View>
     </SafeAreaView>

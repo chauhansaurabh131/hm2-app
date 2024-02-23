@@ -20,7 +20,9 @@ const EducationDetailsScreen = () => {
           }}>
           Degree
         </Text>
-        <TextInputWithDropDownComponent />
+        <TextInputWithDropDownComponent
+          dropdownItems={['B.com', 'BCA', 'BBA']}
+        />
 
         <Text
           style={{
@@ -35,7 +37,7 @@ const EducationDetailsScreen = () => {
           Collage/University
         </Text>
 
-        <TextInputWithDropDownComponent />
+        <TextInputWithDropDownComponent dropdownItems={['ABC', 'XYZ', 'AAA']} />
 
         <Text
           style={{
@@ -50,7 +52,9 @@ const EducationDetailsScreen = () => {
           City
         </Text>
 
-        <TextInputWithDropDownComponent />
+        <TextInputWithDropDownComponent
+          dropdownItems={['GUJARAT', 'MUMBAI', 'DELHI']}
+        />
 
         <Text
           style={{
@@ -65,7 +69,9 @@ const EducationDetailsScreen = () => {
           State
         </Text>
 
-        <TextInputWithDropDownComponent />
+        <TextInputWithDropDownComponent
+          dropdownItems={['GUJARAT', 'MUMBAI', 'DELHI']}
+        />
 
         <Text
           style={{
@@ -80,7 +86,9 @@ const EducationDetailsScreen = () => {
           Country
         </Text>
 
-        <TextInputWithDropDownComponent />
+        <TextInputWithDropDownComponent
+          dropdownItems={['GUJARAT', 'MUMBAI', 'DELHI']}
+        />
       </View>
     </SafeAreaView>
   );

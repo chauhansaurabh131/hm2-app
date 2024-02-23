@@ -1,12 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
-import {hp, wp} from '../../utils/helpers';
-import CheckBox from 'react-native-check-box';
-import {colors} from '../../utils/colors';
-import ProfileCheckBox from '../../components/profileCheckBox';
 import ProfileCheckboxGroup from '../../components/profileCheckBox';
 
 const PrivacyScreen = () => {
@@ -22,6 +18,18 @@ const PrivacyScreen = () => {
   const Number_Privacy_Data = [
     {id: 1, label: 'Visible to all'},
     {id: 2, label: 'Only visible to registered Members'},
+  ];
+
+  const Profile_Privacy = [
+    {
+      id: 1,
+      label: 'Visible to all, including unregistered visitors',
+      subTitle: '(photo and Name will not be visible on Profile)',
+    },
+    {
+      id: 2,
+      label: 'Only visible to registered Members',
+    },
   ];
 
   return (
@@ -59,12 +67,7 @@ const PrivacyScreen = () => {
       <View style={style.bodyContainer}>
         <Text style={style.bodyTittleTextStyle}>Select Display Name</Text>
 
-        <View style={{marginTop: hp(15)}}>
-          <ProfileCheckboxGroup
-            data={Display_Name}
-            styleRow={{flexDirection: 'row', justifyContent: 'space-between'}}
-          />
-        </View>
+        <ProfileCheckboxGroup data={Display_Name} />
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
@@ -72,9 +75,21 @@ const PrivacyScreen = () => {
           Who can see your mobile Number?{' '}
         </Text>
 
-        <View style={{marginTop: hp(15)}}>
-          <ProfileCheckboxGroup data={Number_Privacy_Data} />
-        </View>
+        <ProfileCheckboxGroup data={Number_Privacy_Data} />
+
+        <View style={style.descriptionBodyUnderlineStyle} />
+
+        <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
+          Who can see your email address?
+        </Text>
+        <ProfileCheckboxGroup data={Number_Privacy_Data} />
+
+        <View style={style.descriptionBodyUnderlineStyle} />
+
+        <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
+          Profile Privacy
+        </Text>
+        <ProfileCheckboxGroup data={Profile_Privacy} />
       </View>
     </SafeAreaView>
   );

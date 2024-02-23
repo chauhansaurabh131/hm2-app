@@ -11,7 +11,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import style from './style';
 import {colors} from '../../utils/colors';
-import {hp, wp} from '../../utils/helpers';
+import {fontFamily, hp, wp} from '../../utils/helpers';
 import MyTextInput from '../../components/TextInput';
 import {icons} from '../../assets';
 import {
@@ -44,31 +44,85 @@ const GeneralInformationDetailsScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={style.bodyContainerStyle}>
+      <View
+        style={{
+          flex: 1,
+          marginHorizontal: wp(18),
+          marginTop: hp(8),
+          // backgroundColor: 'lightgreen',
+        }}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={style.fillUpTextStyle}>Give us your name as per ID</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Give us your name as per ID
+          </Text>
 
           <TextInput
             placeholder={'First Name'}
-            style={style.textInputBodyStyle}
             placeholderTextColor={colors.black}
+            style={{
+              width: '100%',
+              height: hp(50),
+              borderWidth: 1,
+              borderColor: colors.lightGreyBorder,
+              padding: 15,
+              borderRadius: 10,
+              marginTop: hp(7),
+            }}
           />
 
           <TextInput
             placeholder={'Last Name'}
-            style={[style.textInputBodyStyle, {marginTop: hp(13)}]}
             placeholderTextColor={colors.black}
+            style={[
+              {
+                width: '100%',
+                height: hp(50),
+                borderWidth: 1,
+                borderColor: colors.lightGreyBorder,
+                padding: 15,
+                borderRadius: 10,
+                marginTop: hp(7),
+              },
+              {marginTop: hp(13)},
+            ]}
           />
 
-          <Text style={style.fillUpTextStyle}>Gender</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Gender
+          </Text>
 
-          <View style={style.selectedGenderContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: hp(5),
+            }}>
             {['Male', 'Female', 'Other'].map(gender => (
               <TouchableOpacity
                 key={gender}
                 activeOpacity={0.5}
                 style={[
-                  style.selectedGenderBodyStyle,
+                  {
+                    width: 105,
+                    height: 50,
+                    borderColor: colors.lightGreyBorder,
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                  },
                   {borderWidth: selectedGender === gender ? 0 : 1},
                 ]}
                 onPress={() => handleGenderSelection(gender)}>
@@ -76,7 +130,7 @@ const GeneralInformationDetailsScreen = () => {
                   colors={getGradientColors(gender).colors}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
-                  style={style.selectedGenderGradientColorStyle}>
+                  style={{flex: 1, borderRadius: 10, justifyContent: 'center'}}>
                   <Text
                     style={{
                       textAlign: 'center',
@@ -89,46 +143,123 @@ const GeneralInformationDetailsScreen = () => {
             ))}
           </View>
 
-          <Text style={style.fillUpTextStyle}>Date of Birth</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Date of Birth
+          </Text>
 
-          <View style={style.DOBContainer}>
+          <View
+            style={{
+              width: '100%',
+              height: hp(55),
+              borderWidth: 1,
+              borderColor: colors.lightGreyBorder,
+              borderRadius: 10,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 10,
+              marginTop: hp(9),
+            }}>
             <TextInput
               placeholder={'18.08.1992'}
               keyboardType={'numeric'}
               placeholderTextColor={colors.black}
               style={{flex: 1}}
             />
-            <TouchableOpacity style={style.DOBContainerStyle}>
-              <Image source={icons.calendar_icon} style={style.DOBImageStyle} />
+            <TouchableOpacity
+              style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={icons.calendar_icon}
+                style={{
+                  width: hp(21.34),
+                  height: hp(24),
+                  marginLeft: wp(10),
+                  marginRight: wp(5),
+                  resizeMode: 'contain',
+                }}
+              />
             </TouchableOpacity>
           </View>
 
-          <Text style={style.fillUpTextStyle}>Birth of Time</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Birth of Time
+          </Text>
 
-          <View style={style.BOTContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: hp(9),
+            }}>
             <TextInput
               placeholder={'HH'}
               keyboardType={'numeric'}
               placeholderTextColor={colors.black}
-              style={style.BOTContainerBody}
+              style={{
+                width: wp(103),
+                height: hp(50),
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: colors.lightGreyBorder,
+                textAlign: 'center',
+              }}
             />
 
             <TextInput
               placeholder={'MM'}
               keyboardType={'numeric'}
               placeholderTextColor={colors.black}
-              style={style.BOTContainerBody}
+              style={{
+                width: wp(103),
+                height: hp(50),
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: colors.lightGreyBorder,
+                textAlign: 'center',
+              }}
             />
 
             <TextInput
               placeholder={'SS'}
               keyboardType={'numeric'}
               placeholderTextColor={colors.black}
-              style={style.BOTContainerBody}
+              style={{
+                width: wp(103),
+                height: hp(50),
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: colors.lightGreyBorder,
+                textAlign: 'center',
+              }}
             />
           </View>
 
-          <Text style={style.fillUpTextStyle}>Religion</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              marginBottom: hp(9),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Religion
+          </Text>
 
           <DropDownTextInputComponent
             placeholder={'Select or Type'}
@@ -136,7 +267,17 @@ const GeneralInformationDetailsScreen = () => {
             height={50}
           />
 
-          <Text style={style.fillUpTextStyle}>Caste / Sub Caste</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+              marginBottom: hp(9),
+            }}>
+            Caste / Sub Caste
+          </Text>
 
           <DropDownTextInputComponent
             placeholder={'Type'}
@@ -144,32 +285,68 @@ const GeneralInformationDetailsScreen = () => {
             height={50}
           />
 
-          <Text style={style.fillUpTextStyle}>Current City</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+              marginBottom: hp(9),
+            }}>
+            Current City
+          </Text>
 
           <DropDownTextInputComponent
-            placeholder={'Type'}
+            placeholder={'Select'}
             data={CurrentCity}
             height={50}
           />
 
-          <Text style={style.fillUpTextStyle}>Country of Living</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+              marginBottom: hp(9),
+            }}>
+            Country of Living
+          </Text>
 
           <DropDownTextInputComponent
-            placeholder={'Type'}
+            placeholder={'Select'}
             data={COUNTRY_LIST}
             height={50}
           />
 
-          <Text style={style.fillUpTextStyle}>Write About Yourself</Text>
+          <Text
+            style={{
+              fontSize: hp(12),
+              lineHeight: hp(18),
+              marginTop: hp(16),
+              color: colors.black,
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Write About Yourself
+          </Text>
 
           <TextInput
             numberOfLines={10}
             multiline={true}
             placeholderTextColor={colors.black}
-            style={style.descriptionContainer}
+            style={{
+              height: hp(90),
+              borderWidth: 1,
+              borderColor: colors.lightGreyBorder,
+              borderRadius: 10,
+              justifyContent: 'flex-start',
+              marginTop: hp(12),
+            }}
           />
 
-          <View style={{marginBottom: 100}} />
+          <View style={{marginBottom: 50}} />
         </ScrollView>
       </View>
     </SafeAreaView>
