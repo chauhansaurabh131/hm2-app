@@ -8,7 +8,6 @@ const style = StyleSheet.create({
     backgroundColor: colors.white,
   },
   headerContainer: {
-    // backgroundColor: 'lightgreen',
     height: hp(122),
   },
   headerContainerTittleStyle: {
@@ -28,7 +27,7 @@ const style = StyleSheet.create({
     borderRadius: 50,
     resizeMode: 'stretch',
     marginTop: hp(14),
-    marginRight: wp(18),
+    marginRight: wp(20),
   },
   flatListStatusBarStyle: {
     // flexDirection: 'row',

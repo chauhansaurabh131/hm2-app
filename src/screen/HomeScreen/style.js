@@ -10,6 +10,7 @@ const style = StyleSheet.create({
   headerViewContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: hp(12),
   },
   headerImageStyle: {
     top: -15,
@@ -22,9 +23,10 @@ const style = StyleSheet.create({
     width: hp(24),
     height: hp(24),
     borderRadius: 50,
-    marginRight: hp(10),
+    marginRight: hp(10.5),
     resizeMode: 'stretch',
-    right: -8,
+    right: -7,
+    marginTop: hp(2),
   },
   modalContainer: {
     flex: 1,

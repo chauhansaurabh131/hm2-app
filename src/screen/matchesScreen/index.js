@@ -109,81 +109,77 @@ const MatchesScreen = ({navigation}) => {
   );
 
   const renderItem = ({item}) => (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={() => {
-        navigation.navigate(
-          'UserDetailsScreen',
-          //   {
-          //   userName: 'saurabh',
-          // }
-        );
-      }}>
-      <Image source={item.image} style={style.userImageStyle} />
+    <TouchableOpacity activeOpacity={1}>
+      <View>
+        <Image source={item.image} style={style.userImageStyle} />
 
-      <View style={style.UserDetailsContainer}>
-        <View style={style.onlineBodyStyle}>
-          <Text style={style.bodyTextStyle}>Online</Text>
-        </View>
-
-        <TouchableOpacity>
-          <Text style={style.userNameTextStyle}>{item.name}</Text>
-
-          <View style={style.userDetailsDescriptionContainer}>
-            <Text style={style.userDetailsTextStyle}>{item.gender}</Text>
-            <Text style={style.userDetailsTextStyle}>{item.age},</Text>
-            <Text style={style.userDetailsTextStyle}>{item.height}</Text>
-
-            <View style={style.verticalLineStyle} />
-
-            <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-            <Text style={style.userDetailsTextStyle}>{item.surname}</Text>
+        <View style={style.UserDetailsContainer}>
+          <View style={style.onlineBodyStyle}>
+            <Text style={style.bodyTextStyle}>Online</Text>
           </View>
 
-          <View style={style.userDetailsDescriptionContainer}>
-            <Text style={style.userDetailsTextStyle}>{item.occupation}</Text>
-
-            <View style={style.verticalLineStyle} />
-
-            <Text style={style.userDetailsTextStyle}>{item.city}</Text>
-            <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-            <Text style={style.userDetailsTextStyle}>{item.country}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <View style={style.bottomImageContainer}>
           <TouchableOpacity
             onPress={() => {
-              console.log(' === var ===> ', '.....');
+              navigation.navigate('UserDetailsScreen');
             }}>
-            <Image
-              source={icons.image_icon}
-              style={{
-                width: hp(20),
-                height: hp(20),
-                resizeMode: 'contain',
-                marginRight: wp(22),
-              }}
-            />
+            <Text style={style.userNameTextStyle}>{item.name}</Text>
+
+            <View style={style.userDetailsDescriptionContainer}>
+              <Text style={style.userDetailsTextStyle}>{item.gender}</Text>
+              <Text style={style.userDetailsTextStyle}>{item.age},</Text>
+              <Text style={style.userDetailsTextStyle}>{item.height}</Text>
+
+              <View style={style.verticalLineStyle} />
+
+              <Text style={style.userDetailsTextStyle}>{item.state}</Text>
+              <Text style={style.userDetailsTextStyle}>{item.surname}</Text>
+            </View>
+
+            <View style={style.userDetailsDescriptionContainer}>
+              <Text style={style.userDetailsTextStyle}>{item.occupation}</Text>
+
+              <View style={style.verticalLineStyle} />
+
+              <Text style={style.userDetailsTextStyle}>{item.city}</Text>
+              <Text style={style.userDetailsTextStyle}>{item.state}</Text>
+              <Text style={style.userDetailsTextStyle}>{item.country}</Text>
+            </View>
           </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Image
-              source={icons.video_icon}
-              style={{width: hp(24.1), height: hp(20), resizeMode: 'contain'}}
-            />
-          </TouchableOpacity>
+          <View style={style.bottomImageContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log(' === var ===> ', '.....');
+              }}>
+              <Image
+                source={icons.image_icon}
+                style={{
+                  width: hp(20),
+                  height: hp(20),
+                  resizeMode: 'contain',
+                  marginRight: wp(22),
+                }}
+              />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={{position: 'absolute', right: 40}}>
-            <Image
-              source={icons.starIcon}
-              style={{
-                width: hp(21.67),
-                height: hp(20),
-                resizeMode: 'contain',
-              }}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity>
+              <Image
+                source={icons.video_icon}
+                style={{width: hp(24.1), height: hp(20), resizeMode: 'contain'}}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{position: 'absolute', right: 40}}>
+              <Image
+                source={icons.starIcon}
+                style={{
+                  width: hp(21.67),
+                  height: hp(20),
+                  resizeMode: 'contain',
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableOpacity>

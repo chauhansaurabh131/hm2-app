@@ -190,6 +190,7 @@ const style = StyleSheet.create({
   tittleDescriptionTextStyle: {
     fontSize: fontSize(14),
     lineHeight: hp(21),
+    color: colors.black,
   },
 });
 

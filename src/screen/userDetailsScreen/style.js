@@ -54,7 +54,7 @@ const style = StyleSheet.create({
   },
   UserDetailsContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 0,
     width: '90%',
     marginRight: wp(17),
     marginHorizontal: wp(17),
@@ -77,6 +77,10 @@ const style = StyleSheet.create({
     fontSize: fontSize(20),
     lineHeight: hp(30),
     fontFamily: fontFamily.poppins700,
+  },
+  bottomImageContainer: {
+    flexDirection: 'row',
+    marginTop: hp(22),
   },
   userDetailsDescriptionContainer: {
     flexDirection: 'row',

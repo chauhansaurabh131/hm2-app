@@ -66,6 +66,9 @@ export const icons = {
   edit_icon: require('./icons/edit_icon.png'),
   back_arrow_icon: require('./icons/back_arrow_icon.png'),
   dots_icon: require('./icons/dots_icon.png'),
+  heart_like_icon: require('./icons/heart_like_icon.png'),
+  light_arrow_icon: require('./icons/light_arrow_icons.png'),
+  save_icon: require('./icons/save_icon.png'),
 };
 
 export const gif = {

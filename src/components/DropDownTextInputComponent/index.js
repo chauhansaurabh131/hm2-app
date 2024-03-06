@@ -54,6 +54,19 @@ const DropdownComponent = ({
     }
   };
 
+  const renderItem = item => {
+    const itemTextStyle = {
+      ...styles.textItem,
+      color: value === item.value ? 'black' : 'black', // Change text color to red if item is selected
+    };
+
+    return (
+      <View style={styles.item}>
+        <Text style={itemTextStyle}>{item.label}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Dropdown
@@ -72,8 +85,8 @@ const DropdownComponent = ({
         iconColor={colors.blue}
         labelField="label"
         valueField="value"
-        // placeholder={!isFocus ? 'Select item' : 'Select item'}
         placeholder={placeholder}
+        // placeholder={!isFocus ? 'Select item' : 'Select item'}
         // searchPlaceholder="Search..."
         searchPlaceholder={searchPlaceholder}
         value={value}
@@ -83,6 +96,7 @@ const DropdownComponent = ({
           setValue(item.value);
           setIsFocus(false);
         }}
+        renderItem={renderItem}
       />
     </View>
   );
@@ -102,7 +116,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 8,
-    // marginTop: 10,
+    // marginTop: 50,
   },
   dropdownFocused: {
     // Additional styles for the focused state
@@ -128,14 +142,21 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontSize: 16,
     color: colors.black,
+    marginLeft: 15,
   },
   iconStyle: {
     width: 20,
     height: 20,
+    marginRight: 15,
   },
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
     color: colors.black,
+  },
+  textItem: {
+    // flex: 1,
+    fontSize: 16,
+    padding: 20,
   },
 });

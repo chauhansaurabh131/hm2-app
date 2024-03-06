@@ -57,7 +57,7 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <View style={{marginHorizontal: 10}}>
+      <View style={{marginHorizontal: 17}}>
         <View style={style.headerViewContainer}>
           {/*<CustomHeaderLogo headerImage={style.headerImageStyle} />*/}
           <Image
@@ -65,8 +65,8 @@ const HomeScreen = ({navigation}) => {
             style={{
               width: wp(96),
               height: hp(24),
-              resizeMode: 'stretch',
-              marginTop: hp(5),
+              resizeMode: 'contain',
+              marginTop: hp(2),
             }}
           />
 
@@ -81,7 +81,7 @@ const HomeScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View>
+        <View style={{marginTop: hp(15)}}>
           <StoryComponent />
         </View>
 

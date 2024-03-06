@@ -33,6 +33,10 @@ import MainScreenDemo from './src/screen/mainScreenDemo';
 import Xyz from './src/screen/xyz';
 import EmailSmsAlertScreen from './src/screen/emailSmsAlertScreen';
 import UserDetailsScreen from './src/screen/userDetailsScreen';
+import UserUploadImageFullScreen from './src/screen/userUploadImageFullScreen';
+import DemoPractiveCodeScreen from './src/screen/demoPractiveCodeScreen';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import MyProfileScreen from './src/screen/myProfileScreen';
 
 LogBox.ignoreAllLogs();
 
@@ -40,10 +44,11 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const ExtraStack = createStackNavigator();
 const ExtrasStack = createStackNavigator();
+const profileStack = createStackNavigator();
 
 const MainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="StartExploreScreen">
+    <Stack.Navigator initialRouteName="MainScreenDemo">
       {/*<Stack.Screen*/}
       {/*  name="MainScreen"*/}
       {/*  component={MainScreen}*/}
@@ -56,6 +61,11 @@ const MainStack = () => {
       />
 
       <Stack.Screen name="Xyz" component={Xyz} options={{headerShown: false}} />
+      <Stack.Screen
+        name="DemoPractiveCodeScreen"
+        component={DemoPractiveCodeScreen}
+        options={{headerShown: false}}
+      />
 
       <Stack.Screen
         name="RegistrationScreen"
@@ -126,6 +136,11 @@ const ExtraScreens = () => {
         component={AccountsScreen}
         options={{headerShown: false}}
       />
+      {/*<ExtraStack.Screen*/}
+      {/*  name="MyProfileScreen"*/}
+      {/*  component={MyProfileScreen}*/}
+      {/*  options={{headerShown: false}}*/}
+      {/*/>*/}
 
       <ExtraStack.Screen
         name="CredentialsScreen"
@@ -168,28 +183,45 @@ const ExtrasScreens = () => {
         component={UserDetailsScreen}
         options={{headerShown: false}}
       />
+      <ExtrasStack.Screen
+        name="UserUploadImageFullScreen"
+        component={UserUploadImageFullScreen}
+        options={{headerShown: false}}
+      />
+    </ExtrasStack.Navigator>
+  );
+};
+
+const ProfileStack = () => {
+  return (
+    <ExtrasStack.Navigator>
+      <ExtraStack.Screen
+        name="MyProfileScreen"
+        component={MyProfileScreen}
+        options={{headerShown: false}}
+      />
     </ExtrasStack.Navigator>
   );
 };
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="MainStack"
-          component={MainStack}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="HomeTabs"
-          component={HomeTabs}
-          // name="Upgrader"
-          // component={UpgradeScreen}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <BottomSheetModalProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="MainStack"
+            component={MainStack}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="HomeTabs"
+            component={HomeTabs}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </BottomSheetModalProvider>
   );
 };
 
@@ -362,6 +394,7 @@ const HomeTabs = () => {
           headerShown: false,
         }}
       />
+
       <Tab.Screen
         name="Upgrader"
         component={UpgradeScreen}
@@ -401,6 +434,12 @@ const HomeTabs = () => {
       <Tab.Screen
         name="UserDetailsScreen"
         component={ExtrasScreens}
+        options={{tabBarButton: () => null, headerShown: false}}
+      />
+
+      <Tab.Screen
+        name="MyProfileScreen"
+        component={ProfileStack}
         options={{tabBarButton: () => null, headerShown: false}}
       />
     </Tab.Navigator>

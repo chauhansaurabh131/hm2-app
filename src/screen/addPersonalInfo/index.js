@@ -11,12 +11,10 @@ import style from './style';
 import {PersonalInfoPhases} from '../../utils/constants';
 
 import React, {useReducer} from 'react';
-import GradientButton from '../../components/GradientButton';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Progress from 'react-native-progress';
-import CustomHeaderLogo from '../../components/customHeaderLogo';
 import {images} from '../../assets';
 import CommonGradientButton from '../../components/commonGradientButton';
 
