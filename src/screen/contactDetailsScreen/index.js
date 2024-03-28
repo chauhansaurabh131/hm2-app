@@ -1,11 +1,8 @@
 import React from 'react';
 import {SafeAreaView, Text, View, TextInput} from 'react-native';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
-import {CurrentCity} from '../../utils/data';
+import {Area_Code, CurrentCity} from '../../utils/data';
 import {colors} from '../../utils/colors';
-import {icons} from '../../assets';
-import style from './style';
-// import TextInput from '../../components/TextInput';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 
 const ContactDetailsScreen = () => {
@@ -16,10 +13,10 @@ const ContactDetailsScreen = () => {
           style={{
             color: colors.black,
             marginTop: hp(20),
-            fontSize: fontSize(12),
+            fontSize: fontSize(14),
             lineHeight: hp(18),
             fontWeight: '400',
-            fontFamily: fontFamily.nunito400,
+            fontFamily: fontFamily.poppins500,
           }}>
           Mobile Number
         </Text>
@@ -33,11 +30,12 @@ const ContactDetailsScreen = () => {
           }}>
           <DropDownTextInputComponent
             placeholder={'Area Code'}
-            data={CurrentCity}
+            data={Area_Code}
             searchPlaceholder={'Search Current City...'}
             placeholderStyle={colors.black}
             height={50}
             width={123}
+            iconStyle={{marginRight: 5}}
           />
 
           <TextInput
@@ -50,7 +48,6 @@ const ContactDetailsScreen = () => {
               borderColor: colors.lightGreyBorder,
               padding: 15,
               borderRadius: 10,
-              // marginTop: hp(7),
             }}
           />
         </View>
@@ -58,9 +55,9 @@ const ContactDetailsScreen = () => {
         <Text
           style={{
             marginTop: hp(15),
-            fontSize: fontSize(12),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins400,
+            fontSize: fontSize(14),
+            lineHeight: hp(18),
+            fontFamily: fontFamily.poppins500,
             color: colors.black,
           }}>
           Home Number
@@ -74,11 +71,12 @@ const ContactDetailsScreen = () => {
           }}>
           <DropDownTextInputComponent
             placeholder={'Area Code'}
-            data={CurrentCity}
+            data={Area_Code}
             searchPlaceholder={'Search Current City...'}
             placeholderStyle={colors.black}
             height={50}
             width={123}
+            iconStyle={{marginRight: 5}}
           />
 
           <TextInput
@@ -98,10 +96,10 @@ const ContactDetailsScreen = () => {
         <Text
           style={{
             color: colors.black,
-            fontSize: fontSize(12),
+            fontSize: fontSize(14),
             lineHeight: hp(18),
             fontWeight: '400',
-            fontFamily: fontFamily.nunito400,
+            fontFamily: fontFamily.poppins500,
             marginTop: hp(10),
           }}>
           Enter Email Address

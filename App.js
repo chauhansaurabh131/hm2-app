@@ -1,10 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 import {NavigationContainer, useTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import 'react-native-gesture-handler';
-import {Image, LogBox, Text, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  LogBox,
+  PermissionsAndroid,
+  Platform,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import MainScreen from './src/screen/mainScreen';
 import RegistrationScreen from './src/screen/registrationScreen';
 import LoginScreen from './src/screen/loginScreen';
@@ -37,6 +44,10 @@ import UserUploadImageFullScreen from './src/screen/userUploadImageFullScreen';
 import DemoPractiveCodeScreen from './src/screen/demoPractiveCodeScreen';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import MyProfileScreen from './src/screen/myProfileScreen';
+import SelectImageScreen from './src/screen/selectImageScreen';
+import AddProfilePictureScreen from './src/screen/addProfilePictureScreen';
+import PartnerPreferencesScreen from './src/screen/partnerPreferencesScreen';
+import ChatUserScreen from './src/screen/chatUserScreen';
 
 LogBox.ignoreAllLogs();
 
@@ -48,7 +59,7 @@ const profileStack = createStackNavigator();
 
 const MainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="MainScreenDemo">
+    <Stack.Navigator initialRouteName="StartExploreScreen">
       {/*<Stack.Screen*/}
       {/*  name="MainScreen"*/}
       {/*  component={MainScreen}*/}
@@ -124,6 +135,29 @@ const MainStack = () => {
         component={SetProfilePictureScreen}
         options={{headerShown: false}}
       />
+
+      <Stack.Screen
+        name="SelectImageScreen"
+        component={SelectImageScreen}
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name="AddProfilePictureScreen"
+        component={AddProfilePictureScreen}
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name="PartnerPreferencesScreen"
+        component={PartnerPreferencesScreen}
+        options={{headerShown: false}}
+      />
+      {/*<Stack.Screen*/}
+      {/*  name="ChatUserScreen"*/}
+      {/*  component={ChatUserScreen}*/}
+      {/*  options={{headerShown: false}}*/}
+      {/*/>*/}
     </Stack.Navigator>
   );
 };
@@ -192,6 +226,30 @@ const ExtrasScreens = () => {
   );
 };
 
+const UploadImageFullScreen = () => {
+  return (
+    <ExtrasStack.Navigator>
+      <ExtrasStack.Screen
+        name="UserUploadImageFullScreen"
+        component={UserUploadImageFullScreen}
+        options={{headerShown: false}}
+      />
+    </ExtrasStack.Navigator>
+  );
+};
+
+const UsersChatsScreen = () => {
+  return (
+    <ExtrasStack.Navigator>
+      <ExtrasStack.Screen
+        name="ChatUserScreen"
+        component={ChatUserScreen}
+        options={{headerShown: false}}
+      />
+    </ExtrasStack.Navigator>
+  );
+};
+
 const ProfileStack = () => {
   return (
     <ExtrasStack.Navigator>
@@ -205,6 +263,23 @@ const ProfileStack = () => {
 };
 
 const App = () => {
+  useEffect(() => {
+    hasPermission();
+  }, []);
+
+  const hasPermission = async () => {
+    const permission =
+      Platform.Version >= 33
+        ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+    let status = await PermissionsAndroid.request(permission); // Change from const to let
+    return status === PermissionsAndroid.RESULTS.GRANTED;
+  };
   return (
     <BottomSheetModalProvider>
       <NavigationContainer>
@@ -436,10 +511,21 @@ const HomeTabs = () => {
         component={ExtrasScreens}
         options={{tabBarButton: () => null, headerShown: false}}
       />
+      <Tab.Screen
+        name="UserUploadImageFullScreen"
+        component={UploadImageFullScreen}
+        options={{tabBarButton: () => null, headerShown: false}}
+      />
 
       <Tab.Screen
         name="MyProfileScreen"
         component={ProfileStack}
+        options={{tabBarButton: () => null, headerShown: false}}
+      />
+
+      <Tab.Screen
+        name="ChatUserScreen"
+        component={UsersChatsScreen}
         options={{tabBarButton: () => null, headerShown: false}}
       />
     </Tab.Navigator>

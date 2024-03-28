@@ -281,8 +281,8 @@ const HobbiesAndInterestScreen = () => {
           style={{
             color: colors.black,
             fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins400,
+            lineHeight: hp(18),
+            fontFamily: fontFamily.poppins500,
             marginTop: hp(31),
             marginBottom: hp(11),
           }}>
@@ -295,8 +295,8 @@ const HobbiesAndInterestScreen = () => {
           style={{
             color: colors.black,
             fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins400,
+            lineHeight: hp(18),
+            fontFamily: fontFamily.poppins500,
             marginTop: hp(20),
             marginBottom: hp(11),
           }}>
@@ -309,8 +309,8 @@ const HobbiesAndInterestScreen = () => {
           style={{
             color: colors.black,
             fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins400,
+            lineHeight: hp(18),
+            fontFamily: fontFamily.poppins500,
             marginTop: hp(20),
             marginBottom: hp(11),
           }}>

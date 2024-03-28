@@ -11,6 +11,17 @@ export const CurrentCity = [
   {label: 'Bangalore', value: '8'},
 ];
 
+export const Area_Code = [
+  {label: '+ 91', value: '1'},
+  {label: '+ 92', value: '2'},
+  {label: '+ 87', value: '3'},
+  {label: '+ 69', value: '4'},
+  {label: '+ 93', value: '5'},
+  {label: '+ 95', value: '6'},
+  {label: '+ 88', value: '7'},
+  {label: '+ 90', value: '8'},
+];
+
 export const COUNTRY_LIST = [
   {label: 'INDIA', value: '1'},
   {label: 'SRI LANKA', value: '2'},
@@ -62,6 +73,21 @@ export const CREATIVE = [
   {label: 'Photography', value: '10'},
   {label: 'Dancing', value: '11'},
   {label: 'Content Creation', value: '12'},
+];
+
+export const Fun = [
+  {label: 'Movie', value: '1'},
+  {label: 'Sports', value: '2'},
+  {label: 'Biking', value: '3'},
+  {label: 'Music', value: '4'},
+  {label: 'Social Media', value: '5'},
+  {label: 'Clubbing', value: '6'},
+  {label: 'Travelling', value: '7'},
+  {label: 'Gaming', value: '8'},
+  {label: 'Shopping', value: '9'},
+  {label: 'Reading', value: '10'},
+  {label: 'Binge-Watching', value: '11'},
+  {label: 'Theater & Events', value: '12'},
 ];
 
 export const DemoImage = [

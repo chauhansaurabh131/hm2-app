@@ -127,38 +127,17 @@ const AdminProfileDetailsScreen = ({onEditButtonPress}) => {
           }}>
           {AdminDetailsProfile[activeIndex].phaseName}
         </Text>
-
-        {/*<TouchableOpacity*/}
-        {/*  activeOpacity={0.5}*/}
-        {/*  onPress={onEditButtonPress}*/}
-        {/*  onPressIn={() => {*/}
-        {/*    console.log(' === var ===> ', 'onPressIN');*/}
-        {/*  }}*/}
-        {/*  style={{*/}
-        {/*    width: 40,*/}
-        {/*    height: 40,*/}
-        {/*    backgroundColor: '#F0F9FF',*/}
-        {/*    borderRadius: 10,*/}
-        {/*    alignItems: 'center',*/}
-        {/*    justifyContent: 'center',*/}
-        {/*    top: 15,*/}
-        {/*  }}>*/}
-        {/*  <Image*/}
-        {/*    source={icons.edit_icon}*/}
-        {/*    style={{width: 25, height: 25, tintColor: colors.blue}}*/}
-        {/*  />*/}
-        {/*</TouchableOpacity>*/}
       </View>
 
-      <View style={{alignSelf: 'center', height: hp(1), marginTop: hp(15)}}>
-        <Progress.Bar
-          progress={(activeIndex + 1) / AdminDetailsProfile.length}
-          width={(Dimensions.get('window').width / 100) * 91}
-          color={'#17C270'}
-          borderWidth={0.5}
-          borderColor={colors.gray}
-        />
-      </View>
+      {/*<View style={{alignSelf: 'center', height: hp(1), marginTop: hp(15)}}>*/}
+      {/*  <Progress.Bar*/}
+      {/*    progress={(activeIndex + 1) / AdminDetailsProfile.length}*/}
+      {/*    width={(Dimensions.get('window').width / 100) * 91}*/}
+      {/*    color={'#17C270'}*/}
+      {/*    borderWidth={0.5}*/}
+      {/*    borderColor={colors.gray}*/}
+      {/*  />*/}
+      {/*</View>*/}
 
       <RenderComp />
     </SafeAreaView>

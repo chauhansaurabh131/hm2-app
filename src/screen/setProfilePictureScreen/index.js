@@ -1,69 +1,70 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {images} from '../../assets';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {colors} from '../../utils/colors';
 import CommonGradientButton from '../../components/commonGradientButton';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {useNavigation} from '@react-navigation/native';
 
 const SetProfilePictureScreen = () => {
+  const [photo, setPhoto] = useState([]);
+  const navigation = useNavigation();
+
+  const getAllPhotos = () => {
+    CameraRoll.getPhotos({
+      first: 20,
+      assetType: 'All',
+    })
+      .then(r => {
+        setPhoto(r.edges);
+        navigation.navigate('SelectImageScreen', {photos: r.edges});
+      })
+      .catch(err => {
+        console.error('Error fetching photos:', err);
+      });
+  };
   return (
     <SafeAreaView style={style.container}>
-      <View
-        style={{
-          marginHorizontal: wp(18),
-          backgroundColor: 'lightgreen',
-          flex: 1,
-        }}>
-        <Image
-          source={images.happyMilanColorLogo}
-          style={{
-            width: wp(96),
-            height: hp(24),
-            resizeMode: 'stretch',
-            marginTop: hp(15),
-          }}
-        />
+      <View style={style.bodyContainer}>
+        <Image source={images.happyMilanColorLogo} style={style.appLogoStyle} />
 
-        <View style={{marginTop: hp(45), flexDirection: 'row'}}>
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-            }}>
-            Select Photo to
-            <Text style={{color: colors.blue}}> Set as profile picture</Text>
+        <View style={style.tittleTextContainer}>
+          <Text style={style.headingTextStyle}>
+            Upload Photos
+            <Text style={style.subHeadingTextStyle}> (Min. 6 Photos)</Text>
           </Text>
         </View>
 
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{
-              width: wp(162),
-              height: hp(50),
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: colors.blue,
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                color: colors.black,
-                textAlign: 'center',
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
+        {/*ADD PHOTO BUTTON*/}
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => {
+            getAllPhotos();
+          }}
+          style={style.addPhotoButtonStyle}>
+          <Text style={style.addPhotoButtonTextStyle}>Add Photos</Text>
+        </TouchableOpacity>
+
+        {/*BACK & DO IT LATER BUTTON*/}
+        <View style={style.bottomButtonContainer}>
+          <View style={style.bottomButtonBodyContainer}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={style.backButtonStyle}
+              onPress={() => {
+                navigation.goBack();
               }}>
-              Back
-            </Text>
-          </TouchableOpacity>
-          <CommonGradientButton
-            buttonName={'Next'}
-            containerStyle={{width: wp(162), height: hp(50)}}
-          />
+              <Text style={style.backButtonTextStyle}>Back</Text>
+            </TouchableOpacity>
+
+            <CommonGradientButton
+              onPress={() => {
+                navigation.navigate('PartnerPreferencesScreen');
+              }}
+              buttonName={'I’ll Do Later'}
+              containerStyle={style.laterButtonStyle}
+            />
+          </View>
         </View>
       </View>
     </SafeAreaView>

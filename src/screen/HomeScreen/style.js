@@ -33,7 +33,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'rgba(300, 300, 255, 0.5)',
-    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalBodyContainer: {
     // backgroundColor: 'gray',

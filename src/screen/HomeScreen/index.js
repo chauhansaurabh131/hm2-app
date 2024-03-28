@@ -24,6 +24,7 @@ import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatList
 import {fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import FastImage from 'react-native-fast-image';
 import CommonGradientButton from '../../components/commonGradientButton';
+import GifImage from '@lowkey/react-native-gif';
 
 const HomeScreen = ({navigation}) => {
   const [showModal, setShowModal] = useState(true);
@@ -87,7 +88,7 @@ const HomeScreen = ({navigation}) => {
 
         <Modal
           visible={showModal}
-          animationType="slide"
+          animationType="none"
           transparent
           presentationStyle="overFullScreen"
           onRequestClose={closeWelcomeModal}>
@@ -245,7 +246,7 @@ const HomeScreen = ({navigation}) => {
 
             <Modal
               visible={isCompleteModalVisible}
-              animationType="slide"
+              animationType="none"
               transparent={true}
               // onBackdropPress={verificationModalToggle}
               // onBackdropPress={setCompleteModalModalVisible(false)}
@@ -269,8 +270,9 @@ const HomeScreen = ({navigation}) => {
                   {/*/>*/}
 
                   <Image
-                    source={images.verification_MOdal}
-                    style={{backgroundColor: 'red'}}
+                    source={gif.register_modal}
+                    style={{height: 100, width: 100, backgroundColor: 'red'}}
+                    resizeMode={'contain'}
                   />
 
                   {/*<FastImage*/}

@@ -92,7 +92,7 @@ const UserUploadImageFullScreen = () => {
         style={{
           position: 'absolute',
           bottom: 42,
-          right: 50,
+          right: 35,
         }}
         onPress={() => navigation.goBack()}>
         <Image

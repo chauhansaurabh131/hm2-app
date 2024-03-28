@@ -9,6 +9,7 @@ import DropDownTextInputComponent from '../../components/DropDownTextInputCompon
 import {COUNTRY_LIST, CurrentCity} from '../../utils/data';
 import CheckBox from 'react-native-check-box';
 import {fontFamily, fontSize, hp, isIOS} from '../../utils/helpers';
+import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
 
 const AddressDetailsScreen = ({navigation}) => {
   const [isFocus, setIsFocus] = useState(false);
@@ -21,10 +22,10 @@ const AddressDetailsScreen = ({navigation}) => {
           <Text
             style={{
               color: colors.black,
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
               fontWeight: '400',
-              fontFamily: fontFamily.nunito400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Current Residing Address
           </Text>
@@ -59,23 +60,36 @@ const AddressDetailsScreen = ({navigation}) => {
           <Text
             style={{
               color: colors.black,
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
               fontWeight: '400',
-              fontFamily: fontFamily.nunito400,
-              // marginTop: isIOS ? hp(15) : hp(2),
+              fontFamily: fontFamily.poppins500,
               marginTop: hp(15),
               marginBottom: hp(9),
             }}>
             Current City
           </Text>
 
-          <DropDownTextInputComponent
-            data={CurrentCity}
-            placeholder={'select'}
-            searchPlaceholder={'Search Current City...'}
-            height={55}
-            placeholderStyle={colors.black}
+          {/*<DropDownTextInputComponent*/}
+          {/*  data={CurrentCity}*/}
+          {/*  placeholder={'select'}*/}
+          {/*  searchPlaceholder={'Search Current City...'}*/}
+          {/*  height={55}*/}
+          {/*  placeholderStyle={colors.black}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={[
+              'Ahmedabad',
+              'Surat',
+              'vadodara',
+              'Delhi',
+              'Mumbai',
+              'Chennai',
+              'Kolkata',
+              'Bangalore',
+            ]}
           />
 
           {/*<DropDownTextInputComponent*/}
@@ -89,31 +103,45 @@ const AddressDetailsScreen = ({navigation}) => {
           <Text
             style={{
               color: colors.black,
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
               fontWeight: '400',
-              fontFamily: fontFamily.nunito400,
+              fontFamily: fontFamily.poppins500,
               marginTop: isIOS ? hp(15) : hp(15),
               marginBottom: hp(15),
             }}>
             Current Residing Country
           </Text>
 
-          <DropDownTextInputComponent
-            data={CurrentCity}
-            placeholder={'select'}
-            searchPlaceholder={'Search Current City...'}
-            placeholderStyle={colors.black}
-            height={55}
+          {/*<DropDownTextInputComponent*/}
+          {/*  data={CurrentCity}*/}
+          {/*  placeholder={'select'}*/}
+          {/*  searchPlaceholder={'Search Current City...'}*/}
+          {/*  placeholderStyle={colors.black}*/}
+          {/*  height={55}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={[
+              'Ahmedabad',
+              'Surat',
+              'vadodara',
+              'Delhi',
+              'Mumbai',
+              'Chennai',
+              'Kolkata',
+              'Bangalore',
+            ]}
           />
 
           <Text
             style={{
               color: colors.black,
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontWeight: 'bold',
-              fontFamily: fontFamily.nunito700,
+              // fontWeight: 'bold',
+              fontFamily: fontFamily.poppins500,
               marginTop: isIOS ? hp(15) : hp(15),
             }}>
             Same as current address

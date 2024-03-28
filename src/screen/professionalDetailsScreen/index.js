@@ -5,6 +5,7 @@ import style from './style';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import {ANNUAL_SALARY, COUNTRY_LIST, RELIGION_LIST} from '../../utils/data';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
 
 const ProfessionalsDetailsScreen = () => {
   return (
@@ -13,9 +14,9 @@ const ProfessionalsDetailsScreen = () => {
         <View style={{marginHorizontal: wp(17)}}>
           <Text
             style={{
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               color: colors.black,
               marginTop: hp(19),
             }}>
@@ -38,9 +39,9 @@ const ProfessionalsDetailsScreen = () => {
 
           <Text
             style={{
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               color: colors.black,
               marginTop: hp(15),
               marginBottom: hp(12),
@@ -48,17 +49,23 @@ const ProfessionalsDetailsScreen = () => {
             Job Type
           </Text>
 
-          <DropDownTextInputComponent
-            placeholder={'Select or Type'}
-            data={RELIGION_LIST}
-            height={50}
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Select or Type'}*/}
+          {/*  data={RELIGION_LIST}*/}
+          {/*  height={50}*/}
+          {/*  searchPlaceholder={'Search Or Type'}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={['AA', 'VV', 'BB', 'DD', 'SS', 'GG', 'SDS', 'NG']}
           />
 
           <Text
             style={{
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               color: colors.black,
               marginTop: hp(19),
             }}>
@@ -81,9 +88,9 @@ const ProfessionalsDetailsScreen = () => {
 
           <Text
             style={{
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               color: colors.black,
               marginTop: hp(15),
               marginBottom: hp(12),
@@ -91,17 +98,28 @@ const ProfessionalsDetailsScreen = () => {
             Annual Salary
           </Text>
 
-          <DropDownTextInputComponent
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'10,000 To 15,000'}*/}
+          {/*  data={ANNUAL_SALARY}*/}
+          {/*  height={50}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
             placeholder={'10,000 To 15,000'}
-            data={ANNUAL_SALARY}
-            height={50}
+            dropdownItems={[
+              '10,000 to 15000',
+              '15000 to 30,000',
+              '30,000 to 45,000',
+              '45,000 to 60,000',
+              '60,000 to 80,000',
+            ]}
           />
 
           <Text
             style={{
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               color: colors.black,
               marginTop: hp(15),
               marginBottom: hp(12),
@@ -109,17 +127,31 @@ const ProfessionalsDetailsScreen = () => {
             Work In City
           </Text>
 
-          <DropDownTextInputComponent
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Select or Type'}*/}
+          {/*  data={COUNTRY_LIST}*/}
+          {/*  height={50}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
             placeholder={'Select or Type'}
-            data={COUNTRY_LIST}
-            height={50}
+            dropdownItems={[
+              'INDIA',
+              'SRI LANKA',
+              'Germany',
+              'Malaysia',
+              'Australia',
+              'Belize',
+              'Brazil',
+              'NAVSARI',
+            ]}
           />
 
           <Text
             style={{
-              fontSize: fontSize(12),
+              fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               color: colors.black,
               marginTop: hp(15),
               marginBottom: hp(12),
@@ -127,10 +159,24 @@ const ProfessionalsDetailsScreen = () => {
             Work In Country
           </Text>
 
-          <DropDownTextInputComponent
-            placeholder={'Select or Type'}
-            data={COUNTRY_LIST}
-            height={50}
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Select or Type'}*/}
+          {/*  data={COUNTRY_LIST}*/}
+          {/*  height={50}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={[
+              'INDIA',
+              'SRI LANKA',
+              'Germany',
+              'Malaysia',
+              'Australia',
+              'Belize',
+              'Brazil',
+              'NAVSARI',
+            ]}
           />
         </View>
       </ScrollView>

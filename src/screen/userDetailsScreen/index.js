@@ -56,7 +56,7 @@ const UserDetailScreen = ({navigation}) => {
                 position: 'absolute',
                 bottom: 35,
                 width: '100%',
-                backgroundColor: 'rgba(0,0,0,0.09)',
+                // backgroundColor: 'rgba(0,0,0,0.09)',
               }}>
               <View style={style.onlineBodyStyle}>
                 <Text style={style.bodyTextStyle}>Online</Text>
@@ -150,11 +150,12 @@ const UserDetailScreen = ({navigation}) => {
             <Image
               source={icons.rightSideIcon}
               style={{
-                width: 15,
-                height: 15,
+                width: 8,
+                height: 8,
                 tintColor: colors.blue,
                 marginTop: hp(20),
                 transform: [{rotate: imageRotation}],
+                resizeMode: 'contain',
               }}
             />
           </TouchableOpacity>

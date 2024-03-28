@@ -47,6 +47,21 @@ const style = StyleSheet.create({
     lineHeight: hp(15),
     fontWeight: '400',
   },
+  itemContainer: {
+    marginTop: 10,
+    width: wp(340),
+    height: hp(91),
+    borderRadius: 15,
+    marginBottom: 1,
+    backgroundColor: colors.white,
+    alignSelf: 'center',
+    borderColor: colors.blue, // Border color
+    elevation: 1, // Add shadow
+    shadowColor: colors.blue, // Shadow color
+    shadowOffset: {width: 0, height: 2}, // Shadow offset
+    shadowOpacity: 0.5, // Shadow opacity
+    shadowRadius: 2, // Shadow radius
+  },
 });
 
 export default style;

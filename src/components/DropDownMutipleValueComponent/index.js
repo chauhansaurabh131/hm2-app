@@ -18,6 +18,7 @@ const DropdownComponent = ({
 }) => {
   const [selectedValues, setSelectedValues] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
+  const [value, setValue] = useState(null);
 
   const handleDropdownChange = item => {
     const index = selectedValues.indexOf(item.value);
@@ -63,6 +64,18 @@ const DropdownComponent = ({
     }
   };
 
+  const renderItem = item => {
+    const itemTextStyle = {
+      ...styles.textItem,
+      color: value === item.value ? 'black' : 'black', // Change text color to red if item is selected
+    };
+
+    return (
+      <View style={styles.item}>
+        <Text style={itemTextStyle}>{item.label}</Text>
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       <Dropdown
@@ -88,6 +101,7 @@ const DropdownComponent = ({
         onBlur={() => setIsFocus(false)}
         onChange={handleDropdownChange}
         multiselect
+        renderItem={renderItem}
       />
     </View>
   );
@@ -140,5 +154,10 @@ const styles = StyleSheet.create({
     fontSize: fontSize(11),
     alignItems: 'center',
     textAlign: 'center',
+  },
+  textItem: {
+    // flex: 1,
+    fontSize: 16,
+    padding: 20,
   },
 });

@@ -138,8 +138,10 @@
 
 import React, {useState} from 'react';
 import {View, TextInput, TouchableOpacity, Image, Text} from 'react-native';
+import {FlatList} from 'react-native-gesture-handler';
 import {colors} from '../../utils/colors';
 import {hp, wp} from '../../utils/helpers';
+import Autocomplete from 'react-native-dropdown-autocomplete-textinput/autoComplete/Autocomplete';
 
 const TextInputWithDropDownComponent = ({dropdownItems}) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -174,9 +176,17 @@ const TextInputWithDropDownComponent = ({dropdownItems}) => {
 
   return (
     <View>
-      <View style={styles.container}>
+      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 7}}>
         <TextInput
-          style={styles.textInput}
+          style={{
+            flex: 1,
+            borderWidth: 1,
+            borderRadius: 10,
+            padding: 10,
+            width: '100%',
+            height: 50,
+            borderColor: colors.lightGreyBorder,
+          }}
           placeholder="Select"
           value={selectedItem !== null ? selectedItem : textInputValue}
           onFocus={handleTextInputFocus}
@@ -186,26 +196,49 @@ const TextInputWithDropDownComponent = ({dropdownItems}) => {
         />
 
         <TouchableOpacity onPress={handleDropdownPress}>
-          <View style={styles.dropdownIconContainer}>
+          <View
+            style={{
+              marginLeft: -35,
+              width: 30,
+              height: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <Image
               source={require('../../assets/icons/dropDown_Down_logo.png')}
-              style={styles.dropdownIcon}
+              style={{width: 10.36, height: 6}}
             />
           </View>
         </TouchableOpacity>
       </View>
 
       {showDropdown && (
-        <View style={styles.dropdownListContainer}>
-          {dropdownItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleItemSelected(item)}
-              style={styles.dropdownItem}>
-              <Text style={styles.dropdownItemText}>{item}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <FlatList
+          style={{
+            maxHeight: 300,
+            position: 'absolute',
+            width: wp(339),
+            top: 70,
+            left: wp(10),
+            zIndex: 1,
+            backgroundColor: 'white',
+            padding: 10,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: '#ccc',
+          }}
+          data={[...dropdownItems, ...dropdownItems]}
+          renderItem={({item, index}) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleItemSelected(item)}
+                style={styles.dropdownItem}>
+                <Text style={styles.dropdownItemText}>{item}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
       )}
     </View>
   );

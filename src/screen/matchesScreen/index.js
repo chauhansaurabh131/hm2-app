@@ -12,7 +12,7 @@ import style from './style';
 import {icons, images} from '../../assets';
 import {hp, wp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const MatchesScreen = ({navigation}) => {
   // const navigation = useNavigation();
@@ -112,6 +112,10 @@ const MatchesScreen = ({navigation}) => {
     <TouchableOpacity activeOpacity={1}>
       <View>
         <Image source={item.image} style={style.userImageStyle} />
+        <LinearGradient
+          colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+          style={style.gradient}
+        />
 
         <View style={style.UserDetailsContainer}>
           <View style={style.onlineBodyStyle}>
@@ -150,6 +154,7 @@ const MatchesScreen = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 console.log(' === var ===> ', '.....');
+                navigation.navigate('UserUploadImageFullScreen');
               }}>
               <Image
                 source={icons.image_icon}

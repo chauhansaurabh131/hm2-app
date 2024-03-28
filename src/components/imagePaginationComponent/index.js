@@ -7,8 +7,9 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import {images} from '../../assets'; // Assuming you have your images imported correctly
-import {hp, screenWidth} from '../../utils/helpers';
+import {images} from '../../assets';
+import LinearGradient from 'react-native-linear-gradient';
+import {hp} from '../../utils/helpers';
 
 const {width} = Dimensions.get('window');
 
@@ -40,11 +41,17 @@ const ImagePaginationComponent = () => {
   const flatListRef = useRef(null);
 
   const renderItem = ({item}) => (
-    <Image
-      source={item.pic}
-      style={{width: width, height: hp(500)}}
-      resizeMode="contain"
-    />
+    <View style={{flex: 1}}>
+      <Image
+        source={item.pic}
+        style={{width: width, height: hp(500)}}
+        resizeMode="contain"
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+        style={styles.gradient}
+      />
+    </View>
   );
 
   const handleScroll = event => {
@@ -92,6 +99,13 @@ const ImagePaginationComponent = () => {
 };
 
 const styles = StyleSheet.create({
+  gradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 200, // Adjust the height as per your requirement
+  },
   pagination: {
     width: '100%',
     flexDirection: 'row',
@@ -104,7 +118,6 @@ const styles = StyleSheet.create({
     width: 48.53,
     height: 3,
     borderRadius: 4,
-    // backgroundColor: '#888',
     backgroundColor: 'grey',
     marginHorizontal: 5,
   },

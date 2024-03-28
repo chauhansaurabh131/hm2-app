@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {images} from '../../assets';
 import {ReactNativeZoomableView} from '@openspacelabs/react-native-zoomable-view';
-import {hp} from '../../utils/helpers';
+import {hp, isIOS} from '../../utils/helpers';
 import Pinchable from 'react-native-pinchable';
 
 const {width} = Dimensions.get('window');
@@ -53,7 +53,7 @@ const DemoPractiveCodeScreen = () => {
       <Pinchable>
         <Image
           source={item.pic}
-          style={{width: width, height: hp(550)}}
+          style={{width: width, height: isIOS ? hp(550) : hp(600)}}
           resizeMode="stretch"
         />
       </Pinchable>

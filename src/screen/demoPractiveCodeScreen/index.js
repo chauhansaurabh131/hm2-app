@@ -1,33 +1,86 @@
-import React, {useMemo, useRef} from 'react';
-import {Button, SafeAreaView, Text, View} from 'react-native';
-import BottomSheet, {
-  BottomSheetModalProvider,
-  useBottomSheetModal,
-} from '@gorhom/bottom-sheet';
-import {useIsFocused} from '@react-navigation/native'; // Import the hook for detecting focus
+import React, {useState, useEffect} from 'react';
+import {
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Keyboard,
+} from 'react-native';
 
 const DemoPractiveCodeScreen = () => {
-  const snapPoints = useMemo(() => ['50%', '75%'], []);
-  const bottomSheetRef = useRef(null);
-  const isFocused = useIsFocused(); // Check if the screen is focused
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
-  const handleOpenBottom = () => bottomSheetRef.current?.expand();
-  const handleCloseBottom = () => bottomSheetRef.current?.close();
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setIsKeyboardOpen(true);
+      },
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setIsKeyboardOpen(false);
+      },
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
-    <BottomSheetModalProvider>
-      <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
-        <Button title={'open'} onPress={handleOpenBottom} />
-        <Button title={'Close'} onPress={handleCloseBottom} />
-        {isFocused && ( // Conditionally render based on screen focus
-          <BottomSheet ref={bottomSheetRef} index={1} snapPoints={snapPoints}>
-            <View>
-              <Text>Bottom Sheet</Text>
-            </View>
-          </BottomSheet>
-        )}
-      </SafeAreaView>
-    </BottomSheetModalProvider>
+    <SafeAreaView style={{flex: 1}}>
+      <Text>hxvk</Text>
+
+      <TextInput
+        placeholder={'name'}
+        style={{
+          // width: '100%',
+          height: 50,
+          borderWidth: 1,
+          borderColor: 'red',
+          marginHorizontal: 17,
+          padding: 10,
+        }}
+      />
+
+      {!isKeyboardOpen && (
+        <View
+          style={{
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            marginHorizontal: 18,
+            position: 'absolute',
+            bottom: 10,
+          }}>
+          <TouchableOpacity
+            style={{
+              width: 150,
+              height: 50,
+              backgroundColor: 'red',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text>back</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              width: 150,
+              height: 50,
+              backgroundColor: 'red',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text>Next</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 

@@ -21,9 +21,18 @@ import {
   RELIGION_LIST,
 } from '../../utils/data';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
+import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import DemoPractiveCodeScreen from '../demoPractiveCodeScreen';
+import AlertsScreen from '../alertsScreen';
 
 const GeneralInformationDetailsScreen = () => {
   const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('');
+  // const options = ['Option 1', 'Option 2', 'Option 3'];
+  const handleOptionSelected = option => {
+    setSelectedOption(option.label); // Update the selected option to the label
+  };
 
   const handleGenderSelection = gender => {
     setSelectedGender(gender);
@@ -44,21 +53,24 @@ const GeneralInformationDetailsScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View
-        style={{
-          flex: 1,
-          marginHorizontal: wp(18),
-          marginTop: hp(8),
-          // backgroundColor: 'lightgreen',
-        }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+      {/*<KeyboardAwareScrollView*/}
+      {/*  contentContainerStyle={{flexGrow: 1}}*/}
+      {/*  showsVerticalScrollIndicator={false}>*/}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View
+          style={{
+            flex: 1,
+            marginHorizontal: wp(18),
+            marginTop: hp(8),
+            // backgroundColor: 'lightgreen',
+          }}>
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Give us your name as per ID
           </Text>
@@ -74,6 +86,7 @@ const GeneralInformationDetailsScreen = () => {
               padding: 15,
               borderRadius: 10,
               marginTop: hp(7),
+              paddingLeft: 16,
             }}
           />
 
@@ -89,6 +102,7 @@ const GeneralInformationDetailsScreen = () => {
                 padding: 15,
                 borderRadius: 10,
                 marginTop: hp(7),
+                paddingLeft: 16,
               },
               {marginTop: hp(13)},
             ]}
@@ -96,11 +110,11 @@ const GeneralInformationDetailsScreen = () => {
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Gender
           </Text>
@@ -130,7 +144,11 @@ const GeneralInformationDetailsScreen = () => {
                   colors={getGradientColors(gender).colors}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
-                  style={{flex: 1, borderRadius: 10, justifyContent: 'center'}}>
+                  style={{
+                    flex: 1,
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                  }}>
                   <Text
                     style={{
                       textAlign: 'center',
@@ -145,11 +163,11 @@ const GeneralInformationDetailsScreen = () => {
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Date of Birth
           </Text>
@@ -190,11 +208,11 @@ const GeneralInformationDetailsScreen = () => {
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Birth of Time
           </Text>
@@ -251,83 +269,143 @@ const GeneralInformationDetailsScreen = () => {
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               marginBottom: hp(9),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Religion
           </Text>
 
-          <DropDownTextInputComponent
-            placeholder={'Select or Type'}
-            data={RELIGION_LIST}
-            height={50}
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Select or Type'}*/}
+          {/*  data={RELIGION_LIST}*/}
+          {/*  height={50}*/}
+          {/*  placeholderStyle={{paddingLeft: 10}}*/}
+          {/*  iconStyle={{marginRight: 3}}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={[
+              'Hinduism',
+              'Christianity',
+              'Islam',
+              'Buddhism',
+              'Sikhism',
+              'Judaism',
+              'Jainism',
+              'Shinto',
+            ]}
           />
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               marginBottom: hp(9),
             }}>
             Caste / Sub Caste
           </Text>
 
-          <DropDownTextInputComponent
-            placeholder={'Type'}
-            data={CASTE_LIST}
-            height={50}
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Type'}*/}
+          {/*  data={CASTE_LIST}*/}
+          {/*  height={50}*/}
+          {/*  placeholderStyle={{paddingLeft: 10}}*/}
+          {/*  iconStyle={{marginRight: 3}}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={[
+              'Brahmins',
+              'Kshatriyas',
+              'Vaishyas',
+              'Shudras',
+              'Pariash',
+            ]}
           />
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               marginBottom: hp(9),
             }}>
             Current City
           </Text>
 
-          <DropDownTextInputComponent
-            placeholder={'Select'}
-            data={CurrentCity}
-            height={50}
-          />
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Select'}*/}
+          {/*  data={CurrentCity}*/}
+          {/*  height={50}*/}
+          {/*  placeholderStyle={{paddingLeft: 10}}*/}
+          {/*  iconStyle={{marginRight: 3}}*/}
+          {/*/>*/}
 
+          <TextInputSearchAndDropDowm
+            placeholder={'Select'}
+            dropdownItems={[
+              'GUJARAT',
+              'MUMBAI',
+              'DELHI',
+              'SURAT',
+              'VADODARA',
+              'AHAMADABAD',
+              'ANAND',
+              'NAVSARI',
+            ]}
+          />
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
               marginBottom: hp(9),
             }}>
             Country of Living
           </Text>
 
-          <DropDownTextInputComponent
+          {/*<DropDownTextInputComponent*/}
+          {/*  placeholder={'Select'}*/}
+          {/*  data={COUNTRY_LIST}*/}
+          {/*  height={50}*/}
+          {/*  placeholderStyle={{paddingLeft: 10}}*/}
+          {/*  iconStyle={{marginRight: 3}}*/}
+          {/*/>*/}
+
+          <TextInputSearchAndDropDowm
             placeholder={'Select'}
-            data={COUNTRY_LIST}
-            height={50}
+            dropdownItems={[
+              'INDIA',
+              'SRI LANKA',
+              'Germany',
+              'Malaysia',
+              'Australia',
+              'Belize',
+              'Brazil',
+              'NAVSARI',
+            ]}
           />
 
           <Text
             style={{
-              fontSize: hp(12),
+              fontSize: hp(14),
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Write About Yourself
           </Text>
@@ -347,8 +425,9 @@ const GeneralInformationDetailsScreen = () => {
           />
 
           <View style={{marginBottom: 50}} />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
+      {/*</KeyboardAwareScrollView>*/}
     </SafeAreaView>
   );
 };

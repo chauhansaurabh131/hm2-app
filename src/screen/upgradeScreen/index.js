@@ -1,12 +1,8 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   FlatList,
   Image,
-  Modal,
-  Platform,
-  Pressable,
   SafeAreaView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -15,85 +11,39 @@ import {colors} from '../../utils/colors';
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {icons, images} from '../../assets';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
-import Animated, {
-  FadeIn,
-  FadeOut,
-  runOnJS,
-  SlideInDown,
-  SlideOutDown,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
-import DemoPractiveCodeScreen from '../demoPractiveCodeScreen';
+  fontFamily,
+  fontSize,
+  hp,
+  isIOS,
+  screenHeight,
+  wp,
+} from '../../utils/helpers';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 
-const PressAnimated = Animated.createAnimatedComponent(Pressable);
-const HEIGHT = 300;
-const CLAMP = 20;
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const UpgradeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('silver');
   const [topModalVisible, setTopModalVisible] = useState(false);
-  const [upGradePlan, setUpGradePlan] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const RBSheetRef = useRef();
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState('');
+  const [pressed, setPressed] = useState(false);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const offset = useSharedValue(0);
-
-  const handleBackdropPress = () => {
-    setIsOpen(false);
+  const openBottomSheet = (newPrice, oldPrice) => {
+    setSelectedPrice({newPrice, oldPrice});
+    RBSheetRef.current.open();
+    setIsBottomSheetOpen(true);
   };
 
-  const panGesture = Gesture.Pan()
-    .onChange(event => {
-      const offsetDelta = event.changeY + offset.value;
-      const clamp = Math.max(-CLAMP, offsetDelta);
-      offset.value = offsetDelta > 0 ? offsetDelta : withSpring(clamp);
-    })
-    .onFinalize(() => {
-      if (offset.value < HEIGHT / 3) {
-        offset.value = withSpring(0);
-      } else {
-        offset.value = withTiming(HEIGHT, {}, () => {
-          runOnJS(handleBackdropPress)();
-        });
-      }
-    });
-
-  const translateY = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: offset.value,
-        },
-      ],
-    };
-  }, []);
-
-  useEffect(() => {
-    function onOpen() {
-      if (isOpen) {
-        offset.value = 0;
-      }
-    }
-    onOpen();
-  }, [isOpen]);
-
-  const openUpGradeModal = item => {
-    setSelectedPlan(item);
-    setUpGradePlan(true);
+  const closeBottomSheet = () => {
+    RBSheetRef.current.close();
+    setIsBottomSheetOpen(false);
   };
 
-  const closeUpGradeModal = () => {
-    setUpGradePlan(false);
+  const handleSheetClosed = () => {
+    setIsBottomSheetOpen(false);
   };
 
   const [subscriptionPlans, setSubscriptionPlans] = useState({
@@ -190,28 +140,33 @@ const UpgradeScreen = () => {
 
   const renderItem = ({item}) => (
     <TouchableOpacity
+      style={[
+        style.itemContainer,
+        pressed && {backgroundColor: 'white'}, // Change background color when pressed
+      ]}
       activeOpacity={0.7}
-      onPress={() => setIsOpen(prevState => !prevState)}>
+      onPress={() => openBottomSheet(item.NewPrice, item.OldPrice)}>
       <View
-        style={{
-          marginTop: 10,
-          width: wp(340),
-          height: hp(91),
-          borderRadius: 20,
-          marginBottom: 1,
-          backgroundColor: colors.white,
-          alignSelf: 'center',
-          ...Platform.select({
-            ios: {
-              shadowColor: 'lightblue',
-              shadowOffset: {width: 0, height: 0.1},
-              shadowOpacity: 0.5,
-            },
-            android: {
-              elevation: 2,
-            },
-          }),
-        }}>
+      // style={{
+      //   marginTop: 10,
+      //   width: wp(340),
+      //   height: hp(91),
+      //   borderRadius: 20,
+      //   marginBottom: 1,
+      //   backgroundColor: colors.white,
+      //   alignSelf: 'center',
+      //   ...Platform.select({
+      //     ios: {
+      //       shadowColor: 'lightblue',
+      //       shadowOffset: {width: 0, height: 0.1},
+      //       shadowOpacity: 0.5,
+      //     },
+      //     android: {
+      //       elevation: 2,
+      //     },
+      //   }),
+      // }}
+      >
         <View
           style={{
             marginTop: hp(20),
@@ -315,7 +270,7 @@ const UpgradeScreen = () => {
                 fontSize: fontSize(10),
                 lineHeight: hp(15),
                 fontFamily: fontFamily.poppins500,
-                color: colors.black,
+                color: '#17C270',
               }}>
               {item.Discount}
             </Text>
@@ -326,8 +281,279 @@ const UpgradeScreen = () => {
   );
 
   return (
-    <GestureHandlerRootView style={style.container}>
-      <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={style.container}>
+      <View style={{flex: 1}}>
+        <View
+          style={{
+            backgroundColor: isBottomSheetOpen
+              ? 'rgba(0, 0, 0, 0.3)'
+              : '#ffffff',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {/*<Button title="OPEN BOTTOM SHEET" onPress={openBottomSheet} />*/}
+        </View>
+        <RBSheet
+          ref={RBSheetRef}
+          // height={480}
+          height={screenHeight * 0.7 - 50}
+          // duration={250}
+          closeOnDragDown={true}
+          closeOnPressMask={true}
+          onClose={handleSheetClosed} // Added onClose callback
+          customStyles={{
+            wrapper: {
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            },
+            draggableIcon: {
+              backgroundColor: '#ffffff',
+            },
+            container: {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            },
+          }}>
+          <View style={{flex: 1}}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: fontSize(14),
+                lineHeight: hp(21),
+                fontFamily: fontFamily.poppins400,
+                color: colors.black,
+              }}>
+              One Month Plan
+            </Text>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: fontSize(54),
+                lineHeight: hp(81),
+                fontFamily: fontFamily.poppins700,
+                textAlign: 'center',
+              }}>
+              {/*{selectedPrice}*/}
+              {selectedPrice.newPrice}
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                INR
+              </Text>
+              <Text
+                style={{
+                  textDecorationLine: 'line-through',
+                  marginLeft: 5,
+                  color: colors.black,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                {selectedPrice.oldPrice}
+              </Text>
+
+              <View
+                style={{
+                  width: wp(84),
+                  height: hp(28),
+                  borderRadius: 14,
+                  backgroundColor: '#F0FCF6',
+                  marginLeft: wp(10),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins500,
+                    color: '#17C270',
+                  }}>
+                  20% Off
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: hp(25),
+                width: '100%',
+                borderWidth: 1,
+                borderColor: '#E3E3E3',
+              }}
+            />
+
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                lineHeight: hp(28),
+                fontFamily: fontFamily.poppins600,
+                color: colors.black,
+                textAlign: 'center',
+                marginTop: hp(20),
+              }}>
+              What Will You Get?
+            </Text>
+
+            <View
+              style={{
+                marginHorizontal: wp(30),
+                marginTop: hp(18),
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Message to <Text style={{color: colors.blue}}>10 Profiles</Text>
+              </Text>
+              <Image
+                source={icons.confirm_check_icon}
+                style={{width: hp(14), height: hp(14), resizeMode: 'contain'}}
+              />
+            </View>
+
+            <View
+              style={{
+                marginHorizontal: wp(30),
+                marginTop: hp(18),
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Send request to{' '}
+                <Text style={{color: colors.blue}}>10 Profiles</Text>
+              </Text>
+              <Image
+                source={icons.confirm_check_icon}
+                style={{width: hp(14), height: hp(14), resizeMode: 'contain'}}
+              />
+            </View>
+
+            <View
+              style={{
+                marginHorizontal: wp(30),
+                marginTop: hp(18),
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Online Support
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: wp(30),
+                justifyContent: 'space-between',
+                marginTop: isIOS ? hp(30) : hp(50),
+              }}>
+              <TouchableOpacity activeOpacity={0.7} onPress={closeBottomSheet}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  style={{
+                    width: wp(110),
+                    height: hp(50),
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    borderColor: 'transparent', // Set border color to transparent
+                  }}>
+                  <View
+                    style={{
+                      borderRadius: 10, // <-- Inner Border Radius
+                      flex: 1,
+                      backgroundColor: colors.white,
+                      justifyContent: 'center',
+                      margin: isIOS ? 0 : 1,
+                    }}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        backgroundColor: 'transparent',
+                        color: colors.black,
+                        margin: 10,
+                        fontSize: fontSize(14),
+                        lineHeight: hp(21),
+                        fontFamily: fontFamily.poppins500,
+                      }}>
+                      Not Now
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.5}
+                // onPress={handleModalClose}
+              >
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}
+                  style={{
+                    width: wp(178),
+                    height: hp(50),
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: colors.white,
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontFamily: fontFamily.poppins600,
+                    }}>
+                    Proceed to Pay
+                  </Text>
+                  <Image
+                    source={icons.light_arrow_icon}
+                    style={{
+                      width: hp(14),
+                      height: hp(14),
+                      resizeMode: 'contain',
+                      transform: [{rotate: '90deg'}],
+                      marginLeft: wp(14),
+                    }}
+                  />
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </RBSheet>
+
         <LinearGradient
           colors={['#0D4EB3', '#9413D0']}
           style={style.headerContainer}
@@ -361,7 +587,6 @@ const UpgradeScreen = () => {
             </Text>
           </View>
         </LinearGradient>
-
         <View
           style={{
             width: wp(335),
@@ -501,7 +726,6 @@ const UpgradeScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-
         <Text
           style={{
             textAlign: 'center',
@@ -510,55 +734,17 @@ const UpgradeScreen = () => {
           }}>
           Choose your subscription
         </Text>
-
         <FlatList
           data={subscriptionPlans[selectedOption]}
           renderItem={renderItem}
         />
-
         <HomeTopSheetComponent
           isVisible={topModalVisible}
           onBackdropPress={toggleModal}
           onBackButtonPress={toggleModal}
         />
-
-        {isOpen && (
-          <Fragment>
-            <PressAnimated
-              onPress={handleBackdropPress}
-              entering={FadeIn}
-              exiting={FadeOut}
-              style={{
-                ...StyleSheet.absoluteFillObject,
-                backgroundColor: 'rgba(0,0,0,0.45)',
-                zIndex: 1,
-              }}
-            />
-            <GestureDetector gesture={panGesture}>
-              <Animated.View
-                entering={SlideInDown.springify().damping(12)}
-                exiting={SlideOutDown}
-                style={[
-                  {
-                    backgroundColor: 'white',
-                    height: HEIGHT,
-                    width: '100%',
-                    position: 'absolute',
-                    bottom: -CLAMP * 1.1,
-                    zIndex: 1,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  },
-                  translateY,
-                ]}>
-                {/* Your component in bottom sheet */}
-                <Text>sjdvksdvkn</Text>
-              </Animated.View>
-            </GestureDetector>
-          </Fragment>
-        )}
-      </SafeAreaView>
-    </GestureHandlerRootView>
+      </View>
+    </SafeAreaView>
   );
 };
 

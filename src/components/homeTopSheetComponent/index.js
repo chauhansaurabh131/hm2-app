@@ -71,17 +71,47 @@ const HomeTopSheetComponent = ({
         onBackdropPress={onBackdropPress}
         onBackButtonPress={onBackButtonPress}
         style={{top: modalTop}}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalBodyContainer}>
+        <View
+          style={{
+            backgroundColor: 'white',
+            // height: 514,
+            width: '200%',
+            position: 'absolute',
+            top: -20,
+            marginLeft: -20,
+          }}>
+          <View style={{marginTop: 23, marginHorizontal: wp(27)}}>
             <Image
               source={images.profileDisplayImage}
-              style={styles.modalHeaderProfileStyle}
+              style={{
+                height: hp(60),
+                width: hp(60),
+                borderRadius: 50,
+                marginTop: hp(23),
+              }}
             />
 
-            <Text style={styles.userNameTextStyle}>Riya Shah</Text>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: fontSize(22),
+                lineHeight: hp(33),
+                fontWeight: '600',
+                marginTop: hp(10),
+              }}>
+              Riya Shah
+            </Text>
 
-            <View style={styles.userDescriptionContainer}>
-              <Text style={styles.userNumberTextStyle}>HM 10000122</Text>
+            <View style={{flexDirection: 'row', marginTop: hp(3)}}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontWeight: '500',
+                }}>
+                HM 10000122
+              </Text>
               <View
                 style={{
                   height: hp(13),

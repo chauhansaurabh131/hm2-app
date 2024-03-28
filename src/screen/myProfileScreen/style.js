@@ -139,7 +139,6 @@ const style = StyleSheet.create({
 
   underLineStyle: {
     width: '100%',
-    height: 1,
     borderWidth: 1,
     borderColor: '#E2E2E2',
     marginTop: hp(16),
@@ -161,8 +160,8 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   toggleImageStyle: {
-    width: hp(15),
-    height: hp(15),
+    width: 8,
+    height: 8,
     marginTop: hp(20),
     tintColor: colors.blue,
   },

@@ -208,7 +208,7 @@ const HideDeleteProfileScreen = () => {
 
       <View style={style.modalContainer}>
         <Modal
-          animationType="slide"
+          animationType="none"
           transparent={true}
           visible={modalVisible}
           onRequestClose={handleModalClose}>
@@ -274,7 +274,7 @@ const HideDeleteProfileScreen = () => {
         </Modal>
 
         <Modal
-          animationType="slide"
+          animationType="none"
           transparent={true}
           visible={selectDurationModal}
           onRequestClose={SelectSetDurationModalClose}>

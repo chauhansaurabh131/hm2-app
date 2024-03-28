@@ -13,6 +13,7 @@ import {icons, images} from '../../assets';
 import StoryComponent from '../../components/storyComponent';
 import {hp, wp} from '../../utils/helpers';
 import AdminProfileDetailsScreen from '../adminProfileDetailsScreen';
+import LinearGradient from 'react-native-linear-gradient';
 
 const MyProfileScreen = () => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -62,19 +63,24 @@ const MyProfileScreen = () => {
             source={images.profileDisplayImage}
             style={style.userProfileImage}
           />
-
-          {/*<View style={{position: 'absolute', bottom: 50}}>*/}
-          {/*  <Text>hjvkbv</Text>*/}
-          {/*</View>*/}
+          <LinearGradient
+            colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 150,
+            }}
+          />
 
           <View style={style.UserDetailsContainer}>
             <View
               style={{
                 position: 'absolute',
-                // bottom: 35,
                 bottom: -1,
                 width: '100%',
-                backgroundColor: 'rgba(0,0,0,0.1)',
+                // backgroundColor: 'rgba(0,0,0,0.1)',
                 height: 150,
               }}>
               <View style={{marginLeft: wp(18.16)}}>
@@ -193,18 +199,6 @@ const MyProfileScreen = () => {
 
         <View style={style.bodyContainer}>
           <Text style={style.TittleTextStyle}>About Me</Text>
-
-          {/*<Text*/}
-          {/*  numberOfLines={showFullDescription ? undefined : 4}*/}
-          {/*  style={style.descriptionBodyText}>*/}
-          {/*  I'd describe myself as someone who's reliable, trendy, smart and*/}
-          {/*  someone who always has a smile on the face. I am a big Nature &*/}
-          {/*  Animal lover. I have lived in different parts of India and*/}
-          {/*  appreciate all cultures & customs.... I'd describe myself as someone*/}
-          {/*  who's reliable, trendy, smart and someone who always has a smile on*/}
-          {/*  the face. I am a big Nature & Animal lover. I have lived in*/}
-          {/*  different parts of India and appreciate all cultures & customs.*/}
-          {/*</Text>*/}
 
           {isEditing ? (
             <TextInput

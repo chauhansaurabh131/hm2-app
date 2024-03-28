@@ -91,7 +91,7 @@ const MainScreenDemo = ({navigation}) => {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => navigation.navigate('RegistrationScreen')}
-              // onPress={() => navigation.navigate('Xyz')}
+              // onPress={() => navigation.navigate('DemoPractiveCodeScreen')}
             >
               <View
                 style={{

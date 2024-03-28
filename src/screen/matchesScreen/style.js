@@ -82,7 +82,7 @@ const style = StyleSheet.create({
     width: '100%',
     marginLeft: wp(21),
     // backgroundColor: 'grey',
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    // backgroundColor: 'rgba(0,0,0,0.05)',
   },
   onlineBodyStyle: {
     width: wp(34.8),
@@ -122,6 +122,16 @@ const style = StyleSheet.create({
   bottomImageContainer: {
     flexDirection: 'row',
     marginTop: hp(22),
+  },
+  gradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderRadius: 10,
+    width: '100%',
+    height: '40%',
+    marginBottom: hp(13),
   },
 });
 

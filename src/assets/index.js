@@ -69,6 +69,16 @@ export const icons = {
   heart_like_icon: require('./icons/heart_like_icon.png'),
   light_arrow_icon: require('./icons/light_arrow_icons.png'),
   save_icon: require('./icons/save_icon.png'),
+  x_cancel_icon: require('./icons/x_cancel_icon.png'),
+  down_arrow_icon: require('./icons/down_arrow_icon.png'),
+  confirm_check_icon: require('./icons/confirm_check_icon.png'),
+  video_play_icon: require('./icons/video_play_icon.png'),
+  select_white_icon: require('./icons/select_white_icon.png'),
+  delete_icon: require('./icons/delete_icon.png'),
+  select_borderWhite_icon: require('./icons/select_boderWhite_icon.png'),
+  search_icon: require('./icons/search_icon.png'),
+  three_dots_icon: require('./icons/three_dot_icon.png'),
+  clear_delete_icon: require('./icons/clear_delete_icon.png'),
 };
 
 export const gif = {
