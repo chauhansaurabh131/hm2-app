@@ -15,6 +15,7 @@ const DropdownComponent = ({
   data,
   width,
   height,
+  search,
 }) => {
   const [selectedValues, setSelectedValues] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
@@ -89,7 +90,7 @@ const DropdownComponent = ({
         inputSearchStyle={[styles.inputSearchStyle, inputSearchStyle]}
         iconStyle={[styles.iconStyle, iconStyle]}
         data={data}
-        search
+        search={search}
         maxHeight={300}
         iconColor={colors.blue}
         labelField="label"

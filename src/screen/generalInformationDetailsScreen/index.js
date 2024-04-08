@@ -87,6 +87,7 @@ const GeneralInformationDetailsScreen = () => {
               borderRadius: 10,
               marginTop: hp(7),
               paddingLeft: 16,
+              color: colors.black,
             }}
           />
 
@@ -103,6 +104,7 @@ const GeneralInformationDetailsScreen = () => {
                 borderRadius: 10,
                 marginTop: hp(7),
                 paddingLeft: 16,
+                color: colors.black,
               },
               {marginTop: hp(13)},
             ]}
@@ -136,6 +138,7 @@ const GeneralInformationDetailsScreen = () => {
                     borderColor: colors.lightGreyBorder,
                     borderRadius: 10,
                     justifyContent: 'center',
+                    color: colors.black,
                   },
                   {borderWidth: selectedGender === gender ? 0 : 1},
                 ]}
@@ -189,7 +192,7 @@ const GeneralInformationDetailsScreen = () => {
               placeholder={'18.08.1992'}
               keyboardType={'numeric'}
               placeholderTextColor={colors.black}
-              style={{flex: 1}}
+              style={{flex: 1, color: colors.black}}
             />
             <TouchableOpacity
               style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -234,21 +237,24 @@ const GeneralInformationDetailsScreen = () => {
                 borderRadius: 10,
                 borderWidth: 1,
                 borderColor: colors.lightGreyBorder,
-                textAlign: 'center',
+                textAlign: 'center', // Align text in center
+                color: colors.black,
               }}
             />
 
+            {/* Add a transparent placeholder text to align the cursor */}
             <TextInput
               placeholder={'MM'}
               keyboardType={'numeric'}
-              placeholderTextColor={colors.black}
+              placeholderTextColor={colors.black} // Make placeholder text transparent
               style={{
                 width: wp(103),
                 height: hp(50),
                 borderRadius: 10,
                 borderWidth: 1,
                 borderColor: colors.lightGreyBorder,
-                textAlign: 'center',
+                textAlign: 'center', // Align text in center
+                color: colors.black,
               }}
             />
 
@@ -262,7 +268,9 @@ const GeneralInformationDetailsScreen = () => {
                 borderRadius: 10,
                 borderWidth: 1,
                 borderColor: colors.lightGreyBorder,
-                textAlign: 'center',
+                textAlign: 'center', // Align text in center
+                color: colors.black,
+                textAlignVertical: 'center',
               }}
             />
           </View>
@@ -421,6 +429,8 @@ const GeneralInformationDetailsScreen = () => {
               borderRadius: 10,
               justifyContent: 'flex-start',
               marginTop: hp(12),
+              color: colors.black,
+              textAlignVertical: 'top',
             }}
           />
 

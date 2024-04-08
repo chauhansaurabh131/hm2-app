@@ -15,7 +15,6 @@ import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import CommonGradientButton from '../commonGradientButton';
 
 const HomeTopSheetComponent = ({
   isVisible,
@@ -26,7 +25,6 @@ const HomeTopSheetComponent = ({
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalTop, setModalTop] = useState(new Animated.Value(20));
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   useEffect(() => {
     let timeoutId;
@@ -46,16 +44,6 @@ const HomeTopSheetComponent = ({
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
-  };
-
-  const toggleConfirmationModal = () => {
-    setShowConfirmationModal(!showConfirmationModal);
-  };
-
-  const handleLogout = () => {
-    toggleConfirmationModal();
-    // Handle logout action here
-    console.log('Logout action');
   };
 
   // const privacyPolicyPress = () => {};
@@ -174,39 +162,32 @@ const HomeTopSheetComponent = ({
             />
 
             <View style={{marginTop: hp(21)}}>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  navigation.navigate('MyProfileScreen');
-                  toggleModal();
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginBottom: hp(19),
+                  alignItems: 'center',
                 }}>
-                <View
+                <Image
+                  source={icons.profileLogo}
                   style={{
-                    flexDirection: 'row',
-                    marginBottom: hp(19),
-                    alignItems: 'center',
+                    width: hp(17.22),
+                    height: hp(16),
+                    tintColor: colors.black,
+                    resizeMode: 'stretch',
+                  }}
+                />
+                <Text
+                  style={{
+                    color: colors.black,
+                    marginLeft: hp(17.78),
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontWeight: '400',
                   }}>
-                  <Image
-                    source={icons.profileLogo}
-                    style={{
-                      width: hp(17.22),
-                      height: hp(16),
-                      tintColor: colors.black,
-                      resizeMode: 'stretch',
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: colors.black,
-                      marginLeft: hp(17.78),
-                      fontSize: fontSize(14),
-                      lineHeight: hp(21),
-                      fontWeight: '400',
-                    }}>
-                    My Profile
-                  </Text>
-                </View>
-              </TouchableOpacity>
+                  My Profile
+                </Text>
+              </View>
 
               <TouchableOpacity
                 activeOpacity={0.7}
@@ -309,7 +290,6 @@ const HomeTopSheetComponent = ({
           {/*button*/}
 
           <TouchableOpacity
-            onPress={handleLogout}
             activeOpacity={0.5}
             style={{
               // width: wp(340),
@@ -341,90 +321,6 @@ const HomeTopSheetComponent = ({
               style={{width: hp(14.7), height: hp(17.27)}}
             />
           </TouchableOpacity>
-        </View>
-      </Modal>
-
-      <Modal isVisible={showConfirmationModal}>
-        <View
-          style={{
-            backgroundColor: 'white',
-            padding: 20,
-            justifyContent: 'center',
-            borderRadius: 10,
-            width: wp(340),
-            height: hp(200),
-            alignSelf: 'center',
-          }}>
-          <View style={{marginHorizontal: 15}}>
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-                textAlign: 'center',
-              }}>
-              Are you sure you want to exit?
-            </Text>
-            {/*<TouchableOpacity onPress={handleLogout}>*/}
-            {/*  <Text>Yes</Text>*/}
-            {/*</TouchableOpacity>*/}
-            {/*<TouchableOpacity onPress={toggleConfirmationModal}>*/}
-            {/*  <Text>No</Text>*/}
-            {/*</TouchableOpacity>*/}
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 40,
-              }}>
-              <CommonGradientButton
-                buttonName={'Stay'}
-                containerStyle={{width: 122, height: 50}}
-                onPress={toggleConfirmationModal}
-              />
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  navigation.navigate('MainScreenDemo');
-                }}>
-                <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']}
-                  style={{
-                    width: wp(112),
-                    height: hp(50),
-                    borderRadius: 10,
-                    borderWidth: 1,
-                    justifyContent: 'center',
-                    borderColor: 'transparent', // Set border color to transparent
-                  }}>
-                  <View
-                    style={{
-                      borderRadius: 10, // <-- Inner Border Radius
-                      flex: 1,
-                      backgroundColor: colors.white,
-                      justifyContent: 'center',
-                      margin: isIOS ? 0 : 1,
-                    }}>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        backgroundColor: 'transparent',
-                        color: colors.black,
-                        margin: 10,
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Log out
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </View>
         </View>
       </Modal>
     </SafeAreaView>

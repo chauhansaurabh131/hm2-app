@@ -9,12 +9,17 @@ import {
 import {DemoImage} from '../../utils/data';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '../../assets';
+import {useNavigation} from '@react-navigation/native';
 
 const StoryComponent = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
       <View style={{padding: 7}}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            console.log(' === var ===> ', 'PRESS MY STORY');
+          }}>
           <Image
             source={images.story_Add_Image}
             style={[
@@ -37,7 +42,12 @@ const StoryComponent = () => {
             padding: 5,
             marginLeft: 2,
           }}>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              // navigation.navigate('Xyz');
+              navigation.navigate('StoryShowComponent');
+            }}>
             <LinearGradient
               colors={['#0F52BA', '#0F52BA', '#0F52BA']}
               style={{padding: 2.5, borderRadius: 50}}>

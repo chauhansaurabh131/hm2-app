@@ -3,11 +3,11 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
-const ProfileCheckboxGroup = ({data, styleRow}) => {
-  const [selectedId, setSelectedId] = useState(null);
+const ProfileCheckboxGroup = ({data, selectedId}) => {
+  const [checkedId, setCheckedId] = useState(selectedId);
 
   const handleCheckboxChange = id => {
-    setSelectedId(id);
+    setCheckedId(id);
   };
 
   return (
@@ -17,12 +17,9 @@ const ProfileCheckboxGroup = ({data, styleRow}) => {
           <TouchableOpacity
             onPress={() => handleCheckboxChange(item.id)}
             style={styles.checkboxContainer}>
-            <View
-              style={[
-                styles.checkbox,
-                selectedId === item.id && styles.checked,
-              ]}
-            />
+            <View style={styles.outerCircle}>
+              {checkedId === item.id && <View style={styles.innerCircle} />}
+            </View>
           </TouchableOpacity>
           <View style={styles.textContainer}>
             <Text style={styles.label}>{item.label}</Text>
@@ -45,15 +42,19 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     marginRight: 10,
   },
-  checkbox: {
+  outerCircle: {
     width: 16,
     height: 16,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: '#000',
-    borderRadius: 10,
-    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  checked: {
+  innerCircle: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#000',
   },
   textContainer: {
@@ -68,8 +69,6 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: fontSize(10),
     lineHeight: hp(14),
-    // fontFamily: fontFamily.poppins400,
-    // color: colors.gray,
     color: '#464646',
   },
 });

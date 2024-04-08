@@ -48,6 +48,9 @@ import SelectImageScreen from './src/screen/selectImageScreen';
 import AddProfilePictureScreen from './src/screen/addProfilePictureScreen';
 import PartnerPreferencesScreen from './src/screen/partnerPreferencesScreen';
 import ChatUserScreen from './src/screen/chatUserScreen';
+import SuccessStoryPageScreen from './src/screen/successStoryPageScreen';
+import SuccessStoryEditInformationScreen from './src/screen/successStoryEditInformationScreen';
+import StoryShowComponent from './src/components/storyShowComponent';
 
 LogBox.ignoreAllLogs();
 
@@ -153,11 +156,6 @@ const MainStack = () => {
         component={PartnerPreferencesScreen}
         options={{headerShown: false}}
       />
-      {/*<Stack.Screen*/}
-      {/*  name="ChatUserScreen"*/}
-      {/*  component={ChatUserScreen}*/}
-      {/*  options={{headerShown: false}}*/}
-      {/*/>*/}
     </Stack.Navigator>
   );
 };
@@ -170,11 +168,6 @@ const ExtraScreens = () => {
         component={AccountsScreen}
         options={{headerShown: false}}
       />
-      {/*<ExtraStack.Screen*/}
-      {/*  name="MyProfileScreen"*/}
-      {/*  component={MyProfileScreen}*/}
-      {/*  options={{headerShown: false}}*/}
-      {/*/>*/}
 
       <ExtraStack.Screen
         name="CredentialsScreen"
@@ -262,6 +255,24 @@ const ProfileStack = () => {
   );
 };
 
+const SuccessStoryStack = () => {
+  return (
+    <ExtrasStack.Navigator>
+      <ExtraStack.Screen
+        name="SuccessStoryPageScreen"
+        component={SuccessStoryPageScreen}
+        options={{headerShown: false}}
+      />
+
+      <ExtraStack.Screen
+        name="SuccessStoryEditInformationScreen"
+        component={SuccessStoryEditInformationScreen}
+        options={{headerShown: false}}
+      />
+    </ExtrasStack.Navigator>
+  );
+};
+
 const App = () => {
   useEffect(() => {
     hasPermission();
@@ -292,6 +303,12 @@ const App = () => {
           <Stack.Screen
             name="HomeTabs"
             component={HomeTabs}
+            options={{headerShown: false}}
+          />
+
+          <Stack.Screen
+            name="StoryShowComponent"
+            component={StoryShowComponent}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
@@ -528,8 +545,28 @@ const HomeTabs = () => {
         component={UsersChatsScreen}
         options={{tabBarButton: () => null, headerShown: false}}
       />
+      <Tab.Screen
+        name="SuccessStoryPageScreen"
+        component={SuccessStoryStack}
+        options={{tabBarButton: () => null, headerShown: false}}
+      />
     </Tab.Navigator>
   );
 };
 
 export default App;
+
+// import React from 'react';
+// import {SafeAreaProvider} from 'react-native-safe-area-context';
+// import MainNavigator from './src/navigations';
+// import {LogBox} from 'react-native';
+// LogBox.ignoreAllLogs();
+// const App = () => {
+//   return (
+//     <SafeAreaProvider>
+//       <MainNavigator />
+//     </SafeAreaProvider>
+//   );
+// };
+//
+// export default App;

@@ -5,18 +5,11 @@ import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import CheckBox from 'react-native-check-box';
 import CheckBoxComponent from '../../components/checkBoxComponent ';
 
 const EmailSmsAlertScreen = () => {
   const navigation = useNavigation();
-  const [isChecked, setChecked] = useState(false);
-  const [isDailyChecked, setDailyChecked] = useState(false);
-  const [isWeeklyChecked, setWeeklyChecked] = useState(false);
-  const [isTriWeeklyChecked, setTriWeeklyChecked] = useState(false);
-
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [permission, setPermission] = useState();
 
   const handleSelect = selectedItems => {
     setSelectedOptions(selectedItems);
@@ -34,7 +27,7 @@ const EmailSmsAlertScreen = () => {
   ];
 
   const privacyOptions = [
-    {id: 1, label: 'Daily '},
+    {id: 1, label: 'Daily'},
     {id: 2, label: 'Tri-Weekly'},
     {id: 3, label: 'Weekly'},
     {id: 4, label: 'Unsubscribe'},
@@ -89,16 +82,11 @@ const EmailSmsAlertScreen = () => {
         </Text>
 
         <View style={style.checkBoxContainer}>
-          {/*  <CheckBox*/}
-          {/*    isChecked={isChecked}*/}
-          {/*    onClick={() => setChecked(!isChecked)}*/}
-          {/*    checkBoxColor={colors.blue}*/}
-          {/*  />*/}
-
-          {/*  <Text style={style.checkBoxTittleText}>*/}
-          {/*    Send me Broader Matches if there are no new{'\n'}Preferred Matches*/}
-          {/*  </Text>*/}
-          <CheckBoxComponent options={Permission} onSelect={handlePermission} />
+          <CheckBoxComponent
+            options={Permission}
+            onSelect={handlePermission}
+            defaultSelectedId={1}
+          />
         </View>
 
         <View style={style.underLineHeaderStyle} />
@@ -108,11 +96,13 @@ const EmailSmsAlertScreen = () => {
         </Text>
 
         <View style={{marginTop: 15}}>
-          <CheckBoxComponent options={privacyOptions} onSelect={handleSelect} />
+          <CheckBoxComponent
+            options={privacyOptions}
+            onSelect={handleSelect}
+            defaultSelectedId={1}
+          />
         </View>
       </View>
-
-      {/*</View>*/}
     </SafeAreaView>
   );
 };

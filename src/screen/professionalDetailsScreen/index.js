@@ -33,6 +33,7 @@ const ProfessionalsDetailsScreen = () => {
               borderWidth: 1,
               marginTop: hp(7),
               padding: 10,
+              color: colors.black,
             }}
             placeholderTextColor={colors.black}
           />
@@ -83,6 +84,7 @@ const ProfessionalsDetailsScreen = () => {
               borderWidth: 1,
               marginTop: hp(7),
               padding: 10,
+              color: colors.black,
             }}
           />
 

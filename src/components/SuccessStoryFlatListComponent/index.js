@@ -50,10 +50,12 @@ const data = [
   },
 ];
 
-const SuccessStoryFlatListComponent = () => {
+const SuccessStoryFlatListComponent = ({onStoryPagePress}) => {
   const renderItem = ({item}) => (
     <View style={styles.itemContainer}>
-      <Image source={item.image} style={styles.image} />
+      <TouchableOpacity activeOpacity={0.6} onPress={onStoryPagePress}>
+        <Image source={item.image} style={styles.image} />
+      </TouchableOpacity>
 
       <View style={styles.imageTextContainer}>
         <Text style={styles.headingTextStyle}>{item.name}</Text>

@@ -40,6 +40,7 @@ const ContactDetailsScreen = () => {
 
           <TextInput
             placeholder={'Type'}
+            keyboardType="numeric"
             placeholderTextColor={colors.black}
             style={{
               width: wp(205),
@@ -48,6 +49,7 @@ const ContactDetailsScreen = () => {
               borderColor: colors.lightGreyBorder,
               padding: 15,
               borderRadius: 10,
+              color: colors.black,
             }}
           />
         </View>
@@ -82,6 +84,7 @@ const ContactDetailsScreen = () => {
           <TextInput
             placeholder={'Type'}
             placeholderTextColor={colors.black}
+            keyboardType="numeric"
             style={{
               width: wp(205),
               height: 50,
@@ -89,6 +92,7 @@ const ContactDetailsScreen = () => {
               borderColor: colors.lightGreyBorder,
               padding: 15,
               borderRadius: 10,
+              color: colors.black,
             }}
           />
         </View>
@@ -125,6 +129,7 @@ const ContactDetailsScreen = () => {
             padding: 15,
             borderRadius: 10,
             marginTop: hp(7),
+            color: colors.black,
           }}
         />
       </View>

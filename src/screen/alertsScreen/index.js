@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {
   FlatList,
   Image,
+  Pressable,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -13,9 +14,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import style from './style';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import BottomSheet from '../../components/bottomSheet';
 
 const AlertsScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const data = [
     {
       id: '1',
@@ -104,11 +107,22 @@ const AlertsScreen = () => {
     // Add more data as needed
   ];
 
+  // const toggleModal = () => {
+  //   setTopModalVisible(!topModalVisible);
+  // };
+  // const openTopSheetModal = () => {
+  //   toggleModal();
+  // };
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
   };
-  const openTopSheetModal = () => {
-    toggleModal();
+
+  const toggleBottomSheet = () => {
+    setIsOpen(prevState => !prevState);
+  };
+
+  const handleBackdropPress = () => {
+    setIsOpen(false);
   };
 
   const renderItem = ({item}) => (
@@ -231,7 +245,10 @@ const AlertsScreen = () => {
             }}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            // onPress={openTopSheetModal}
+          >
             <Image
               source={images.profileDisplayImage}
               style={{
@@ -263,7 +280,11 @@ const AlertsScreen = () => {
             }}>
             All Notifications
           </Text>
-          <TouchableOpacity style={{flexDirection: 'row'}} activeOpacity={0.5}>
+          <TouchableOpacity
+            style={{flexDirection: 'row'}}
+            activeOpacity={0.5}
+            // onPress={toggleBottomSheet}
+          >
             <Text
               style={{
                 color: colors.blue,
@@ -302,6 +323,7 @@ const AlertsScreen = () => {
         onBackdropPress={toggleModal}
         onBackButtonPress={toggleModal}
       />
+      {/*<BottomSheet isOpen={isOpen} setIsOpen={toggleBottomSheet} />*/}
     </SafeAreaView>
   );
 };

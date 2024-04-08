@@ -27,6 +27,7 @@ import CommonGradientButton from '../../components/commonGradientButton';
 import GifImage from '@lowkey/react-native-gif';
 
 const HomeScreen = ({navigation}) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
@@ -237,7 +238,11 @@ const HomeScreen = ({navigation}) => {
             <Text style={style.premiumTextStyle}>Success Stories</Text>
           </View>
 
-          <SuccessStoryFlatListComponent />
+          <SuccessStoryFlatListComponent
+            onStoryPagePress={() => {
+              navigation.navigate('SuccessStoryPageScreen');
+            }}
+          />
 
           {/*VERIFICATION MODAL OPEN */}
 

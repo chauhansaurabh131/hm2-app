@@ -22,6 +22,9 @@ import AdminHobbiesAndInterestScreen from '../screen/adminProfileDetailsScreen/a
 export const STANDARD_SCREEN_HEIGHT = 764;
 export const STANDARD_SCREEN_WIDTH = 390;
 
+export const TOKEN = 'TOKEN';
+export const BASE_URL = 'https://api.solesearchindia.com';
+
 // const images = [
 //   require('../../assets/icons/address_location_logo.png'),
 //   require('../../assets/icons/phone_logo.png'),

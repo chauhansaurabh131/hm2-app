@@ -1,17 +1,8 @@
 import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  Text,
-  View,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import style from './style';
+import {SafeAreaView, Text, View, TouchableOpacity} from 'react-native';
+
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
-import {RELIGION_LIST} from '../../utils/data';
 import DropDownMutipleValueComponent from '../../components/DropDownMutipleValueComponent';
 
 const HobbiesAndInterestScreen = () => {

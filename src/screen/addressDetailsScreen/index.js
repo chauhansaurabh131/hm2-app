@@ -1,12 +1,7 @@
 import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, Text, TextInput, View} from 'react-native';
-import {icons, images} from '../../assets';
 import style from './style';
-import HeaderLogo from '../../components/HeaderLogo';
 import {colors} from '../../utils/colors';
-import {SelectList} from 'react-native-dropdown-select-list/index';
-import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
-import {COUNTRY_LIST, CurrentCity} from '../../utils/data';
 import CheckBox from 'react-native-check-box';
 import {fontFamily, fontSize, hp, isIOS} from '../../utils/helpers';
 import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
@@ -54,6 +49,7 @@ const AddressDetailsScreen = ({navigation}) => {
               padding: 15,
               borderRadius: 10,
               marginTop: hp(7),
+              color: colors.black,
             }}
           />
 
@@ -158,6 +154,7 @@ const AddressDetailsScreen = ({navigation}) => {
               padding: 15,
               borderRadius: 10,
               marginTop: hp(7),
+              color: colors.black,
             }}
           />
 

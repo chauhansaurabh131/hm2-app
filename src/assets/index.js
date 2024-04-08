@@ -22,6 +22,10 @@ export const images = {
   user_Two_Image: require('./images/user_two.png'),
   user_Three_Image: require('./images/user_three.png'),
   user_Four_Image: require('./images/user_four.png'),
+  couple_One_Image: require('./images/couple_One.png'),
+  couple_Two_Image: require('./images/couple_Two.png'),
+  couple_Three_Image: require('./images/couple_Three.png'),
+  video_one: require('./images/video_one.mp4'),
 };
 
 export const icons = {
@@ -79,6 +83,10 @@ export const icons = {
   search_icon: require('./icons/search_icon.png'),
   three_dots_icon: require('./icons/three_dot_icon.png'),
   clear_delete_icon: require('./icons/clear_delete_icon.png'),
+  plus_icon: require('./icons/plus_icon.png'),
+  share_icon: require('./icons/share_icon.png'),
+  heart_icon: require('./icons/heart_icon.png'),
+  add_image_icon: require('./icons/add_image_icon.png'),
 };
 
 export const gif = {

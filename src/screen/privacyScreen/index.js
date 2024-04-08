@@ -67,7 +67,7 @@ const PrivacyScreen = () => {
       <View style={style.bodyContainer}>
         <Text style={style.bodyTittleTextStyle}>Select Display Name</Text>
 
-        <ProfileCheckboxGroup data={Display_Name} />
+        <ProfileCheckboxGroup data={Display_Name} selectedId={1} />
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
@@ -75,21 +75,21 @@ const PrivacyScreen = () => {
           Who can see your mobile Number?{' '}
         </Text>
 
-        <ProfileCheckboxGroup data={Number_Privacy_Data} />
+        <ProfileCheckboxGroup data={Number_Privacy_Data} selectedId={1} />
 
-        <View style={style.descriptionBodyUnderlineStyle} />
+        <View style={style.descriptionBodyUnderlineStyle} selectedId={1} />
 
         <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
           Who can see your email address?
         </Text>
-        <ProfileCheckboxGroup data={Number_Privacy_Data} />
+        <ProfileCheckboxGroup data={Number_Privacy_Data} selectedId={1} />
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
         <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
           Profile Privacy
         </Text>
-        <ProfileCheckboxGroup data={Profile_Privacy} />
+        <ProfileCheckboxGroup data={Profile_Privacy} selectedId={1} />
       </View>
     </SafeAreaView>
   );
