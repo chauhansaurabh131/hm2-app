@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -10,30 +10,19 @@ import {
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
-const ChatUserScreen = c => {
-  const {route} = c;
+const ChatUserScreen = ({navigation, route}) => {
   const {userData} = route.params || {};
-
-  console.log(' === userDataq ===> ', JSON.stringify({c, userData}, null, 2));
-
-  const navigation = useNavigation();
+  const [user, setUser] = useState(userData);
 
   useEffect(() => {
-    const backAction = () => {
-      console.log(' === ayay ===> ');
-      navigation.navigate('Chat');
-      return false;
-    };
+    setUser(userData);
+  }, [userData]);
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove(); // Clean up the event listener
-  }, []);
+  console.log(' === userData ..... ===> ', userData);
+  console.log(' === var ===> ', userData.name);
+  //
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
@@ -90,10 +79,10 @@ const ChatUserScreen = c => {
                 fontFamily: fontFamily.poppins600,
                 color: colors.black,
               }}>
-              {userData?.name || ''}
+              {/*{name?.name || ''}*/}
             </Text>
 
-            {/*<Text>{userData.online}</Text>*/}
+            <Text>{userData.name}</Text>
           </View>
 
           {/* Display the ellipsis */}

@@ -4,11 +4,16 @@ import style from './style';
 import {images} from '../../assets';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
 const SetProfilePictureScreen = () => {
   const [photo, setPhoto] = useState([]);
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const {selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox_SetProfilePictureScreen ===> ', selectedBox);
 
   const getAllPhotos = () => {
     CameraRoll.getPhotos({
@@ -17,7 +22,10 @@ const SetProfilePictureScreen = () => {
     })
       .then(r => {
         setPhoto(r.edges);
-        navigation.navigate('SelectImageScreen', {photos: r.edges});
+        navigation.navigate('SelectImageScreen', {
+          photos: r.edges,
+          selectedBox: selectedBox,
+        });
       })
       .catch(err => {
         console.error('Error fetching photos:', err);
@@ -59,7 +67,7 @@ const SetProfilePictureScreen = () => {
 
             <CommonGradientButton
               onPress={() => {
-                navigation.navigate('PartnerPreferencesScreen');
+                navigation.navigate('PartnerPreferencesScreen', {selectedBox});
               }}
               buttonName={'I’ll Do Later'}
               containerStyle={style.laterButtonStyle}

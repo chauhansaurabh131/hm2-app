@@ -17,9 +17,10 @@ const EducationDetailsScreen = () => {
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               fontWeight: '400',
-              marginTop: hp(10),
+              marginTop: hp(20),
+              marginBottom: hp(7),
             }}>
             Degree
           </Text>
@@ -38,9 +39,10 @@ const EducationDetailsScreen = () => {
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               fontWeight: '400',
-              marginTop: hp(10),
+              marginTop: hp(15),
+              marginBottom: hp(7),
             }}>
             Collage/University
           </Text>
@@ -59,9 +61,10 @@ const EducationDetailsScreen = () => {
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               fontWeight: '400',
-              marginTop: hp(10),
+              marginTop: hp(15),
+              marginBottom: hp(7),
             }}>
             City
           </Text>
@@ -89,9 +92,10 @@ const EducationDetailsScreen = () => {
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               fontWeight: '400',
-              marginTop: hp(10),
+              marginTop: hp(15),
+              marginBottom: hp(7),
             }}>
             State
           </Text>
@@ -119,9 +123,10 @@ const EducationDetailsScreen = () => {
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               fontWeight: '400',
-              marginTop: hp(10),
+              marginTop: hp(15),
+              marginBottom: hp(7),
             }}>
             Country
           </Text>

@@ -25,13 +25,25 @@ import {fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import FastImage from 'react-native-fast-image';
 import CommonGradientButton from '../../components/commonGradientButton';
 import GifImage from '@lowkey/react-native-gif';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import RecentlyAcceptedFlatlistComponent from '../../components/recentlyAcceptedFlatlistComponent';
+import RecentlySendFlatlistComponent from '../../components/recentlySendFlatlistComponent';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({route}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
     useState(false);
+
+  const navigation = useNavigation();
+
+  // const route = useRoute();
+
+  const {sharedMedia, selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox Home ===> ', selectedBox);
+  console.log(sharedMedia);
 
   useEffect(() => {}, []);
 
@@ -45,7 +57,7 @@ const HomeScreen = ({navigation}) => {
 
   const verificationModalToggle = () => {
     setCompleteModalModalVisible(false);
-    navigation.navigate('GeneralInformationScreen');
+    navigation.navigate('GeneralInformationScreen', {selectedBox});
   };
 
   const openTopSheetModal = () => {
@@ -53,7 +65,7 @@ const HomeScreen = ({navigation}) => {
     toggleModal();
   };
 
-  const completeOpenModal = () => {
+  const completeOpenModal = selectedBox => {
     setCompleteModalModalVisible(true);
   };
 
@@ -111,8 +123,6 @@ const HomeScreen = ({navigation}) => {
                 style={{
                   marginTop: 34,
                   alignItems: 'center',
-                  // marginTop: -110,
-                  // backgroundColor: 'green',
                 }}>
                 <Text style={style.modalSubTitleTextStyle}>
                   "New Beginnings, New Possibilities!
@@ -122,13 +132,6 @@ const HomeScreen = ({navigation}) => {
                 </Text>
                 <Text style={style.modalSubTitleTextStyle}>HappyMilan</Text>
               </View>
-
-              {/*<GradientButton*/}
-              {/*  buttonName={'Start Exploring'}*/}
-              {/*  containerStyle={style.gradientButtonContainerStyle}*/}
-              {/*  buttonTextStyle={{color: colors.white}}*/}
-              {/*  onPress={closeWelcomeModal}*/}
-              {/*/>*/}
 
               <CommonGradientButton
                 buttonName={'Start Exploring'}
@@ -196,39 +199,114 @@ const HomeScreen = ({navigation}) => {
             onBackButtonPress={toggleModal}
           />
 
-          <View style={style.premiumTextContainer}>
-            <Text style={style.premiumTextStyle}>Premium Matches</Text>
-            <Text style={style.premiumTextsStyle}>110</Text>
-          </View>
+          {/*<View style={style.premiumTextContainer}>*/}
+          {/*  <Text style={style.premiumTextStyle}>Premium Matches</Text>*/}
+          {/*  <Text style={style.premiumTextsStyle}>110</Text>*/}
+          {/*</View>*/}
+
+          {selectedBox === 'marriage' && (
+            <>
+              <View style={style.premiumTextContainer}>
+                <Text style={style.premiumTextStyle}>Premium Matches</Text>
+                <Text style={style.premiumTextsStyle}>110</Text>
+              </View>
+              {/* Render Premium Matches component */}
+            </>
+          )}
+
+          {selectedBox === 'dating' && (
+            <>
+              <View style={style.premiumTextContainer}>
+                <Text style={style.premiumTextStyle}>Recently Accepted</Text>
+                <Text style={style.premiumTextsStyle}>02</Text>
+              </View>
+              {/* Render Recently Accepted component */}
+            </>
+          )}
 
           {/*PREMIUM MATCHES COMPONENT*/}
           <View style={style.PremiumMatchesTextContainer}>
-            <PremiumMatchesFlatlistComponent
-              data={userData}
-              isOnline
-              shareButtonPress={completeOpenModal}
-              // shareButtonPress={() => {
-              //   console.log(' === var ===> ', 'press');
-              // }}
-            />
+            {/*<PremiumMatchesFlatlistComponent*/}
+            {/*  data={userData}*/}
+            {/*  isOnline*/}
+            {/*  shareButtonPress={completeOpenModal}*/}
+            {/*  // shareButtonPress={() => {*/}
+            {/*  //   console.log(' === var ===> ', 'press');*/}
+            {/*  // }}*/}
+            {/*/>*/}
+
+            {selectedBox === 'marriage' ? (
+              <PremiumMatchesFlatlistComponent
+                data={NEW_MATCHES}
+                shareButtonPress={() => {
+                  completeOpenModal(selectedBox);
+                }}
+                // shareButtonPress={completeOpenModal}
+                // shareButtonPress={() => {
+                //   console.log(
+                //     ' === var ===> ',
+                //     'New Matches Share Button Press',
+                //   );
+                // }}
+              />
+            ) : (
+              <RecentlyAcceptedFlatlistComponent
+                data={NEW_MATCHES}
+                OnImagePress={() => {
+                  console.log(' === NEW_MATCHES PRESS ===> ');
+                  navigation.navigate('UserDetailsScreen', {selectedBox});
+                }}
+                shareButtonPress={completeOpenModal}
+              />
+            )}
           </View>
 
           <TouchableOpacity activeOpacity={0.7}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>
           </TouchableOpacity>
 
-          <View style={style.premiumTextContainer}>
-            <Text style={style.premiumTextStyle}>New Matches</Text>
-            <Text style={style.premiumTextsStyle}>42</Text>
-          </View>
+          {/*<View style={style.premiumTextContainer}>*/}
+          {/*  <Text style={style.premiumTextStyle}>New Matches</Text>*/}
+          {/*  <Text style={style.premiumTextsStyle}>42</Text>*/}
+          {/*</View>*/}
+
+          {selectedBox === 'marriage' && (
+            <>
+              <View style={style.premiumTextContainer}>
+                <Text style={style.premiumTextStyle}>New Matches</Text>
+                <Text style={style.premiumTextsStyle}>42</Text>
+              </View>
+            </>
+          )}
+
+          {selectedBox === 'dating' && (
+            <>
+              <View style={style.premiumTextContainer}>
+                <Text style={style.premiumTextStyle}>Recently Sent</Text>
+                <Text style={style.premiumTextsStyle}>10</Text>
+              </View>
+            </>
+          )}
 
           {/*<NewMatchesFlatlistComponent />*/}
-          <PremiumMatchesFlatlistComponent
-            data={NEW_MATCHES}
-            shareButtonPress={() => {
-              console.log(' === var ===> ', 'New Matches Share Button Press');
-            }}
-          />
+          {selectedBox === 'marriage' ? (
+            <PremiumMatchesFlatlistComponent
+              data={NEW_MATCHES}
+              shareButtonPress={() => {
+                console.log(' === var ===> ', 'New Matches Share Button Press');
+              }}
+            />
+          ) : (
+            <RecentlySendFlatlistComponent
+              data={NEW_MATCHES}
+              OnImagePress={() => {
+                console.log(' === IMAGE ===> ');
+              }}
+              shareButtonPress={() => {
+                console.log(' === var ===> ', 'New Matches Share Button Press');
+              }}
+            />
+          )}
 
           <TouchableOpacity activeOpacity={0.7}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>

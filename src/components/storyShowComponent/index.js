@@ -25,7 +25,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {icons, images} from '../../assets';
 import Video from 'react-native-video';
 
@@ -39,16 +39,19 @@ const StoryShowComponent = () => {
       content: require('../../assets/images/couple_One.png'),
       type: 'image',
       finish: 0,
+      Des: '"If I had a flower every time I thought of you, I could walk in my garden forever." ',
     },
     {
       content: require('../../assets/images/video_one.mp4'),
       type: 'video',
       finish: 0,
+      Des: "Love is the flower. You've got to let it grow.",
     },
     {
       content: require('../../assets/images/couple_Two.png'),
       type: 'image',
       finish: 0,
+      Des: 'If you live to be a hundred, I want to live to be a hundred minus one day, so I never have to live without you.',
     },
     {
       content: require('../../assets/images/demo_5.png'),
@@ -61,6 +64,9 @@ const StoryShowComponent = () => {
       finish: 0,
     },
   ]);
+
+  const route = useRoute();
+  const {sharedMedia} = route.params ?? {};
 
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -112,20 +118,55 @@ const StoryShowComponent = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
       {content[current].type === 'video' ? (
-        <Video
-          source={content[current].content}
-          resizeMode="cover"
-          paused={false}
-          onLoad={play}
-          onEnd={next}
-          style={{width: width, height: height}}
-        />
+        <>
+          <Video
+            source={content[current].content}
+            resizeMode="cover"
+            paused={false}
+            onLoad={play}
+            onEnd={next}
+            style={{width: width, height: height}}
+          />
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 16,
+              textAlign: 'center',
+              position: 'absolute',
+              bottom: 10,
+              alignSelf: 'center',
+            }}>
+            {content[current].Des}
+          </Text>
+        </>
       ) : (
-        <Image
-          source={content[current].content}
-          onLoadEnd={start}
-          style={{width: width, height: height, resizeMode: 'cover'}}
-        />
+        <>
+          <Image
+            source={content[current].content}
+            onLoadEnd={start}
+            style={{width: width, height: height, resizeMode: 'cover'}}
+          />
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 16,
+              textAlign: 'center',
+              position: 'absolute',
+              bottom: 10,
+              alignSelf: 'center',
+            }}>
+            {content[current].Des}
+          </Text>
+
+          {/*{sharedMedia ? (*/}
+          {/*  <Image*/}
+          {/*    source={{uri: sharedMedia.mediaUri}}*/}
+          {/*    style={{flex: 1, resizeMode: 'cover'}}*/}
+          {/*  />*/}
+          {/*) : (*/}
+          {/*  <Text>No shared media available</Text>*/}
+          {/*)}*/}
+        </>
       )}
 
       <View

@@ -87,6 +87,10 @@ export const icons = {
   share_icon: require('./icons/share_icon.png'),
   heart_icon: require('./icons/heart_icon.png'),
   add_image_icon: require('./icons/add_image_icon.png'),
+  camera_icon: require('./icons/camera_icon.png'),
+  filter_icon: require('./icons/filter_icon.png'),
+  star_border_icon: require('./icons/star_border_icon.png'),
+  disLike_icon: require('./icons/dislike_icon.png'),
 };
 
 export const gif = {

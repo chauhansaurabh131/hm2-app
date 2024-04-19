@@ -9,29 +9,42 @@ import {
 import {DemoImage} from '../../utils/data';
 import LinearGradient from 'react-native-linear-gradient';
 import {images} from '../../assets';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
 const StoryComponent = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const {sharedMedia} = route.params ?? {};
+
   return (
     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
       <View style={{padding: 7}}>
         <TouchableOpacity
           onPress={() => {
-            console.log(' === var ===> ', 'PRESS MY STORY');
+            if (sharedMedia) {
+              navigation.navigate('StoryShowComponent', {sharedMedia}); // Navigate to StoryShowComponent with sharedMedia data
+            } else {
+              navigation.navigate('OpenGalleryStoryScreen'); // Navigate to OpenGalleryStoryScreen if sharedMedia is not available
+            }
           }}>
-          <Image
-            source={images.story_Add_Image}
-            style={[
-              styles.usersImage,
-              {
-                backgroundColor: '#F5F5F5',
-                resizeMode: 'stretch',
-                marginLeft: -5,
-                // marginLeft: 10,
-              },
-            ]}
-          />
+          {sharedMedia ? (
+            <Image
+              source={{uri: sharedMedia.mediaUri}}
+              style={styles.usersImage}
+            />
+          ) : (
+            <Image
+              source={images.story_Add_Image}
+              style={[
+                styles.usersImage,
+                {
+                  backgroundColor: '#F5F5F5',
+                  resizeMode: 'stretch',
+                  marginLeft: -5,
+                },
+              ]}
+            />
+          )}
         </TouchableOpacity>
       </View>
       {DemoImage.map((item, index) => (
@@ -45,8 +58,7 @@ const StoryComponent = () => {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
-              // navigation.navigate('Xyz');
-              navigation.navigate('StoryShowComponent');
+              navigation.navigate('StoryShowComponent', {sharedMedia});
             }}>
             <LinearGradient
               colors={['#0F52BA', '#0F52BA', '#0F52BA']}

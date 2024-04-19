@@ -9,27 +9,15 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import style from './style';
 import {colors} from '../../utils/colors';
-import {fontFamily, hp, wp} from '../../utils/helpers';
-import MyTextInput from '../../components/TextInput';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons} from '../../assets';
-import {
-  CASTE_LIST,
-  COUNTRY_LIST,
-  CurrentCity,
-  RELIGION_LIST,
-} from '../../utils/data';
-import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import DemoPractiveCodeScreen from '../demoPractiveCodeScreen';
-import AlertsScreen from '../alertsScreen';
 
 const GeneralInformationDetailsScreen = () => {
   const [selectedGender, setSelectedGender] = useState(null);
   const [selectedOption, setSelectedOption] = useState('');
-  // const options = ['Option 1', 'Option 2', 'Option 3'];
+
   const handleOptionSelected = option => {
     setSelectedOption(option.label); // Update the selected option to the label
   };
@@ -53,24 +41,20 @@ const GeneralInformationDetailsScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      {/*<KeyboardAwareScrollView*/}
-      {/*  contentContainerStyle={{flexGrow: 1}}*/}
-      {/*  showsVerticalScrollIndicator={false}>*/}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View
           style={{
             flex: 1,
             marginHorizontal: wp(18),
             marginTop: hp(8),
-            // backgroundColor: 'lightgreen',
           }}>
           <Text
             style={{
-              fontSize: hp(14),
-              lineHeight: hp(18),
-              marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontSize: fontSize(14),
+              lineHeight: hp(19),
+              fontFamily: fontFamily.poppins600,
+              marginTop: hp(16),
             }}>
             Give us your name as per ID
           </Text>
@@ -102,11 +86,10 @@ const GeneralInformationDetailsScreen = () => {
                 borderColor: colors.lightGreyBorder,
                 padding: 15,
                 borderRadius: 10,
-                marginTop: hp(7),
+                marginTop: hp(13),
                 paddingLeft: 16,
                 color: colors.black,
               },
-              {marginTop: hp(13)},
             ]}
           />
 
@@ -116,7 +99,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
             }}>
             Gender
           </Text>
@@ -170,7 +153,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
             }}>
             Date of Birth
           </Text>
@@ -215,7 +198,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
             }}>
             Birth of Time
           </Text>
@@ -282,7 +265,7 @@ const GeneralInformationDetailsScreen = () => {
               marginTop: hp(16),
               marginBottom: hp(9),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
             }}>
             Religion
           </Text>
@@ -315,7 +298,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               marginBottom: hp(9),
             }}>
             Caste / Sub Caste
@@ -346,7 +329,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               marginBottom: hp(9),
             }}>
             Current City
@@ -379,7 +362,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               marginBottom: hp(9),
             }}>
             Country of Living
@@ -413,7 +396,7 @@ const GeneralInformationDetailsScreen = () => {
               lineHeight: hp(18),
               marginTop: hp(16),
               color: colors.black,
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
             }}>
             Write About Yourself
           </Text>

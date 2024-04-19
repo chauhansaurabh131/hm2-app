@@ -20,7 +20,7 @@ const AddressDetailsScreen = ({navigation}) => {
               fontSize: fontSize(14),
               lineHeight: hp(18),
               fontWeight: '400',
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
             }}>
             Current Residing Address
           </Text>
@@ -48,7 +48,7 @@ const AddressDetailsScreen = ({navigation}) => {
               borderColor: colors.lightGreyBorder,
               padding: 15,
               borderRadius: 10,
-              marginTop: hp(7),
+              marginTop: hp(9),
               color: colors.black,
             }}
           />
@@ -59,7 +59,7 @@ const AddressDetailsScreen = ({navigation}) => {
               fontSize: fontSize(14),
               lineHeight: hp(18),
               fontWeight: '400',
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               marginTop: hp(15),
               marginBottom: hp(9),
             }}>
@@ -102,9 +102,10 @@ const AddressDetailsScreen = ({navigation}) => {
               fontSize: fontSize(14),
               lineHeight: hp(18),
               fontWeight: '400',
-              fontFamily: fontFamily.poppins500,
-              marginTop: isIOS ? hp(15) : hp(15),
-              marginBottom: hp(15),
+              fontFamily: fontFamily.poppins600,
+              marginTop: hp(15),
+              // marginBottom: hp(15),
+              marginBottom: hp(9),
             }}>
             Current Residing Country
           </Text>
@@ -136,8 +137,7 @@ const AddressDetailsScreen = ({navigation}) => {
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              // fontWeight: 'bold',
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               marginTop: isIOS ? hp(15) : hp(15),
             }}>
             Same as current address
@@ -153,7 +153,7 @@ const AddressDetailsScreen = ({navigation}) => {
               borderColor: colors.lightGreyBorder,
               padding: 15,
               borderRadius: 10,
-              marginTop: hp(7),
+              marginTop: hp(9),
               color: colors.black,
             }}
           />
@@ -185,7 +185,7 @@ const AddressDetailsScreen = ({navigation}) => {
                 fontSize: fontSize(14),
                 lineHeight: hp(21),
                 fontWeight: '400',
-                fontFamily: fontFamily.nunito400,
+                fontFamily: fontFamily.poppins500,
               }}>
               Same as current address
             </Text>

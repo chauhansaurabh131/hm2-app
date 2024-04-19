@@ -17,6 +17,10 @@ const SelectImageScreen = ({route}) => {
   const {photos} = route.params;
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const {selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox_SelectImageScreen ===> ', selectedBox);
+
   // Function to toggle selection of an item
   const toggleSelection = item => {
     const index = selectedItems.findIndex(
@@ -69,7 +73,10 @@ const SelectImageScreen = ({route}) => {
 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('AddProfilePictureScreen', {selectedItems});
+              navigation.navigate('AddProfilePictureScreen', {
+                selectedItems: selectedItems,
+                selectedBox: selectedBox,
+              });
             }}>
             <Image
               source={icons.back_arrow_icon}

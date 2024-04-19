@@ -16,7 +16,7 @@ const ContactDetailsScreen = () => {
             fontSize: fontSize(14),
             lineHeight: hp(18),
             fontWeight: '400',
-            fontFamily: fontFamily.poppins500,
+            fontFamily: fontFamily.poppins600,
           }}>
           Mobile Number
         </Text>
@@ -24,7 +24,7 @@ const ContactDetailsScreen = () => {
         <View
           style={{
             flexDirection: 'row',
-            marginTop: hp(10),
+            marginTop: hp(7),
             justifyContent: 'space-between',
             // backgroundColor: 'green',
           }}>
@@ -59,7 +59,7 @@ const ContactDetailsScreen = () => {
             marginTop: hp(15),
             fontSize: fontSize(14),
             lineHeight: hp(18),
-            fontFamily: fontFamily.poppins500,
+            fontFamily: fontFamily.poppins600,
             color: colors.black,
           }}>
           Home Number
@@ -69,7 +69,7 @@ const ContactDetailsScreen = () => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginTop: hp(10),
+            marginTop: hp(7),
           }}>
           <DropDownTextInputComponent
             placeholder={'Area Code'}
@@ -103,8 +103,8 @@ const ContactDetailsScreen = () => {
             fontSize: fontSize(14),
             lineHeight: hp(18),
             fontWeight: '400',
-            fontFamily: fontFamily.poppins500,
-            marginTop: hp(10),
+            fontFamily: fontFamily.poppins600,
+            marginTop: hp(15),
           }}>
           Enter Email Address
         </Text>

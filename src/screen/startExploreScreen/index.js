@@ -86,8 +86,8 @@ const StartExploreScreen = ({navigation}) => {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
-              // navigation.navigate('HomeTabsStack');
-              navigation.navigate('HomeTabs');
+              // navigation.navigate('HomeTabs');
+              navigation.navigate('HomeTabs', {selectedBox: selectedBox});
             }}
             style={style.buttonContainer}>
             <LinearGradient

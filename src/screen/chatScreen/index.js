@@ -115,14 +115,17 @@ const ChatScreen = ({navigation}) => {
     if (userInput === '') {
       const onlineStatusColor =
         item.online === 'online' ? colors.blue : '#A7A7A7';
-      const handleItemPress = () => {
-        // navigation.navigate('ChatUserScreen');
-        console.log(' === var ===> ', {item});
-        navigation.navigate('ChatUserScreen', {userData: item});
+
+      const handleItemPress = userData => {
+        navigation.navigate('HomeTabs', {
+          screen: 'ChatUserScreen',
+          params: {userData},
+        });
       };
+
       return (
         <TouchableOpacity
-          onPress={handleItemPress}
+          onPress={() => handleItemPress(item)}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -259,42 +262,6 @@ const ChatScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/*<TextInput*/}
-          {/*  style={{*/}
-          {/*    flex: 1,*/}
-          {/*    height: 50,*/}
-          {/*    borderWidth: 1,*/}
-          {/*    borderColor: colors.blue,*/}
-          {/*    marginTop: hp(22),*/}
-          {/*    borderRadius: 10,*/}
-          {/*    paddingLeft: 20,*/}
-          {/*    textAlign: 'left',*/}
-          {/*    marginBottom: hp(18),*/}
-          {/*  }}*/}
-          {/*  placeholder="Search Member"*/}
-          {/*  placeholderTextColor="black"*/}
-          {/*  autoCorrect={false}*/}
-          {/*  onChangeText={text => setUserInput(text)}*/}
-          {/*/>*/}
-
-          {/* Container for image */}
-          {/*<TouchableOpacity*/}
-          {/*  disabled={true}*/}
-          {/*  activeOpacity={0.7}*/}
-          {/*  style={{*/}
-          {/*    position: 'absolute',*/}
-          {/*    right: 10,*/}
-          {/*    justifyContent: 'center',*/}
-          {/*    alignItems: 'center',*/}
-          {/*    width: 42,*/}
-          {/*    height: 40,*/}
-          {/*    // backgroundColor: '#F5FBFF',*/}
-          {/*    backgroundColor: 'red',*/}
-          {/*    top: 26,*/}
-          {/*  }}>*/}
-          {/*  <Image source={icons.search_icon} style={{width: 20, height: 20}} />*/}
-          {/*</TouchableOpacity>*/}
-
           <View
             style={{
               position: 'relative',

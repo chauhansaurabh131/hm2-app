@@ -273,8 +273,8 @@ const HobbiesAndInterestScreen = () => {
             color: colors.black,
             fontSize: fontSize(14),
             lineHeight: hp(18),
-            fontFamily: fontFamily.poppins500,
-            marginTop: hp(31),
+            fontFamily: fontFamily.poppins600,
+            marginTop: hp(20),
             marginBottom: hp(11),
           }}>
           Creative
@@ -287,8 +287,8 @@ const HobbiesAndInterestScreen = () => {
             color: colors.black,
             fontSize: fontSize(14),
             lineHeight: hp(18),
-            fontFamily: fontFamily.poppins500,
-            marginTop: hp(20),
+            fontFamily: fontFamily.poppins600,
+            marginTop: hp(15),
             marginBottom: hp(11),
           }}>
           Fun
@@ -301,8 +301,8 @@ const HobbiesAndInterestScreen = () => {
             color: colors.black,
             fontSize: fontSize(14),
             lineHeight: hp(18),
-            fontFamily: fontFamily.poppins500,
-            marginTop: hp(20),
+            fontFamily: fontFamily.poppins600,
+            marginTop: hp(15),
             marginBottom: hp(11),
           }}>
           Fitness

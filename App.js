@@ -51,6 +51,9 @@ import ChatUserScreen from './src/screen/chatUserScreen';
 import SuccessStoryPageScreen from './src/screen/successStoryPageScreen';
 import SuccessStoryEditInformationScreen from './src/screen/successStoryEditInformationScreen';
 import StoryShowComponent from './src/components/storyShowComponent';
+import OpenGalleryStoryScreen from './src/screen/openGalleryStoryScreen';
+import SetStoryScreen from './src/screen/setStoryScreen';
+import ExploreScreen from './src/screen/exploreScreen';
 
 LogBox.ignoreAllLogs();
 
@@ -156,6 +159,18 @@ const MainStack = () => {
         component={PartnerPreferencesScreen}
         options={{headerShown: false}}
       />
+
+      <Stack.Screen
+        name="OpenGalleryStoryScreen"
+        component={OpenGalleryStoryScreen}
+        options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name="SetStoryScreen"
+        component={SetStoryScreen}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
@@ -187,11 +202,11 @@ const ExtraScreens = () => {
         options={{headerShown: false}}
       />
 
-      <ExtraStack.Screen
-        name="PrivacyScreen"
-        component={PrivacyScreen}
-        options={{headerShown: false}}
-      />
+      {/*<ExtraStack.Screen*/}
+      {/*  name="PrivacyScreen"*/}
+      {/*  component={PrivacyScreen}*/}
+      {/*  options={{headerShown: false}}*/}
+      {/*/>*/}
 
       <ExtraStack.Screen
         name="EmailSmsAlertScreen"
@@ -202,13 +217,15 @@ const ExtraScreens = () => {
   );
 };
 
-const ExtrasScreens = () => {
+const ExtrasScreens = ({route}) => {
+  const {selectedBox} = route.params ?? {};
   return (
     <ExtrasStack.Navigator>
       <ExtrasStack.Screen
         name="UserDetailsScreen"
         component={UserDetailsScreen}
         options={{headerShown: false}}
+        initialParams={{selectedBox: selectedBox}}
       />
       <ExtrasStack.Screen
         name="UserUploadImageFullScreen"
@@ -231,12 +248,29 @@ const UploadImageFullScreen = () => {
   );
 };
 
-const UsersChatsScreen = () => {
+const UsersChatsScreen = ({route}) => {
+  const {selectedBox} = route.params ?? {};
   return (
     <ExtrasStack.Navigator>
       <ExtrasStack.Screen
         name="ChatUserScreen"
         component={ChatUserScreen}
+        initialParams={{
+          selectedBox: selectedBox,
+          userData: route.params?.userData,
+        }}
+        options={{headerShown: false}}
+      />
+    </ExtrasStack.Navigator>
+  );
+};
+
+const PrivacyScreenStack = () => {
+  return (
+    <ExtrasStack.Navigator>
+      <ExtraStack.Screen
+        name="PrivacyScreen"
+        component={PrivacyScreen}
         options={{headerShown: false}}
       />
     </ExtrasStack.Navigator>
@@ -355,8 +389,9 @@ const CustomTabBarButton = ({accessibilityState, children, onPress}) => {
   );
 };
 
-const HomeTabs = () => {
+const HomeTabs = ({route}) => {
   const {colors} = useTheme();
+  const {selectedBox} = route.params ?? {};
 
   const getIconStyle = isFocused => {
     return {
@@ -384,6 +419,7 @@ const HomeTabs = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
+        initialParams={{selectedBox: selectedBox}}
         options={{
           tabBarIcon: ({color, size, focused}) => (
             <Image source={icons.homeIcon} style={getIconStyle(focused)} />
@@ -405,33 +441,72 @@ const HomeTabs = () => {
           headerShown: false,
         }}
       />
-      <Tab.Screen
-        name="Matches"
-        component={MatchesScreen}
-        options={{
-          tabBarIcon: ({color, size, focused}) => (
-            <Image
-              source={icons.matchesIcon}
-              style={[getIconStyle(focused), {width: hp(22.5), height: hp(20)}]}
-            />
-          ),
-          tabBarLabel: ({focused}) => (
-            <Text
-              style={[
-                getLabelStyle(focused),
-                {
-                  fontSize: fontSize(10),
-                  lineHeight: hp(15),
-                  fontWeight: '500',
-                },
-              ]}>
-              Matches
-            </Text>
-          ),
-          tabBarButton: props => <CustomTabBarButton {...props} />,
-          headerShown: false,
-        }}
-      />
+
+      {selectedBox === 'marriage' ? (
+        <Tab.Screen
+          name="Matches"
+          component={MatchesScreen}
+          options={{
+            tabBarIcon: ({color, size, focused}) => (
+              <Image
+                source={icons.matchesIcon}
+                style={[
+                  getIconStyle(focused),
+                  {width: hp(22.5), height: hp(20)},
+                ]}
+              />
+            ),
+            tabBarLabel: ({focused}) => (
+              <Text
+                style={[
+                  getLabelStyle(focused),
+                  {
+                    fontSize: fontSize(10),
+                    lineHeight: hp(15),
+                    fontWeight: '500',
+                  },
+                ]}>
+                Matches
+              </Text>
+            ),
+            tabBarButton: props => <CustomTabBarButton {...props} />,
+            headerShown: false,
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name="Explore"
+          component={ExploreScreen}
+          initialParams={{selectedBox}}
+          options={{
+            tabBarIcon: ({color, size, focused}) => (
+              <Image
+                source={icons.matchesIcon}
+                style={[
+                  getIconStyle(focused),
+                  {width: hp(22.5), height: hp(20)},
+                ]}
+              />
+            ),
+            tabBarLabel: ({focused}) => (
+              <Text
+                style={[
+                  getLabelStyle(focused),
+                  {
+                    fontSize: fontSize(10),
+                    lineHeight: hp(15),
+                    fontWeight: '500',
+                  },
+                ]}>
+                Explore
+              </Text>
+            ),
+            tabBarButton: props => <CustomTabBarButton {...props} />,
+            headerShown: false,
+          }}
+        />
+      )}
+
       <Tab.Screen
         name="Chat"
         component={ChatScreen}
@@ -541,8 +616,18 @@ const HomeTabs = () => {
       />
 
       <Tab.Screen
+        name="PrivacyScreen"
+        component={PrivacyScreenStack}
+        options={{tabBarButton: () => null, headerShown: false}}
+      />
+
+      <Tab.Screen
         name="ChatUserScreen"
         component={UsersChatsScreen}
+        initialParams={{
+          selectedBox: selectedBox,
+          userData: route.params?.userData,
+        }}
         options={{tabBarButton: () => null, headerShown: false}}
       />
       <Tab.Screen

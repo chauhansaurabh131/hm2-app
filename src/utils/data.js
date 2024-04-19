@@ -111,6 +111,8 @@ export const userData = [
     city: 'Mahesana',
     county: 'India',
     isOnline: true,
+    km: '2.1km',
+    gender: 'Male',
   },
   {
     id: '2',
@@ -121,6 +123,8 @@ export const userData = [
     city: 'Vododara',
     county: 'India',
     isOnline: true,
+    km: '1km',
+    gender: 'Male',
   },
   {
     id: '3',
@@ -130,6 +134,8 @@ export const userData = [
     state: 'Gujarat',
     city: 'Vododara',
     county: 'India',
+    km: '2km',
+    gender: 'Male',
   },
   {
     id: '4',
@@ -139,6 +145,8 @@ export const userData = [
     state: 'Surat',
     city: 'Mahesana',
     county: 'India',
+    km: '2.5km',
+    gender: 'Male',
   },
   {
     id: '5',
@@ -149,6 +157,8 @@ export const userData = [
     city: 'Ahmedabad',
     county: 'India',
     isOnline: true,
+    km: '3km',
+    gender: 'Male',
   },
   {
     id: '6',
@@ -158,6 +168,8 @@ export const userData = [
     state: 'Gujarat',
     city: 'Mahesana',
     county: 'India',
+    km: '5km',
+    gender: 'Male',
   },
   {
     id: '7',
@@ -167,6 +179,8 @@ export const userData = [
     state: 'Gujarat',
     city: 'Mahesana',
     county: 'India',
+    km: '0.6km',
+    gender: 'Male',
   },
 ];
 
@@ -179,6 +193,8 @@ export const NEW_MATCHES = [
     state: 'Gujarat',
     city: 'Mahesana',
     county: 'India',
+    km: '2.1 km',
+    gender: 'Male',
   },
   {
     id: 2,
@@ -188,6 +204,8 @@ export const NEW_MATCHES = [
     state: 'Gujarat',
     city: 'Vododara',
     county: 'India',
+    km: '1 km',
+    gender: 'Male',
   },
   {
     id: 3,
@@ -197,6 +215,8 @@ export const NEW_MATCHES = [
     state: 'Gujarat',
     city: 'Vododara',
     county: 'India',
+    km: '1 km',
+    gender: 'Male',
   },
   {
     id: '4',
@@ -206,5 +226,7 @@ export const NEW_MATCHES = [
     state: 'Gujarat',
     city: 'Mahesana',
     county: 'India',
+    km: '3 km',
+    gender: 'Male',
   },
 ];

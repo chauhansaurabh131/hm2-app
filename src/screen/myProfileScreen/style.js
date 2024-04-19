@@ -139,7 +139,7 @@ const style = StyleSheet.create({
 
   underLineStyle: {
     width: '100%',
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: '#E2E2E2',
     marginTop: hp(16),
   },

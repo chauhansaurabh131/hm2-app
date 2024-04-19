@@ -146,27 +146,7 @@ const UpgradeScreen = () => {
       ]}
       activeOpacity={0.7}
       onPress={() => openBottomSheet(item.NewPrice, item.OldPrice)}>
-      <View
-      // style={{
-      //   marginTop: 10,
-      //   width: wp(340),
-      //   height: hp(91),
-      //   borderRadius: 20,
-      //   marginBottom: 1,
-      //   backgroundColor: colors.white,
-      //   alignSelf: 'center',
-      //   ...Platform.select({
-      //     ios: {
-      //       shadowColor: 'lightblue',
-      //       shadowOffset: {width: 0, height: 0.1},
-      //       shadowOpacity: 0.5,
-      //     },
-      //     android: {
-      //       elevation: 2,
-      //     },
-      //   }),
-      // }}
-      >
+      <View>
         <View
           style={{
             marginTop: hp(20),
@@ -295,9 +275,7 @@ const UpgradeScreen = () => {
         </View>
         <RBSheet
           ref={RBSheetRef}
-          // height={480}
           height={screenHeight * 0.7 - 50}
-          // duration={250}
           closeOnDragDown={true}
           closeOnPressMask={true}
           onClose={handleSheetClosed} // Added onClose callback
@@ -314,200 +292,65 @@ const UpgradeScreen = () => {
             },
           }}>
           <View style={{flex: 1}}>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
-                color: colors.black,
-              }}>
-              One Month Plan
-            </Text>
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(54),
-                lineHeight: hp(81),
-                fontFamily: fontFamily.poppins700,
-                textAlign: 'center',
-              }}>
-              {/*{selectedPrice}*/}
+            <Text style={style.bottomSheetOneMonthText}>One Month Plan</Text>
+
+            <Text style={style.oneMonthPriceText}>
               {selectedPrice.newPrice}
             </Text>
 
-            <View
-              style={{
-                flexDirection: 'row',
-                alignSelf: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                INR
-              </Text>
-              <Text
-                style={{
-                  textDecorationLine: 'line-through',
-                  marginLeft: 5,
-                  color: colors.black,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                {selectedPrice.oldPrice}
-              </Text>
+            <View style={style.bottomSheetHeadingBodyContainer}>
+              <Text style={style.InrText}>INR</Text>
 
-              <View
-                style={{
-                  width: wp(84),
-                  height: hp(28),
-                  borderRadius: 14,
-                  backgroundColor: '#F0FCF6',
-                  marginLeft: wp(10),
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins500,
-                    color: '#17C270',
-                  }}>
-                  20% Off
-                </Text>
+              <Text style={style.oldPriceText}>{selectedPrice.oldPrice}</Text>
+
+              <View style={style.offerContainer}>
+                <Text style={style.offerTextStyle}>20% Off</Text>
               </View>
             </View>
-            <View
-              style={{
-                marginTop: hp(25),
-                width: '100%',
-                borderWidth: 1,
-                borderColor: '#E3E3E3',
-              }}
-            />
 
-            <Text
-              style={{
-                fontSize: fontSize(16),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                color: colors.black,
-                textAlign: 'center',
-                marginTop: hp(20),
-              }}>
-              What Will You Get?
-            </Text>
+            <View style={style.headingLine} />
 
-            <View
-              style={{
-                marginHorizontal: wp(30),
-                marginTop: hp(18),
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Message to <Text style={{color: colors.blue}}>10 Profiles</Text>
+            <Text style={style.bodyTittleText}>What Will You Get?</Text>
+
+            <View style={style.tittleBodyContainer}>
+              <Text style={style.tittleOneTextStyle}>
+                Message to{' '}
+                <Text style={style.tittleTextColor}>10 Profiles</Text>
               </Text>
+
               <Image
                 source={icons.confirm_check_icon}
-                style={{width: hp(14), height: hp(14), resizeMode: 'contain'}}
+                style={style.checkIcon}
               />
             </View>
 
-            <View
-              style={{
-                marginHorizontal: wp(30),
-                marginTop: hp(18),
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
+            <View style={style.tittleBodyContainer}>
+              <Text style={style.tittleOneTextStyle}>
                 Send request to{' '}
-                <Text style={{color: colors.blue}}>10 Profiles</Text>
+                <Text style={style.tittleTextColor}>10 Profiles</Text>
               </Text>
+
               <Image
                 source={icons.confirm_check_icon}
-                style={{width: hp(14), height: hp(14), resizeMode: 'contain'}}
+                style={style.checkIcon}
               />
             </View>
 
-            <View
-              style={{
-                marginHorizontal: wp(30),
-                marginTop: hp(18),
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Online Support
-              </Text>
+            <View style={style.tittleBodyContainer}>
+              <Text style={style.tittleOneTextStyle}>Online Support</Text>
+              <Image
+                source={icons.confirm_check_icon}
+                style={style.checkIcon}
+              />
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginHorizontal: wp(30),
-                justifyContent: 'space-between',
-                marginTop: isIOS ? hp(30) : hp(50),
-              }}>
+
+            <View style={style.bottomSheetBottomButtonContainer}>
               <TouchableOpacity activeOpacity={0.7} onPress={closeBottomSheet}>
                 <LinearGradient
                   colors={['#0D4EB3', '#9413D0']}
-                  style={{
-                    width: wp(110),
-                    height: hp(50),
-                    borderRadius: 10,
-                    borderWidth: 1,
-                    justifyContent: 'center',
-                    borderColor: 'transparent', // Set border color to transparent
-                  }}>
-                  <View
-                    style={{
-                      borderRadius: 10, // <-- Inner Border Radius
-                      flex: 1,
-                      backgroundColor: colors.white,
-                      justifyContent: 'center',
-                      margin: isIOS ? 0 : 1,
-                    }}>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        backgroundColor: 'transparent',
-                        color: colors.black,
-                        margin: 10,
-                        fontSize: fontSize(14),
-                        lineHeight: hp(21),
-                        fontFamily: fontFamily.poppins500,
-                      }}>
-                      Not Now
-                    </Text>
+                  style={style.notNowButtonColorGradient}>
+                  <View style={style.notNowButtonContainer}>
+                    <Text style={style.notNowButtonText}>Not Now</Text>
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
@@ -520,33 +363,11 @@ const UpgradeScreen = () => {
                   colors={['#0D4EB3', '#9413D0']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
-                  style={{
-                    width: wp(178),
-                    height: hp(50),
-                    borderRadius: 10,
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      textAlign: 'center',
-                      color: colors.white,
-                      fontSize: fontSize(14),
-                      lineHeight: hp(21),
-                      fontFamily: fontFamily.poppins600,
-                    }}>
-                    Proceed to Pay
-                  </Text>
+                  style={style.payButtonColorGradient}>
+                  <Text style={style.payButtonText}>Proceed to Pay</Text>
                   <Image
                     source={icons.light_arrow_icon}
-                    style={{
-                      width: hp(14),
-                      height: hp(14),
-                      resizeMode: 'contain',
-                      transform: [{rotate: '90deg'}],
-                      marginLeft: wp(14),
-                    }}
+                    style={style.payButtonIcon}
                   />
                 </LinearGradient>
               </TouchableOpacity>
@@ -587,32 +408,11 @@ const UpgradeScreen = () => {
             </Text>
           </View>
         </LinearGradient>
-        <View
-          style={{
-            width: wp(335),
-            height: hp(60),
-            borderWidth: 1,
-            borderColor: colors.blue,
-            alignSelf: 'center',
-            borderRadius: 30,
-            backgroundColor: colors.white,
-            top: -30,
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
+
+        <View style={style.headingBodYContainer}>
           <TouchableOpacity
             onPress={() => handleOptionClick('silver')}
-            style={{
-              borderRadius: 25,
-              width: wp(107),
-              height: hp(50),
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: hp(6),
-              overflow: 'hidden',
-            }}>
+            style={style.silverTouchableFunctionality}>
             <LinearGradient
               colors={
                 selectedOption === 'silver'
@@ -621,39 +421,21 @@ const UpgradeScreen = () => {
               }
               start={{x: 0, y: 0.5}}
               end={{x: 1, y: 0.5}}
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                borderRadius: 25,
-                width: wp(107),
-                height: hp(50),
-              }}
+              style={style.silverTextContainer}
             />
+
             <Text
-              style={{
-                color: selectedOption === 'silver' ? 'white' : 'black',
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontWeight: '500',
-              }}>
+              style={[
+                style.silverText,
+                {color: selectedOption === 'silver' ? 'white' : 'black'},
+              ]}>
               Silver
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => handleOptionClick('gold')}
-            style={{
-              borderRadius: 25,
-              width: wp(107),
-              height: hp(50),
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-            }}>
+            style={style.goldContainer}>
             <LinearGradient
               colors={
                 selectedOption === 'gold'
@@ -662,40 +444,20 @@ const UpgradeScreen = () => {
               }
               start={{x: 0, y: 0.5}}
               end={{x: 1, y: 0.5}}
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                borderRadius: 25,
-                width: wp(107),
-                height: hp(50),
-              }}
+              style={style.goldBodyContainer}
             />
             <Text
-              style={{
-                color: selectedOption === 'gold' ? 'white' : 'black',
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontWeight: '500',
-              }}>
+              style={[
+                style.goldText,
+                {color: selectedOption === 'gold' ? 'white' : 'black'},
+              ]}>
               Gold
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => handleOptionClick('platinum')}
-            style={{
-              borderRadius: 25,
-              width: wp(107),
-              height: hp(50),
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: hp(6),
-              overflow: 'hidden',
-            }}>
+            style={style.platinumBodyContainer}>
             <LinearGradient
               colors={
                 selectedOption === 'platinum'
@@ -704,36 +466,22 @@ const UpgradeScreen = () => {
               }
               start={{x: 0, y: 0.5}}
               end={{x: 1, y: 0.5}}
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                borderRadius: 25,
-                width: wp(107),
-                height: hp(50),
-              }}
+              style={style.platinumBody}
             />
             <Text
-              style={{
-                color: selectedOption === 'platinum' ? 'white' : 'black',
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontWeight: '500',
-              }}>
+              style={[
+                style.platinumText,
+                {color: selectedOption === 'platinum' ? 'white' : 'black'},
+              ]}>
               Platinum
             </Text>
           </TouchableOpacity>
         </View>
-        <Text
-          style={{
-            textAlign: 'center',
-            color: colors.black,
-            marginBottom: hp(24),
-          }}>
+
+        <Text style={style.choiceDescriptionText}>
           Choose your subscription
         </Text>
+
         <FlatList
           data={subscriptionPlans[selectedOption]}
           renderItem={renderItem}

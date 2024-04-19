@@ -11,7 +11,7 @@ import {
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import CommonGradientButton from '../../components/commonGradientButton';
 
 const AddProfilePictureScreen = ({route}) => {
@@ -20,6 +20,10 @@ const AddProfilePictureScreen = ({route}) => {
   const [selectedItems, setSelectedItems] = useState(initialSelectedItems);
   const [selectedImageIndex, setSelectedImageIndex] = useState(-1); // Initialize with -1, meaning no image is selected initially
   const [isImageSelected, setIsImageSelected] = useState(false); // State to track if any image is selected
+
+  const {selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox_AddProfilePictureScreen ===> ', selectedBox);
 
   const handleAddImage = () => {
     console.log('Add more images');
@@ -185,6 +189,9 @@ const AddProfilePictureScreen = ({route}) => {
           paddingBottom: hp(20),
         }}>
         <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
           activeOpacity={0.7}
           style={{
             width: wp(162),
@@ -210,7 +217,7 @@ const AddProfilePictureScreen = ({route}) => {
         <CommonGradientButton
           onPress={() => {
             if (isImageSelected) {
-              navigation.navigate('PartnerPreferencesScreen');
+              navigation.navigate('PartnerPreferencesScreen', {selectedBox});
             }
           }}
           buttonName={'Continue'}

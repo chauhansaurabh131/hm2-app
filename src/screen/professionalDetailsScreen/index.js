@@ -16,9 +16,9 @@ const ProfessionalsDetailsScreen = () => {
             style={{
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               color: colors.black,
-              marginTop: hp(19),
+              marginTop: hp(20),
             }}>
             Current Designation (Job Title)
           </Text>
@@ -42,10 +42,10 @@ const ProfessionalsDetailsScreen = () => {
             style={{
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               color: colors.black,
               marginTop: hp(15),
-              marginBottom: hp(12),
+              marginBottom: hp(7),
             }}>
             Job Type
           </Text>
@@ -66,9 +66,9 @@ const ProfessionalsDetailsScreen = () => {
             style={{
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               color: colors.black,
-              marginTop: hp(19),
+              marginTop: hp(15),
             }}>
             Company Name
           </Text>
@@ -92,10 +92,10 @@ const ProfessionalsDetailsScreen = () => {
             style={{
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               color: colors.black,
               marginTop: hp(15),
-              marginBottom: hp(12),
+              marginBottom: hp(7),
             }}>
             Annual Salary
           </Text>
@@ -121,10 +121,10 @@ const ProfessionalsDetailsScreen = () => {
             style={{
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               color: colors.black,
               marginTop: hp(15),
-              marginBottom: hp(12),
+              marginBottom: hp(7),
             }}>
             Work In City
           </Text>
@@ -153,10 +153,10 @@ const ProfessionalsDetailsScreen = () => {
             style={{
               fontSize: fontSize(14),
               lineHeight: hp(18),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               color: colors.black,
               marginTop: hp(15),
-              marginBottom: hp(12),
+              marginBottom: hp(7),
             }}>
             Work In Country
           </Text>
@@ -180,6 +180,7 @@ const ProfessionalsDetailsScreen = () => {
               'NAVSARI',
             ]}
           />
+          <View style={{height: 20}} />
         </View>
       </ScrollView>
     </SafeAreaView>

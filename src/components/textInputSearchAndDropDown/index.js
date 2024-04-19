@@ -51,7 +51,7 @@ const TextInputSearchAndDropDowm = ({dropdownItems, placeholder}) => {
 
   return (
     <View>
-      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 7}}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TextInput
           style={{
             flex: 1,

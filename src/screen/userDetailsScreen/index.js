@@ -14,10 +14,16 @@ import StoryComponent from '../../components/storyComponent';
 import style from './style';
 import UsersProfileDetailsScreen from '../usersProfileDetailsScreen';
 import ImagePaginationComponent from '../../components/imagePaginationComponent';
+import {useRoute} from '@react-navigation/native';
 
 const UserDetailScreen = ({navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageRotation, setImageRotation] = useState('90deg');
+
+  const route = useRoute();
+  const {selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox ===> ', selectedBox);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -72,56 +78,35 @@ const UserDetailScreen = ({navigation}) => {
 
                 <Text style={style.userDetailsTextStyle}>Gujarati</Text>
                 <Text style={style.userDetailsTextStyle}>Patel</Text>
+                <Text style={style.userDetailsTextStyle}>(2.1km)</Text>
               </View>
 
-              <View style={style.userDetailsDescriptionContainer}>
-                <Text style={style.userDetailsTextStyle}>
-                  Software Engineer
-                </Text>
+              {/*<View style={style.userDetailsDescriptionContainer}>*/}
+              {/*  <Text style={style.userDetailsTextStyle}>*/}
+              {/*    Software Engineer*/}
+              {/*  </Text>*/}
 
-                <View style={style.verticalLineStyle} />
+              {/*  <View style={style.verticalLineStyle} />*/}
 
-                <Text style={style.userDetailsTextStyle}>NY</Text>
-                <Text style={style.userDetailsTextStyle}>United</Text>
-                <Text style={style.userDetailsTextStyle}>States</Text>
-              </View>
+              {/*  <Text style={style.userDetailsTextStyle}>NY</Text>*/}
+              {/*  <Text style={style.userDetailsTextStyle}>United</Text>*/}
+              {/*  <Text style={style.userDetailsTextStyle}>States</Text>*/}
+              {/*</View>*/}
 
               <View style={style.bottomImageContainer}>
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate('UserUploadImageFullScreen');
                   }}>
-                  <Image
-                    source={icons.image_icon}
-                    style={{
-                      width: hp(20),
-                      height: hp(20),
-                      resizeMode: 'contain',
-                      marginRight: wp(22),
-                    }}
-                  />
+                  <Image source={icons.image_icon} style={style.imageIcon} />
                 </TouchableOpacity>
 
                 <TouchableOpacity>
-                  <Image
-                    source={icons.video_icon}
-                    style={{
-                      width: hp(24.1),
-                      height: hp(20),
-                      resizeMode: 'contain',
-                    }}
-                  />
+                  <Image source={icons.video_icon} style={style.videoIcon} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{position: 'absolute', right: 10}}>
-                  <Image
-                    source={icons.starIcon}
-                    style={{
-                      width: hp(21.67),
-                      height: hp(20),
-                      resizeMode: 'contain',
-                    }}
-                  />
+                <TouchableOpacity style={style.startIconContainer}>
+                  <Image source={icons.starIcon} style={style.starIcon} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -130,6 +115,33 @@ const UserDetailScreen = ({navigation}) => {
 
         {/* DESCRIPTION VIEW */}
         <View style={style.descriptionTextContainer}>
+          {selectedBox === 'dating' && (
+            <>
+              <View style={style.likeSharContainer}>
+                <TouchableOpacity activeOpacity={0.5}>
+                  <Image
+                    source={icons.disLike_icon}
+                    style={style.dislikeIcon}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity activeOpacity={0.5}>
+                  <Image source={icons.likeIcon} style={style.likeIcon} />
+                </TouchableOpacity>
+
+                <TouchableOpacity activeOpacity={0.5}>
+                  <Image
+                    source={icons.star_border_icon}
+                    style={style.startIcon}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity activeOpacity={0.5}>
+                  <Image source={icons.shareIcon} style={style.shareIcon} />
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
           <Text style={style.descriptionTittleText}>About Me</Text>
 
           <Text

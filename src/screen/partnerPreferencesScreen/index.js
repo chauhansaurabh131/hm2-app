@@ -23,13 +23,18 @@ import {
   Fun,
 } from '../../utils/data';
 import CommonGradientButton from '../../components/commonGradientButton';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import DemoPractiveCodeScreen from '../demoPractiveCodeScreen';
 import DropdownHeightAndAgeComponent from '../../components/DropdownHeightAndAgeComponent';
 
 const PartnerPreferencesScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const {selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox_PartnerPreferencesScreen ===> ', selectedBox);
 
   const AGE_LIST = [
     {label: '22', value: '1'},
@@ -229,7 +234,7 @@ const PartnerPreferencesScreen = () => {
 
           <CommonGradientButton
             onPress={() => {
-              navigation.navigate('HomeTabs');
+              navigation.navigate('HomeTabs', {selectedBox});
             }}
             buttonName={'Continue'}
             containerStyle={style.continueButtonContainer}

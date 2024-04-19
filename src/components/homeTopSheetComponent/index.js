@@ -162,32 +162,39 @@ const HomeTopSheetComponent = ({
             />
 
             <View style={{marginTop: hp(21)}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginBottom: hp(19),
-                  alignItems: 'center',
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  navigation.navigate('MyProfileScreen');
+                  toggleModal();
                 }}>
-                <Image
-                  source={icons.profileLogo}
+                <View
                   style={{
-                    width: hp(17.22),
-                    height: hp(16),
-                    tintColor: colors.black,
-                    resizeMode: 'stretch',
-                  }}
-                />
-                <Text
-                  style={{
-                    color: colors.black,
-                    marginLeft: hp(17.78),
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontWeight: '400',
+                    flexDirection: 'row',
+                    marginBottom: hp(19),
+                    alignItems: 'center',
                   }}>
-                  My Profile
-                </Text>
-              </View>
+                  <Image
+                    source={icons.profileLogo}
+                    style={{
+                      width: hp(17.22),
+                      height: hp(16),
+                      tintColor: colors.black,
+                      resizeMode: 'stretch',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colors.black,
+                      marginLeft: hp(17.78),
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontWeight: '400',
+                    }}>
+                    My Profile
+                  </Text>
+                </View>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 activeOpacity={0.7}

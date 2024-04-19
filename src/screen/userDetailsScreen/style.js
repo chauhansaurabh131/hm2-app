@@ -122,6 +122,55 @@ const style = StyleSheet.create({
     height: hp(20),
     resizeMode: 'contain',
   },
+  imageIcon: {
+    width: hp(20),
+    height: hp(20),
+    resizeMode: 'contain',
+    marginRight: wp(22),
+  },
+  videoIcon: {
+    width: hp(24.1),
+    height: hp(20),
+    resizeMode: 'contain',
+  },
+  startIconContainer: {
+    position: 'absolute',
+    right: 10,
+  },
+  starIcon: {
+    width: hp(21.67),
+    height: hp(20),
+    resizeMode: 'contain',
+  },
+  likeSharContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 15,
+    marginTop: -10,
+  },
+  dislikeIcon: {
+    width: hp(40),
+    height: hp(40),
+    resizeMode: 'contain',
+    marginRight: 20,
+  },
+  likeIcon: {
+    width: hp(40),
+    height: hp(40),
+    resizeMode: 'contain',
+    marginRight: 20,
+  },
+  startIcon: {
+    width: hp(40),
+    height: hp(40),
+    resizeMode: 'contain',
+    marginRight: 20,
+  },
+  shareIcon: {
+    width: hp(40),
+    height: hp(40),
+    resizeMode: 'contain',
+  },
 });
 
 export default style;

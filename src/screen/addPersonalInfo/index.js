@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import * as Progress from 'react-native-progress';
 import {images} from '../../assets';
 import CommonGradientButton from '../../components/commonGradientButton';
+import {useRoute} from '@react-navigation/native';
 
 const NEXT_SCREEN = 'NEXT_SCREEN';
 const NUMBER_SCREEN = 'NUMBER_SCREEN';
@@ -102,6 +103,11 @@ const AddPersonalInfo = ({navigation}) => {
   const phaseReducerInitialState = {
     activeIndex: 0,
   };
+  const route = useRoute();
+
+  const {sharedMedia, selectedBox} = route.params ?? {};
+
+  console.log(' === selectedBox_AddPersonalInfo ===> ', selectedBox);
 
   const [{activeIndex}, dispatch] = useReducer(
     phaseReducer,
@@ -123,7 +129,7 @@ const AddPersonalInfo = ({navigation}) => {
   const navigateToNext = () => {
     if (activeIndex === PersonalInfoPhases.length - 1) {
       // Navigate to XYZScreen when on the last screen
-      navigation.navigate('SetProfilePictureScreen');
+      navigation.navigate('SetProfilePictureScreen', {selectedBox});
     } else {
       // Proceed to the next screen if not on the last screen
       dispatch({type: NEXT_SCREEN});
@@ -135,7 +141,7 @@ const AddPersonalInfo = ({navigation}) => {
       dispatch({type: BACK_SCREEN});
     } else {
       // navigation.navigate('HomeScreen');
-      navigation.navigate('HomeTabs');
+      navigation.navigate('HomeTabs', {selectedBox});
     }
   };
 
@@ -179,15 +185,15 @@ const AddPersonalInfo = ({navigation}) => {
         {PersonalInfoPhases[activeIndex].phaseName}
       </Text>
 
-      <View style={{alignSelf: 'center', height: hp(1), marginTop: hp(8)}}>
-        <Progress.Bar
-          progress={(activeIndex + 1) / PersonalInfoPhases.length}
-          width={(Dimensions.get('window').width / 100) * 92}
-          color={'#17C270'}
-          borderWidth={0.5}
-          borderColor={colors.gray}
-        />
-      </View>
+      {/*<View style={{alignSelf: 'center', height: hp(1), marginTop: hp(8)}}>*/}
+      {/*  <Progress.Bar*/}
+      {/*    progress={(activeIndex + 1) / PersonalInfoPhases.length}*/}
+      {/*    width={(Dimensions.get('window').width / 100) * 92}*/}
+      {/*    color={'#17C270'}*/}
+      {/*    borderWidth={0.5}*/}
+      {/*    borderColor={colors.gray}*/}
+      {/*  />*/}
+      {/*</View>*/}
       <RenderComp />
 
       <View
