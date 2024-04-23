@@ -199,9 +199,11 @@ const style = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     elevation: 5,
-    width: wp(314),
+    width: wp(355),
+    // width: '100%',
     // height: hp(416),
     alignItems: 'center',
+    marginHorizontal: 17,
   },
   verificationModalHeadingStyle: {
     color: colors.black,
@@ -220,6 +222,7 @@ const style = StyleSheet.create({
     fontSize: fontSize(12),
     lineHeight: hp(18),
     fontWeight: '400',
+    fontFamily: fontFamily.poppins400,
   },
 });
 

@@ -91,6 +91,8 @@ export const icons = {
   filter_icon: require('./icons/filter_icon.png'),
   star_border_icon: require('./icons/star_border_icon.png'),
   disLike_icon: require('./icons/dislike_icon.png'),
+  couple_icon: require('./icons/couple_icon.png'),
+  check_gradient_icon: require('./icons/check_icon_gradient.png'),
 };
 
 export const gif = {

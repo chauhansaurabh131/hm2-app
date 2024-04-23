@@ -111,14 +111,6 @@ const HomeScreen = ({route}) => {
                 Congratulations
               </GradientText>
 
-              {/*<FastImage*/}
-              {/*  source={gif.congrats_modal}*/}
-              {/*  style={{width: wp(150), height: hp(150)}}*/}
-              {/*  // resizeMode={'stretch'}*/}
-              {/*  resizeMode={FastImage.resizeMode.contain}*/}
-              {/*/>*/}
-              {/*<Image source={gif.congrats_modal} />*/}
-
               <View
                 style={{
                   marginTop: 34,
@@ -133,13 +125,19 @@ const HomeScreen = ({route}) => {
                 <Text style={style.modalSubTitleTextStyle}>HappyMilan</Text>
               </View>
 
+              <FastImage
+                source={gif.congrats_modal}
+                style={{width: 180, height: 150, marginTop: -130}}
+                resizeMode={'contain'}
+              />
+
               <CommonGradientButton
                 buttonName={'Start Exploring'}
                 onPress={closeWelcomeModal}
                 containerStyle={{
                   width: wp(280),
                   height: hp(50),
-                  marginTop: hp(50),
+                  marginTop: hp(30),
                 }}
               />
             </View>
@@ -241,13 +239,6 @@ const HomeScreen = ({route}) => {
                 shareButtonPress={() => {
                   completeOpenModal(selectedBox);
                 }}
-                // shareButtonPress={completeOpenModal}
-                // shareButtonPress={() => {
-                //   console.log(
-                //     ' === var ===> ',
-                //     'New Matches Share Button Press',
-                //   );
-                // }}
               />
             ) : (
               <RecentlyAcceptedFlatlistComponent
@@ -261,7 +252,15 @@ const HomeScreen = ({route}) => {
             )}
           </View>
 
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              if (selectedBox === 'marriage') {
+                navigation.navigate('Matches');
+              } else if (selectedBox === 'dating') {
+                navigation.navigate('Explore');
+              }
+            }}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>
           </TouchableOpacity>
 
@@ -326,42 +325,21 @@ const HomeScreen = ({route}) => {
 
           <View style={style.verificationModalContainer}>
             {/*<Button title="Open Modal" onPress={openModal} />*/}
-
             <Modal
               visible={isCompleteModalVisible}
               animationType="none"
-              transparent={true}
-              // onBackdropPress={verificationModalToggle}
-              // onBackdropPress={setCompleteModalModalVisible(false)}
-              // onRequestClose={closeModal}
-            >
+              transparent={true}>
               <View style={style.verificationModalContainerStyle}>
                 <View style={style.verificationModalBodyStyle}>
                   <Text style={style.verificationModalHeadingStyle}>
                     Please complete your profile
                   </Text>
-                  {/*<Button title="Close Modal" onPress={closeModal} />*/}
 
-                  {/*<FastImage*/}
-                  {/*  source={gif.verification_modal}*/}
-                  {/*  style={{*/}
-                  {/*    width: '80%',*/}
-                  {/*    height: 150,*/}
-                  {/*    marginLeft: 40,*/}
-                  {/*  }}*/}
-                  {/*  resizeMode={'stretch'}*/}
-                  {/*/>*/}
-
-                  <Image
+                  <FastImage
                     source={gif.register_modal}
-                    style={{height: 100, width: 100, backgroundColor: 'red'}}
+                    style={{height: 180, width: 180, marginTop: 20}}
                     resizeMode={'contain'}
                   />
-
-                  {/*<FastImage*/}
-                  {/*  source={gif.register_modal}*/}
-                  {/*  style={{width: 150, height: 150}}*/}
-                  {/*/>*/}
 
                   <View style={style.verificationDescriptionStyle}>
                     <Text style={style.verificationDescriptionText}>
@@ -375,18 +353,6 @@ const HomeScreen = ({route}) => {
                     <Text style={style.verificationDescriptionText}>
                       that we deliver tailored results to you.
                     </Text>
-                    {/*<GradientButton*/}
-                    {/*  buttonName={'Let’s do it'}*/}
-                    {/*  onPress={verificationModalToggle}*/}
-                    {/*  containerStyle={{*/}
-                    {/*    width: isIOS ? wp(270) : wp(250),*/}
-                    {/*    height: hp(50),*/}
-                    {/*    marginTop: hp(20),*/}
-                    {/*  }}*/}
-                    {/*  // containerStyle={style.gradientButtonContainerStyle}*/}
-                    {/*  // buttonTextStyle={{color: colors.white}}*/}
-                    {/*  // onPress={closeWelcomeModal}*/}
-                    {/*/>*/}
 
                     <CommonGradientButton
                       buttonName={'Let’s do it'}
