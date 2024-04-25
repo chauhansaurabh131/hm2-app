@@ -1,28 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  Text,
-  Image,
-  View,
-  TouchableOpacity,
-  BackHandler,
-} from 'react-native';
+import {SafeAreaView, Text, Image, View, TouchableOpacity} from 'react-native';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-const ChatUserScreen = ({navigation, route}) => {
-  const {userData} = route.params || {};
-  const [user, setUser] = useState(userData);
+const ChatUserScreen = ({route}) => {
+  const [userData, setUserData] = useState(null);
+  const {params} = route;
+
+  console.log(' === ChatUserScreen ===> ', params);
 
   useEffect(() => {
-    setUser(userData);
-  }, [userData]);
+    if (params && params.userData) {
+      setUserData(params.userData);
+    }
 
-  console.log(' === userData ..... ===> ', userData);
-  console.log(' === var ===> ', userData.name);
-  //
+    // Cleanup function
+    return () => {
+      setUserData(null); // Reset userData state when component unmounts
+    };
+  }, [params]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
@@ -59,18 +57,20 @@ const ChatUserScreen = ({navigation, route}) => {
           style={{
             marginTop: hp(22),
             flexDirection: 'row',
-            alignItems: 'center', // Align items vertically
+            alignItems: 'center',
             backgroundColor: 'orange',
           }}>
-          <Image
-            // source={userData.image}
-            style={{
-              width: 47,
-              height: 47,
-              borderRadius: 50,
-              marginRight: wp(14),
-            }}
-          />
+          {userData && (
+            <Image
+              source={userData.image}
+              style={{
+                width: 47,
+                height: 47,
+                borderRadius: 50,
+                marginRight: wp(14),
+              }}
+            />
+          )}
           <View style={{flex: 1}}>
             <Text
               style={{
@@ -79,22 +79,16 @@ const ChatUserScreen = ({navigation, route}) => {
                 fontFamily: fontFamily.poppins600,
                 color: colors.black,
               }}>
-              {/*{name?.name || ''}*/}
+              {userData ? userData.name : ''}
             </Text>
-
-            <Text>{userData.name}</Text>
+            {/* Display other user information here */}
           </View>
-
           {/* Display the ellipsis */}
           <Image
             source={icons.three_dots_icon}
             style={{width: hp(25), height: hp(24)}}
           />
         </View>
-      </View>
-
-      <View style={{position: 'absolute', bottom: 0}}>
-        <Text>dvjb</Text>
       </View>
     </SafeAreaView>
   );

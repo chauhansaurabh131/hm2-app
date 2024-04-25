@@ -93,6 +93,7 @@ export const icons = {
   disLike_icon: require('./icons/dislike_icon.png'),
   couple_icon: require('./icons/couple_icon.png'),
   check_gradient_icon: require('./icons/check_icon_gradient.png'),
+  show_Password_icon: require('./icons/show_password_icon.png'),
 };
 
 export const gif = {

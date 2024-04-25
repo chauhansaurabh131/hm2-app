@@ -42,9 +42,8 @@ const style = StyleSheet.create({
     textAlign: 'center',
   },
   resendTextStyle: {
-    color: colors.black,
-    fontFamily: fontFamily.inter400,
-    fontWeight: '400',
+    color: '#6A6A6A',
+    fontFamily: fontFamily.poppins400,
     textAlign: 'center',
     fontSize: fontSize(12),
     lineHeight: hp(18),
@@ -93,13 +92,20 @@ const style = StyleSheet.create({
   underLineContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: hp(74),
+    // marginTop: hp(74),
   },
   line: {
     height: 1,
     width: 61,
     backgroundColor: 'black', // You can change the color as needed
     // marginHorizontal: 7,
+  },
+
+  OtpGeneratedContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
   },
 });
 

@@ -56,7 +56,7 @@ const style = StyleSheet.create({
     color: colors.black,
     fontSize: fontSize(10),
     lineHeight: hp(15),
-    extAlign: 'center',
+    textAlign: 'center',
     fontFamily: fontFamily.poppins400,
   },
   passwordTextInputContainerStyle: {

@@ -2,19 +2,52 @@ import React, {useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import {colors} from '../../utils/colors';
-import GradientButton from '../../components/GradientButton';
 import {hp, wp} from '../../utils/helpers';
-import TextInput from '../../components/TextInput';
 import TextInputWithIcons from '../../components/textInputWithIcons';
-import LinearGradient from 'react-native-linear-gradient';
 import CommonGradientButton from '../../components/commonGradientButton';
 
 const RegistrationScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [name, setName] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const validateName = () => {
+    if (name.length < 3) {
+      setNameError('Name must be at least 3 characters');
+      return false;
+    } else if (name.length > 15) {
+      setNameError('Name must be less than 15 characters');
+      return false;
+    } else {
+      setNameError('');
+      return true;
+    }
+  };
+
+  const validateEmail = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setEmailError('Invalid email address');
+      return false;
+    } else {
+      setEmailError('');
+      return true;
+    }
+  };
+
+  const handleSignUp = () => {
+    const isNameValid = validateName();
+    const isEmailValid = validateEmail();
+    if (isNameValid && isEmailValid) {
+      // navigation.navigate('VerificationScreen');
+      navigation.navigate('VerificationScreen', {name: name, email: email});
+    }
   };
 
   return (
@@ -37,7 +70,14 @@ const RegistrationScreen = ({navigation}) => {
             placeholder={'Enter Your name'}
             textInputStyle={{marginLeft: 10}}
             inputContainerStyle={{width: '100%'}}
+            inputValue={name}
+            handleInputChange={text => setName(text)}
+            maxLength={15}
           />
+
+          {nameError ? (
+            <Text style={{marginTop: 2, color: 'red'}}>{nameError}</Text>
+          ) : null}
 
           <TextInputWithIcons
             IconNameDesign={icons.profileLogo}
@@ -45,7 +85,6 @@ const RegistrationScreen = ({navigation}) => {
             editable={true}
             iconSources
             iconSource={icons.mailLogo}
-            // iconSecures
             iconSecure={icons.secureEyeLogo}
             containerStyle={style.textInputContainerStyle}
             secureTextEntry={isPasswordVisible}
@@ -53,20 +92,19 @@ const RegistrationScreen = ({navigation}) => {
             iconStyle={style.iconStyle}
             textInputStyle={{marginLeft: 10}}
             inputContainerStyle={{marginTop: 20, width: '100%'}}
+            inputValue={email}
+            handleInputChange={text => setEmail(text)}
           />
+          {emailError ? (
+            <Text style={{color: 'red', marginTop: 2}}>{emailError}</Text>
+          ) : null}
 
           <CommonGradientButton
             buttonName={'Send Code'}
             containerStyle={{width: '100%', marginTop: hp(20)}}
-            onPress={() => navigation.navigate('VerificationScreen')}
+            // onPress={() => navigation.navigate('VerificationScreen')}
+            onPress={handleSignUp}
           />
-
-          {/*<GradientButton*/}
-          {/*  buttonName={'Send Code'}*/}
-          {/*  containerStyle={style.gradientButtonContainerStyle}*/}
-          {/*  buttonTextStyle={{color: colors.white}}*/}
-          {/*  onPress={() => navigation.navigate('VerificationScreen')}*/}
-          {/*/>*/}
 
           <Text style={style.continueWithTextStyle}>or continue with</Text>
 

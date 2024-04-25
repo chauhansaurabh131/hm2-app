@@ -65,7 +65,7 @@ const profileStack = createStackNavigator();
 
 const MainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="StartExploreScreen">
+    <Stack.Navigator initialRouteName="RegistrationScreen">
       {/*<Stack.Screen*/}
       {/*  name="MainScreen"*/}
       {/*  component={MainScreen}*/}
