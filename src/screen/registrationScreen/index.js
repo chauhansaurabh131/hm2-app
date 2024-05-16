@@ -1,17 +1,58 @@
-import React, {useState} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import {hp, wp} from '../../utils/helpers';
+import {hp} from '../../utils/helpers';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import CommonGradientButton from '../../components/commonGradientButton';
+import {useDispatch, useSelector} from 'react-redux';
+import {Registration} from '../../store/actions/allActions';
+import {apiKeys} from '../../config/apikeys';
+import {useNavigation} from '@react-navigation/native';
+import useDelayedNavigation from '../../utils/delayFunction';
 
-const RegistrationScreen = ({navigation}) => {
+const RegistrationScreen = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [name, setName] = useState('');
+  const [name, setName] = useState('test007');
   const [nameError, setNameError] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('kunal@yopmail.com');
   const [emailError, setEmailError] = useState('');
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
+  const {RegisterMessage, loading, RegisterMessageFailed} = useSelector(
+    state => state.auth,
+  );
+
+  useDelayedNavigation(RegisterMessage, 'VerificationScreen');
+
+  useEffect(() => {
+    if (RegisterMessageFailed !== null) {
+      Alert.alert(RegisterMessageFailed);
+    }
+  });
+
+  const handleSignUp = async () => {
+    const isNameValid = validateName();
+    const isEmailValid = validateEmail();
+    if (isNameValid && isEmailValid) {
+      let params = {
+        [apiKeys.Path]: apiKeys.register,
+        [apiKeys.Data]: {
+          name,
+          email,
+        },
+      };
+      dispatch(Registration(params));
+    }
+  };
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -41,22 +82,14 @@ const RegistrationScreen = ({navigation}) => {
     }
   };
 
-  const handleSignUp = () => {
-    const isNameValid = validateName();
-    const isEmailValid = validateEmail();
-    if (isNameValid && isEmailValid) {
-      // navigation.navigate('VerificationScreen');
-      navigation.navigate('VerificationScreen', {name: name, email: email});
-    }
-  };
-
   return (
     <SafeAreaView style={style.container}>
       <Image
         source={images.happyMilanColorLogo}
         style={style.headerLogoStyle}
       />
-      <View style={{flex: 1}}>
+
+      <View style={{}}>
         <Text style={style.signUpTextStyle}>Sign Up</Text>
 
         <View
@@ -102,8 +135,8 @@ const RegistrationScreen = ({navigation}) => {
           <CommonGradientButton
             buttonName={'Send Code'}
             containerStyle={{width: '100%', marginTop: hp(20)}}
-            // onPress={() => navigation.navigate('VerificationScreen')}
             onPress={handleSignUp}
+            loading={loading}
           />
 
           <Text style={style.continueWithTextStyle}>or continue with</Text>

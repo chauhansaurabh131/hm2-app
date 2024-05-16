@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {
   Alert,
   Image,
@@ -13,6 +13,10 @@ import {hp, isIOS} from '../../utils/helpers';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import CommonGradientButton from '../../components/commonGradientButton';
 import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import {apiKeys} from '../../config/apikeys';
+import {SetPassword} from '../../store/actions/allActions';
+import {MyContext} from '../../utils/Provider';
 
 const SetPasswordScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -20,6 +24,21 @@ const SetPasswordScreen = ({navigation}) => {
     useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const {setMoveToHome} = useContext(MyContext);
+
+  const {loading, updatedEmail, userDetails} = useSelector(state => state.auth);
+
+  const hiddenChars = updatedEmail.substring(0, 3);
+  const dispatch = useDispatch();
+  const domain = updatedEmail.substring(updatedEmail.indexOf('@'));
+  const maskedEmail = hiddenChars + '******' + domain;
+
+  useEffect(() => {
+    console.log('tesitng login', setMoveToHome);
+    if (userDetails.length !== 0) {
+      navigation.navigate('StartExploreScreen');
+    }
+  }, [userDetails]);
 
   const ShowToast = () => {
     Toast.show({
@@ -50,7 +69,13 @@ const SetPasswordScreen = ({navigation}) => {
       // Alert.alert('Password Mismatch', 'Passwords do not match.');
       ShowToast();
     } else {
-      navigation.navigate('StartExploreScreen');
+      let params = {
+        [apiKeys.Path]: apiKeys.setPassword,
+        [apiKeys.Data]: {
+          password: password,
+        },
+      };
+      dispatch(SetPassword(params));
     }
   };
 
@@ -66,9 +91,7 @@ const SetPasswordScreen = ({navigation}) => {
 
         <Text style={style.verificationTextStyle}>Set your password</Text>
 
-        <Text style={style.verificationEmailTextStyle}>
-          roh******tel@gmail.com
-        </Text>
+        <Text style={style.verificationEmailTextStyle}>{maskedEmail}</Text>
 
         <View style={{marginTop: 20, marginHorizontal: 52}}>
           <TextInputWithIcons
@@ -129,6 +152,7 @@ const SetPasswordScreen = ({navigation}) => {
             buttonName={'Register Now'}
             containerStyle={{marginTop: hp(19), width: '100%'}}
             onPress={handleRegister}
+            loading={loading}
           />
 
           <View style={style.bottomUnderLineStyle} />

@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import style from './style';
 import CustomHeaderLogo from '../../components/customHeaderLogo';
 import {icons, images} from '../../assets';
 import {hp, wp} from '../../utils/helpers';
+import {MyContext} from '../../utils/Provider';
 
 const StartExploreScreen = ({navigation}) => {
   const [selectedBox, setSelectedBox] = useState(null);
+  const {setMoveToHome, setIsDatingSelected} = useContext(MyContext);
 
   const handleBoxPress = boxType => {
     setSelectedBox(boxType);
@@ -17,6 +19,15 @@ const StartExploreScreen = ({navigation}) => {
     return boxType === 'marriage'
       ? ['#0F52BA', '#8225AF']
       : ['#0F52BA', '#8225AF'];
+  };
+
+  const selectionOptionClick = () => {
+    if (selectedBox === 'marriage') {
+      setMoveToHome(true);
+    } else {
+      setIsDatingSelected(true);
+      setMoveToHome(true);
+    }
   };
 
   const renderBox = (boxType, styleProp) => {
@@ -85,10 +96,7 @@ const StartExploreScreen = ({navigation}) => {
         {selectedBox && (
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => {
-              // navigation.navigate('HomeTabs');
-              navigation.navigate('HomeTabs', {selectedBox: selectedBox});
-            }}
+            onPress={selectionOptionClick}
             style={style.buttonContainer}>
             <LinearGradient
               colors={['#0F52BA', '#8225AF']}

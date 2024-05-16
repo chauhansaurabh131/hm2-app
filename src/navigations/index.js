@@ -1,5 +1,5 @@
-import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, {useEffect, useState} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer, useTheme} from '@react-navigation/native';
 import {Image, Text, TouchableOpacity} from 'react-native';
@@ -22,64 +22,50 @@ import UpgradeScreen from '../screen/upgradeScreen';
 import {icons} from '../assets';
 import {fontSize, hp, isIOS} from '../utils/helpers';
 import MainScreenDemo from '../screen/mainScreenDemo';
+import ExploreScreen from '../screen/exploreScreen';
+import DemoPractiveCodeScreen from '../screen/demoPractiveCodeScreen';
+import ChatUserScreen from '../screen/chatUserScreen';
+import {MyContext} from '../utils/Provider';
+import {useSelector} from 'react-redux';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const ExtrasStack = createNativeStackNavigator();
 
 const MainNavigator = () => {
+  const [moveToHome, setMoveToHome] = useState(false);
+  const [isDatingSelected, setIsDatingSelected] = useState(false);
+
   const AuthStack = () => (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="MainScreenDemo">
+      initialRouteName="RegistrationScreen">
+      <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen
-        name="MainScreenDemo"
-        component={MainScreenDemo}
-        options={{headerShown: false}}
+        name="DemoPractiveCodeScreen"
+        component={DemoPractiveCodeScreen}
       />
       <Stack.Screen
         name="GeneralInformation"
         component={GeneralInformationScreen}
       />
-      <Stack.Screen
-        name="RegistrationScreen"
-        component={RegistrationScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="VerificationScreen"
-        component={VerificationScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SetPasswordScreen"
-        component={SetPasswordScreen}
-        options={{headerShown: false}}
-      />
+      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
+      <Stack.Screen name="SetPasswordScreen" component={SetPasswordScreen} />
       <Stack.Screen
         name="NumberRegistrationScreen"
         component={NumberRegistrationScreen}
-        options={{headerShown: false}}
       />
       <Stack.Screen
         name="GeneralInformationScreen"
         component={AddPersonalInfo}
-        options={{headerShown: false}}
       />
       <Stack.Screen
         name="NumberRegistrationTextInput"
         component={NumberRegistrationTextInput}
-        options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="StartExploreScreen"
-        component={StartExploreScreen}
-        options={{headerShown: false}}
-      />
+      <Stack.Screen name="StartExploreScreen" component={StartExploreScreen} />
     </Stack.Navigator>
   );
 
@@ -121,9 +107,36 @@ const MainNavigator = () => {
     );
   };
 
-  const HomeTabs = () => {
-    const {colors} = useTheme();
+  const UsersChatsScreen = ({route}) => {
+    const {selectedBox} = route.params ?? {};
+    return (
+      <ExtrasStack.Navigator>
+        <ExtrasStack.Screen
+          name="ChatUserScreen"
+          component={ChatUserScreen}
+          initialParams={{
+            selectedBox: selectedBox,
+            userData: route.params?.userData,
+          }}
+          options={{headerShown: false}}
+        />
+      </ExtrasStack.Navigator>
+    );
+  };
 
+  const HomeStack = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={{headerShown: false}}
+        initialRouteName={'HomeTabs'}>
+        <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
+        <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
+      </Stack.Navigator>
+    );
+  };
+
+  const HomeTabs = ({route}) => {
+    // const {colors} = useTheme();
     const getIconStyle = isFocused => {
       return {
         width: hp(17.76),
@@ -140,6 +153,9 @@ const MainNavigator = () => {
 
     return (
       <Tab.Navigator
+        tabBarOptions={{
+          keyboardHidesTabBar: true,
+        }}
         screenOptions={{
           tabBarStyle: {
             height: isIOS ? hp(100) : hp(80),
@@ -150,6 +166,7 @@ const MainNavigator = () => {
         <Tab.Screen
           name="Home"
           component={HomeScreen}
+          // initialParams={{selectedBox: selectedBox}}
           options={{
             tabBarIcon: ({color, size, focused}) => (
               <Image source={icons.homeIcon} style={getIconStyle(focused)} />
@@ -171,36 +188,71 @@ const MainNavigator = () => {
             headerShown: false,
           }}
         />
-        <Tab.Screen
-          name="Matches"
-          component={MatchesScreen}
-          options={{
-            tabBarIcon: ({color, size, focused}) => (
-              <Image
-                source={icons.matchesIcon}
-                style={[
-                  getIconStyle(focused),
-                  {width: hp(22.5), height: hp(20)},
-                ]}
-              />
-            ),
-            tabBarLabel: ({focused}) => (
-              <Text
-                style={[
-                  getLabelStyle(focused),
-                  {
-                    fontSize: fontSize(10),
-                    lineHeight: hp(15),
-                    fontWeight: '500',
-                  },
-                ]}>
-                Matches
-              </Text>
-            ),
-            tabBarButton: props => <CustomTabBarButton {...props} />,
-            headerShown: false,
-          }}
-        />
+        {!isDatingSelected ? (
+          <Tab.Screen
+            name="Matches"
+            component={MatchesScreen}
+            options={{
+              tabBarIcon: ({color, size, focused}) => (
+                <Image
+                  source={icons.matchesIcon}
+                  style={[
+                    getIconStyle(focused),
+                    {width: hp(22.5), height: hp(20)},
+                  ]}
+                />
+              ),
+              tabBarLabel: ({focused}) => (
+                <Text
+                  style={[
+                    getLabelStyle(focused),
+                    {
+                      fontSize: fontSize(10),
+                      lineHeight: hp(15),
+                      fontWeight: '500',
+                    },
+                  ]}>
+                  Matches
+                </Text>
+              ),
+              tabBarButton: props => <CustomTabBarButton {...props} />,
+              headerShown: false,
+            }}
+          />
+        ) : (
+          <Tab.Screen
+            name="Explore"
+            component={ExploreScreen}
+            // initialParams={{selectedBox}}
+            options={{
+              tabBarIcon: ({color, size, focused}) => (
+                <Image
+                  source={icons.matchesIcon}
+                  style={[
+                    getIconStyle(focused),
+                    {width: hp(22.5), height: hp(20)},
+                  ]}
+                />
+              ),
+              tabBarLabel: ({focused}) => (
+                <Text
+                  style={[
+                    getLabelStyle(focused),
+                    {
+                      fontSize: fontSize(10),
+                      lineHeight: hp(15),
+                      fontWeight: '500',
+                    },
+                  ]}>
+                  Explore
+                </Text>
+              ),
+              tabBarButton: props => <CustomTabBarButton {...props} />,
+              headerShown: false,
+            }}
+          />
+        )}
+
         <Tab.Screen
           name="Chat"
           component={ChatScreen}
@@ -261,7 +313,6 @@ const MainNavigator = () => {
             headerShown: false,
           }}
         />
-
         <Tab.Screen
           name="Upgrader"
           component={UpgradeScreen}
@@ -292,18 +343,28 @@ const MainNavigator = () => {
             headerShown: false,
           }}
         />
+
+        {/*<Tab.Screen*/}
+        {/*  name="ChatUserScreen"*/}
+        {/*  component={UsersChatsScreen}*/}
+        {/*  initialParams={*/}
+        {/*    {*/}
+        {/*      // selectedBox: selectedBox,*/}
+        {/*      // userData: route.params?.userData,*/}
+        {/*    }*/}
+        {/*  }*/}
+        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
+        {/*/>*/}
       </Tab.Navigator>
     );
   };
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{headerShown: false}}
-        initialRouteName="AuthStack">
-        <Stack.Screen name="AuthStack" component={AuthStack} />
-        <Stack.Screen name="HomeTabs" component={HomeTabs} />
-      </Stack.Navigator>
+      <MyContext.Provider
+        value={{moveToHome, setMoveToHome, setIsDatingSelected}}>
+        {moveToHome ? <HomeStack /> : <AuthStack />}
+      </MyContext.Provider>
     </NavigationContainer>
   );
 };

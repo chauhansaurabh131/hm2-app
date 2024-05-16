@@ -94,6 +94,8 @@ export const icons = {
   couple_icon: require('./icons/couple_icon.png'),
   check_gradient_icon: require('./icons/check_icon_gradient.png'),
   show_Password_icon: require('./icons/show_password_icon.png'),
+  simple_camera_icon: require('./icons/simple_camera_icon.png'),
+  send_icon: require('./icons/send_icon.png'),
 };
 
 export const gif = {

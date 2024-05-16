@@ -117,8 +117,11 @@ const ChatScreen = ({navigation}) => {
         item.online === 'online' ? colors.blue : '#A7A7A7';
 
       const handleItemPress = userData => {
-        console.log(' === userData______ChatScreen ===> ', userData);
-        navigation.navigate('ChatUserScreen', {userData});
+        // console.log(' === userData______ChatScreen ===> ', userData);
+        navigation.navigate('ChatUserScreen', {
+          screen: 'ChatUserScreen',
+          params: {userData},
+        });
       };
 
       return (

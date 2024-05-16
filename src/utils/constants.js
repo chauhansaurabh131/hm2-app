@@ -18,12 +18,15 @@ import AdminContactDetailsScreen from '../screen/adminProfileDetailsScreen/admin
 import AdminEducationDetailsScreen from '../screen/adminProfileDetailsScreen/adminEducationDetailsScreen';
 import AdminProfessionalDetailsScreen from '../screen/adminProfileDetailsScreen/adminProfessionalDetailsScreen';
 import AdminHobbiesAndInterestScreen from '../screen/adminProfileDetailsScreen/adminHobbiesAndInterestScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const STANDARD_SCREEN_HEIGHT = 764;
 export const STANDARD_SCREEN_WIDTH = 390;
 
 export const TOKEN = 'TOKEN';
-export const BASE_URL = 'https://api.solesearchindia.com';
+export const BASE_URL = 'https://happymilan.tech';
+
+// https://happymilan.tech/api/v1/user/auth/register
 
 // const images = [
 //   require('../../assets/icons/address_location_logo.png'),
@@ -131,3 +134,7 @@ export const AdminDetailsProfile = [
     icon: require('../assets/icons/interner_logo.png'),
   },
 ];
+
+export const globalUse = {
+  ACCESSTOKEN: '',
+};

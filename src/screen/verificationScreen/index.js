@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -13,39 +13,51 @@ import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useRoute} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {apiKeys} from '../../config/apikeys';
+import {Login, VerifyOtp} from '../../store/actions/allActions';
+import useDelayedNavigation from '../../utils/delayFunction';
+import {MyContext} from '../../utils/Provider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {globalUse} from '../../utils/constants';
 
-const VerificationScreen = ({navigation}) => {
-  const route = useRoute();
+const VerificationScreen = ({navigation, route}) => {
+  // const route = useRoute();
   const [otp, setOTP] = useState(['', '', '', '']);
   const inputRefs = useRef([]);
   const [timer, setTimer] = useState(60);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
+  // const {setAccessToken} = useContext(MyContext);
 
-  const {name, email} = route.params;
+  const {otpVerifiedDetails, loading, updatedEmail} = useSelector(
+    state => state.auth,
+  );
 
-  const hiddenChars = email.substring(0, 3);
-  const domain = email.substring(email.indexOf('@'));
+  const hiddenChars = updatedEmail.substring(0, 3);
+  const domain = updatedEmail.substring(updatedEmail.indexOf('@'));
   const maskedEmail = hiddenChars + '******' + domain;
 
-  // console.log(' === email ===> ', email);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer(prevTimer => {
-          if (prevTimer === 1) {
-            clearInterval(interval);
-            setIsTimerRunning(false); // Timer is not running anymore
-          }
-          return prevTimer - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    } else {
-      setIsTimerRunning(false); // Timer is not running anymore
+    console.log('inside the verification screen', otpVerifiedDetails);
+    if (
+      otpVerifiedDetails.length !== 0 &&
+      otpVerifiedDetails[0]?.tokens.access.token
+    ) {
+      // setAccessToken(otpVerifiedDetails[0]?.tokens.access.token);
+      navigationFunction();
     }
-  }, [timer]);
+  }, [otpVerifiedDetails]);
+
+  const navigationFunction = async () => {
+    // setAccessToken(otpVerifiedDetails[0]?.tokens.access.token);
+    await AsyncStorage.setItem(
+      globalUse.ACCESSTOKEN,
+      otpVerifiedDetails[0]?.tokens.access.token,
+    );
+    navigation.navigate('SetPasswordScreen');
+  };
 
   const handleResend = () => {
     // Reset timer and start again
@@ -54,18 +66,24 @@ const VerificationScreen = ({navigation}) => {
   };
 
   const handleOTPChange = (text, index) => {
-    if (text.length <= 1) {
-      const updatedOTP = [...otp];
-      updatedOTP[index] = text;
-      setOTP(updatedOTP);
-
-      if (text.length === 1 && index < 3) {
-        inputRefs.current[index + 1].focus();
-      } else if (text.length === 0 && index > 0) {
-        inputRefs.current[index - 1].focus();
-      }
-    }
+    const updatedOTP = [...otp]; // Create a copy of current state
+    updatedOTP[index] = text; // Update the value at the specified index
+    setOTP(updatedOTP); // Update the state with the new OTP array
   };
+
+  const onVerifyCodePress = () => {
+    let params = {
+      [apiKeys.Path]: apiKeys.verifyOTP,
+      [apiKeys.Data]: {
+        email: updatedEmail,
+        otp: otp.join(''),
+        // email: 'happytest01@yopmail.com',
+        // password: 'test123',
+      },
+    };
+    dispatch(VerifyOtp(params));
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <Image
@@ -81,22 +99,40 @@ const VerificationScreen = ({navigation}) => {
         </Text>
 
         <Text style={style.verificationEmailTextStyle}>
-          {/*Verification code sent roh******tel@gmail.com*/}
+          {/*Verification code sent {updatedEmail}*/}
           Verification code sent {maskedEmail}
         </Text>
 
         <View style={{marginHorizontal: wp(52)}}>
           <View style={style.OtpGeneratedContainer}>
-            {otp.map((value, index) => (
+            {/*{otp?.map((value, index) => (*/}
+            {/*<TextInput*/}
+            {/*  // key={index}*/}
+            {/*  // ref={ref => (inputRefs.current[index] = ref)}*/}
+            {/*  style={{*/}
+            {/*    borderColor: 'black',*/}
+            {/*    borderRadius: 5,*/}
+            {/*    fontSize: 20,*/}
+            {/*    textAlign: 'center',*/}
+            {/*    width: 50,*/}
+            {/*  }}*/}
+            {/*  onChangeText={handleOTPChange}*/}
+            {/*  value={otp}*/}
+            {/*  keyboardType="numeric"*/}
+            {/*  maxLength={1}*/}
+            {/*/>*/}
+            {/*))}*/}
+
+            {otp?.map((value, index) => (
               <TextInput
                 key={index}
-                ref={ref => (inputRefs.current[index] = ref)}
                 style={{
                   borderColor: 'black',
                   borderRadius: 5,
                   fontSize: 20,
                   textAlign: 'center',
                   width: 50,
+                  color: colors.black,
                 }}
                 onChangeText={text => handleOTPChange(text, index)}
                 value={value}
@@ -147,7 +183,9 @@ const VerificationScreen = ({navigation}) => {
           <CommonGradientButton
             buttonName={'Verify Code'}
             containerStyle={{width: '100%', marginTop: hp(35)}}
-            onPress={() => navigation.navigate('SetPasswordScreen')}
+            // onPress={() => navigation.navigate('SetPasswordScreen')}
+            onPress={onVerifyCodePress}
+            loading={loading}
           />
 
           <View style={style.bottomUnderLineStyle} />

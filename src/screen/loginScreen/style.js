@@ -31,7 +31,7 @@ const style = StyleSheet.create({
     marginTop: hp(50),
   },
   passwordContainerStyle: {
-    // marginTop: isIOS ? hp(20) : hp(-20),
+    marginTop: isIOS ? hp(20) : hp(-20),
   },
   gradientContainerStyle: {
     marginTop: isIOS ? hp(20) : hp(2),

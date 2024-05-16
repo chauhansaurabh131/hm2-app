@@ -25,12 +25,14 @@ const MyTextInput = ({
   maxLength,
   keyboardType,
   iconStyle,
+  handleInputChange,
+  inputValue,
 }) => {
-  const [inputValue, setInputValue] = useState('');
+  // const [inputValue, setInputValue] = useState('');
 
-  const handleInputChange = text => {
-    setInputValue(text);
-  };
+  // const handleInputChange = text => {
+  //   setInputValue(text);
+  // };
 
   return (
     <SafeAreaView style={[style.container, containerStyle]}>
