@@ -1,13 +1,28 @@
 import React from 'react';
 import {SafeAreaView, ScrollView, Text, TextInput, View} from 'react-native';
 import {colors} from '../../utils/colors';
-import style from './style';
-import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
-import {ANNUAL_SALARY, COUNTRY_LIST, RELIGION_LIST} from '../../utils/data';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
 
-const ProfessionalsDetailsScreen = () => {
+const ProfessionalsDetailsScreen = ({
+  jobTitle,
+  setJobTitle,
+  jobType,
+  setJobType,
+  companyName,
+  setCompanyName,
+  salary,
+  setSalary,
+  workInCity,
+  setWorkInCity,
+  workInCountry,
+  setWorkInCountry,
+}) => {
+  const handleSalaryChange = value => {
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setSalary(numericValue);
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -25,6 +40,8 @@ const ProfessionalsDetailsScreen = () => {
 
           <TextInput
             placeholder={'Type'}
+            value={jobTitle}
+            onChangeText={setJobTitle}
             style={{
               width: '100%',
               height: hp(50),
@@ -50,14 +67,9 @@ const ProfessionalsDetailsScreen = () => {
             Job Type
           </Text>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  placeholder={'Select or Type'}*/}
-          {/*  data={RELIGION_LIST}*/}
-          {/*  height={50}*/}
-          {/*  searchPlaceholder={'Search Or Type'}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
+            value={jobType}
+            onChangeText={setJobType}
             placeholder={'Select'}
             dropdownItems={['AA', 'VV', 'BB', 'DD', 'SS', 'GG', 'SDS', 'NG']}
           />
@@ -75,6 +87,8 @@ const ProfessionalsDetailsScreen = () => {
 
           <TextInput
             placeholder={'Enter Name Here'}
+            value={companyName}
+            onChangeText={setCompanyName}
             placeholderTextColor={colors.black}
             style={{
               width: '100%',
@@ -100,20 +114,17 @@ const ProfessionalsDetailsScreen = () => {
             Annual Salary
           </Text>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  placeholder={'10,000 To 15,000'}*/}
-          {/*  data={ANNUAL_SALARY}*/}
-          {/*  height={50}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
             placeholder={'10,000 To 15,000'}
+            value={salary}
+            onChangeText={handleSalaryChange}
             dropdownItems={[
-              '10,000 to 15000',
-              '15000 to 30,000',
-              '30,000 to 45,000',
-              '45,000 to 60,000',
-              '60,000 to 80,000',
+              '10000',
+              '15000',
+              '30000',
+              '45000',
+              '60000',
+              '80000',
             ]}
           />
 
@@ -129,14 +140,10 @@ const ProfessionalsDetailsScreen = () => {
             Work In City
           </Text>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  placeholder={'Select or Type'}*/}
-          {/*  data={COUNTRY_LIST}*/}
-          {/*  height={50}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
             placeholder={'Select or Type'}
+            value={workInCity}
+            onChangeText={setWorkInCity}
             dropdownItems={[
               'INDIA',
               'SRI LANKA',
@@ -161,13 +168,9 @@ const ProfessionalsDetailsScreen = () => {
             Work In Country
           </Text>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  placeholder={'Select or Type'}*/}
-          {/*  data={COUNTRY_LIST}*/}
-          {/*  height={50}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
+            value={workInCountry}
+            onChangeText={setWorkInCountry}
             placeholder={'Select'}
             dropdownItems={[
               'INDIA',

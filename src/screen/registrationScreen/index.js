@@ -1,22 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  Image,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
 import {hp} from '../../utils/helpers';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useDispatch, useSelector} from 'react-redux';
-import {Registration} from '../../store/actions/allActions';
-import {apiKeys} from '../../config/apikeys';
 import {useNavigation} from '@react-navigation/native';
-import useDelayedNavigation from '../../utils/delayFunction';
+import {register} from '../../actions/authActions';
+import Toast from 'react-native-toast-message';
 
 const RegistrationScreen = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -27,30 +19,17 @@ const RegistrationScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const {RegisterMessage, loading, RegisterMessageFailed} = useSelector(
-    state => state.auth,
-  );
-
-  useDelayedNavigation(RegisterMessage, 'VerificationScreen');
-
-  useEffect(() => {
-    if (RegisterMessageFailed !== null) {
-      Alert.alert(RegisterMessageFailed);
-    }
-  });
+  const {loading} = useSelector(state => state.home);
 
   const handleSignUp = async () => {
     const isNameValid = validateName();
     const isEmailValid = validateEmail();
     if (isNameValid && isEmailValid) {
-      let params = {
-        [apiKeys.Path]: apiKeys.register,
-        [apiKeys.Data]: {
-          name,
-          email,
-        },
-      };
-      dispatch(Registration(params));
+      dispatch(
+        register({name, email}, () => {
+          navigation.navigate('VerificationScreen', {name, email});
+        }),
+      );
     }
   };
 
@@ -200,6 +179,7 @@ const RegistrationScreen = () => {
           </View>
         </View>
       </View>
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

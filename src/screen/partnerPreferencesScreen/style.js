@@ -70,6 +70,49 @@ const style = StyleSheet.create({
     width: wp(162),
     height: hp(50),
   },
+  bodyContainer: {
+    marginTop: hp(19),
+  },
+  headerListBody: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  chooseAgeText: {
+    color: colors.black,
+    fontSize: fontSize(12),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins400,
+    marginBottom: hp(7),
+  },
+  chooseAgeContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+  chooseAgeSpace: {
+    marginRight: 10,
+  },
+  toText: {
+    marginRight: 10,
+    color: colors.black,
+    fontSize: fontSize(12),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins400,
+    alignSelf: 'center',
+  },
+  chooseHeightText: {
+    color: colors.black,
+    fontSize: fontSize(12),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins400,
+    marginBottom: hp(7),
+  },
+  chooseHeightContainer: {
+    flexDirection: 'row',
+  },
+  chooseHeightSpace: {
+    marginRight: 10,
+  },
 });
 
 export default style;

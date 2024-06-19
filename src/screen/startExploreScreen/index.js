@@ -5,11 +5,11 @@ import style from './style';
 import CustomHeaderLogo from '../../components/customHeaderLogo';
 import {icons, images} from '../../assets';
 import {hp, wp} from '../../utils/helpers';
-import {MyContext} from '../../utils/Provider';
+import {useDispatch} from 'react-redux';
+import {changeStack} from '../../actions/authActions';
 
 const StartExploreScreen = ({navigation}) => {
   const [selectedBox, setSelectedBox] = useState(null);
-  const {setMoveToHome, setIsDatingSelected} = useContext(MyContext);
 
   const handleBoxPress = boxType => {
     setSelectedBox(boxType);
@@ -21,12 +21,12 @@ const StartExploreScreen = ({navigation}) => {
       : ['#0F52BA', '#8225AF'];
   };
 
+  const dispatch = useDispatch();
+
   const selectionOptionClick = () => {
     if (selectedBox === 'marriage') {
-      setMoveToHome(true);
+      dispatch(changeStack());
     } else {
-      setIsDatingSelected(true);
-      setMoveToHome(true);
     }
   };
 

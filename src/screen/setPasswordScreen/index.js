@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Image,
@@ -13,10 +13,8 @@ import {hp, isIOS} from '../../utils/helpers';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import CommonGradientButton from '../../components/commonGradientButton';
 import Toast from 'react-native-toast-message';
-import {useDispatch, useSelector} from 'react-redux';
-import {apiKeys} from '../../config/apikeys';
-import {SetPassword} from '../../store/actions/allActions';
-import {MyContext} from '../../utils/Provider';
+import {useDispatch} from 'react-redux';
+import {setPassword as setPasswordAction} from '../../actions/authActions';
 
 const SetPasswordScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -24,21 +22,14 @@ const SetPasswordScreen = ({navigation}) => {
     useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const {setMoveToHome} = useContext(MyContext);
 
-  const {loading, updatedEmail, userDetails} = useSelector(state => state.auth);
+  const loading = false;
+  const updatedEmail = '';
 
   const hiddenChars = updatedEmail.substring(0, 3);
   const dispatch = useDispatch();
   const domain = updatedEmail.substring(updatedEmail.indexOf('@'));
   const maskedEmail = hiddenChars + '******' + domain;
-
-  useEffect(() => {
-    console.log('tesitng login', setMoveToHome);
-    if (userDetails.length !== 0) {
-      navigation.navigate('StartExploreScreen');
-    }
-  }, [userDetails]);
 
   const ShowToast = () => {
     Toast.show({
@@ -66,16 +57,13 @@ const SetPasswordScreen = ({navigation}) => {
         'Password must contain at least one capital letter, one special character, one number, and be 6 to 8 characters in length.',
       );
     } else if (password !== confirmPassword) {
-      // Alert.alert('Password Mismatch', 'Passwords do not match.');
       ShowToast();
     } else {
-      let params = {
-        [apiKeys.Path]: apiKeys.setPassword,
-        [apiKeys.Data]: {
-          password: password,
-        },
-      };
-      dispatch(SetPassword(params));
+      dispatch(
+        setPasswordAction({password}, () => {
+          navigation.navigate('StartExploreScreen');
+        }),
+      );
     }
   };
 

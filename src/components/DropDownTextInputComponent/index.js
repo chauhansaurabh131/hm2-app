@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {colors} from '../../utils/colors';
 import {hp, wp} from '../../utils/helpers';
@@ -16,56 +16,17 @@ const DropdownComponent = ({
   width,
   height,
   search,
+  onChange, // Add onChange prop
 }) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
-  // const handleDropdownChange = item => {
-  //   const index = selectedValues.indexOf(item.value);
-  //   if (index === -1) {
-  //     setSelectedValues([...selectedValues, item.value]); // Select if not already selected
-  //   } else {
-  //     const newSelectedValues = [...selectedValues];
-  //     newSelectedValues.splice(index, 1); // Deselect if already selected
-  //     setSelectedValues(newSelectedValues);
-  //   }
-  // };
-
-  // const removeSelectedValue = value => {
-  //   const newSelectedValues = selectedValues.filter(val => val !== value);
-  //   setSelectedValues(newSelectedValues);
-  // };
-
-  // const getPlaceholderText = () => {
-  //   if (selectedValues.length === 0) {
-  //     return placeholder;
-  //   } else {
-  //     return selectedValues.map(value => {
-  //       const label = data.find(item => item.value === value).label;
-  //       return (
-  //         <TouchableOpacity
-  //           key={value}
-  //           onPress={() => removeSelectedValue(value)}
-  //           style={styles.selectedItem}>
-  //           <Text>{label}</Text>
-  //           <Text style={styles.removeButton}>X</Text>
-  //         </TouchableOpacity>
-  //       );
-  //     });
-  //   }
-  // };
-
-  const renderItem = item => {
-    const itemTextStyle = {
-      ...styles.textItem,
-      color: value === item.value ? 'black' : 'black', // Change text color to red if item is selected
-    };
-
-    return (
-      <View style={styles.item}>
-        <Text style={itemTextStyle}>{item.label}</Text>
-      </View>
-    );
+  const handleValueChange = item => {
+    setValue(item.value);
+    if (onChange) {
+      onChange(item.value); // Call the onChange callback with the selected value
+    }
+    setIsFocus(false);
   };
 
   return (
@@ -87,29 +48,18 @@ const DropdownComponent = ({
         labelField="label"
         valueField="value"
         placeholder={placeholder}
-        // placeholder={!isFocus ? 'Select item' : 'Select item'}
-        // searchPlaceholder="Search..."
         searchPlaceholder={searchPlaceholder}
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
-        onChange={item => {
-          setValue(item.value);
-          setIsFocus(false);
-        }}
-        renderItem={renderItem}
+        onChange={handleValueChange} // Pass the handleValueChange function to Dropdown's onChange prop
       />
     </View>
   );
 };
 
-export default DropdownComponent;
-
 const styles = StyleSheet.create({
-  container: {
-    // backgroundColor: 'white',
-    // padding: 16,
-  },
+  container: {},
   dropdown: {
     height: hp(50),
     width: wp(339),
@@ -117,13 +67,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 8,
-    // marginTop: 50,
   },
-  dropdownFocused: {
-    // Additional styles for the focused state
-    // For example:
-    // borderColor: 'red',
-  },
+  dropdownFocused: {},
   icon: {
     marginRight: 5,
   },
@@ -155,9 +100,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.black,
   },
-  textItem: {
-    // flex: 1,
-    fontSize: 16,
-    padding: 20,
-  },
 });
+
+export default DropdownComponent;

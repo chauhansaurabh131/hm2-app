@@ -13,7 +13,22 @@ const SetProfilePictureScreen = () => {
 
   const {selectedBox} = route.params ?? {};
 
-  console.log(' === selectedBox_SetProfilePictureScreen ===> ', selectedBox);
+  // const getAllPhotos = () => {
+  //   CameraRoll.getPhotos({
+  //     first: 20,
+  //     assetType: 'All',
+  //   })
+  //     .then(r => {
+  //       setPhoto(r.edges);
+  //       navigation.navigate('SelectImageScreen', {
+  //         photos: r.edges,
+  //         selectedBox: selectedBox,
+  //       });
+  //     })
+  //     .catch(err => {
+  //       console.error('Error fetching photos:', err);
+  //     });
+  // };
 
   const getAllPhotos = () => {
     CameraRoll.getPhotos({
@@ -22,6 +37,16 @@ const SetProfilePictureScreen = () => {
     })
       .then(r => {
         setPhoto(r.edges);
+
+        // Check if photos are retrieved and log the first image details
+        if (r.edges.length > 0) {
+          console.log('First photo:', r.edges[0].node.image);
+        } else {
+          console.log('No photos found');
+        }
+
+        console.log(' === r.edges ===> ', r.edges[0].node.image);
+
         navigation.navigate('SelectImageScreen', {
           photos: r.edges,
           selectedBox: selectedBox,
@@ -31,6 +56,7 @@ const SetProfilePictureScreen = () => {
         console.error('Error fetching photos:', err);
       });
   };
+
   return (
     <SafeAreaView style={style.container}>
       <View style={style.bodyContainer}>
@@ -67,7 +93,7 @@ const SetProfilePictureScreen = () => {
 
             <CommonGradientButton
               onPress={() => {
-                navigation.navigate('PartnerPreferencesScreen', {selectedBox});
+                navigation.navigate('PartnerPreferencesScreen');
               }}
               buttonName={'I’ll Do Later'}
               containerStyle={style.laterButtonStyle}

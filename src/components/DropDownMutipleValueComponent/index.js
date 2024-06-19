@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {colors} from '../../utils/colors';
@@ -16,32 +16,33 @@ const DropdownComponent = ({
   width,
   height,
   search,
+  selectedItems,
+  setSelectedItems,
 }) => {
-  const [selectedValues, setSelectedValues] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [value, setValue] = useState(null);
 
   const handleDropdownChange = item => {
-    const index = selectedValues.indexOf(item.value);
+    const index = selectedItems.indexOf(item.value);
     if (index === -1) {
-      setSelectedValues([...selectedValues, item.value]); // Select if not already selected
+      setSelectedItems([...selectedItems, item.value]); // Select if not already selected
     } else {
-      const newSelectedValues = [...selectedValues];
-      newSelectedValues.splice(index, 1); // Deselect if already selected
-      setSelectedValues(newSelectedValues);
+      const newSelectedItems = [...selectedItems];
+      newSelectedItems.splice(index, 1); // Deselect if already selected
+      setSelectedItems(newSelectedItems);
     }
   };
 
   const removeSelectedValue = value => {
-    const newSelectedValues = selectedValues.filter(val => val !== value);
-    setSelectedValues(newSelectedValues);
+    const newSelectedItems = selectedItems.filter(val => val !== value);
+    setSelectedItems(newSelectedItems);
   };
 
   const getPlaceholderText = () => {
-    if (selectedValues.length === 0) {
+    if (selectedItems.length === 0) {
       return placeholder;
     } else {
-      return selectedValues.map(value => {
+      return selectedItems.map(value => {
         const label = data.find(item => item.value === value).label;
         return (
           <TouchableOpacity
@@ -97,7 +98,7 @@ const DropdownComponent = ({
         valueField="value"
         placeholder={getPlaceholderText()}
         searchPlaceholder={searchPlaceholder}
-        value={selectedValues}
+        value={selectedItems}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={handleDropdownChange}

@@ -1,25 +1,20 @@
 import React, {useState} from 'react';
 import {View, TextInput, TouchableOpacity, Image, Text} from 'react-native';
 import {colors} from '../../utils/colors';
-import {hp, wp} from '../../utils/helpers';
-import {ScrollView} from 'react-native-gesture-handler';
 
-const TextInputSearchAndDropDowm = ({dropdownItems, placeholder}) => {
+const TextInputSearchAndDropDowm = ({
+  dropdownItems,
+  placeholder,
+  value,
+  onChangeText,
+}) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
   const [isTextInputFocused, setIsTextInputFocused] = useState(false);
-  const [textInputValue, setTextInputValue] = useState('');
   const [filteredDropdownItems, setFilteredDropdownItems] =
     useState(dropdownItems);
 
   const handleDropdownPress = () => {
     setShowDropdown(!showDropdown);
-  };
-
-  const handleItemSelected = item => {
-    setSelectedItem(item);
-    setTextInputValue(item);
-    setShowDropdown(false);
   };
 
   const handleTextInputFocus = () => {
@@ -32,21 +27,23 @@ const TextInputSearchAndDropDowm = ({dropdownItems, placeholder}) => {
   };
 
   const handleTextInputChange = text => {
-    setTextInputValue(text);
-    setSelectedItem(null); // Clear selected item when typing
+    onChangeText(text);
 
-    // Filter dropdown items based on the search text
     const filteredItems = dropdownItems.filter(item =>
       item.toLowerCase().includes(text.toLowerCase()),
     );
 
-    // Check if there are any filtered items
     if (filteredItems.length === 0) {
-      setShowDropdown(false); // Hide dropdown if there are no matches
+      setShowDropdown(false);
     } else {
       setFilteredDropdownItems(filteredItems);
-      setShowDropdown(true); // Show dropdown if there are matches
+      setShowDropdown(true);
     }
+  };
+
+  const handleDropdownItemPress = item => {
+    onChangeText(item);
+    setShowDropdown(false); // Close the dropdown after selecting an item
   };
 
   return (
@@ -61,12 +58,10 @@ const TextInputSearchAndDropDowm = ({dropdownItems, placeholder}) => {
             width: '100%',
             height: 50,
             borderColor: colors.lightGreyBorder,
-            // borderColor: 'red',
             color: 'black',
           }}
-          // placeholder="Select"
           placeholder={placeholder}
-          value={selectedItem !== null ? selectedItem : textInputValue}
+          value={value}
           onFocus={handleTextInputFocus}
           onBlur={handleTextInputBlur}
           onChangeText={handleTextInputChange}
@@ -91,83 +86,30 @@ const TextInputSearchAndDropDowm = ({dropdownItems, placeholder}) => {
       </View>
 
       {showDropdown && (
-        <>
-          <ScrollView
-            style={{
-              position: 'absolute',
-              // width: wp(350),
-              width: '100%',
-              top: 70,
-              // left: wp(10),
-              zIndex: 1,
-              backgroundColor: 'white',
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: '#ccc',
-              maxHeight: 200, // Set a maximum height to enable scrolling
-            }}>
-            {filteredDropdownItems.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handleItemSelected(item)}
-                style={styles.dropdownItem}>
-                <Text style={styles.dropdownItemText}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <View style={{height: 200}} />
-        </>
+        <View
+          style={{
+            position: 'absolute',
+            width: '100%',
+            top: 70,
+            zIndex: 1,
+            backgroundColor: 'white',
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            maxHeight: 200,
+          }}>
+          {filteredDropdownItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleDropdownItemPress(item)}
+              style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
+              <Text style={{color: colors.black}}>{item}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       )}
     </View>
   );
-};
-
-const styles = {
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 7,
-  },
-  textInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    width: '100%',
-    height: 50,
-    borderColor: colors.lightGreyBorder,
-  },
-  dropdownIconContainer: {
-    marginLeft: -35,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dropdownIcon: {
-    width: 10.36,
-    height: 6,
-  },
-  dropdownListContainer: {
-    position: 'absolute',
-    width: wp(339),
-    top: 70,
-    left: wp(10),
-    zIndex: 1,
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  dropdownItemText: {
-    color: colors.black,
-  },
 };
 
 export default TextInputSearchAndDropDowm;

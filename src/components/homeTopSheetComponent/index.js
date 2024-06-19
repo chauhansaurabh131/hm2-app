@@ -15,6 +15,8 @@ import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {changeStack, logout} from '../../actions/authActions';
 
 const HomeTopSheetComponent = ({
   isVisible,
@@ -22,6 +24,7 @@ const HomeTopSheetComponent = ({
   onBackButtonPress,
 }) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalTop, setModalTop] = useState(new Animated.Value(20));
@@ -297,6 +300,10 @@ const HomeTopSheetComponent = ({
           {/*button*/}
 
           <TouchableOpacity
+            onPress={() => {
+              // console.log(' === LOGOUT ===> ');
+              dispatch(logout(), () => dispatch(changeStack()));
+            }}
             activeOpacity={0.5}
             style={{
               // width: wp(340),

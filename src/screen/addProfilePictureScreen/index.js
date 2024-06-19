@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,115 +7,242 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import {icons, images} from '../../assets';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {colors} from '../../utils/colors';
+import {icons, images} from '../../assets'; // Assuming you have imported your icons and images
+import {colors} from '../../utils/colors'; // Assuming you have defined your colors
 import {useNavigation, useRoute} from '@react-navigation/native';
-import CommonGradientButton from '../../components/commonGradientButton';
+import CommonGradientButton from '../../components/commonGradientButton'; // Adjust as per your component structure
+import {useDispatch, useSelector} from 'react-redux'; // Assuming you use Redux for state management
+import {
+  addProfilePicture,
+  addProfilePictureFailure,
+} from '../../actions/homeActions'; // Assuming this action is defined
+import style from './style'; // Adjust the import path for your style
+
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {TOKEN} from '../../utils/constants';
+import RNBlobUtil from 'react-native-blob-util';
 
 const AddProfilePictureScreen = ({route}) => {
   const navigation = useNavigation();
   const {selectedItems: initialSelectedItems} = route.params;
   const [selectedItems, setSelectedItems] = useState(initialSelectedItems);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(-1); // Initialize with -1, meaning no image is selected initially
-  const [isImageSelected, setIsImageSelected] = useState(false); // State to track if any image is selected
+  const [selectedImageIndex, setSelectedImageIndex] = useState(-1);
+  const [isImageSelected, setIsImageSelected] = useState(false);
+  const [authToken, setAuthToken] = useState(null);
 
-  const {selectedBox} = route.params ?? {};
+  const dispatch = useDispatch();
 
-  console.log(' === selectedBox_AddProfilePictureScreen ===> ', selectedBox);
-
-  const handleAddImage = () => {
-    console.log('Add more images');
-    navigation.goBack();
-  };
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        let token = await AsyncStorage.getItem(TOKEN);
+        if (token) {
+          token = token.replace(/^"(.*)"$/, '$1'); // Remove any extra double quotes
+          setAuthToken(token.startsWith('Bearer ') ? token : `Bearer ${token}`);
+        } else {
+          // Redirect to login screen or handle authentication failure
+          navigation.navigate('LoginScreen');
+        }
+      } catch (error) {
+        console.error('Error fetching token:', error);
+        // Handle error fetching token
+      }
+    };
+    fetchToken();
+  }, []);
 
   const handleImageClick = index => {
     setSelectedImageIndex(index);
-    setIsImageSelected(true); // Set isImageSelected to true when an image is selected
+    setIsImageSelected(true);
   };
 
-  // Add TouchableOpacity to the selected items list
-  const dataWithAddButton = [...selectedItems, {type: 'addButton'}];
+  // const handleUploadImage = async () => {
+  //   try {
+  //     const selectedImage = selectedItems[selectedImageIndex];
+  //
+  //     // Check if selectedImage and its properties exist
+  //     if (
+  //       !selectedImage ||
+  //       !selectedImage.node ||
+  //       !selectedImage.node.image ||
+  //       !selectedImage.node.image.uri
+  //     ) {
+  //       Alert.alert('Error', 'No image selected.');
+  //       return;
+  //     }
+  //
+  //     const callBack = response => {
+  //       const presignedUrl = response.data?.data?.url;
+  //       RNBlobUtil.fetch(
+  //         'PUT',
+  //         presignedUrl,
+  //         {},
+  //         RNBlobUtil.wrap(selectedImage.node.image.uri),
+  //       )
+  //         .then(data => {
+  //           //TODO Navigate to home page
+  //           console.log(' === data ===> ', data);
+  //           navigation.navigate('PartnerPreferencesScreen');
+  //         })
+  //         .catch(err => {
+  //           console.log(' === err ===> ', err);
+  //         });
+  //     };
+  //
+  //     dispatch(
+  //       addProfilePicture(
+  //         {
+  //           key: `${selectedImage.node.id}.jpg`,
+  //           contentType: getContentType(selectedImage.node.type),
+  //           isProfilePic: true,
+  //           profileType: 'profileImage',
+  //         },
+  //         callBack,
+  //       ),
+  //     );
+  //   } catch (error) {
+  //     console.error('Error uploading image:', error);
+  //     Alert.alert('Error', 'Failed to upload image.');
+  //   }
+  // };
 
-  const handleDeleteImage = index => {
-    const updatedSelectedItems = [...selectedItems];
-    updatedSelectedItems.splice(index, 1); // Remove the item at the specified index
-    setSelectedItems(updatedSelectedItems);
-    setIsImageSelected(false); // Reset isImageSelected if no images are selected
+  const handleUploadImage = async () => {
+    try {
+      const selectedImage = selectedItems[selectedImageIndex];
+
+      // Check if selectedImage and its properties exist
+      if (
+        !selectedImage ||
+        !selectedImage.node ||
+        !selectedImage.node.image ||
+        !selectedImage.node.image.uri
+      ) {
+        Alert.alert('Error', 'No image selected.');
+        return;
+      }
+
+      // Logging selected image properties
+      console.log('Selected Image:', selectedImage);
+
+      const callBack = async response => {
+        try {
+          const presignedUrl = response.data?.data?.url;
+
+          if (!presignedUrl) {
+            console.error('Error: presignedUrl is undefined', response.data);
+            Alert.alert('Error', 'Failed to get presigned URL.');
+            return;
+          }
+
+          // Additional logging to verify the data being sent
+          console.log('Uploading to presigned URL:', presignedUrl);
+          console.log('Uploading image URI:', selectedImage.node.image.uri);
+
+          // Verify the file exists and is accessible
+          const fileInfo = await RNBlobUtil.fs.stat(
+            selectedImage.node.image.uri,
+          );
+          console.log('File info:', fileInfo);
+
+          // Ensure the file size is logged
+          if (fileInfo.size) {
+            console.log('File size:', fileInfo.size);
+          } else {
+            console.error('File size is undefined');
+          }
+
+          // Fetch the presigned URL with the image data
+          const data = await RNBlobUtil.fetch(
+            'PUT',
+            presignedUrl,
+            {
+              'Content-Type': getContentType(selectedImage.node.type),
+            },
+            RNBlobUtil.wrap(selectedImage.node.image.uri),
+          );
+
+          // If the fetch operation was successful
+          console.log('Image uploaded successfully:', data);
+          navigation.navigate('PartnerPreferencesScreen');
+        } catch (err) {
+          // Detailed error logging
+          console.error('RNBlobUtil fetch error:', err);
+          Alert.alert('Error', 'Failed to upload image.');
+        }
+      };
+
+      dispatch(
+        addProfilePicture(
+          {
+            key: `${selectedImage.node.id}.jpg`,
+            contentType: getContentType(selectedImage.node.type),
+            isProfilePic: true,
+            profileType: 'profileImage',
+          },
+          callBack,
+        ),
+      );
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert('Error', 'Failed to upload image.');
+    }
+  };
+
+  const getContentType = imageType => {
+    switch (imageType) {
+      case 'video/mp4':
+        return 'video/mp4';
+      case 'image/jpeg':
+      case 'image/jpg':
+        return 'image/jpeg';
+      case 'image/png':
+        return 'image/png';
+      default:
+        return 'image/jpeg';
+    }
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: wp(18), flex: 1}}>
+    <SafeAreaView style={style.container}>
+      <View style={style.containerBody}>
         <Image
-          source={images.happyMilanColorLogo}
-          style={{
-            width: wp(96),
-            height: hp(24),
-            marginTop: hp(15),
-            resizeMode: 'stretch',
-            marginBottom: hp(15),
-          }}
+          source={images.happyMilanColorLogo} // Adjust source as per your imported images
+          style={style.logoImageStyle}
         />
 
-        <View style={{marginTop: hp(30), marginBottom: hp(39)}}>
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-            }}>
+        <View style={style.headingContainer}>
+          <Text style={style.headingTextStyle}>
             Select Photo to{' '}
             <Text style={{color: colors.blue}}>Set as profile picture</Text>
           </Text>
         </View>
+
         <FlatList
-          data={dataWithAddButton}
+          data={[...selectedItems, {type: 'addButton'}]}
           numColumns={3}
           renderItem={({item, index}) => (
-            <View
-              style={{
-                width: '33%',
-                height: 106,
-                position: 'relative',
-                marginBottom: 10,
-              }}>
+            <View style={style.flatListImageContainer}>
               {item.type === 'addButton' ? (
                 <TouchableOpacity
-                  style={{
-                    width: hp(106),
-                    height: hp(106),
-                    borderRadius: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#F1F1F1',
-                  }}
-                  onPress={handleAddImage}>
+                  style={style.addButtonStyle}
+                  onPress={() => {
+                    navigation.goBack();
+                  }}>
                   <Text style={{color: colors.blue, fontSize: 30}}>+</Text>
                 </TouchableOpacity>
               ) : (
                 <>
                   <TouchableOpacity
                     onPress={() => handleImageClick(index)}
-                    style={{
-                      width: hp(106),
-                      height: hp(106),
-                      borderRadius: 10,
-                      resizeMode: 'stretch',
-                      backgroundColor: 'transparent',
-                      overflow: 'hidden',
-                    }}>
+                    style={style.addButtonImageContainer}>
                     <Image
                       source={{uri: item.node.image.uri}}
-                      style={{
-                        width: hp(106),
-                        height: hp(106),
-                        borderRadius: 10,
-                        resizeMode: 'stretch',
-                      }}
+                      style={style.addButtonImageStyle}
                     />
+
                     {selectedImageIndex === index && (
                       <View
                         style={{
@@ -126,51 +253,32 @@ const AddProfilePictureScreen = ({route}) => {
                         }}>
                         <Image
                           source={icons.select_borderWhite_icon}
-                          style={{width: 20, height: 20}}
+                          style={style.selectedImageStyle}
                         />
                       </View>
                     )}
                   </TouchableOpacity>
                   {item.node.type === 'video/mp4' && (
-                    <View
-                      style={{
-                        position: 'absolute',
-                        bottom: 40,
-                        left: 0,
-                        right: 0,
-                        padding: 5,
-                        alignItems: 'center',
-                      }}>
+                    <View style={style.videoIconStyle}>
                       <Image
                         source={icons.video_play_icon}
-                        style={{width: 25, height: 25}}
+                        style={style.videoIcon}
                       />
                     </View>
                   )}
 
                   <TouchableOpacity
-                    // onPress={() => {
-                    //   console.log(' === press ===> ', 'press');
-                    // }}
-                    onPress={() => handleDeleteImage(index)}
-                    style={{position: 'absolute', right: 17, top: 5}}>
-                    <View
-                      style={{
-                        width: 13,
-                        height: 13,
-                        borderRadius: 6.5,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'rgba(0, 0,0, 0.5)',
-                      }}>
+                    onPress={() => {
+                      const updatedSelectedItems = [...selectedItems];
+                      updatedSelectedItems.splice(index, 1); // Remove the item at the specified index
+                      setSelectedItems(updatedSelectedItems);
+                      setIsImageSelected(false); // Reset isImageSelected if no images are selected
+                    }}
+                    style={style.deleteIconContainer}>
+                    <View style={style.deleteIconStyle}>
                       <Image
                         source={icons.delete_icon}
-                        style={{
-                          width: 6,
-                          height: 7,
-                          resizeMode: 'contain',
-                          right: 1,
-                        }}
+                        style={style.deleteIcon}
                       />
                     </View>
                   </TouchableOpacity>
@@ -181,57 +289,23 @@ const AddProfilePictureScreen = ({route}) => {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
-      <View
-        style={{
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-          paddingHorizontal: wp(18),
-          paddingBottom: hp(20),
-        }}>
+
+      <View style={style.bottomButtonContainer}>
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
           }}
           activeOpacity={0.7}
-          style={{
-            width: wp(162),
-            height: hp(50),
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: colors.blue,
-            justifyContent: 'center',
-            marginBottom: 10,
-          }}>
-          <Text
-            style={{
-              color: colors.black,
-              textAlign: 'center',
-              fontSize: hp(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins400,
-            }}>
-            Back
-          </Text>
+          style={style.backButtonStyle}>
+          <Text style={style.backButtonTextStyle}>Back</Text>
         </TouchableOpacity>
 
         <CommonGradientButton
-          onPress={() => {
-            if (isImageSelected) {
-              navigation.navigate('PartnerPreferencesScreen', {selectedBox});
-            }
-          }}
+          onPress={handleUploadImage}
           buttonName={'Continue'}
-          containerStyle={{
-            width: wp(162),
-            height: hp(50),
-            marginBottom: 10,
-          }}
-          buttonTextStyle={{
-            fontSize: hp(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins400,
-          }}
-          disabled={!isImageSelected} // Disable the button when no image is selected
+          containerStyle={style.continueButtonStyle}
+          buttonTextStyle={style.continueTextStyle}
+          disabled={!isImageSelected}
         />
       </View>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -14,76 +14,38 @@ import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  accepted_Decline_Request,
+  getAllRequest,
+} from '../../actions/homeActions';
+import {USER_LIST} from '../../utils/data';
 
 const MatchesScreen = ({navigation}) => {
-  // const navigation = useNavigation();
-  const [selectedTab, setSelectedTab] = useState('new'); // Default selected tab is 'new'
+  const [selectedTab, setSelectedTab] = useState('new');
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [step, setStep] = useState(1);
+  const [userActions, setUserActions] = useState({});
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllRequest());
+  }, [dispatch]);
+
+  const {getAllRequestData} = useSelector(state => state.home);
+  // console.log(' === getAllRequestData ===> ', getAllRequestData?.data);
 
   const tabsData = [
     {id: 'new', label: 'New'},
     {id: 'accepted', label: 'Accepted'},
+    {id: 'receive', label: 'Received'},
+    {id: 'saved', label: 'Saved'},
     {id: 'declined', label: 'Declined'},
     {id: 'sent', label: 'Sent'},
     {id: 'deleted', label: 'Deleted'},
     {id: 'blocked', label: 'Blocked'},
-  ];
-
-  const USER_LIST = [
-    {
-      id: 1,
-      name: 'Rohan Patel',
-      image: require('../../assets/images/user_one.png'),
-      gender: 'Male',
-      age: '36',
-      height: '4\'55"',
-      state: 'Gujarat',
-      surname: 'Patel',
-      occupation: 'Software Engineer',
-      country: 'NY United States',
-      city: '',
-    },
-    {
-      id: 2,
-      name: 'Aarav Joshi',
-      image: require('../../assets/images/user_two.png'),
-      gender: 'Male',
-      age: '36',
-      height: '4\'55"',
-      state: 'Gujarat',
-      surname: 'Joshi',
-      occupation: 'Software Developer',
-      country: 'India',
-      city: 'Rajkot',
-    },
-    {
-      id: 3,
-      name: 'Jigar Barot',
-      image: require('../../assets/images/user_three.png'),
-      gender: 'Male',
-      age: '31',
-      height: '4\'55"',
-      state: 'Gujarat',
-      surname: 'Barot',
-      occupation: 'Software Engineer',
-      country: 'India',
-      city: '',
-    },
-    {
-      id: 4,
-      name: 'Vinod Maheta',
-      image: require('../../assets/images/user_four.png'),
-      gender: 'Male',
-      age: '36',
-      height: '4\'55"',
-      state: 'Gujarat',
-      surname: 'Maheta',
-      occupation: 'Engineer',
-      country: 'India',
-      city: 'Mahesana',
-    },
   ];
 
   const openModal = () => {
@@ -115,6 +77,170 @@ const MatchesScreen = ({navigation}) => {
     toggleModal();
   };
 
+  const handleDecline = (id, userIduserId) => {
+    setUserActions(prevActions => ({...prevActions, [id]: 'declined'}));
+    dispatch(
+      accepted_Decline_Request({
+        user: userIduserId,
+        request: id,
+        status: 'rejected',
+      }),
+    );
+  };
+
+  const handleAccept = (id, userIduserId) => {
+    setUserActions(prevActions => ({...prevActions, [id]: 'accepted'}));
+    dispatch(
+      accepted_Decline_Request({
+        user: userIduserId,
+        request: id,
+        status: 'accepted',
+      }),
+    );
+    // console.log(' === id ===> ', id, userIduserId);
+  };
+  // USER REQUEST LIST RENDER ITEM //
+  const renderUserRequestItem = ({item}) => {
+    console.log(' === item ===> ', item);
+    const {user, id} = item; // Destructure `user` and `id` from `item`
+    const {
+      firstName,
+      lastName,
+      profilePic,
+      address,
+      gender,
+      dateOfBirth,
+      userProfessional,
+      motherTongue,
+      cast,
+    } = user;
+
+    const jobTitle = item.user.userProfessional.jobTitle;
+    const workCountry = item.user.userProfessional.workCountry;
+
+    const calculateAge = dob => {
+      const birthDate = new Date(dob);
+      const difference = Date.now() - birthDate.getTime();
+      const ageDate = new Date(difference);
+      return Math.abs(ageDate.getUTCFullYear() - 1970);
+    };
+
+    const age = calculateAge(dateOfBirth);
+
+    const height = user.height || 'N/A';
+
+    return (
+      <View style={style.renderContainer}>
+        <TouchableOpacity activeOpacity={1}>
+          <View>
+            <Image
+              source={profilePic ? {uri: profilePic} : images.empty_male_Image}
+              style={style.userImageStyle}
+            />
+
+            <LinearGradient
+              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+              style={style.gradient}
+            />
+
+            <View style={style.UserDetailsContainer}>
+              <View style={style.onlineBodyStyle}>
+                <Text style={style.bodyTextStyle}>Online</Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('UserDetailsScreen');
+                }}>
+                <Text style={style.userNameTextStyle}>
+                  {firstName || 'NAN'} {lastName || 'NAN'}
+                </Text>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                  <Text style={style.userDetailsTextStyle}>{age},</Text>
+                  <Text style={style.userDetailsTextStyle}>{height}</Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{motherTongue}</Text>
+                  <Text style={style.userDetailsTextStyle}>{cast}</Text>
+                </View>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{workCountry}</Text>
+                </View>
+              </TouchableOpacity>
+
+              <View style={style.RenderBottomImageContainer}>
+                <TouchableOpacity>
+                  <Image source={icons.image_icon} style={style.imageStyle} />
+                </TouchableOpacity>
+
+                <TouchableOpacity>
+                  <Image source={icons.video_icon} style={style.videoStyle} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={style.starImageContainer}>
+                  <Image
+                    source={icons.starIcon}
+                    style={style.startImageStyle}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={style.renderBottomButtonContainer}>
+                {userActions[id] === 'declined' ? (
+                  <TouchableOpacity style={style.requestDeclineContainer}>
+                    <Text style={style.requestTextStyle}>Request Decline</Text>
+                  </TouchableOpacity>
+                ) : userActions[id] === 'accepted' ? (
+                  <TouchableOpacity style={style.acceptedButtonContainer}>
+                    <Text style={style.acceptedTextStyle}>
+                      Request Accepted
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <>
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      style={{
+                        width: wp(142),
+                        height: hp(40),
+                        borderRadius: hp(20),
+                        backgroundColor: colors.white,
+                        justifyContent: 'center',
+                      }}
+                      onPress={() => handleDecline(id, user.id)}>
+                      <Text style={style.declineTextStyle}>Decline</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      onPress={() => handleAccept(id, user.id)}>
+                      <LinearGradient
+                        colors={['#0D4EB3', '#9413D0']}
+                        start={{x: 0, y: 0}}
+                        end={{x: 1, y: 1.5}}
+                        style={style.acceptButtonGradient}>
+                        <Text style={style.acceptTextStyle}>Accept</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  // TOP LIST DATA SHOW //
   const renderTabItem = ({item}) => (
     <TouchableOpacity onPress={() => handleTabPress(item.id)}>
       <View
@@ -131,159 +257,161 @@ const MatchesScreen = ({navigation}) => {
     </TouchableOpacity>
   );
 
-  const renderItem = ({item}) => (
-    <View>
-      <TouchableOpacity activeOpacity={1}>
-        <View>
-          <Image source={item.image} style={style.userImageStyle} />
-          <LinearGradient
-            colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-            style={style.gradient}
-          />
+  // USER NEW RENDER LIST //
+  const renderUserItem = ({item}) => {
+    return (
+      <View style={{marginHorizontal: 17}}>
+        <TouchableOpacity activeOpacity={1}>
+          <View>
+            <Image source={item.image} style={style.userImageStyle} />
+            <LinearGradient
+              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+              style={style.gradient}
+            />
 
-          <View style={style.UserDetailsContainer}>
-            <View style={style.onlineBodyStyle}>
-              <Text style={style.bodyTextStyle}>Online</Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('UserDetailsScreen');
-              }}>
-              <Text style={style.userNameTextStyle}>{item.name}</Text>
-
-              <View style={style.userDetailsDescriptionContainer}>
-                <Text style={style.userDetailsTextStyle}>{item.gender}</Text>
-                <Text style={style.userDetailsTextStyle}>{item.age},</Text>
-                <Text style={style.userDetailsTextStyle}>{item.height}</Text>
-
-                <View style={style.verticalLineStyle} />
-
-                <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-                <Text style={style.userDetailsTextStyle}>{item.surname}</Text>
+            <View style={style.UserDetailsContainer}>
+              <View style={style.onlineBodyStyle}>
+                <Text style={style.bodyTextStyle}>Online</Text>
               </View>
 
-              <View style={style.userDetailsDescriptionContainer}>
-                <Text style={style.userDetailsTextStyle}>
-                  {item.occupation}
-                </Text>
-
-                <View style={style.verticalLineStyle} />
-
-                <Text style={style.userDetailsTextStyle}>{item.city}</Text>
-                <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-                <Text style={style.userDetailsTextStyle}>{item.country}</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/*<View style={style.bottomImageContainer}>*/}
-            {/*  <TouchableOpacity*/}
-            {/*    onPress={() => {*/}
-            {/*      console.log(' === var ===> ', '.....');*/}
-            {/*      navigation.navigate('UserUploadImageFullScreen');*/}
-            {/*    }}>*/}
-            {/*    <Image*/}
-            {/*      source={icons.image_icon}*/}
-            {/*      style={{*/}
-            {/*        width: hp(20),*/}
-            {/*        height: hp(20),*/}
-            {/*        resizeMode: 'contain',*/}
-            {/*        marginRight: wp(22),*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*  </TouchableOpacity>*/}
-
-            {/*  <TouchableOpacity>*/}
-            {/*    <Image*/}
-            {/*      source={icons.video_icon}*/}
-            {/*      style={{*/}
-            {/*        width: hp(24.1),*/}
-            {/*        height: hp(20),*/}
-            {/*        resizeMode: 'contain',*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*  </TouchableOpacity>*/}
-
-            {/*  <TouchableOpacity style={{position: 'absolute', right: 40}}>*/}
-            {/*    <Image*/}
-            {/*      source={icons.starIcon}*/}
-            {/*      style={{*/}
-            {/*        width: hp(21.67),*/}
-            {/*        height: hp(20),*/}
-            {/*        resizeMode: 'contain',*/}
-            {/*      }}*/}
-            {/*    />*/}
-            {/*  </TouchableOpacity>*/}
-            {/*</View>*/}
-
-            <View
-              style={{
-                marginTop: hp(22),
-                flexDirection: 'row',
-              }}>
               <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={openModal}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                onPress={() => {
+                  navigation.navigate('UserDetailsScreen');
                 }}>
-                <Image
-                  source={icons.couple_icon}
-                  style={{width: hp(16), height: hp(14), resizeMode: 'contain'}}
-                />
-                <Text
-                  style={{
-                    color: '#FFA5F6',
-                    marginLeft: 9,
-                    fontSize: fontSize(12),
-                    lineHeight: hp(18),
-                    fontFamily: fontFamily.poppins500,
-                  }}>
-                  85% Match
-                </Text>
+                <Text style={style.userNameTextStyle}>{item.name}</Text>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>{item.gender}</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.age},</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.height}</Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{item.state}</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.surname}</Text>
+                </View>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>
+                    {item.occupation}
+                  </Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{item.city}</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.state}</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.country}</Text>
+                </View>
               </TouchableOpacity>
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  position: 'absolute',
-                  right: 50,
-                  alignItems: 'center',
-                  top: 1,
-                }}>
+              <View style={{marginTop: hp(22), flexDirection: 'row'}}>
                 <TouchableOpacity
                   activeOpacity={0.5}
-                  onPress={() => {
-                    navigation.navigate('UserUploadImageFullScreen');
-                  }}>
+                  onPress={openModal}
+                  style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Image
-                    source={icons.image_icon}
+                    source={icons.couple_icon}
                     style={{
-                      width: 16,
-                      height: 16,
+                      width: hp(16),
+                      height: hp(14),
                       resizeMode: 'contain',
-                      marginRight: wp(14),
                     }}
                   />
+                  <Text
+                    style={{
+                      color: '#FFA5F6',
+                      marginLeft: 9,
+                      fontSize: fontSize(12),
+                      lineHeight: hp(18),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    85% Match
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity activeOpacity={0.5}>
-                  <Image
-                    source={icons.video_icon}
-                    style={{width: 20, height: 16, resizeMode: 'contain'}}
-                  />
-                </TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    position: 'absolute',
+                    right: 50,
+                    alignItems: 'center',
+                    top: 1,
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      navigation.navigate('UserUploadImageFullScreen');
+                    }}>
+                    <Image
+                      source={icons.image_icon}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        resizeMode: 'contain',
+                        marginRight: wp(14),
+                      }}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity activeOpacity={0.5}>
+                    <Image
+                      source={icons.video_icon}
+                      style={{width: 20, height: 16, resizeMode: 'contain'}}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   const handleTabPress = tab => {
     setSelectedTab(tab);
+  };
+
+  const renderContent = () => {
+    switch (selectedTab) {
+      case 'new':
+        return (
+          <View>
+            <FlatList
+              data={USER_LIST}
+              keyExtractor={item => item.id}
+              renderItem={renderUserItem}
+              showsVerticalScrollIndicator={false}
+              ListFooterComponent={<View style={{height: 130}} />}
+            />
+          </View>
+        );
+      case 'accepted':
+        return <Text>Accepted</Text>;
+
+      case 'receive':
+        // return <Text>Receive</Text>;
+        return (
+          <FlatList
+            data={getAllRequestData?.data}
+            keyExtractor={item => item.id}
+            renderItem={renderUserRequestItem}
+            ListFooterComponent={<View style={{height: 130}} />}
+          />
+        );
+      case 'saved':
+        return <Text>Saved</Text>;
+      case 'declined':
+        return <Text>Declined</Text>;
+      case 'sent':
+        return <Text>Sent</Text>;
+      case 'deleted':
+        return <Text>Deleted</Text>;
+      case 'blocked':
+        return <Text>Blocked</Text>;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -317,27 +445,9 @@ const MatchesScreen = ({navigation}) => {
             renderItem={renderTabItem}
             keyExtractor={item => item.id}
             contentContainerStyle={style.flatListStatusBarStyle}
-            // contentContainerStyle={{
-            //   flexDirection: 'row',
-            //   paddingHorizontal: wp(17), // Add horizontal padding
-            //   marginTop: hp(22),
-            //   alignItems: 'center', // Align items to center
-            //   justifyContent: 'flex-start', // Align content to the sta
-            // }}
           />
         </View>
       </View>
-
-      <View style={style.containerBodyStyle}>
-        <FlatList
-          data={USER_LIST}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-
-      {/*MATCH RASIO MODAL*/}
 
       <Modal
         animationType="none"
@@ -646,6 +756,8 @@ const MatchesScreen = ({navigation}) => {
         </View>
         {/*</TouchableWithoutFeedback>*/}
       </Modal>
+
+      <View>{renderContent()}</View>
     </SafeAreaView>
   );
 };

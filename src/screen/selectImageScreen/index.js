@@ -15,11 +15,8 @@ import style from './style';
 const SelectImageScreen = ({route}) => {
   const navigation = useNavigation();
   const {photos} = route.params;
+
   const [selectedItems, setSelectedItems] = useState([]);
-
-  const {selectedBox} = route.params ?? {};
-
-  console.log(' === selectedBox_SelectImageScreen ===> ', selectedBox);
 
   // Function to toggle selection of an item
   const toggleSelection = item => {
@@ -73,9 +70,10 @@ const SelectImageScreen = ({route}) => {
 
           <TouchableOpacity
             onPress={() => {
+              console.log(' === selectedItems ===> ', selectedItems);
               navigation.navigate('AddProfilePictureScreen', {
                 selectedItems: selectedItems,
-                selectedBox: selectedBox,
+                // selectedBox: selectedBox,
               });
             }}>
             <Image
@@ -84,9 +82,8 @@ const SelectImageScreen = ({route}) => {
             />
           </TouchableOpacity>
         </View>
-
-        <View style={{alignItems: 'center', width: '100%'}} />
       </View>
+
       <View style={style.flatListContainer}>
         <FlatList
           data={photos}

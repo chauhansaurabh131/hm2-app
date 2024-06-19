@@ -21,69 +21,22 @@ import {MyContext} from '../../utils/Provider';
 import Toast from 'react-native-toast-message';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import {hp} from '../../utils/helpers';
+import {changeStack, login} from '../../actions/authActions';
 
 const LoginScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  // const {setTemporyHome} = useContext(MyContext);
 
-  const {loading, userDetails, userDetailsError} = useSelector(
-    state => state.auth,
-  );
-  const {setMoveToHome} = useContext(MyContext);
-
-  useEffect(() => {
-    if (userDetailsError == null) {
-      if (userDetails.length !== 0) {
-        setMoveToHome(true);
-      }
-    } else {
-      Alert.alert(userDetailsError);
-    }
-  });
-
-  useEffect(() => {
-    if (userDetailsError !== null) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: userDetailsError,
-        autoHide: true,
-      });
-    }
-  }, [userDetailsError]);
+  const {loading} = useSelector(state => state.auth);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  // const onPressLogin = () => {
-  //   if (email === '' && password === '') {
-  //     let params = {
-  //       [apiKeys.Path]: apiKeys.login,
-  //       [apiKeys.Data]: {
-  //         email: 'happytest01@yopmail.com',
-  //         password: 'test123',
-  //       },
-  //     };
-  //     dispatch(Login(params));
-  //   }
-  // };
-
   const onPressLogin = () => {
-    console.log('onPressLogin ', email + password);
-    if (email !== '' && password !== '') {
-      let params = {
-        [apiKeys.Path]: apiKeys.login,
-        [apiKeys.Data]: {
-          email: email,
-          password: password,
-        },
-      };
-      dispatch(Login(params));
-    }
+    dispatch(login({email, password}, () => dispatch(changeStack())));
   };
 
   return (

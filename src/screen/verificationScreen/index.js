@@ -20,35 +20,27 @@ import useDelayedNavigation from '../../utils/delayFunction';
 import {MyContext} from '../../utils/Provider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {globalUse} from '../../utils/constants';
+import {verifyOTP} from '../../actions/authActions';
 
 const VerificationScreen = ({navigation, route}) => {
-  // const route = useRoute();
+  const {email = ''} = route.params;
+
+  // console.log(' === var ===> ', email);
+
   const [otp, setOTP] = useState(['', '', '', '']);
-  const inputRefs = useRef([]);
   const [timer, setTimer] = useState(60);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
-  // const {setAccessToken} = useContext(MyContext);
 
-  const {otpVerifiedDetails, loading, updatedEmail} = useSelector(
-    state => state.auth,
-  );
+  const {otpVerifiedDetails} = useSelector(state => state.auth);
 
-  const hiddenChars = updatedEmail.substring(0, 3);
-  const domain = updatedEmail.substring(updatedEmail.indexOf('@'));
+  const loading = false;
+  const updatedEmail = '';
+
+  const hiddenChars = email.substring(0, 3);
+  const domain = email.substring(email.indexOf('@'));
   const maskedEmail = hiddenChars + '******' + domain;
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log('inside the verification screen', otpVerifiedDetails);
-    if (
-      otpVerifiedDetails.length !== 0 &&
-      otpVerifiedDetails[0]?.tokens.access.token
-    ) {
-      // setAccessToken(otpVerifiedDetails[0]?.tokens.access.token);
-      navigationFunction();
-    }
-  }, [otpVerifiedDetails]);
 
   const navigationFunction = async () => {
     // setAccessToken(otpVerifiedDetails[0]?.tokens.access.token);
@@ -60,7 +52,6 @@ const VerificationScreen = ({navigation, route}) => {
   };
 
   const handleResend = () => {
-    // Reset timer and start again
     setTimer(60);
     setIsTimerRunning(true);
   };
@@ -72,16 +63,11 @@ const VerificationScreen = ({navigation, route}) => {
   };
 
   const onVerifyCodePress = () => {
-    let params = {
-      [apiKeys.Path]: apiKeys.verifyOTP,
-      [apiKeys.Data]: {
-        email: updatedEmail,
-        otp: otp.join(''),
-        // email: 'happytest01@yopmail.com',
-        // password: 'test123',
-      },
-    };
-    dispatch(VerifyOtp(params));
+    dispatch(
+      verifyOTP({email, otp: otp.join('')}, () =>
+        navigation.navigate('SetPasswordScreen'),
+      ),
+    );
   };
 
   return (

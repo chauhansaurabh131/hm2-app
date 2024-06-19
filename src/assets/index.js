@@ -26,6 +26,9 @@ export const images = {
   couple_Two_Image: require('./images/couple_Two.png'),
   couple_Three_Image: require('./images/couple_Three.png'),
   video_one: require('./images/video_one.mp4'),
+  empty_male_Image: require('./images/empty_Male_img.jpg'),
+  empty_female_Image: require('./images/empty_Female_img.jpg'),
+  modal_top_img: require('./images/modal_top_img.png'),
 };
 
 export const icons = {

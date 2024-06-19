@@ -14,16 +14,16 @@ import {icons, images} from '../../assets';
 import style from './style';
 
 const ChatUserScreen = ({route}) => {
-  const {userData: initialUserData} = route.params;
-  const [userData, setUserData] = useState(initialUserData);
+  // const {userData: initialUserData} = route.params;
+  // const [userData, setUserData] = useState(initialUserData);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    if (route.params && route.params.userData) {
-      setUserData(route.params.userData);
-    }
-  }, [route.params]);
+  // useEffect(() => {
+  //   if (route.params && route.params.userData) {
+  //     setUserData(route.params.userData);
+  //   }
+  // }, [route.params]);
 
   const handleSendMessage = () => {
     if (message.trim() === '') {
@@ -60,25 +60,25 @@ const ChatUserScreen = ({route}) => {
           </TouchableOpacity>
         </View>
         <View style={style.userDetailsContainer}>
-          {userData && (
-            <Image source={userData.image} style={style.userProfileIcon} />
-          )}
+          {/*{userData && (*/}
+          {/*  <Image source={userData.image} style={style.userProfileIcon} />*/}
+          {/*)}*/}
           <View style={style.detailsContainer}>
             <Text style={style.userNameTextStyle}>
-              {userData ? userData.name : ''}
+              {/*{userData ? userData.name : ''}*/}
             </Text>
-            <Text
-              style={[
-                style.statusTextStyle,
-                {
-                  color:
-                    userData && userData.online === 'online'
-                      ? colors.blue
-                      : colors.black,
-                },
-              ]}>
-              {userData ? userData.online : ''}
-            </Text>
+            {/*<Text*/}
+            {/*  style={[*/}
+            {/*    style.statusTextStyle,*/}
+            {/*    {*/}
+            {/*      color:*/}
+            {/*        userData && userData.online === 'online'*/}
+            {/*          ? colors.blue*/}
+            {/*          : colors.black,*/}
+            {/*    },*/}
+            {/*  ]}>*/}
+            {/*  {userData ? userData.online : ''}*/}
+            {/*</Text>*/}
           </View>
           <TouchableOpacity activeOpacity={0.5}>
             <Image source={icons.three_dots_icon} style={style.threeDotIcon} />
@@ -99,17 +99,17 @@ const ChatUserScreen = ({route}) => {
                 alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
                 marginBottom: 8,
               }}>
-              {msg.sender !== 'user' && (
-                <Image
-                  source={userData.image}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    marginRight: 8,
-                  }}
-                />
-              )}
+              {/*{msg.sender !== 'user' && (*/}
+              {/*  <Image*/}
+              {/*    source={userData.image}*/}
+              {/*    style={{*/}
+              {/*      width: 40,*/}
+              {/*      height: 40,*/}
+              {/*      borderRadius: 20,*/}
+              {/*      marginRight: 8,*/}
+              {/*    }}*/}
+              {/*  />*/}
+              {/*)}*/}
               <View
                 style={{
                   maxWidth: '70%',

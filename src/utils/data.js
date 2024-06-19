@@ -1,14 +1,22 @@
 import {images} from '../assets';
 
+export const CurrentState = [
+  {label: 'gujarat', value: '1'},
+  {label: 'assam', value: '2'},
+  {label: 'andhra-pradesh', value: '3'},
+  {label: 'arunachal-pradesh', value: '4'},
+  {label: 'Bihar', value: '5'},
+  {label: 'Chhattisgarh', value: '6'},
+  {label: 'goa', value: '7'},
+  {label: 'haryana', value: '8'},
+];
+
 export const CurrentCity = [
-  {label: 'Ahmedabad', value: '1'},
-  {label: 'Surat', value: '2'},
-  {label: 'vadodara', value: '3'},
-  {label: 'Delhi', value: '4'},
-  {label: 'Mumbai', value: '5'},
-  {label: 'Chennai', value: '6'},
-  {label: 'Kolkata', value: '7'},
-  {label: 'Bangalore', value: '8'},
+  {label: 'Bardoli', value: '1'},
+  {label: 'Navsari', value: '2'},
+  {label: 'Mandvi', value: '3'},
+  {label: 'Valod', value: '4'},
+  {label: 'Surat', value: '5'},
 ];
 
 export const Area_Code = [
@@ -23,14 +31,14 @@ export const Area_Code = [
 ];
 
 export const COUNTRY_LIST = [
-  {label: 'INDIA', value: '1'},
-  {label: 'SRI LANKA', value: '2'},
-  {label: 'Germany', value: '3'},
-  {label: 'Malaysia', value: '4'},
-  {label: 'Australia', value: '5'},
-  {label: 'Belize', value: '6'},
-  {label: 'Brazil', value: '7'},
-  {label: 'Estonia', value: '8'},
+  {label: 'india', value: '1'},
+  {label: 'canada', value: '2'},
+  {label: 'us', value: '3'},
+  {label: 'afghanistan', value: '4'},
+  {label: 'china', value: '5'},
+  {label: 'Myanmar', value: '6'},
+  {label: 'nepal', value: '7'},
+  {label: 'sri-lanka', value: '8'},
 ];
 
 export const RELIGION_LIST = [
@@ -62,17 +70,22 @@ export const ANNUAL_SALARY = [
 
 export const CREATIVE = [
   {label: 'Writing', value: '1'},
-  {label: 'Play Instrument', value: '2'},
-  {label: 'Poetry', value: '3'},
-  {label: 'Cooking', value: '4'},
-  {label: 'Painting', value: '5'},
-  {label: 'Gardening', value: '6'},
-  {label: 'Singing', value: '7'},
-  {label: 'DIY Crafts', value: '8'},
-  {label: 'Blogging', value: '9'},
-  {label: 'Photography', value: '10'},
-  {label: 'Dancing', value: '11'},
-  {label: 'Content Creation', value: '12'},
+  {label: 'painting', value: '2'},
+  // {label: 'Play Instrument', value: '2'},
+  // {label: 'Poetry', value: '3'},
+  // {label: 'Cooking', value: '4'},
+  // {label: 'Gardening', value: '6'},
+  // {label: 'Singing', value: '7'},
+  // {label: 'DIY Crafts', value: '8'},
+  // {label: 'Blogging', value: '9'},
+  // {label: 'Photography', value: '10'},
+  // {label: 'Dancing', value: '11'},
+  // {label: 'Content Creation', value: '12'},
+];
+
+export const Diet = [
+  {label: 'vegetarian', value: '1'},
+  {label: 'non_vegetarian', value: '2'},
 ];
 
 export const Fun = [
@@ -228,5 +241,60 @@ export const NEW_MATCHES = [
     county: 'India',
     km: '3 km',
     gender: 'Male',
+  },
+];
+
+export const USER_LIST = [
+  {
+    id: 1,
+    name: 'Rohan Patel',
+    image: require('../assets/images/user_one.png'),
+    gender: 'Male',
+    age: '36',
+    height: '4\'55"',
+    state: 'Gujarat',
+    surname: 'Patel',
+    occupation: 'Software Engineer',
+    country: 'NY United States',
+    city: '',
+  },
+  {
+    id: 2,
+    name: 'Aarav Joshi',
+    image: require('../assets/images/user_two.png'),
+    gender: 'Male',
+    age: '36',
+    height: '4\'55"',
+    state: 'Gujarat',
+    surname: 'Joshi',
+    occupation: 'Software Developer',
+    country: 'India',
+    city: 'Rajkot',
+  },
+  {
+    id: 3,
+    name: 'Jigar Barot',
+    image: require('../assets/images/user_three.png'),
+    gender: 'Male',
+    age: '31',
+    height: '4\'55"',
+    state: 'Gujarat',
+    surname: 'Barot',
+    occupation: 'Software Engineer',
+    country: 'India',
+    city: '',
+  },
+  {
+    id: 4,
+    name: 'Vinod Maheta',
+    image: require('../assets/images/user_four.png'),
+    gender: 'Male',
+    age: '36',
+    height: '4\'55"',
+    state: 'Gujarat',
+    surname: 'Maheta',
+    occupation: 'Engineer',
+    country: 'India',
+    city: 'Mahesana',
   },
 ];

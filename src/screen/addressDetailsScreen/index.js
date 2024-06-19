@@ -5,10 +5,29 @@ import {colors} from '../../utils/colors';
 import CheckBox from 'react-native-check-box';
 import {fontFamily, fontSize, hp, isIOS} from '../../utils/helpers';
 import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
+import Toast from 'react-native-toast-message';
 
-const AddressDetailsScreen = ({navigation}) => {
-  const [isFocus, setIsFocus] = useState(false);
+const AddressDetailsScreen = ({
+  selectCurrentCity,
+  setSelectCurrentCity,
+  currentResidingAddress,
+  setCurrentResidingAddress,
+  selectCurrentLiving,
+  setSelectCurrentLiving,
+}) => {
   const [isChecked, setChecked] = useState(false); // Add state for checkbox
+  const [originAddress, setOriginAddress] = useState(''); // Add state for origin address
+
+  const handleCheckboxClick = () => {
+    setChecked(!isChecked);
+    if (!isChecked) {
+      // If checkbox is checked, copy current residing address to origin address
+      setOriginAddress(currentResidingAddress);
+    } else {
+      // If checkbox is unchecked, clear the origin address
+      setOriginAddress('');
+    }
+  };
 
   return (
     <SafeAreaView style={style.container}>
@@ -25,22 +44,11 @@ const AddressDetailsScreen = ({navigation}) => {
             Current Residing Address
           </Text>
 
-          {/*<TextInput*/}
-          {/*  IconNameDesign={icons.profileLogo}*/}
-          {/*  placeholder={'Block No, Street '}*/}
-          {/*  editable={true}*/}
-          {/*  iconSource={icons.profileLogo}*/}
-          {/*  containerStyle={{*/}
-          {/*    alignSelf: 'flex-start',*/}
-          {/*    marginLeft: isIOS ? hp(0) : hp(-20),*/}
-          {/*    marginTop: isIOS ? hp(5) : hp(-11),*/}
-          {/*  }}*/}
-          {/*  inputContainer={{height: hp(50), width: '100%'}}*/}
-          {/*/>*/}
-
           <TextInput
             placeholder={'Block No, Street '}
             placeholderTextColor={colors.black}
+            value={currentResidingAddress}
+            onChangeText={setCurrentResidingAddress}
             style={{
               width: '100%',
               height: hp(50),
@@ -66,20 +74,14 @@ const AddressDetailsScreen = ({navigation}) => {
             Current City
           </Text>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  data={CurrentCity}*/}
-          {/*  placeholder={'select'}*/}
-          {/*  searchPlaceholder={'Search Current City...'}*/}
-          {/*  height={55}*/}
-          {/*  placeholderStyle={colors.black}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
             placeholder={'Select'}
+            value={selectCurrentCity}
+            onChangeText={setSelectCurrentCity}
             dropdownItems={[
               'Ahmedabad',
               'Surat',
-              'vadodara',
+              'Vadodara',
               'Delhi',
               'Mumbai',
               'Chennai',
@@ -87,14 +89,6 @@ const AddressDetailsScreen = ({navigation}) => {
               'Bangalore',
             ]}
           />
-
-          {/*<DropDownTextInputComponent*/}
-          {/*  placeholder={'select'}*/}
-          {/*  data={CurrentCity}*/}
-          {/*  searchPlaceholder={'Search Current City...'}*/}
-          {/*  placeholderStyle={colors.black}*/}
-          {/*  height={50}*/}
-          {/*/>*/}
 
           <Text
             style={{
@@ -104,31 +98,23 @@ const AddressDetailsScreen = ({navigation}) => {
               fontWeight: '400',
               fontFamily: fontFamily.poppins600,
               marginTop: hp(15),
-              // marginBottom: hp(15),
               marginBottom: hp(9),
             }}>
             Current Residing Country
           </Text>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  data={CurrentCity}*/}
-          {/*  placeholder={'select'}*/}
-          {/*  searchPlaceholder={'Search Current City...'}*/}
-          {/*  placeholderStyle={colors.black}*/}
-          {/*  height={55}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
             placeholder={'Select'}
+            value={selectCurrentLiving}
+            onChangeText={setSelectCurrentLiving}
             dropdownItems={[
-              'Ahmedabad',
-              'Surat',
-              'vadodara',
-              'Delhi',
-              'Mumbai',
-              'Chennai',
-              'Kolkata',
-              'Bangalore',
+              'india',
+              'canada',
+              'us',
+              'afghanistan',
+              'Australia',
+              'Belize',
+              'Brazil',
             ]}
           />
 
@@ -140,12 +126,14 @@ const AddressDetailsScreen = ({navigation}) => {
               fontFamily: fontFamily.poppins600,
               marginTop: isIOS ? hp(15) : hp(15),
             }}>
-            Same as current address
+            Add Your Origin
           </Text>
 
           <TextInput
             placeholder={'Add Your Origin'}
             placeholderTextColor={colors.black}
+            value={originAddress}
+            onChangeText={setOriginAddress}
             style={{
               width: '100%',
               height: hp(50),
@@ -173,7 +161,7 @@ const AddressDetailsScreen = ({navigation}) => {
             {/* CheckBox */}
             <CheckBox
               isChecked={isChecked}
-              onClick={() => setChecked(!isChecked)}
+              onClick={handleCheckboxClick}
               checkBoxColor={colors.blue}
             />
 
@@ -192,6 +180,7 @@ const AddressDetailsScreen = ({navigation}) => {
           </View>
         </View>
       </ScrollView>
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

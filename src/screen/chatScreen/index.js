@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -13,6 +13,8 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import {colors} from '../../utils/colors';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllFriends} from '../../actions/chatActions';
 
 const ChatScreen = ({navigation}) => {
   const userDatas = [
@@ -111,6 +113,16 @@ const ChatScreen = ({navigation}) => {
 
   const [userInput, setUserInput] = useState('');
 
+  const {myAllFriends} = useSelector(state => state.chat);
+
+  console.log(' === myAllFriends ===> ', myAllFriends.data);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllFriends());
+  }, [dispatch]);
+
   const FilterData = item => {
     if (userInput === '') {
       const onlineStatusColor =
@@ -124,6 +136,10 @@ const ChatScreen = ({navigation}) => {
         });
       };
 
+      // const handleItemPress = () => {
+      //   navigation.navigate('ChatUserScreen', {userData: item});
+      // };
+
       return (
         <TouchableOpacity
           onPress={() => handleItemPress(item)}
@@ -133,7 +149,8 @@ const ChatScreen = ({navigation}) => {
             marginBottom: hp(20),
           }}>
           <Image
-            source={item.image}
+            // source={item.image}
+            source={{uri: item.friend.profilePic}}
             style={{
               width: 47,
               height: 47,
@@ -152,7 +169,8 @@ const ChatScreen = ({navigation}) => {
                   color: colors.black,
                   marginRight: wp(10),
                 }}>
-                {item.name}
+                {/*{item.name}*/}
+                {item.friend.firstName} {item.friend.lastName}
               </Text>
               <Text
                 style={{
@@ -174,7 +192,8 @@ const ChatScreen = ({navigation}) => {
                 fontFamily: fontFamily.poppins400,
                 color: colors.black,
               }}>
-              {item.status}
+              {/*{item.status}*/}
+              Hi, I am busy, I’ll drop you a message after a some time ago
             </Text>
           </View>
         </TouchableOpacity>
@@ -311,7 +330,8 @@ const ChatScreen = ({navigation}) => {
           marginHorizontal: wp(26),
         }}>
         <FlatList
-          data={userDatas}
+          // data={userDatas}
+          data={myAllFriends.data}
           renderItem={({item, index}) => FilterData(item)}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}

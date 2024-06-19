@@ -37,7 +37,7 @@ const style = StyleSheet.create({
     width: '100%',
     height: hp(50),
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 50,
     borderColor: colors.lightGreyBorder,
     marginTop: hp(30),
     alignItems: 'center',
@@ -61,7 +61,7 @@ const style = StyleSheet.create({
   backButtonStyle: {
     width: wp(162),
     height: hp(50),
-    borderRadius: 10,
+    borderRadius: 50,
     borderWidth: 1,
     borderColor: colors.blue,
     justifyContent: 'center',
@@ -78,6 +78,7 @@ const style = StyleSheet.create({
     width: wp(162),
     height: hp(50),
     marginBottom: 10,
+    borderRadius: 50,
   },
 });
 

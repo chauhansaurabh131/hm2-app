@@ -1,15 +1,3 @@
-// import React from 'react';
-// import {SafeAreaView, Text} from 'react-native';
-//
-// const DropdownHeightAndAgeComponent = () => {
-//   return (
-//     <SafeAreaView>
-//       <Text>Text</Text>
-//     </SafeAreaView>
-//   );
-// };
-// export default DropdownHeightAndAgeComponent;
-
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -19,31 +7,16 @@ const DropdownHeightAndAgeComponent = ({
   data,
   placeholder,
   dropdownContainer,
+  selectedValue,
+  onValueChange,
 }) => {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(selectedValue || null);
   const [isFocus, setIsFocus] = useState(false);
-
-  const ages = [
-    {label: '25', value: '1'},
-    {label: '26', value: '2'},
-    {label: '27', value: '3'},
-    {label: '28', value: '4'},
-    {label: '29', value: '5'},
-    {label: '30', value: '6'},
-    // Add more age ranges as needed
-  ];
-  // const renderItem = item => {
-  //   return (
-  //     <View style={styles.item}>
-  //       <Text style={styles.textItem}>{item.label}</Text>
-  //     </View>
-  //   );
-  // };
 
   const renderItem = item => {
     const itemTextStyle = {
       ...styles.textItem,
-      color: value === item.value ? 'black' : 'black', // Change text color to red if item is selected
+      color: value === item.value ? 'black' : 'black',
     };
 
     return (
@@ -73,6 +46,7 @@ const DropdownHeightAndAgeComponent = ({
         onBlur={() => setIsFocus(false)}
         onChange={item => {
           setValue(item.value);
+          onValueChange(item.value);
           setIsFocus(false);
         }}
         renderItem={renderItem}

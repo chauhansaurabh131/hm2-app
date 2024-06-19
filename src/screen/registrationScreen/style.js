@@ -42,7 +42,7 @@ const style = StyleSheet.create({
     marginBottom: 20,
   },
   iconStyle: {
-    with: hp(20.78),
+    width: hp(20.78),
     height: hp(16),
     resizeMode: 'contain',
   },

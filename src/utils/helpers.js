@@ -7,6 +7,7 @@ import {
 } from 'react-native-responsive-screen';
 
 export const wp = val => {
+  // console.log(' === var ===> ', val);
   const valInPercentage = (val * 100) / STANDARD_SCREEN_WIDTH;
   // console.log(' === WIDTH ===> ', widthPercentageToDP(valInPercentage));
   return widthPercentageToDP(valInPercentage);

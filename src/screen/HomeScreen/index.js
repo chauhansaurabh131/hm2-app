@@ -9,43 +9,106 @@ import {
   ScrollView,
 } from 'react-native';
 import style from './style';
-import GradientText from '../../components/textGradientColor';
-import {colors} from '../../utils/colors';
-import GradientButton from '../../components/GradientButton';
-import CustomHeaderLogo from '../../components/customHeaderLogo';
-
 import LinearGradient from 'react-native-linear-gradient';
 import {gif, icons, images} from '../../assets';
 import StoryComponent from '../../components/storyComponent';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import PremiumMatchesFlatlistComponent from '../../components/premiumMatchesFlatlistComponent';
-import {NEW_MATCHES, userData} from '../../utils/data';
+import {NEW_MATCHES} from '../../utils/data';
 import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatListComponent';
-import {fontSize, hp, isIOS, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import FastImage from 'react-native-fast-image';
 import CommonGradientButton from '../../components/commonGradientButton';
-import GifImage from '@lowkey/react-native-gif';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import RecentlyAcceptedFlatlistComponent from '../../components/recentlyAcceptedFlatlistComponent';
-import RecentlySendFlatlistComponent from '../../components/recentlySendFlatlistComponent';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {userDatas} from '../../actions/homeActions';
+import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
+import Toast from 'react-native-toast-message';
+import {colors} from '../../utils/colors';
 
 const HomeScreen = ({route}) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
     useState(false);
+  const [activeLine, setActiveLine] = useState(1);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  // const route = useRoute();
+  const {selectedBox} = route.params ?? {};
 
-  const {sharedMedia, selectedBox} = route.params ?? {};
+  useEffect(() => {
+    dispatch(userDatas());
+  }, [dispatch]);
 
-  console.log(' === selectedBox Home ===> ', selectedBox);
-  console.log(sharedMedia);
+  const {userData} = useSelector(state => state.home);
 
-  useEffect(() => {}, []);
+  const {user} = useSelector(state => state.auth);
+
+  // console.log(' === user...... ===> ', user);
+
+  const userProfileCompleted = user?.user?.userProfileCompleted;
+
+  useEffect(() => {
+    if (userProfileCompleted) {
+      setShowModal(false);
+    }
+  }, [userProfileCompleted]);
+
+  // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+
+  const name = user?.user?.name;
+  const profilePicUrl = user?.user?.profilePic;
+
+  const handleButtonClick = () => {
+    if (activeLine === 3) {
+      setShowModal(false);
+      setActiveLine(1); // Reset the active line
+      navigation.navigate('GeneralInformationScreen');
+    } else {
+      setActiveLine(prev => prev + 1);
+    }
+  };
+
+  const getDisplayText = () => {
+    switch (activeLine) {
+      case 1:
+        return 'Explore Matches';
+      case 2:
+        return 'Stay Safe & Secure';
+      case 3:
+        return 'Complete Your Profile';
+      default:
+        return 'Explore Matches';
+    }
+  };
+
+  const getDisplayDescriptionText = () => {
+    switch (activeLine) {
+      case 1:
+        return 'Boost your profile by sharing more about yourself, your interests, and your ideal partner. A detailed profile improves your chances of finding the perfect match';
+      case 2:
+        return 'Your privacy is our priority. Take advantage of our security features, and be assured that your information is in safe hands';
+      case 3:
+        return 'Your privacy is our priority. Take advantage of our security features, and be assured that your information is in safe hands';
+      default:
+        return 'Boost your profile by sharing more about yourself, your interests, and your ideal partner. A detailed profile improves your chances of finding the perfect match';
+    }
+  };
+
+  const getButtpnText = () => {
+    switch (activeLine) {
+      case 1:
+        return 'Next';
+      case 2:
+        return 'Next';
+      case 3:
+        return 'Let’s do it';
+      default:
+        return 'Next';
+    }
+  };
 
   const closeWelcomeModal = () => {
     setShowModal(false);
@@ -73,7 +136,6 @@ const HomeScreen = ({route}) => {
     <SafeAreaView style={style.container}>
       <View style={{marginHorizontal: 17}}>
         <View style={style.headerViewContainer}>
-          {/*<CustomHeaderLogo headerImage={style.headerImageStyle} />*/}
           <Image
             source={images.happyMilanColorLogo}
             style={{
@@ -99,47 +161,157 @@ const HomeScreen = ({route}) => {
           <StoryComponent />
         </View>
 
+        {/*<Modal*/}
+        {/*  visible={showModal}*/}
+        {/*  animationType="none"*/}
+        {/*  transparent*/}
+        {/*  presentationStyle="overFullScreen"*/}
+        {/*  onRequestClose={closeWelcomeModal}>*/}
+        {/*  <View style={style.modalContainer}>*/}
+        {/*    <View style={style.modalBodyContainer}>*/}
+        {/*      <GradientText style={style.modalHeadingText}>*/}
+        {/*        Congratulations*/}
+        {/*      </GradientText>*/}
+
+        {/*      <View*/}
+        {/*        style={{*/}
+        {/*          marginTop: 34,*/}
+        {/*          alignItems: 'center',*/}
+        {/*        }}>*/}
+        {/*        <Text style={style.modalSubTitleTextStyle}>*/}
+        {/*          "New Beginnings, New Possibilities!*/}
+        {/*        </Text>*/}
+        {/*        <Text style={style.modalSubTitleTextStyle}>*/}
+        {/*          Congratulations on Registering with*/}
+        {/*        </Text>*/}
+        {/*        <Text style={style.modalSubTitleTextStyle}>HappyMilan</Text>*/}
+        {/*      </View>*/}
+
+        {/*      <FastImage*/}
+        {/*        source={gif.congrats_modal}*/}
+        {/*        style={{width: 180, height: 150, marginTop: -130}}*/}
+        {/*        resizeMode={'contain'}*/}
+        {/*      />*/}
+
+        {/*      <CommonGradientButton*/}
+        {/*        buttonName={'Start Exploring'}*/}
+        {/*        onPress={closeWelcomeModal}*/}
+        {/*        containerStyle={{*/}
+        {/*          width: wp(280),*/}
+        {/*          height: hp(50),*/}
+        {/*          marginTop: hp(30),*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*    </View>*/}
+        {/*  </View>*/}
+        {/*</Modal>*/}
+
         <Modal
-          visible={showModal}
           animationType="none"
-          transparent
-          presentationStyle="overFullScreen"
-          onRequestClose={closeWelcomeModal}>
-          <View style={style.modalContainer}>
-            <View style={style.modalBodyContainer}>
-              <GradientText style={style.modalHeadingText}>
-                Congratulations
-              </GradientText>
+          transparent={true}
+          visible={showModal}
+          onRequestClose={() => {
+            setShowModal(!showModal);
+          }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}>
+            <View
+              style={{
+                width: wp(340),
+                height: hp(470),
+                backgroundColor: 'white',
+                borderRadius: 14,
+                alignItems: 'center',
+              }}>
+              <Image source={images.modal_top_img} style={{width: '100%'}} />
 
-              <View
+              <Text
                 style={{
-                  marginTop: 34,
-                  alignItems: 'center',
+                  fontSize: fontSize(20),
+                  lineHeight: hp(30),
+                  fontFamily: fontFamily.poppins600,
+                  color: colors.white,
+                  marginTop: -60,
                 }}>
-                <Text style={style.modalSubTitleTextStyle}>
-                  "New Beginnings, New Possibilities!
+                Congratulations
+              </Text>
+
+              <View style={{marginTop: 70, alignItems: 'center'}}>
+                <Text
+                  style={{
+                    color: colors.black,
+                    fontSize: fontSize(24),
+                    lineHeight: hp(36),
+                    fontFamily: fontFamily.poppins600,
+                  }}>
+                  {getDisplayText()}
                 </Text>
-                <Text style={style.modalSubTitleTextStyle}>
-                  Congratulations on Registering with
+
+                <Text
+                  style={{
+                    marginHorizontal: wp(31),
+                    fontFamily: fontFamily.poppins400,
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    color: colors.black,
+                    textAlign: 'center',
+                    marginTop: hp(27),
+                  }}>
+                  {getDisplayDescriptionText()}
                 </Text>
-                <Text style={style.modalSubTitleTextStyle}>HappyMilan</Text>
+
+                <View
+                  style={{
+                    marginTop: 50,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                  }}>
+                  {[1, 2, 3].map((line, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        width: wp(50),
+                        borderWidth: 0.5,
+                        borderColor:
+                          activeLine === line ? '#8225AF' : '#E8E8E8',
+                        marginHorizontal: 5,
+                      }}
+                    />
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={handleButtonClick}>
+                  <LinearGradient
+                    colors={['#0D4EB3', '#9413D0']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0.5}}
+                    style={{
+                      marginTop: hp(50),
+                      width: wp(176),
+                      height: hp(50),
+                      borderRadius: 25,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        color: colors.white,
+                        textAlign: 'center',
+                        fontSize: fontSize(16),
+                        lineHeight: hp(26),
+                        fontFamily: fontFamily.poppins500,
+                      }}>
+                      {getButtpnText()}
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
               </View>
-
-              <FastImage
-                source={gif.congrats_modal}
-                style={{width: 180, height: 150, marginTop: -130}}
-                resizeMode={'contain'}
-              />
-
-              <CommonGradientButton
-                buttonName={'Start Exploring'}
-                onPress={closeWelcomeModal}
-                containerStyle={{
-                  width: wp(280),
-                  height: hp(50),
-                  marginTop: hp(30),
-                }}
-              />
             </View>
           </View>
         </Modal>
@@ -153,11 +325,18 @@ const HomeScreen = ({route}) => {
               style={style.cardBodyStyle}>
               <View style={style.cardViewStyle}>
                 <Image
-                  source={images.profileDisplayImage}
+                  // source={images.profileDisplayImage}
+                  // source={{uri: profilePicUrl}}
+                  source={
+                    profilePicUrl
+                      ? {uri: profilePicUrl}
+                      : images.profileDisplayImage
+                  }
                   style={style.imageStyle}
                 />
                 <View style={style.cardTextContainer}>
-                  <Text style={style.cardUserTextStyle}>Riya Shah</Text>
+                  {/*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*/}
+                  <Text style={style.cardUserTextStyle}>{name}</Text>
 
                   <View style={style.cardSubTittleContainer}>
                     <Text style={style.cardSubTittleTextStyle}>
@@ -197,59 +376,19 @@ const HomeScreen = ({route}) => {
             onBackButtonPress={toggleModal}
           />
 
-          {/*<View style={style.premiumTextContainer}>*/}
-          {/*  <Text style={style.premiumTextStyle}>Premium Matches</Text>*/}
-          {/*  <Text style={style.premiumTextsStyle}>110</Text>*/}
-          {/*</View>*/}
-
-          {selectedBox === 'marriage' && (
-            <>
-              <View style={style.premiumTextContainer}>
-                <Text style={style.premiumTextStyle}>Premium Matches</Text>
-                <Text style={style.premiumTextsStyle}>110</Text>
-              </View>
-              {/* Render Premium Matches component */}
-            </>
-          )}
-
-          {selectedBox === 'dating' && (
-            <>
-              <View style={style.premiumTextContainer}>
-                <Text style={style.premiumTextStyle}>Recently Accepted</Text>
-                <Text style={style.premiumTextsStyle}>02</Text>
-              </View>
-              {/* Render Recently Accepted component */}
-            </>
-          )}
+          <View style={style.premiumTextContainer}>
+            <Text style={style.premiumTextStyle}>Premium Matches</Text>
+            <Text style={style.premiumTextsStyle}>110</Text>
+          </View>
 
           {/*PREMIUM MATCHES COMPONENT*/}
           <View style={style.PremiumMatchesTextContainer}>
-            {/*<PremiumMatchesFlatlistComponent*/}
-            {/*  data={userData}*/}
-            {/*  isOnline*/}
-            {/*  shareButtonPress={completeOpenModal}*/}
-            {/*  // shareButtonPress={() => {*/}
-            {/*  //   console.log(' === var ===> ', 'press');*/}
-            {/*  // }}*/}
-            {/*/>*/}
-
-            {selectedBox === 'marriage' ? (
-              <PremiumMatchesFlatlistComponent
-                data={NEW_MATCHES}
-                shareButtonPress={() => {
-                  completeOpenModal(selectedBox);
-                }}
-              />
-            ) : (
-              <RecentlyAcceptedFlatlistComponent
-                data={NEW_MATCHES}
-                OnImagePress={() => {
-                  console.log(' === NEW_MATCHES PRESS ===> ');
-                  navigation.navigate('UserDetailsScreen', {selectedBox});
-                }}
-                shareButtonPress={completeOpenModal}
-              />
-            )}
+            <PremiumMatchesFlatlistComponent
+              data={NEW_MATCHES}
+              shareButtonPress={() => {
+                completeOpenModal(selectedBox);
+              }}
+            />
           </View>
 
           <TouchableOpacity
@@ -264,48 +403,14 @@ const HomeScreen = ({route}) => {
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>
           </TouchableOpacity>
 
-          {/*<View style={style.premiumTextContainer}>*/}
-          {/*  <Text style={style.premiumTextStyle}>New Matches</Text>*/}
-          {/*  <Text style={style.premiumTextsStyle}>42</Text>*/}
-          {/*</View>*/}
+          <View style={style.premiumTextContainer}>
+            <Text style={style.premiumTextStyle}>New Matches</Text>
+            <Text style={style.premiumTextsStyle}>
+              {userData?.data?.length}
+            </Text>
+          </View>
 
-          {selectedBox === 'marriage' && (
-            <>
-              <View style={style.premiumTextContainer}>
-                <Text style={style.premiumTextStyle}>New Matches</Text>
-                <Text style={style.premiumTextsStyle}>42</Text>
-              </View>
-            </>
-          )}
-
-          {selectedBox === 'dating' && (
-            <>
-              <View style={style.premiumTextContainer}>
-                <Text style={style.premiumTextStyle}>Recently Sent</Text>
-                <Text style={style.premiumTextsStyle}>10</Text>
-              </View>
-            </>
-          )}
-
-          {/*<NewMatchesFlatlistComponent />*/}
-          {selectedBox === 'marriage' ? (
-            <PremiumMatchesFlatlistComponent
-              data={NEW_MATCHES}
-              shareButtonPress={() => {
-                console.log(' === var ===> ', 'New Matches Share Button Press');
-              }}
-            />
-          ) : (
-            <RecentlySendFlatlistComponent
-              data={NEW_MATCHES}
-              OnImagePress={() => {
-                console.log(' === IMAGE ===> ');
-              }}
-              shareButtonPress={() => {
-                console.log(' === var ===> ', 'New Matches Share Button Press');
-              }}
-            />
-          )}
+          <PremiumMatchesComponent data={NEW_MATCHES} />
 
           <TouchableOpacity activeOpacity={0.7}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>
@@ -322,9 +427,7 @@ const HomeScreen = ({route}) => {
           />
 
           {/*VERIFICATION MODAL OPEN */}
-
           <View style={style.verificationModalContainer}>
-            {/*<Button title="Open Modal" onPress={openModal} />*/}
             <Modal
               visible={isCompleteModalVisible}
               animationType="none"
@@ -372,6 +475,7 @@ const HomeScreen = ({route}) => {
           <View style={{height: isIOS ? hp(150) : hp(120)}} />
         </ScrollView>
       </View>
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

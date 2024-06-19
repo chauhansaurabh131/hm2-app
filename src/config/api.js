@@ -1,103 +1,122 @@
-import axios from 'axios';
-import {globalUse} from '../utils/constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AsyncStorage} from 'react-native';
 
-export const auth = async (path, method, data) => {
-  const accessToken = await AsyncStorage.getItem(globalUse.ACCESSTOKEN);
-  try {
-    let config =
-      method === 'POST'
-        ? {
-            url: path,
-            method: method,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            data: data,
-          }
-        : method === 'PUT'
-        ? {
-            url: path,
-            method: method,
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            data: data,
-          }
-        : {
-            url: path,
-            method: method,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          };
+import axios from 'axios/index';
+import Toast from 'react-native-toast-message';
 
-    console.log(' === config ===> ', config);
+import {BASE_URL} from '../utils/constants';
+import {TOKEN} from '../utils/constants';
+import {getAsyncStorageData} from '../utils/global';
 
-    const response = await axios.request(config);
-    console.log(' === response.data.message.... ===> ', response.data.message);
-    if (response?.status === 200) {
-      return response;
-    } else {
-      console.error(Error);
-      throw Error;
-    }
-  } catch (e) {
-    console.log(' === Error Message ===> ', e.response.data.message);
-    return e.response.data.message;
-  }
+const defaultHeaders = {
+  'Content-Type': 'application/json',
 };
 
-const afterAuth = (path, method, data) => {
-  try {
-    let params =
-      method == 'UPDATE'
-        ? {
-            method: method,
-            header: {},
-            data: data,
-          }
-        : {};
-    const response = axios(params);
-    if (response.code == 200) {
-      return response;
-    } else {
-      throw response;
-    }
-  } catch (e) {
-    console.error(e);
-    throw e;
-  }
+const url = path => {
+  return BASE_URL + path;
 };
 
-module.exports = {
-  async userRegistration(params) {
-    return await auth(params.Path, 'POST', params?.Data).catch(e => {
-      console.error(e);
-      return e;
-    });
-  },
-  async userLogin(params) {
-    console.log(' === params in userLogin  ===> ', params);
-    return await auth(params.Path, 'POST', params?.Data).catch(e => {
-      console.error(e);
-      return e;
-    });
-  },
-  async userVerifyOTP(params) {
-    console.log(' === params in userVerifyOTP  ===> ', params);
-    return await auth(params.Path, 'POST', params?.Data).catch(e => {
-      console.error(e);
-      return e;
-    });
-  },
+const getHeaders = async auth => {
+  let headers = {...defaultHeaders};
+  if (auth) {
+    const token = await getAuthToken();
+    headers = {...headers, authorization: token};
+  }
+  return headers;
+};
 
-  async setNewPassword(params) {
-    console.log(' === params in setPassword  ===> ', params);
-    return await auth(params.Path, 'PUT', params?.Data).catch(e => {
-      console.error(e);
-      return e;
-    });
+export const apiService = axios.create({});
+
+export const get = async (path, params = {}, auth = true) => {
+  const headers = await getHeaders(auth);
+  return apiService.get(url(path, params), {
+    params,
+    headers: headers,
+  });
+};
+
+export const post = async (path, params = {}, auth = true) => {
+  const headers = await getHeaders(auth);
+  return apiService.post(url(path, params), params, {
+    headers: headers,
+  });
+};
+
+export const put = async (path, params = {}, auth = true) => {
+  const headers = await getHeaders(auth);
+  return apiService.put(url(path, params), params, {
+    headers: headers,
+  });
+};
+
+export const deleteRequest = async (path, params = {}, auth = true) => {
+  const headers = await getHeaders(auth);
+  return apiService.delete(url(path, params), {params, headers: headers});
+};
+
+export const upload = (path, params = {}, auth = true) =>
+  apiService.post(url(path, params), params, {
+    headers: {...getHeaders(auth), 'content-type': 'multipart/form-data'},
+  });
+
+export const download = (path, params = {}, auth = true) =>
+  apiService.get(url(path, params), {
+    responseType: 'blob',
+    params,
+    headers: getHeaders(auth),
+  });
+
+const getUrl = config => {
+  if (config?.baseURL) {
+    return config.url.replace(config.baseURL, '');
+  }
+  return config?.url;
+};
+
+apiService.interceptors.request.use(
+  config => {
+    return config;
   },
+  error => Promise.reject(error),
+);
+
+apiService.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    if (error && error.response && error.response.data.code === 404) {
+      return Promise.reject(error);
+    }
+    if (error.response && error.response.data && error.response.data.message) {
+      console.log(error.response.data.message);
+      Toast.show({
+        type: 'error',
+        text1: error.response.data.message,
+      });
+    }
+    if (error && error.response && error.response.data.code === 401) {
+      // store.dispatch(logout());
+      AsyncStorage.clear().then(() => {
+        // navigate('EnterOTP');
+      });
+      return Promise.reject(error);
+    }
+    return Promise.reject(error);
+  },
+);
+
+export const getAuthToken = async () => {
+  const data = await getAsyncStorageData(TOKEN);
+  if (data) {
+    return `${data}`;
+  }
+  return null;
+};
+
+export const getRefreshToken = async () => {
+  const data = await getAsyncStorageData(TOKEN);
+  if (data) {
+    return data?.refresh?.token ? `${data?.refresh?.token}` : '';
+  }
+  return null;
 };

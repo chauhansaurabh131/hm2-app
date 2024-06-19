@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "478268963840",
+    "project_id": "happymilan-130a5",
+    "storage_bucket": "happymilan-130a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478268963840:android:532bc132fb47cf0f2cace5",
+        "android_client_info": {
+          "package_name": "com.happymilan2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQgO8UK9AFBUiwCSago1V_tSrlefBzZQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

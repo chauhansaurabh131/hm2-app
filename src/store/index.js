@@ -28,7 +28,6 @@ export const store = __DEV__
 
 // Run the Saga middleware
 if (__DEV__) {
-  Reactotron.log('sagaMiddleware.run(rootSaga)');
   store.runSaga = sagaMiddleware.run;
   store.runSaga(rootSaga);
 } else {

@@ -1,11 +1,38 @@
 import React from 'react';
-import {SafeAreaView, Text, View, TextInput} from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
-import {Area_Code, CurrentCity} from '../../utils/data';
+// import {Area_Code} from '../../utils/data';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {useSelector} from 'react-redux';
+import {home} from '../../apis/homeApi';
 
-const ContactDetailsScreen = () => {
+const ContactDetailsScreen = ({
+  mobileNumber,
+  setMobileNumber,
+  homeNumber,
+  setHomeNumber,
+}) => {
+  const {user} = useSelector(state => state.auth);
+  const userEmail = user?.user?.email;
+
+  const Area_Code = [
+    {label: '+ 91', value: '1'},
+    {label: '+ 92', value: '2'},
+    {label: '+ 87', value: '3'},
+    {label: '+ 69', value: '4'},
+    {label: '+ 93', value: '5'},
+    {label: '+ 95', value: '6'},
+    {label: '+ 88', value: '7'},
+    {label: '+ 90', value: '8'},
+  ];
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: 17}}>
@@ -26,7 +53,6 @@ const ContactDetailsScreen = () => {
             flexDirection: 'row',
             marginTop: hp(7),
             justifyContent: 'space-between',
-            // backgroundColor: 'green',
           }}>
           <DropDownTextInputComponent
             placeholder={'Area Code'}
@@ -41,7 +67,10 @@ const ContactDetailsScreen = () => {
           <TextInput
             placeholder={'Type'}
             keyboardType="numeric"
+            value={mobileNumber}
+            onChangeText={setMobileNumber}
             placeholderTextColor={colors.black}
+            maxLength={10}
             style={{
               width: wp(205),
               height: 50,
@@ -83,6 +112,9 @@ const ContactDetailsScreen = () => {
 
           <TextInput
             placeholder={'Type'}
+            value={homeNumber}
+            onChangeText={setHomeNumber}
+            maxLength={10}
             placeholderTextColor={colors.black}
             keyboardType="numeric"
             style={{
@@ -109,18 +141,10 @@ const ContactDetailsScreen = () => {
           Enter Email Address
         </Text>
 
-        {/*<TextInput*/}
-        {/*  IconNameDesign={icons.profileLogo}*/}
-        {/*  placeholder={'Type'}*/}
-        {/*  editable={true}*/}
-        {/*  iconSource={icons.profileLogo}*/}
-        {/*  // containerStyle={style.textInputContainerStyle}*/}
-        {/*  inputContainer={{width: '100%', marginTop: 9}}*/}
-        {/*/>*/}
-
         <TextInput
           placeholder={'Type'}
           placeholderTextColor={colors.black}
+          value={userEmail || 'N/A'}
           style={{
             width: '100%',
             height: hp(50),

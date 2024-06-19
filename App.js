@@ -641,22 +641,90 @@
 
 // export default App;
 
-import React from 'react';
+// import React, {useEffect} from 'react';
+// import {SafeAreaProvider} from 'react-native-safe-area-context';
+// import MainNavigator from './src/navigations';
+// import {LogBox} from 'react-native';
+// // import {PersistGate} from 'redux-persist/integration/react';
+// import {Provider} from 'react-redux';
+// import {persistor, store} from './src/reducer/store';
+// import {RequestUserPermission} from './src/service/pushNotification';
+// import {PersistGate} from 'redux-persist/integration/react';
+// LogBox.ignoreAllLogs();
+//
+// const App = () => {
+//   useEffect(() => {
+//     RequestUserPermission();
+//   });
+//
+//   return (
+//     <SafeAreaProvider>
+//       <Provider store={store}>
+//         <PersistGate loading={null} persistor={persistor}>
+//           <MainNavigator />
+//         </PersistGate>
+//       </Provider>
+//     </SafeAreaProvider>
+//   );
+// };
+//
+// export default App;
+
+import React, {useEffect} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNavigator from './src/navigations';
-import {LogBox} from 'react-native';
-import {PersistGate} from 'redux-persist/integration/react';
+import {LogBox, Platform, PermissionsAndroid} from 'react-native';
 import {Provider} from 'react-redux';
-import {persistor, store} from './src/store';
+import {persistor, store} from './src/reducer/store';
+import {RequestUserPermission} from './src/service/pushNotification';
+import {PersistGate} from 'redux-persist/integration/react';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+
 LogBox.ignoreAllLogs();
 
 const App = () => {
+  useEffect(() => {
+    RequestUserPermission();
+    requestPermissions();
+  }, []);
+
+  const requestPermissions = async () => {
+    if (Platform.OS === 'ios') {
+      const photoPermission = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      if (photoPermission !== RESULTS.GRANTED) {
+        const result = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+        if (result !== RESULTS.GRANTED) {
+          console.warn('Photo library access denied');
+        }
+      }
+    } else if (Platform.OS === 'android') {
+      const photoPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      );
+      if (!photoPermission) {
+        const result = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Photo Library Access',
+            message: 'This app needs access to your photo library',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.warn('Photo library access denied');
+        }
+      }
+    }
+  };
+
   return (
     <SafeAreaProvider>
       <Provider store={store}>
-        {/*<PersistGate loading={null} persistor={persistor}>*/}
-        <MainNavigator />
-        {/*</PersistGate>*/}
+        <PersistGate loading={null} persistor={persistor}>
+          <MainNavigator />
+        </PersistGate>
       </Provider>
     </SafeAreaProvider>
   );

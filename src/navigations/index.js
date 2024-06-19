@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer, useTheme} from '@react-navigation/native';
 import {Image, Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import GeneralInformationScreen from '../screen/generalInformationScreen';
-import AddressDetailsScreen from '../screen/addressDetailsScreen';
 import RegistrationScreen from '../screen/registrationScreen';
 import LoginScreen from '../screen/loginScreen';
 import VerificationScreen from '../screen/verificationScreen';
@@ -27,14 +26,19 @@ import DemoPractiveCodeScreen from '../screen/demoPractiveCodeScreen';
 import ChatUserScreen from '../screen/chatUserScreen';
 import {MyContext} from '../utils/Provider';
 import {useSelector} from 'react-redux';
+import SetProfilePictureScreen from '../screen/setProfilePictureScreen';
+import SelectImageScreen from '../screen/selectImageScreen';
+import AddProfilePictureScreen from '../screen/addProfilePictureScreen';
+import PartnerPreferencesScreen from '../screen/partnerPreferencesScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const ExtrasStack = createNativeStackNavigator();
 
 const MainNavigator = () => {
-  const [moveToHome, setMoveToHome] = useState(false);
   const [isDatingSelected, setIsDatingSelected] = useState(false);
+
+  const {isLoggedIn} = useSelector(state => state.auth);
 
   const AuthStack = () => (
     <Stack.Navigator
@@ -130,6 +134,33 @@ const MainNavigator = () => {
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
+        <Stack.Screen
+          name={'DemoPractiveCodeScreen'}
+          component={DemoPractiveCodeScreen}
+        />
+
+        <Stack.Screen
+          name={'GeneralInformationScreen'}
+          component={AddPersonalInfo}
+        />
+        <Stack.Screen
+          name={'SetProfilePictureScreen'}
+          component={SetProfilePictureScreen}
+        />
+        <Stack.Screen
+          name={'SelectImageScreen'}
+          component={SelectImageScreen}
+        />
+        <Stack.Screen
+          name={'AddProfilePictureScreen'}
+          component={AddProfilePictureScreen}
+        />
+
+        <Stack.Screen
+          name={'PartnerPreferencesScreen'}
+          component={PartnerPreferencesScreen}
+        />
+
         <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
       </Stack.Navigator>
     );
@@ -359,13 +390,13 @@ const MainNavigator = () => {
     );
   };
 
-  return (
-    <NavigationContainer>
-      <MyContext.Provider
-        value={{moveToHome, setMoveToHome, setIsDatingSelected}}>
-        {moveToHome ? <HomeStack /> : <AuthStack />}
-      </MyContext.Provider>
-    </NavigationContainer>
+  return useMemo(
+    () => (
+      <NavigationContainer>
+        {isLoggedIn ? <HomeStack /> : <AuthStack />}
+      </NavigationContainer>
+    ),
+    [isLoggedIn],
   );
 };
 

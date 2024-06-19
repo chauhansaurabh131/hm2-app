@@ -16,14 +16,11 @@ import {
 } from '../type/types';
 import {SetLoading} from '../actions/allActions';
 import Api from '../../config/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// worker Saga: will be fired on auth actions
 function* getRegisterUserDetails({params}) {
-  console.log(' === getRegisterUserDetails_PArams ===> ', params);
   try {
     yield put(SetLoading(true));
-    console.log(' === params.data.email ===> ', params.Data.email);
+    console.log(' === params.data.email ===> ', {params});
     if (params.Data.email) {
       yield put({
         type: GET_REGISTER_SUCCESS,

@@ -285,7 +285,6 @@ const style = StyleSheet.create({
     height: 14,
     borderRadius: 50,
     marginHorizontal: 10,
-    // backgroundColor: step === item ? '#0F52BA' : '#ECECEC',
   },
   nextIconContainer: {
     width: wp(30),
@@ -295,7 +294,88 @@ const style = StyleSheet.create({
     width: hp(12),
     height: hp(24),
     resizeMode: 'contain',
-    // tintColor: step === 4 ? '#E4E4E4' : 'black',
+  },
+
+  renderContainer: {
+    marginHorizontal: 17,
+  },
+  imageStyle: {
+    width: hp(20),
+    height: hp(20),
+    resizeMode: 'contain',
+  },
+  videoStyle: {
+    width: hp(25),
+    height: hp(20),
+    resizeMode: 'contain',
+    marginLeft: wp(22),
+  },
+  starImageContainer: {
+    position: 'absolute',
+    right: 40,
+  },
+  startImageStyle: {
+    width: hp(22),
+    height: hp(20),
+    resizeMode: 'contain',
+  },
+  RenderBottomImageContainer: {
+    marginTop: hp(22),
+    flexDirection: 'row',
+  },
+  renderBottomButtonContainer: {
+    flexDirection: 'row',
+    marginTop: hp(20),
+    justifyContent: 'space-between',
+  },
+  requestDeclineContainer: {
+    width: wp(310),
+    height: hp(40),
+    borderRadius: 20,
+    backgroundColor: '#303030',
+    justifyContent: 'center',
+  },
+  requestTextStyle: {
+    color: colors.white,
+    textAlign: 'center',
+    fontFamily: fontFamily.poppins500,
+    lineHeight: hp(21),
+    fontSize: fontSize(14),
+  },
+  acceptedButtonContainer: {
+    width: wp(310),
+    height: hp(40),
+    borderRadius: 20,
+    backgroundColor: '#303030',
+    justifyContent: 'center',
+  },
+  acceptedTextStyle: {
+    color: colors.white,
+    textAlign: 'center',
+    fontFamily: fontFamily.poppins500,
+    lineHeight: hp(21),
+    fontSize: fontSize(14),
+  },
+  declineTextStyle: {
+    color: colors.black,
+    textAlign: 'center',
+    fontFamily: fontFamily.poppins400,
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+  },
+  acceptButtonGradient: {
+    width: wp(142),
+    height: hp(40),
+    borderRadius: 20,
+    justifyContent: 'center',
+    marginRight: 40,
+  },
+  acceptTextStyle: {
+    color: colors.white,
+    textAlign: 'center',
+    fontFamily: fontFamily.poppins500,
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
   },
 });
 

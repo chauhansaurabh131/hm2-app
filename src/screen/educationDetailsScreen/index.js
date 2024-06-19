@@ -6,7 +6,18 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
 
-const EducationDetailsScreen = () => {
+const EducationDetailsScreen = ({
+  degree,
+  setDegree,
+  collage,
+  setCollage,
+  collageCity,
+  setCollageCity,
+  collageState,
+  setCollageState,
+  collageCountry,
+  setCollageCountry,
+}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <KeyboardAwareScrollView>
@@ -24,18 +35,16 @@ const EducationDetailsScreen = () => {
             }}>
             Degree
           </Text>
-          {/*<TextInputWithDropDownComponent*/}
-          {/*  dropdownItems={['B.com', 'BCA', 'BBA']}*/}
-          {/*/>*/}
 
           <TextInputSearchAndDropDowm
+            value={degree}
+            onChangeText={setDegree}
             placeholder={'Select'}
             dropdownItems={['B.com', 'BCA', 'BBA']}
           />
 
           <Text
             style={{
-              // marginLeft: wp(12),
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
@@ -47,17 +56,15 @@ const EducationDetailsScreen = () => {
             Collage/University
           </Text>
 
-          {/*<TextInputWithDropDownComponent*/}
-          {/*  dropdownItems={['ABC', 'XYZ', 'AAA']}*/}
-          {/*/>*/}
           <TextInputSearchAndDropDowm
+            value={collage}
+            onChangeText={setCollage}
             placeholder={'Select'}
             dropdownItems={['ABC', 'XYZ', 'AAA']}
           />
 
           <Text
             style={{
-              // marginLeft: wp(12),
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
@@ -69,11 +76,9 @@ const EducationDetailsScreen = () => {
             City
           </Text>
 
-          {/*<TextInputWithDropDownComponent*/}
-          {/*  dropdownItems={['GUJARAT', 'MUMBAI', 'DELHI']}*/}
-          {/*/>*/}
-
           <TextInputSearchAndDropDowm
+            value={collageCity}
+            onChangeText={setCollageCity}
             placeholder={'Select'}
             dropdownItems={[
               'GUJARAT',
@@ -88,7 +93,6 @@ const EducationDetailsScreen = () => {
           />
           <Text
             style={{
-              // marginLeft: wp(12),
               color: colors.black,
               fontSize: fontSize(14),
               lineHeight: hp(18),
@@ -100,10 +104,9 @@ const EducationDetailsScreen = () => {
             State
           </Text>
 
-          {/*<TextInputWithDropDownComponent*/}
-          {/*  dropdownItems={['GUJARAT', 'MUMBAI', 'DELHI']}*/}
-          {/*/>*/}
           <TextInputSearchAndDropDowm
+            value={collageState}
+            onChangeText={setCollageState}
             placeholder={'Select'}
             dropdownItems={[
               'GUJARAT',
@@ -136,6 +139,8 @@ const EducationDetailsScreen = () => {
           {/*/>*/}
 
           <TextInputSearchAndDropDowm
+            value={collageCountry}
+            onChangeText={setCollageCountry}
             placeholder={'Select'}
             dropdownItems={[
               'GUJARAT',
