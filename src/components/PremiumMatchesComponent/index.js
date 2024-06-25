@@ -26,6 +26,23 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
     dispatch(sendRequest({friend: item.id, user: user.user.id}));
     // dispatch(sendRequest());
   };
+
+  const calculateAge = dateOfBirth => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
   return (
     <FlatList
       data={userData.data}
@@ -33,6 +50,7 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
       renderItem={({item}) => {
         const currentCity = item.address ? item.address.currentCity : '';
         const currentCountry = item.address ? item.address.currentCountry : '';
+        const age = calculateAge(item.dateOfBirth); // Calculate age
 
         return (
           <View style={styles.itemContainer}>
@@ -60,12 +78,10 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
               </View>
             </View>
             <Text style={styles.name}>
-              {item.name} {item.lastName}
+              {item.firstName} {item.lastName}
             </Text>
             <View style={styles.nameContainer}>
-              <Text style={styles.nameDetailTextStyle}>
-                {item.Age || 'N/A'}
-              </Text>
+              <Text style={styles.nameDetailTextStyle}>{age || 'N/A'}</Text>
               <Text style={styles.nameDetailTextStyle}>yrs,</Text>
               <Text style={styles.nameDetailTextStyle}>
                 {item.state || 'N/A'}

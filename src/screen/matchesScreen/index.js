@@ -20,6 +20,10 @@ import {
   getAllRequest,
 } from '../../actions/homeActions';
 import {USER_LIST} from '../../utils/data';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import {getAllDeclineFriend, getAllFriends} from '../../actions/chatActions';
+
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const MatchesScreen = ({navigation}) => {
   const [selectedTab, setSelectedTab] = useState('new');
@@ -27,15 +31,22 @@ const MatchesScreen = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [step, setStep] = useState(1);
   const [userActions, setUserActions] = useState({});
+  const [requestStatus, setRequestStatus] = useState(null);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllRequest());
+    dispatch(getAllDeclineFriend());
+    dispatch(getAllFriends());
   }, [dispatch]);
 
-  const {getAllRequestData} = useSelector(state => state.home);
-  // console.log(' === getAllRequestData ===> ', getAllRequestData?.data);
+  const {getAllRequestData, isFriendRequestDataLoading} = useSelector(
+    state => state.home,
+  );
+  const {declineFriends, myAllFriends, isUserDataLoading} = useSelector(
+    state => state.chat,
+  );
 
   const tabsData = [
     {id: 'new', label: 'New'},
@@ -77,31 +88,31 @@ const MatchesScreen = ({navigation}) => {
     toggleModal();
   };
 
-  const handleDecline = (id, userIduserId) => {
-    setUserActions(prevActions => ({...prevActions, [id]: 'declined'}));
+  const handleDecline = (requestId, userId) => {
+    // setUserActions(prevActions => ({...prevActions, [requestId]: 'declined'}));
+    setRequestStatus('declined');
     dispatch(
       accepted_Decline_Request({
-        user: userIduserId,
-        request: id,
+        user: userId,
+        request: requestId,
         status: 'rejected',
       }),
     );
   };
 
-  const handleAccept = (id, userIduserId) => {
-    setUserActions(prevActions => ({...prevActions, [id]: 'accepted'}));
+  const handleAccept = (requestId, userId) => {
+    // setUserActions(prevActions => ({...prevActions, [requestId]: 'accepted'}));
+    setRequestStatus('accepted');
     dispatch(
       accepted_Decline_Request({
-        user: userIduserId,
-        request: id,
+        user: userId,
+        request: requestId,
         status: 'accepted',
       }),
     );
-    // console.log(' === id ===> ', id, userIduserId);
   };
   // USER REQUEST LIST RENDER ITEM //
   const renderUserRequestItem = ({item}) => {
-    console.log(' === item ===> ', item);
     const {user, id} = item; // Destructure `user` and `id` from `item`
     const {
       firstName,
@@ -115,8 +126,10 @@ const MatchesScreen = ({navigation}) => {
       cast,
     } = user;
 
-    const jobTitle = item.user.userProfessional.jobTitle;
-    const workCountry = item.user.userProfessional.workCountry;
+    const userId = item.friend.address.userId;
+
+    const jobTitle = item.user?.userProfessional?.jobTitle;
+    const workCountry = item.user?.userProfessional?.workCountry;
 
     const calculateAge = dob => {
       const birthDate = new Date(dob);
@@ -136,6 +149,7 @@ const MatchesScreen = ({navigation}) => {
             <Image
               source={profilePic ? {uri: profilePic} : images.empty_male_Image}
               style={style.userImageStyle}
+              resizeMode={'cover'}
             />
 
             <LinearGradient
@@ -168,7 +182,9 @@ const MatchesScreen = ({navigation}) => {
                 </View>
 
                 <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {jobTitle || 'N/A'}
+                  </Text>
 
                   <View style={style.verticalLineStyle} />
 
@@ -194,11 +210,13 @@ const MatchesScreen = ({navigation}) => {
               </View>
 
               <View style={style.renderBottomButtonContainer}>
-                {userActions[id] === 'declined' ? (
+                {/*{userActions[userId] === 'declined' ? (*/}
+                {requestStatus === 'declined' ? (
                   <TouchableOpacity style={style.requestDeclineContainer}>
                     <Text style={style.requestTextStyle}>Request Decline</Text>
                   </TouchableOpacity>
-                ) : userActions[id] === 'accepted' ? (
+                ) : // ) : userActions[userId] === 'accepted' ? (
+                requestStatus === 'accepted' ? (
                   <TouchableOpacity style={style.acceptedButtonContainer}>
                     <Text style={style.acceptedTextStyle}>
                       Request Accepted
@@ -215,13 +233,13 @@ const MatchesScreen = ({navigation}) => {
                         backgroundColor: colors.white,
                         justifyContent: 'center',
                       }}
-                      onPress={() => handleDecline(id, user.id)}>
+                      onPress={() => handleDecline(id, userId)}>
                       <Text style={style.declineTextStyle}>Decline</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                       activeOpacity={0.5}
-                      onPress={() => handleAccept(id, user.id)}>
+                      onPress={() => handleAccept(id, userId)}>
                       <LinearGradient
                         colors={['#0D4EB3', '#9413D0']}
                         start={{x: 0, y: 0}}
@@ -232,6 +250,113 @@ const MatchesScreen = ({navigation}) => {
                     </TouchableOpacity>
                   </>
                 )}
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderUserDeclineItem = ({item}) => {
+    const {user, id} = item;
+    const {
+      firstName,
+      lastName,
+      profilePic,
+      address,
+      gender,
+      dateOfBirth,
+      userProfessional,
+      motherTongue,
+      cast,
+    } = user;
+
+    const jobTitle = item.user?.userProfessional?.jobTitle;
+    const workCountry = item.user?.userProfessional?.workCountry;
+
+    const calculateAge = dob => {
+      const birthDate = new Date(dob);
+      const difference = Date.now() - birthDate.getTime();
+      const ageDate = new Date(difference);
+      return Math.abs(ageDate.getUTCFullYear() - 1970);
+    };
+
+    const age = calculateAge(dateOfBirth);
+
+    const height = user.height || 'N/A';
+
+    return (
+      <View style={style.renderContainer}>
+        <TouchableOpacity activeOpacity={1}>
+          <View>
+            <Image
+              source={profilePic ? {uri: profilePic} : images.empty_male_Image}
+              style={style.userImageStyle}
+              resizeMode={'cover'}
+            />
+
+            <LinearGradient
+              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+              style={style.gradient}
+            />
+
+            <View style={style.UserDetailsContainer}>
+              <View style={style.onlineBodyStyle}>
+                <Text style={style.bodyTextStyle}>Online</Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('UserDetailsScreen');
+                }}>
+                <Text style={style.userNameTextStyle}>
+                  {firstName || 'NAN'} {lastName || 'NAN'}
+                </Text>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                  <Text style={style.userDetailsTextStyle}>{age},</Text>
+                  <Text style={style.userDetailsTextStyle}>{height}</Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{motherTongue}</Text>
+                  <Text style={style.userDetailsTextStyle}>{cast}</Text>
+                </View>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>
+                    {jobTitle || 'N/A'}
+                  </Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{workCountry}</Text>
+                </View>
+              </TouchableOpacity>
+
+              <View style={style.RenderBottomImageContainer}>
+                <TouchableOpacity>
+                  <Image source={icons.image_icon} style={style.imageStyle} />
+                </TouchableOpacity>
+
+                <TouchableOpacity>
+                  <Image source={icons.video_icon} style={style.videoStyle} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={style.starImageContainer}>
+                  <Image
+                    source={icons.starIcon}
+                    style={style.startImageStyle}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={style.renderBottomButtonContainer}>
+                <View style={style.requestDeclineContainer}>
+                  <Text style={style.requestTextStyle}>Request Decline</Text>
+                </View>
               </View>
             </View>
           </View>
@@ -368,6 +493,138 @@ const MatchesScreen = ({navigation}) => {
     );
   };
 
+  const renderAccptedUserItem = ({item}) => {
+    // console.log(' === item ===> ', item);
+
+    const {user, id} = item;
+    const {
+      firstName,
+      lastName,
+      profilePic,
+      address,
+      gender,
+      dateOfBirth,
+      userProfessional,
+      motherTongue,
+      cast,
+    } = user;
+
+    const jobTitle = item.user.userProfessional.jobTitle;
+    const workCountry = item.user.userProfessional.workCountry;
+
+    const calculateAge = dob => {
+      const birthDate = new Date(dob);
+      const difference = Date.now() - birthDate.getTime();
+      const ageDate = new Date(difference);
+      return Math.abs(ageDate.getUTCFullYear() - 1970);
+    };
+
+    const age = calculateAge(dateOfBirth);
+
+    const height = user.height || 'N/A';
+
+    return (
+      <View style={{marginHorizontal: 17}}>
+        <TouchableOpacity activeOpacity={1}>
+          <View>
+            <Image
+              source={profilePic ? {uri: profilePic} : images.empty_male_Image}
+              style={style.userImageStyle}
+              resizeMode={'cover'}
+            />
+            <LinearGradient
+              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+              style={style.gradient}
+            />
+
+            <View style={style.UserDetailsContainer}>
+              <View style={style.onlineBodyStyle}>
+                <Text style={style.bodyTextStyle}>Online</Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('UserDetailsScreen');
+                }}>
+                <Text style={style.userNameTextStyle}>
+                  {firstName} {lastName}
+                </Text>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                  <Text style={style.userDetailsTextStyle}>{age},</Text>
+                  <Text style={style.userDetailsTextStyle}>{height}</Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>
+                    {motherTongue || 'N/A'}
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}>{cast}</Text>
+                </View>
+
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
+
+                  <View style={style.verticalLineStyle} />
+
+                  <Text style={style.userDetailsTextStyle}>{workCountry}</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.state}</Text>
+                  <Text style={style.userDetailsTextStyle}>{item.country}</Text>
+                </View>
+              </TouchableOpacity>
+
+              <View style={{marginTop: hp(22), flexDirection: 'row'}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    top: 1,
+                    flex: 1,
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    // onPress={() => {
+                    //   navigation.navigate('UserUploadImageFullScreen');
+                    // }}
+                  >
+                    <Image
+                      source={icons.image_icon}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        resizeMode: 'contain',
+                        marginRight: wp(14),
+                      }}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity activeOpacity={0.5}>
+                    <Image
+                      source={icons.video_icon}
+                      style={{width: 20, height: 16, resizeMode: 'contain'}}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={{position: 'absolute', right: 40}}>
+                    <Image
+                      source={icons.starIcon}
+                      style={{
+                        width: hp(22),
+                        height: hp(20),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   const handleTabPress = tab => {
     setSelectedTab(tab);
   };
@@ -387,22 +644,147 @@ const MatchesScreen = ({navigation}) => {
           </View>
         );
       case 'accepted':
-        return <Text>Accepted</Text>;
+        // <Text>Accepted</Text>;
+        return (
+          <View>
+            {isUserDataLoading ? (
+              <View style={style.receivedShimmerContainer}>
+                <ShimmerPlaceholder style={style.receivedShimmerImageBody} />
+                <View style={style.receivedShimmerImageBodyInside}>
+                  <ShimmerPlaceholder style={style.receivedShimmerName} />
+
+                  <View style={style.receivedShimmerInsideOne}>
+                    <ShimmerPlaceholder style={style.receivedShimmerData} />
+                  </View>
+
+                  <View style={style.receivedShimmerButtonContainer}>
+                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
+                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
+                  </View>
+                </View>
+              </View>
+            ) : myAllFriends.data.length === 0 ? (
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: hp(250),
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.gray,
+                    fontSize: fontSize(21),
+                    lineHeight: hp(26),
+                  }}>
+                  No friend requests
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={myAllFriends.data}
+                keyExtractor={item => item.id}
+                renderItem={renderAccptedUserItem}
+                showsVerticalScrollIndicator={false}
+                ListFooterComponent={<View style={{height: 130}} />}
+              />
+            )}
+          </View>
+        );
 
       case 'receive':
         // return <Text>Receive</Text>;
         return (
-          <FlatList
-            data={getAllRequestData?.data}
-            keyExtractor={item => item.id}
-            renderItem={renderUserRequestItem}
-            ListFooterComponent={<View style={{height: 130}} />}
-          />
+          <View>
+            {isFriendRequestDataLoading ? (
+              <View style={style.receivedShimmerContainer}>
+                <ShimmerPlaceholder style={style.receivedShimmerImageBody} />
+                <View style={style.receivedShimmerImageBodyInside}>
+                  <ShimmerPlaceholder style={style.receivedShimmerName} />
+
+                  <View style={style.receivedShimmerInsideOne}>
+                    <ShimmerPlaceholder style={style.receivedShimmerData} />
+                  </View>
+
+                  <View style={style.receivedShimmerButtonContainer}>
+                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
+                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
+                  </View>
+                </View>
+              </View>
+            ) : getAllRequestData?.data.length === 0 ? (
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: hp(250),
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.gray,
+                    fontSize: fontSize(21),
+                    lineHeight: hp(26),
+                  }}>
+                  No friend requests
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={getAllRequestData?.data}
+                keyExtractor={item => item.id}
+                renderItem={renderUserRequestItem}
+                ListFooterComponent={<View style={{height: 130}} />}
+              />
+            )}
+          </View>
         );
       case 'saved':
         return <Text>Saved</Text>;
       case 'declined':
-        return <Text>Declined</Text>;
+        // <Text>Declined</Text>;
+        return (
+          <View>
+            {isUserDataLoading ? (
+              <View style={style.receivedShimmerContainer}>
+                <ShimmerPlaceholder style={style.receivedShimmerImageBody} />
+                <View style={style.receivedShimmerImageBodyInside}>
+                  <ShimmerPlaceholder style={style.receivedShimmerName} />
+
+                  <View style={style.receivedShimmerInsideOne}>
+                    <ShimmerPlaceholder style={style.receivedShimmerData} />
+                  </View>
+
+                  <View style={style.receivedShimmerButtonContainer}>
+                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
+                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
+                  </View>
+                </View>
+              </View>
+            ) : declineFriends?.data.length === 0 ? (
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: hp(250),
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.gray,
+                    fontSize: fontSize(21),
+                    lineHeight: hp(26),
+                  }}>
+                  No friend requests
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={declineFriends?.data}
+                keyExtractor={item => item.id}
+                renderItem={renderUserDeclineItem}
+                ListFooterComponent={<View style={{height: 130}} />}
+              />
+            )}
+          </View>
+        );
       case 'sent':
         return <Text>Sent</Text>;
       case 'deleted':

@@ -166,7 +166,8 @@ const AddProfilePictureScreen = ({route}) => {
 
           // If the fetch operation was successful
           console.log('Image uploaded successfully:', data);
-          navigation.navigate('PartnerPreferencesScreen');
+          // navigation.navigate('PartnerPreferencesScreen');
+          navigation.navigate('HomeTabs');
         } catch (err) {
           // Detailed error logging
           console.error('RNBlobUtil fetch error:', err);

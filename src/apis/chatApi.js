@@ -4,6 +4,11 @@ const getAllFriend = async data => {
   return get('/api/v1/user/friend/get-frds', data, true);
 };
 
+const getAllDeclineFriends = async data => {
+  return get('/api/v1/user/friend/get-rejected-frds', data, true);
+};
+
 export const chat = {
   getAllFriend,
+  getAllDeclineFriends,
 };

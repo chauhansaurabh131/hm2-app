@@ -5,6 +5,7 @@ const initialState = {
   loading: false,
   user: null,
   isUpdatingProfile: false,
+  isAddressLoading: false,
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -42,6 +43,81 @@ export default (state = initialState, action) => {
       };
     case TYPES.SET_UPDATE_USER_DETAILS_FAILED:
       return {...state, isUpdatingProfile: false};
+
+    case TYPES.SET_USER_ADDRESS:
+      return {...state, isAddressLoading: true};
+
+    case TYPES.SET_USER_ADDRESS_SUCCESS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          user: {...state.user.user, address: action.data.data},
+        },
+        isAddressLoading: false,
+      };
+    case TYPES.SET_USER_ADDRESS_FAILED:
+      return {...state, isAddressLoading: false};
+
+    // //PROFESSIONAL DETAILS APIS
+    case TYPES.PROFESSIONAL_DETAILS:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.ADD_PROFESSIONAL_DETAILS_SUCCESS:
+      // console.log(
+      //   ' === SET_USER_ADDRESS_SUCCESS ===> ',
+      //   JSON.stringify(
+      //     {
+      //       ...state.user.user,
+      //       userProfessional: action.data.data,
+      //     },
+      //     null,
+      //     2,
+      //   ),
+      // );
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          user: {...state.user.user, userProfessional: action.data.data},
+        },
+        isAddressLoading: false,
+      };
+    case TYPES.ADD_PROFESSIONAL_DETAILS_FAILED:
+      return {...state, isSendRequestLoading: false};
+
+    //ADD PROFILE PICTURE APIS
+    case TYPES.ADD_PROFILE_PICTURE:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.ADD_PROFILE_PICTURE_SUCCESS:
+      console.log(
+        ' === SET_USER_ADDRESS_SUCCESS ===> ',
+        JSON.stringify(action.data?.data?.data?.userData, null, 2),
+      );
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          user: action.data?.data?.data?.userData,
+          // ...action.data?.userData,
+        },
+      };
+    case TYPES.ADD_PROFILE_PICTURE_FAILED:
+      return {...state, isSendRequestLoading: false};
+
+    //ADD PARTNER REFERENCES
+    case TYPES.PARTNER_PREFERENCES_DETAILS:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.PARTNER_PREFERENCES_DETAILS_SUCCESS:
+      return {
+        ...state,
+        user: {...state.user.user, userPartner: action.data?.data},
+        isUpdatingProfile: false,
+      };
+    case TYPES.PARTNER_PREFERENCES_DETAILS_FAILED:
+      return {...state, isSendRequestLoading: false};
 
     default:
       return state;

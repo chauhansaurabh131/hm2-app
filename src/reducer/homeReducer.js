@@ -74,17 +74,17 @@ export default (state = initialState, action) => {
       return {...state, isSendRequestLoading: false};
 
     // UPDATE USER ADDRESS
-    case TYPES.SET_USER_ADDRESS:
-      return {...state, isSendRequestLoading: true};
-
-    case TYPES.SET_USER_ADDRESS_SUCCESS:
-      return {
-        ...state,
-        UserAddress: action.data,
-        isSendRequestLoading: false,
-      };
-    case TYPES.SET_USER_ADDRESS_FAILED:
-      return {...state, isSendRequestLoading: false};
+    // case TYPES.SET_USER_ADDRESS:
+    //   return {...state, isSendRequestLoading: true};
+    //
+    // case TYPES.SET_USER_ADDRESS_SUCCESS:
+    //   return {
+    //     ...state,
+    //     UserAddress: action.data,
+    //     isSendRequestLoading: false,
+    //   };
+    // case TYPES.SET_USER_ADDRESS_FAILED:
+    //   return {...state, isSendRequestLoading: false};
 
     //UPDATE EDUCATIONS DETAILS
     case TYPES.EDUCATION_DETAILS:
@@ -99,44 +99,44 @@ export default (state = initialState, action) => {
     case TYPES.ADD_EDUCATION_DETAILS_FAILED:
       return {...state, isSendRequestLoading: false};
 
-    //PROFESSIONAL DETAILS APIS
-    case TYPES.PROFESSIONAL_DETAILS:
-      return {...state, isSendRequestLoading: true};
+    // //PROFESSIONAL DETAILS APIS
+    // case TYPES.PROFESSIONAL_DETAILS:
+    //   return {...state, isSendRequestLoading: true};
+    //
+    // case TYPES.ADD_PROFESSIONAL_DETAILS_SUCCESS:
+    //   return {
+    //     ...state,
+    //     professionalDetails: action.data,
+    //     isSendRequestLoading: false,
+    //   };
+    // case TYPES.ADD_PROFESSIONAL_DETAILS_FAILED:
+    //   return {...state, isSendRequestLoading: false};
 
-    case TYPES.ADD_PROFESSIONAL_DETAILS_SUCCESS:
-      return {
-        ...state,
-        professionalDetails: action.data,
-        isSendRequestLoading: false,
-      };
-    case TYPES.ADD_PROFESSIONAL_DETAILS_FAILED:
-      return {...state, isSendRequestLoading: false};
+    // //ADD PROFILE PICTURE APIS
+    // case TYPES.ADD_PROFILE_PICTURE:
+    //   return {...state, isSendRequestLoading: true};
+    //
+    // case TYPES.ADD_PROFILE_PICTURE_SUCCESS:
+    //   return {
+    //     ...state,
+    //     addProfilePicture: action.data,
+    //     isSendRequestLoading: false,
+    //   };
+    // case TYPES.ADD_PROFILE_PICTURE_FAILED:
+    //   return {...state, isSendRequestLoading: false};
 
-    //ADD PROFILE PICTURE APIS
-    case TYPES.ADD_PROFILE_PICTURE:
-      return {...state, isSendRequestLoading: true};
-
-    case TYPES.ADD_PROFILE_PICTURE_SUCCESS:
-      return {
-        ...state,
-        addProfilePicture: action.data,
-        isSendRequestLoading: false,
-      };
-    case TYPES.ADD_PROFILE_PICTURE_FAILED:
-      return {...state, isSendRequestLoading: false};
-
-    //ADD PARTNER REFERENCES
-    case TYPES.PARTNER_PREFERENCES_DETAILS:
-      return {...state, isSendRequestLoading: true};
-
-    case TYPES.PARTNER_PREFERENCES_DETAILS_SUCCESS:
-      return {
-        ...state,
-        addPartnerReferences: action.data,
-        isSendRequestLoading: false,
-      };
-    case TYPES.PARTNER_PREFERENCES_DETAILS_FAILED:
-      return {...state, isSendRequestLoading: false};
+    // //ADD PARTNER REFERENCES
+    // case TYPES.PARTNER_PREFERENCES_DETAILS:
+    //   return {...state, isSendRequestLoading: true};
+    //
+    // case TYPES.PARTNER_PREFERENCES_DETAILS_SUCCESS:
+    //   return {
+    //     ...state,
+    //     addPartnerReferences: action.data,
+    //     isSendRequestLoading: false,
+    //   };
+    // case TYPES.PARTNER_PREFERENCES_DETAILS_FAILED:
+    //   return {...state, isSendRequestLoading: false};
 
     default:
       return state;

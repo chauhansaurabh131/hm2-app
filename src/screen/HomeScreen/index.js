@@ -46,8 +46,6 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user...... ===> ', user);
-
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
   useEffect(() => {
@@ -58,8 +56,12 @@ const HomeScreen = ({route}) => {
 
   // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
 
+  const firstName = user?.user?.firstName;
+  const lastName = user?.user?.lastName;
   const name = user?.user?.name;
   const profilePicUrl = user?.user?.profilePic;
+
+  // console.log(' === profilePicUrl ===> ', profilePicUrl);
 
   const handleButtonClick = () => {
     if (activeLine === 3) {
@@ -336,7 +338,9 @@ const HomeScreen = ({route}) => {
                 />
                 <View style={style.cardTextContainer}>
                   {/*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*/}
-                  <Text style={style.cardUserTextStyle}>{name}</Text>
+                  <Text style={style.cardUserTextStyle}>
+                    {firstName} {lastName}
+                  </Text>
 
                   <View style={style.cardSubTittleContainer}>
                     <Text style={style.cardSubTittleTextStyle}>

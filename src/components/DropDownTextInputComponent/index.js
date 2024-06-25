@@ -16,7 +16,7 @@ const DropdownComponent = ({
   width,
   height,
   search,
-  onChange, // Add onChange prop
+  onChange,
 }) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -24,7 +24,7 @@ const DropdownComponent = ({
   const handleValueChange = item => {
     setValue(item.value);
     if (onChange) {
-      onChange(item.value); // Call the onChange callback with the selected value
+      onChange(item.value);
     }
     setIsFocus(false);
   };
@@ -52,7 +52,12 @@ const DropdownComponent = ({
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
-        onChange={handleValueChange} // Pass the handleValueChange function to Dropdown's onChange prop
+        onChange={handleValueChange}
+        renderItem={item => (
+          <Text style={[styles.selectedTextStyle, selectedTextStyle]}>
+            {item.label}
+          </Text>
+        )}
       />
     </View>
   );
@@ -89,6 +94,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.black,
     marginLeft: 15,
+    lineHeight: 24,
+    margin: 5,
   },
   iconStyle: {
     width: 20,

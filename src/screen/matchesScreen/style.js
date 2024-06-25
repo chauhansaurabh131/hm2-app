@@ -30,11 +30,6 @@ const style = StyleSheet.create({
     marginRight: wp(20),
   },
   flatListStatusBarStyle: {
-    // flexDirection: 'row',
-    // marginLeft: wp(17),
-    // marginRight: wp(17),
-    // marginTop: hp(22),
-    // // backgroundColor: 'red',
     flexDirection: 'row',
     paddingHorizontal: wp(17),
     marginTop: hp(22),
@@ -44,7 +39,6 @@ const style = StyleSheet.create({
   statusBarContainerStyle: {
     height: hp(50),
     flexDirection: 'row',
-    // backgroundColor: selectedTab === item.id ? '#F0F9FF' : colors.white,
     borderRadius: 29,
     alignItems: 'center',
     marginRight: wp(10),
@@ -376,6 +370,41 @@ const style = StyleSheet.create({
     fontFamily: fontFamily.poppins500,
     fontSize: fontSize(14),
     lineHeight: hp(21),
+  },
+  receivedShimmerContainer: {
+    height: hp(449),
+    marginHorizontal: 17,
+  },
+  receivedShimmerImageBody: {
+    width: '100%',
+    height: hp(449),
+    borderRadius: 10,
+    marginBottom: hp(13),
+  },
+  receivedShimmerImageBodyInside: {
+    marginTop: -180,
+    marginHorizontal: 17,
+  },
+  receivedShimmerName: {
+    width: 100,
+    height: 20,
+  },
+  receivedShimmerInsideOne: {
+    marginTop: 10,
+  },
+  receivedShimmerData: {
+    width: 100,
+    height: 5,
+  },
+  receivedShimmerButtonContainer: {
+    marginTop: 50,
+    flexDirection: 'row',
+  },
+  receivedShimmerButton: {
+    width: wp(142),
+    height: hp(40),
+    justifyContent: 'center',
+    marginRight: 40,
   },
 });
 

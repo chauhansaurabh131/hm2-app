@@ -32,8 +32,6 @@ function* sendFriendRequest(action) {
 
     const response = yield call(home.sendFriendsRequest, action.data.payload);
     yield put(homeActions.sendRequestSuccess(response.data?.data));
-
-    console.log(' === SAGA...2222222 ===> ', response.data?.data);
   } catch (error) {
     yield put(homeActions.sendRequestFail());
   }

@@ -1,51 +1,79 @@
-import React, {useEffect} from 'react';
-import {View, Text, FlatList, Image} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {userDatas} from '../../actions/homeActions';
-import {getAllFriends} from '../../actions/chatActions';
+import React, {useState, useRef} from 'react';
+import {
+  FlatList,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 
-const ChatScreen = () => {
-  const {myAllFriends} = useSelector(state => state.chat);
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
-  const dispatch = useDispatch();
+const DemoPractiveCodeScreen = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [textLayout, setTextLayout] = useState(null);
+  const textRef = useRef(null);
 
-  // useEffect(() => {
-  //   dispatch(userDatas());
-  // }, [dispatch]);
+  const handleLoaderClick = () => {
+    setIsLoading(true);
 
-  useEffect(() => {
-    dispatch(getAllFriends());
-  }, [dispatch]);
+    // Simulate a network request or any async operation
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // Loader will be visible for 3 seconds
+  };
+
+  const onTextLayout = event => {
+    setTextLayout(event.nativeEvent.layout);
+  };
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>My Friends</Text>
-      <FlatList
-        data={myAllFriends.data}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginVertical: 10,
-            }}>
-            <Image
-              source={{uri: item.friend.profilePic}}
-              style={{width: 50, height: 50, borderRadius: 25, marginRight: 10}}
-            />
-            <View>
-              <Text style={{fontSize: 16}}>
-                {item.friend.firstName} {item.friend.lastName}
-              </Text>
-              {/* Additional info if needed */}
-              {/* <Text>{item.friend.email}</Text> */}
-            </View>
-          </View>
-        )}
-      />
-    </View>
+    <SafeAreaView
+      style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <TouchableOpacity onPress={handleLoaderClick} style={{marginBottom: 20}}>
+        <Text>LOADER</Text>
+      </TouchableOpacity>
+
+      {/*<ShimmerPlaceholder*/}
+      {/*  style={{width: 100, height: 100, borderRadius: 50}}*/}
+      {/*  // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}*/}
+      {/*/>*/}
+
+      <View style={{width: '100%'}}>
+        <FlatList
+          data={[1, 1, 1, 1, 1, 1, 1, 1]}
+          renderItem={({item, index}) => {
+            return (
+              <View
+                style={{
+                  width: '100%',
+                  height: 100,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <ShimmerPlaceholder
+                  style={{width: 100, height: 100, borderRadius: 50}}
+                  // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}
+                />
+                <View style={{marginLeft: 10}}>
+                  <ShimmerPlaceholder
+                    style={{width: 100, height: 20}}
+                    // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}
+                  />
+                  <ShimmerPlaceholder
+                    style={{width: 100, height: 20, marginTop: 10}}
+                    // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}
+                  />
+                </View>
+              </View>
+            );
+          }}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default ChatScreen;
+export default DemoPractiveCodeScreen;

@@ -27,6 +27,7 @@ const HomeTopSheetComponent = ({
   const dispatch = useDispatch();
 
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [modalTop, setModalTop] = useState(new Animated.Value(20));
 
   useEffect(() => {
@@ -49,7 +50,17 @@ const HomeTopSheetComponent = ({
     setModalVisible(!isModalVisible);
   };
 
-  // const privacyPolicyPress = () => {};
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(logout(), () => dispatch(changeStack()));
+    setConfirmationVisible(false);
+    onBackdropPress(); // Close the main modal
+  };
+
+  const onStayButtonPress = () => {
+    setConfirmationVisible(false);
+    onBackdropPress();
+  };
 
   return (
     <SafeAreaView>
@@ -57,62 +68,23 @@ const HomeTopSheetComponent = ({
 
       <Modal
         isVisible={isVisible}
-        animationIn="slideInDown" // You can customize the animation here
-        animationOut="slideOutUp" // You can customize the animation here
+        animationIn="slideInDown"
+        animationOut="slideOutUp"
         onBackdropPress={onBackdropPress}
         onBackButtonPress={onBackButtonPress}
         style={{top: modalTop}}>
-        <View
-          style={{
-            backgroundColor: 'white',
-            // height: 514,
-            width: '200%',
-            position: 'absolute',
-            top: -20,
-            marginLeft: -20,
-          }}>
-          <View style={{marginTop: 23, marginHorizontal: wp(27)}}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalBodyContainer}>
             <Image
               source={images.profileDisplayImage}
-              style={{
-                height: hp(60),
-                width: hp(60),
-                borderRadius: 50,
-                marginTop: hp(23),
-              }}
+              style={styles.modalHeaderProfileStyle}
             />
 
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(22),
-                lineHeight: hp(33),
-                fontWeight: '600',
-                marginTop: hp(10),
-              }}>
-              Riya Shah
-            </Text>
+            <Text style={styles.userNameTextStyle}>Riya Shah</Text>
 
-            <View style={{flexDirection: 'row', marginTop: hp(3)}}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontWeight: '500',
-                }}>
-                HM 10000122
-              </Text>
-              <View
-                style={{
-                  height: hp(13),
-                  borderWidth: 0.9,
-                  borderColor: '#BEBEBE',
-                  marginLeft: hp(10),
-                  marginRight: hp(10),
-                  top: 5,
-                }}
-              />
+            <View style={styles.userDescriptionContainer}>
+              <Text style={styles.userNumberTextStyle}>HM 10000122</Text>
+              <View style={styles.userDescriptionTextStyle} />
               <Text
                 style={{
                   color: '#BEBEBE',
@@ -134,7 +106,6 @@ const HomeTopSheetComponent = ({
                   height: 40,
                   borderRadius: 10,
                   flexDirection: 'row',
-                  // justifyContent: 'center',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}>
@@ -157,7 +128,6 @@ const HomeTopSheetComponent = ({
               style={{
                 width: '50%',
                 borderWidth: 0.5,
-                // borderColor: '#F2F2F2',
                 borderColor: colors.gray,
                 marginTop: hp(17),
                 marginRight: 100,
@@ -273,7 +243,6 @@ const HomeTopSheetComponent = ({
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  // marginBottom: hp(19),
                 }}>
                 <Image
                   source={icons.linkDevicesIcon}
@@ -297,44 +266,151 @@ const HomeTopSheetComponent = ({
               </TouchableOpacity>
             </View>
           </View>
-          {/*button*/}
+          {/*<TouchableOpacity*/}
+          {/*  onPress={() => setConfirmationVisible(true)}*/}
+          {/*  activeOpacity={0.5}*/}
+          {/*  style={{*/}
+          {/*    width: '47%',*/}
+          {/*    height: hp(50),*/}
+          {/*    backgroundColor: '#F4FAFF',*/}
+          {/*    flexDirection: 'row',*/}
+          {/*    alignItems: 'center',*/}
+          {/*    justifyContent: 'center',*/}
+          {/*    borderRadius: 10,*/}
+          {/*    marginLeft: wp(27),*/}
+          {/*    marginBottom: hp(24),*/}
+          {/*    marginTop: hp(35),*/}
+          {/*  }}>*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      color: colors.black,*/}
+          {/*      fontSize: fontSize(14),*/}
+          {/*      lineHeight: hp(21),*/}
+          {/*      fontWeight: '400',*/}
+          {/*    }}>*/}
+          {/*    Log Outs*/}
+          {/*  </Text>*/}
+          {/*  <View style={{width: 17}} />*/}
+          {/*  <Image*/}
+          {/*    source={icons.logOutIcon}*/}
+          {/*    style={{width: hp(14.7), height: hp(17.27)}}*/}
+          {/*  />*/}
+          {/*</TouchableOpacity>*/}
 
           <TouchableOpacity
-            onPress={() => {
-              // console.log(' === LOGOUT ===> ');
-              dispatch(logout(), () => dispatch(changeStack()));
-            }}
-            activeOpacity={0.5}
+            onPress={() => setConfirmationVisible(true)}
             style={{
-              // width: wp(340),
               width: '47%',
               height: hp(50),
-              backgroundColor: '#F4FAFF',
-              // backgroundColor: 'green',
+              // backgroundColor: '#F4FAFF',
+              borderWidth: 0.5,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 10,
+              borderRadius: 50,
               marginLeft: wp(27),
-              // marginTop: isIOS ? hp(10) : hp(50),
               marginBottom: hp(24),
               marginTop: hp(35),
+              borderColor: '#E5E5E5',
             }}>
             <Text
               style={{
                 color: colors.black,
                 fontSize: fontSize(14),
                 lineHeight: hp(21),
-                fontWeight: '400',
+                fontFamily: fontFamily.poppins500,
               }}>
               Log Out
             </Text>
-            <View style={{width: 17}} />
-            <Image
-              source={icons.logOutIcon}
-              style={{width: hp(14.7), height: hp(17.27)}}
-            />
           </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={isConfirmationVisible}
+        onBackdropPress={() => setConfirmationVisible(false)}
+        onBackButtonPress={() => setConfirmationVisible(false)}
+        animationIn="slideInUp"
+        animationOut="slideOutDown">
+        <View style={styles.confirmationModalContainer}>
+          <Text style={styles.confirmationTitle}>
+            Are you sure you want to exit?
+          </Text>
+          <View style={styles.confirmationButtonContainer}>
+            {/*<TouchableOpacity*/}
+            {/*  // onPress={() => setConfirmationVisible(false)}*/}
+            {/*  onPress={onStayButtonPress}*/}
+            {/*  style={styles.stayButton}>*/}
+            {/*  <Text style={styles.stayButtonText}>Stay</Text>*/}
+            {/*</TouchableOpacity>*/}
+            <TouchableOpacity activeOpacity={0.7} onPress={onStayButtonPress}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0.5}}
+                style={{
+                  // marginTop: hp(50),
+                  width: wp(122),
+                  height: hp(50),
+                  borderRadius: 50,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    textAlign: 'center',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(26),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  stay
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            {/*<TouchableOpacity*/}
+            {/*  onPress={handleLogout}*/}
+            {/*  style={styles.logoutButton}>*/}
+            {/*  <Text style={styles.logoutButtonText}>Log Out</Text>*/}
+            {/*</TouchableOpacity>*/}
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              // onPress={SelectSetDurationModalClose}
+              onPress={handleLogout}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                style={{
+                  width: wp(122),
+                  height: hp(50),
+                  borderRadius: 50,
+                  borderWidth: 1,
+                  justifyContent: 'center',
+                  borderColor: 'transparent', // Set border color to transparent
+                }}>
+                <View
+                  style={{
+                    borderRadius: 100, // <-- Inner Border Radius
+                    flex: 1,
+                    backgroundColor: colors.white,
+                    justifyContent: 'center',
+                    margin: isIOS ? 0 : 1,
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      backgroundColor: 'transparent',
+                      color: colors.black,
+                      margin: 10,
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontFamily: fontFamily.poppins600,
+                    }}>
+                    Log Out
+                  </Text>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </SafeAreaView>
@@ -344,7 +420,6 @@ const HomeTopSheetComponent = ({
 const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: 'white',
-    // height: 514,
     width: '200%',
     position: 'absolute',
     top: -20,
@@ -353,7 +428,6 @@ const styles = StyleSheet.create({
   modalBodyContainer: {
     marginTop: 23,
     marginHorizontal: wp(27),
-    // backgroundColor: 'red',
   },
   modalHeaderProfileStyle: {
     height: hp(60),
@@ -385,6 +459,48 @@ const styles = StyleSheet.create({
     marginLeft: hp(10),
     marginRight: hp(10),
     top: 5,
+  },
+  confirmationModalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  confirmationTitle: {
+    color: colors.black,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
+    marginTop: hp(50),
+  },
+  confirmationButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginTop: hp(50),
+    marginBottom: hp(35),
+  },
+  stayButton: {
+    backgroundColor: colors.gray,
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  stayButtonText: {
+    color: colors.white,
+    fontSize: fontSize(14),
+  },
+  logoutButton: {
+    backgroundColor: colors.red,
+    padding: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: colors.white,
+    fontSize: fontSize(14),
   },
 });
 

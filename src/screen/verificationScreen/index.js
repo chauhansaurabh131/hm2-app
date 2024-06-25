@@ -12,12 +12,7 @@ import {images} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import CommonGradientButton from '../../components/commonGradientButton';
-import {useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {apiKeys} from '../../config/apikeys';
-import {Login, VerifyOtp} from '../../store/actions/allActions';
-import useDelayedNavigation from '../../utils/delayFunction';
-import {MyContext} from '../../utils/Provider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {globalUse} from '../../utils/constants';
 import {verifyOTP} from '../../actions/authActions';
@@ -25,16 +20,13 @@ import {verifyOTP} from '../../actions/authActions';
 const VerificationScreen = ({navigation, route}) => {
   const {email = ''} = route.params;
 
-  // console.log(' === var ===> ', email);
-
   const [otp, setOTP] = useState(['', '', '', '']);
   const [timer, setTimer] = useState(60);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
 
-  const {otpVerifiedDetails} = useSelector(state => state.auth);
+  const {otpVerifiedDetails, loading} = useSelector(state => state.auth);
 
-  const loading = false;
-  const updatedEmail = '';
+  // const loading = false;
 
   const hiddenChars = email.substring(0, 3);
   const domain = email.substring(email.indexOf('@'));

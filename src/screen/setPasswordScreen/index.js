@@ -13,7 +13,7 @@ import {hp, isIOS} from '../../utils/helpers';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import CommonGradientButton from '../../components/commonGradientButton';
 import Toast from 'react-native-toast-message';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {setPassword as setPasswordAction} from '../../actions/authActions';
 
 const SetPasswordScreen = ({navigation}) => {
@@ -23,7 +23,9 @@ const SetPasswordScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const loading = false;
+  const {loading} = useSelector(state => state.auth);
+
+  // const loading = false;
   const updatedEmail = '';
 
   const hiddenChars = updatedEmail.substring(0, 3);

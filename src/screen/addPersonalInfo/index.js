@@ -287,7 +287,6 @@ const AddPersonalInfo = ({navigation}) => {
               cast: selectCaste,
               writeBoutYourSelf: addDescription,
               userProfileCompleted: true,
-              // userProfileCompleted: false,
             },
             () => dispatch({type: NEXT_SCREEN}),
           ),
@@ -404,10 +403,34 @@ const AddPersonalInfo = ({navigation}) => {
         />
       </View>
 
-      <Text
-        style={{color: colors.black, marginTop: hp(15), marginLeft: hp(16)}}>
-        {PersonalInfoPhases[activeIndex].phaseName}
-      </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: 17,
+        }}>
+        <Text style={{color: colors.black, marginTop: hp(15)}}>
+          {PersonalInfoPhases[activeIndex].phaseName}
+        </Text>
+
+        {activeIndex > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('HomeTabs');
+            }}>
+            <Text
+              style={{
+                fontSize: fontSize(14),
+                lineHeight: hp(21),
+                fontFamily: fontFamily.poppins400,
+                color: colors.blue,
+                marginTop: hp(15),
+              }}>
+              Skip
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
       {RenderComp && (
         <RenderComp

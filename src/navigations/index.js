@@ -43,7 +43,7 @@ const MainNavigator = () => {
   const AuthStack = () => (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="RegistrationScreen">
+      initialRouteName="MainScreenDemo">
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen
         name="DemoPractiveCodeScreen"
