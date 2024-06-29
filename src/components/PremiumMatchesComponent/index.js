@@ -24,7 +24,6 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
     console.log(' === token ===> ', token);
 
     dispatch(sendRequest({friend: item.id, user: user.user.id}));
-    // dispatch(sendRequest());
   };
 
   const calculateAge = dateOfBirth => {
@@ -50,13 +49,17 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
       renderItem={({item}) => {
         const currentCity = item.address ? item.address.currentCity : '';
         const currentCountry = item.address ? item.address.currentCountry : '';
-        const age = calculateAge(item.dateOfBirth); // Calculate age
+        const age = calculateAge(item.dateOfBirth);
+
+        const imageStyle = item.profilePic
+          ? styles.image
+          : [styles.image, styles.imageWithBorder];
 
         return (
           <View style={styles.itemContainer}>
             <View>
               <Image
-                style={styles.image}
+                style={imageStyle}
                 source={
                   item.profilePic
                     ? {uri: item.profilePic}
@@ -111,10 +114,6 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
               </View>
               <View style={styles.shareImageContainerStyle}>
                 <TouchableOpacity
-                  // onPress={() => {
-                  //   console.log(`User ID: ${item.id}, Name: ${item.name}`);
-                  // }}
-
                   onPress={() => onFriendRequestButtonPress(item)}>
                   <Image
                     source={icons.shareIcon}
@@ -126,8 +125,8 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
           </View>
         );
       }}
-      horizontal // Set the horizontal prop to true
-      showsHorizontalScrollIndicator={false} // Optional: Hide horizontal scroll indicator
+      horizontal
+      showsHorizontalScrollIndicator={false}
     />
   );
 };
@@ -135,7 +134,7 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
 const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
-    flexDirection: 'column', // Use 'column' to arrange items vertically inside the FlatList
+    flexDirection: 'column',
     alignItems: 'center',
     padding: 13,
     marginLeft: -12,
@@ -144,7 +143,11 @@ const styles = StyleSheet.create({
     width: wp(110),
     height: hp(136),
     borderRadius: 6,
-    marginBottom: 8, // Adjust spacing between image and text
+    marginBottom: 8,
+  },
+  imageWithBorder: {
+    borderWidth: 0.5,
+    borderColor: '#D3D3D3', // Adjust the border color as needed
   },
   overlayContainer: {
     position: 'absolute',
@@ -154,7 +157,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   onlineText: {
-    color: 'black', // Adjust the color as needed
+    color: 'black',
     fontSize: fontSize(6),
     alignItems: 'center',
     textAlign: 'center',

@@ -54,14 +54,14 @@ const HomeScreen = ({route}) => {
     }
   }, [userProfileCompleted]);
 
-  // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+  const capitalizeFirstLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
 
-  const firstName = user?.user?.firstName;
+  const firstName = capitalizeFirstLetter(user?.user?.firstName || '');
   const lastName = user?.user?.lastName;
   const name = user?.user?.name;
   const profilePicUrl = user?.user?.profilePic;
-
-  // console.log(' === profilePicUrl ===> ', profilePicUrl);
 
   const handleButtonClick = () => {
     if (activeLine === 3) {
@@ -360,7 +360,7 @@ const HomeScreen = ({route}) => {
                     style={style.cardButtonContainer}>
                     <View style={style.cardButtonBodyStyle}>
                       <View style={style.cardButtonTextContainer}>
-                        <Text style={style.cardButtonTextStyle}>upgrade</Text>
+                        <Text style={style.cardButtonTextStyle}>Upgrade</Text>
                         <Image
                           source={icons.crownIcon}
                           style={style.cardButtonImageStyle}

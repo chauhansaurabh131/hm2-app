@@ -63,7 +63,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: hp(21),
-    marginBottom: hp(20),
+    marginBottom: hp(23),
   },
   socialMediaCircleStyle: {
     width: hp(44),
@@ -114,7 +114,7 @@ const style = StyleSheet.create({
     marginVertical: wp(10),
     // marginLeft: wp(50),
     marginRight: wp(50),
-    marginTop: hp(26),
+    marginTop: hp(33),
     width: '100%',
   },
   memberLoginTextContainer: {
@@ -130,7 +130,7 @@ const style = StyleSheet.create({
     width: hp(16),
     height: hp(16),
     marginLeft: wp(10),
-    top: 2,
+    top: 3,
     tintColor: colors.black,
   },
 });

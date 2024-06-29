@@ -180,18 +180,19 @@ const RegistrationScreen = () => {
 
             <View style={style.bottomUnderLineStyle} />
 
-            <View style={style.memberLoginTextContainer}>
+            <TouchableOpacity
+              style={style.memberLoginTextContainer}
+              onPress={() => {
+                navigation.navigate('LoginScreen');
+              }}>
               <Text style={style.loginTextStyle}>Member Login</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('LoginScreen');
-                }}>
+              <View>
                 <Image
                   source={images.profileVectorLogo}
                   style={style.profileVectorStyle}
                 />
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
         <Toast ref={ref => Toast.setRef(ref)} />

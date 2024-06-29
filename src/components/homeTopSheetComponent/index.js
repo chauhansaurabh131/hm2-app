@@ -104,7 +104,7 @@ const HomeTopSheetComponent = ({
                 style={{
                   width: 136,
                   height: 40,
-                  borderRadius: 10,
+                  borderRadius: 20,
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',

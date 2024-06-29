@@ -7,13 +7,11 @@ import {
   TouchableOpacity,
   View,
   Text,
-  ActivityIndicator,
 } from 'react-native';
 import style from './style';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import {colors} from '../../utils/colors';
-import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllFriends} from '../../actions/chatActions';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
@@ -24,22 +22,24 @@ const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const ChatScreen = ({navigation}) => {
   const [userInput, setUserInput] = useState('');
 
-  const {myAllFriends, isUserDataLoading} = useSelector(state => state.chat);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllFriends());
   }, [dispatch]);
 
-  const FilterData = item => {
+  const {myAllFriends, isUserDataLoading} = useSelector(state => state.chat);
+
+  const friends = myAllFriends.data?.results || [];
+
+  const FilterData = ({item}) => {
+    console.log(' === item ===> ', item);
     const onlineStatusColor =
       item.online === 'online' ? colors.blue : '#A7A7A7';
 
     const handleItemPress = userData => {
       navigation.navigate('ChatUserScreen', {
-        screen: 'ChatUserScreen',
-        params: {userData},
+        userData,
       });
     };
 
@@ -52,7 +52,7 @@ const ChatScreen = ({navigation}) => {
           marginBottom: hp(20),
         }}>
         <Image
-          source={{uri: item.user.profilePic}}
+          source={{uri: item.friendList.profilePic}}
           style={{
             width: 47,
             height: 47,
@@ -71,7 +71,7 @@ const ChatScreen = ({navigation}) => {
                 color: colors.black,
                 marginRight: wp(10),
               }}>
-              {item.user.firstName} {item.user.lastName}
+              {item.friendList.firstName} {item.friendList.lastName}
             </Text>
             <Text
               style={{
@@ -145,14 +145,14 @@ const ChatScreen = ({navigation}) => {
                 top: 5,
                 width: 42,
                 height: 40,
-                backgroundColor: '#F5FBFF',
+                // backgroundColor: '#F5FBFF',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               <TouchableOpacity>
                 <Image
                   source={icons.search_icon}
-                  style={{width: 16, height: 16}}
+                  style={{width: 16, height: 16, tintColor: colors.black}}
                 />
               </TouchableOpacity>
             </View>
@@ -162,7 +162,7 @@ const ChatScreen = ({navigation}) => {
 
       <View style={{marginHorizontal: wp(26)}}>
         {isUserDataLoading ? (
-          //SHIMMER LOADER DATA
+          // SHIMMER LOADER DATA
           <FlatList
             data={[1, 1, 1, 1, 1, 1, 1, 1]}
             renderItem={({item, index}) => {
@@ -202,9 +202,9 @@ const ChatScreen = ({navigation}) => {
           </View>
         ) : (
           <FlatList
-            data={myAllFriends?.data}
-            renderItem={({item}) => FilterData(item)}
-            keyExtractor={item => item.id}
+            data={friends}
+            renderItem={FilterData}
+            keyExtractor={item => item.friendList._id} // Assuming _id is a unique identifier
             showsVerticalScrollIndicator={false}
             ListFooterComponent={<View style={{height: hp(120)}} />}
           />
