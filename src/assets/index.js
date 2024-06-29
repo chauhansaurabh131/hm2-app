@@ -99,6 +99,7 @@ export const icons = {
   show_Password_icon: require('./icons/show_password_icon.png'),
   simple_camera_icon: require('./icons/simple_camera_icon.png'),
   send_icon: require('./icons/send_icon.png'),
+  smile_emoji_icon: require('./icons/smile_emoji_icon.png'),
 };
 
 export const gif = {

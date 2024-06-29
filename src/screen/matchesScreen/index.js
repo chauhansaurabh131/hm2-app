@@ -22,6 +22,7 @@ import {
 import {USER_LIST} from '../../utils/data';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {getAllDeclineFriend, getAllFriends} from '../../actions/chatActions';
+import {it} from '@jest/globals';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -41,12 +42,15 @@ const MatchesScreen = ({navigation}) => {
     dispatch(getAllFriends());
   }, [dispatch]);
 
-  const {getAllRequestData, isFriendRequestDataLoading} = useSelector(
+  const {getAllRequestData, isFriendRequestDataLoading, userData} = useSelector(
     state => state.home,
   );
+
   const {declineFriends, myAllFriends, isUserDataLoading} = useSelector(
     state => state.chat,
   );
+
+  const friends = myAllFriends.data?.results || [];
 
   const tabsData = [
     {id: 'new', label: 'New'},
@@ -384,11 +388,34 @@ const MatchesScreen = ({navigation}) => {
 
   // USER NEW RENDER LIST //
   const renderUserItem = ({item}) => {
+    const profileImage = item.profilePic;
+    const birthTime = item.birthTime;
+    const currentCity = item.address?.currentCity;
+    const JobTittle = item.userProfessional?.jobTitle;
+    const workCity = item.userProfessional?.workCity;
+    const workCountry = item.userProfessional?.workCountry;
+
+    const calculateAge = dob => {
+      const birthDate = new Date(dob);
+      const difference = Date.now() - birthDate.getTime();
+      const ageDate = new Date(difference);
+      return Math.abs(ageDate.getUTCFullYear() - 1970);
+    };
+
+    const age = calculateAge(birthTime);
+
     return (
       <View style={{marginHorizontal: 17}}>
         <TouchableOpacity activeOpacity={1}>
           <View>
-            <Image source={item.image} style={style.userImageStyle} />
+            {/*<Image source={item.image} style={style.userImageStyle} />*/}
+            <Image
+              source={
+                profileImage ? {uri: profileImage} : images.empty_male_Image
+              }
+              style={style.userImageStyle}
+              resizeMode={'cover'}
+            />
             <LinearGradient
               colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
               style={style.gradient}
@@ -403,29 +430,40 @@ const MatchesScreen = ({navigation}) => {
                 onPress={() => {
                   navigation.navigate('UserDetailsScreen');
                 }}>
-                <Text style={style.userNameTextStyle}>{item.name}</Text>
+                {/*<Text style={style.userNameTextStyle}>{item.name}</Text>*/}
+                <Text style={style.userNameTextStyle}>
+                  {item.firstName || item.name} {item.lastName || ' '}
+                </Text>
 
                 <View style={style.userDetailsDescriptionContainer}>
                   <Text style={style.userDetailsTextStyle}>{item.gender}</Text>
-                  <Text style={style.userDetailsTextStyle}>{item.age},</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {age || 'N/A'},
+                  </Text>
                   <Text style={style.userDetailsTextStyle}>{item.height}</Text>
 
                   <View style={style.verticalLineStyle} />
 
-                  <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-                  <Text style={style.userDetailsTextStyle}>{item.surname}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {currentCity || ' N/A'}
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}>{item.cast}</Text>
                 </View>
 
                 <View style={style.userDetailsDescriptionContainer}>
                   <Text style={style.userDetailsTextStyle}>
-                    {item.occupation}
+                    {JobTittle || 'N/A'}
                   </Text>
 
                   <View style={style.verticalLineStyle} />
 
-                  <Text style={style.userDetailsTextStyle}>{item.city}</Text>
-                  <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-                  <Text style={style.userDetailsTextStyle}>{item.country}</Text>
+                  <Text style={style.userDetailsTextStyle}> {'N/A'}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {workCity || 'N/A'}
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {workCountry || 'N/A'}
+                  </Text>
                 </View>
               </TouchableOpacity>
 
@@ -494,9 +532,7 @@ const MatchesScreen = ({navigation}) => {
   };
 
   const renderAccptedUserItem = ({item}) => {
-    // console.log(' === item ===> ', item);
-
-    const {user, id} = item;
+    const {friendList, id} = item;
     const {
       firstName,
       lastName,
@@ -507,10 +543,10 @@ const MatchesScreen = ({navigation}) => {
       userProfessional,
       motherTongue,
       cast,
-    } = user;
+    } = friendList;
 
-    const jobTitle = item.user.userProfessional.jobTitle;
-    const workCountry = item.user.userProfessional.workCountry;
+    const jobTitle = item.friendList?.userProfessional?.jobTitle;
+    const workCountry = item.friendList?.userProfessional?.workCountry;
 
     const calculateAge = dob => {
       const birthDate = new Date(dob);
@@ -518,17 +554,20 @@ const MatchesScreen = ({navigation}) => {
       const ageDate = new Date(difference);
       return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
-
     const age = calculateAge(dateOfBirth);
 
-    const height = user.height || 'N/A';
+    const height = friendList.height || 'N/A';
 
     return (
       <View style={{marginHorizontal: 17}}>
         <TouchableOpacity activeOpacity={1}>
           <View>
             <Image
-              source={profilePic ? {uri: profilePic} : images.empty_male_Image}
+              source={
+                profilePic
+                  ? {uri: item.friendList.profilePic}
+                  : images.empty_male_Image
+              }
               style={style.userImageStyle}
               resizeMode={'cover'}
             />
@@ -560,17 +599,27 @@ const MatchesScreen = ({navigation}) => {
                   <Text style={style.userDetailsTextStyle}>
                     {motherTongue || 'N/A'}
                   </Text>
-                  <Text style={style.userDetailsTextStyle}>{cast}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {cast || 'N/A'}
+                  </Text>
                 </View>
 
                 <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {jobTitle || 'N/A'}
+                  </Text>
 
                   <View style={style.verticalLineStyle} />
 
-                  <Text style={style.userDetailsTextStyle}>{workCountry}</Text>
-                  <Text style={style.userDetailsTextStyle}>{item.state}</Text>
-                  <Text style={style.userDetailsTextStyle}>{item.country}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {workCountry || 'N/A'}
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {item.state || 'N/A'}
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {item.country || 'N/A'}
+                  </Text>
                 </View>
               </TouchableOpacity>
 
@@ -635,7 +684,7 @@ const MatchesScreen = ({navigation}) => {
         return (
           <View>
             <FlatList
-              data={USER_LIST}
+              data={userData.data}
               keyExtractor={item => item.id}
               renderItem={renderUserItem}
               showsVerticalScrollIndicator={false}
@@ -663,7 +712,7 @@ const MatchesScreen = ({navigation}) => {
                   </View>
                 </View>
               </View>
-            ) : myAllFriends.data.length === 0 ? (
+            ) : myAllFriends?.data?.length === 0 ? (
               <View
                 style={{
                   alignItems: 'center',
@@ -681,8 +730,8 @@ const MatchesScreen = ({navigation}) => {
               </View>
             ) : (
               <FlatList
-                data={myAllFriends.data}
-                keyExtractor={item => item.id}
+                data={friends}
+                keyExtractor={item => item.friendList._id}
                 renderItem={renderAccptedUserItem}
                 showsVerticalScrollIndicator={false}
                 ListFooterComponent={<View style={{height: 130}} />}

@@ -1,79 +1,83 @@
-import React, {useState, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {
-  FlatList,
   SafeAreaView,
   Text,
-  TouchableOpacity,
   View,
+  FlatList,
+  Image,
+  StyleSheet,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
-
-const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+import {getAllFriends} from '../../actions/chatActions';
+import {useDispatch, useSelector} from 'react-redux';
 
 const DemoPractiveCodeScreen = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [textLayout, setTextLayout] = useState(null);
-  const textRef = useRef(null);
+  const dispatch = useDispatch();
 
-  const handleLoaderClick = () => {
-    setIsLoading(true);
+  useEffect(() => {
+    dispatch(getAllFriends());
+  }, [dispatch]);
 
-    // Simulate a network request or any async operation
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); // Loader will be visible for 3 seconds
-  };
+  const {myAllFriends, isUserDataLoading} = useSelector(state => state.chat);
 
-  const onTextLayout = event => {
-    setTextLayout(event.nativeEvent.layout);
-  };
+  // Extracting friend data from myAllFriends
+  const friends = myAllFriends.data?.results || [];
+
+  // Render function for each item in the FlatList
+  const renderFriendItem = ({item}) => (
+    <View style={styles.friendContainer}>
+      <Image
+        source={{uri: item.friendList.profilePic}}
+        style={styles.profileImage}
+      />
+      <Text style={styles.friendName}>
+        {item.friendList.firstName} {item.friendList.lastName}
+      </Text>
+    </View>
+  );
 
   return (
-    <SafeAreaView
-      style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <TouchableOpacity onPress={handleLoaderClick} style={{marginBottom: 20}}>
-        <Text>LOADER</Text>
-      </TouchableOpacity>
-
-      {/*<ShimmerPlaceholder*/}
-      {/*  style={{width: 100, height: 100, borderRadius: 50}}*/}
-      {/*  // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}*/}
-      {/*/>*/}
-
-      <View style={{width: '100%'}}>
+    <SafeAreaView style={styles.container}>
+      {isUserDataLoading ? (
+        <Text>Loading...</Text>
+      ) : (
         <FlatList
-          data={[1, 1, 1, 1, 1, 1, 1, 1]}
-          renderItem={({item, index}) => {
-            return (
-              <View
-                style={{
-                  width: '100%',
-                  height: 100,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <ShimmerPlaceholder
-                  style={{width: 100, height: 100, borderRadius: 50}}
-                  // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}
-                />
-                <View style={{marginLeft: 10}}>
-                  <ShimmerPlaceholder
-                    style={{width: 100, height: 20}}
-                    // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}
-                  />
-                  <ShimmerPlaceholder
-                    style={{width: 100, height: 20, marginTop: 10}}
-                    // shimmerColors={['#564d4d', '#8e8e8e', '#564d4d']}
-                  />
-                </View>
-              </View>
-            );
-          }}
+          data={friends}
+          renderItem={renderFriendItem}
+          keyExtractor={item => item._id}
+          contentContainerStyle={styles.listContainer}
         />
-      </View>
+      )}
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
+  listContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  friendContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  friendName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default DemoPractiveCodeScreen;

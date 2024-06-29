@@ -16,6 +16,7 @@ import GradientButton from '../../components/GradientButton';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import {changeStack, login} from '../../actions/authActions';
+import TextInputWithIcons from '../../components/TextInputWithIcon';
 
 const LoginScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -50,19 +51,41 @@ const LoginScreen = ({navigation}) => {
           inputValue={email}
           IconNameDesign={icons.profileLogo}
           placeholder={'Enter Your Email'}
-          iconSource={icons.profileLogo}
+          iconSource={icons.mailLogo}
           textInputStyle={style.textInputStyle}
           containerStyle={style.containerStyle}
+          iconSources
           handleInputChange={emailInput => setEmail(emailInput)}
+          iconStyle={{width: 21, height: 16, resizeMode: 'contain'}}
         />
+
+        {/*<View style={{justifyContent: 'center', flex: 1}}>*/}
+        {/*<TextInputWithIcons*/}
+        {/*  placeholder="enter email"*/}
+        {/*  leftIconSource={icons.email_sms_icon}*/}
+        {/*  rightIconSource={icons.secureEyeLogo}*/}
+        {/*  onChangeText={setEmail}*/}
+        {/*  value={email}*/}
+        {/*  containerStyle={{marginTop: 44, marginBottom: 20}}*/}
+        {/*/>*/}
+        {/*</View>*/}
 
         <TextInput
           inputValue={password}
           IconNameDesign={icons.profileLogo}
           placeholder={'Enter Password'}
-          iconSource={icons.mailLogo}
+          iconSource={icons.logLogo}
+          iconStyle={{
+            width: 14,
+            height: 18,
+            resizeMode: 'contain',
+            tintColor: colors.blue,
+          }}
           iconSecures
-          iconSecure={icons.secureEyeLogo}
+          iconSources
+          iconSecure={
+            isPasswordVisible ? icons.show_Password_icon : icons.secureEyeLogo
+          }
           secureTextEntry={!isPasswordVisible}
           textInputStyle={{textAlign: 'center', marginLeft: 20}}
           onIconPress={togglePasswordVisibility}
@@ -129,6 +152,7 @@ const LoginScreen = ({navigation}) => {
             <Text style={style.signUpTextStyle}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+
         <Toast ref={ref => Toast.setRef(ref)} />
       </SafeAreaView>
     </TouchableWithoutFeedback>

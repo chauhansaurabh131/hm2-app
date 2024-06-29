@@ -30,6 +30,7 @@ import SetProfilePictureScreen from '../screen/setProfilePictureScreen';
 import SelectImageScreen from '../screen/selectImageScreen';
 import AddProfilePictureScreen from '../screen/addProfilePictureScreen';
 import PartnerPreferencesScreen from '../screen/partnerPreferencesScreen';
+import UserDetailsScreen from '../screen/userDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -134,10 +135,10 @@ const MainNavigator = () => {
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
-        <Stack.Screen
-          name={'DemoPractiveCodeScreen'}
-          component={DemoPractiveCodeScreen}
-        />
+        {/*<Stack.Screen*/}
+        {/*  name={'DemoPractiveCodeScreen'}*/}
+        {/*  component={DemoPractiveCodeScreen}*/}
+        {/*/>*/}
 
         <Stack.Screen
           name={'GeneralInformationScreen'}
@@ -159,6 +160,11 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'PartnerPreferencesScreen'}
           component={PartnerPreferencesScreen}
+        />
+
+        <Stack.Screen
+          name={'UserDetailsScreen'}
+          component={UserDetailsScreen}
         />
 
         <Stack.Screen name={'HomeTabs'} component={HomeTabs} />

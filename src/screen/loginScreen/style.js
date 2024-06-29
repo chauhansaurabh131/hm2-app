@@ -101,21 +101,24 @@ const style = StyleSheet.create({
     marginVertical: wp(10),
     marginLeft: wp(50),
     marginRight: wp(50),
-    marginTop: hp(25),
+    marginTop: hp(22),
   },
   bottomTextContainer: {
     flexDirection: 'row',
     alignSelf: 'center',
+    marginTop: hp(35),
   },
   bottomTextStyle: {
     color: colors.black,
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontWeight: '400',
-    fontFamily: fontFamily.nunito400,
+    fontFamily: fontFamily.poppins400,
   },
   signUpTextStyle: {
     color: colors.blue,
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins400,
     top: isIOS ? hp(3) : hp(0),
   },
 });
