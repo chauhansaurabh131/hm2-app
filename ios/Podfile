@@ -31,6 +31,11 @@ target 'HappyMilan2' do
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 
+
+# pod 'react-native-blob-util',
+#     :path => '../node_modules/react-native-blob-util'
+
+
   use_react_native!(
     :path => config[:reactNativePath],
     # Enables Flipper.
@@ -41,6 +46,7 @@ $RNFirebaseAsStaticFramework = true
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
 
   target 'HappyMilan2Tests' do
     inherit! :complete

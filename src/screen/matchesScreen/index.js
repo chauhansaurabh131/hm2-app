@@ -168,7 +168,7 @@ const MatchesScreen = ({navigation}) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('UserDetailsScreen');
+                  // navigation.navigate('UserDetailsScreen');
                 }}>
                 <Text style={style.userNameTextStyle}>
                   {firstName || 'NAN'} {lastName || 'NAN'}
@@ -388,21 +388,88 @@ const MatchesScreen = ({navigation}) => {
 
   // USER NEW RENDER LIST //
   const renderUserItem = ({item}) => {
+    // console.log(
+    //   ' === item....... ===> ',
+    //   item?.userProfilePic.map(pic => pic.url),
+    // );
+
+    console.log(' === renderUserItem..... ===> ', item?.hobbies);
+
+    const userAllImage = Array.isArray(item?.userProfilePic)
+      ? item.userProfilePic.map(pic => pic.url)
+      : [];
+
     const profileImage = item.profilePic;
     const birthTime = item.birthTime;
     const currentCity = item.address?.currentCity;
+    const currentCountry = item.address?.currentCountry;
     const JobTittle = item.userProfessional?.jobTitle;
     const workCity = item.userProfessional?.workCity;
     const workCountry = item.userProfessional?.workCountry;
 
-    const calculateAge = dob => {
-      const birthDate = new Date(dob);
-      const difference = Date.now() - birthDate.getTime();
-      const ageDate = new Date(difference);
-      return Math.abs(ageDate.getUTCFullYear() - 1970);
+    const calculateAge = dateOfBirth => {
+      const birthDate = new Date(dateOfBirth);
+      const today = new Date();
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+
+      // Adjust age if the current date is before the birthday in the current year
+      if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      return age;
     };
 
-    const age = calculateAge(birthTime);
+    const age = calculateAge(item.dateOfBirth);
+
+    const handlePress = () => {
+      const matchesUserData = {
+        userAllImage,
+        profileImage,
+        birthTime,
+        currentCity,
+        JobTittle,
+        currentCountry,
+        age,
+        gender: item?.gender,
+        height: item?.height,
+        cast: item?.cast,
+        firstName: item?.firstName,
+        lastName: item?.lastName,
+        motherTongue: item?.motherTongue,
+        about: item?.writeBoutYourSelf,
+        religion: item?.religion,
+        dateOfBirth: item?.dateOfBirth,
+        currentResidenceAddress: item?.address?.currentResidenceAddress,
+        originResidenceAddress: item?.address?.originResidenceAddress,
+        originCountry: item?.address?.originCountry,
+        originCity: item?.address?.originCity,
+        mobileNumber: item?.mobileNumber,
+        homeMobileNumber: item?.homeMobileNumber,
+        email: item?.email,
+        degree: item?.userEducation?.degree,
+        collage: item?.userEducation?.collage,
+        educationCity: item?.userEducation?.city,
+        educationState: item?.userEducation?.state,
+        educationCountry: item?.userEducation?.country,
+        Designation: item?.userProfessional?.jobTitle,
+        companyName: item?.userProfessional?.companyName,
+        jobType: item?.userProfessional?.jobType,
+        currentSalary: item?.userProfessional?.currentSalary,
+        workCity: item?.userProfessional?.workCity,
+        workCountry: item?.userProfessional?.workCountry,
+      };
+
+      console.log('User Data:', matchesUserData);
+
+      // Navigate to UserDetailsScreen
+      navigation.navigate('UserDetailsScreen', {matchesUserData});
+    };
 
     return (
       <View style={{marginHorizontal: 17}}>
@@ -427,9 +494,11 @@ const MatchesScreen = ({navigation}) => {
               </View>
 
               <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('UserDetailsScreen');
-                }}>
+                // onPress={() => {
+                //   // navigation.navigate('UserDetailsScreen');
+                //
+                // }}
+                onPress={handlePress}>
                 {/*<Text style={style.userNameTextStyle}>{item.name}</Text>*/}
                 <Text style={style.userNameTextStyle}>
                   {item.firstName || item.name} {item.lastName || ' '}
@@ -583,7 +652,7 @@ const MatchesScreen = ({navigation}) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('UserDetailsScreen');
+                  // navigation.navigate('UserDetailsScreen');
                 }}>
                 <Text style={style.userNameTextStyle}>
                   {firstName} {lastName}

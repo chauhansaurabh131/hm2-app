@@ -4,7 +4,11 @@ import style from './style';
 import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 
-const UserHobbiesAndInterest = () => {
+const UserHobbiesAndInterest = (...params) => {
+  const MatchesScreenData = params[0];
+
+  console.log(' === MatchesScreenData.... ===> ', MatchesScreenData);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginTop: hp(15)}}>

@@ -1,136 +1,89 @@
 import React from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
-import style from './style';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
-import {colors} from '../../../utils/colors';
+import moment from 'moment';
+import {style} from './style';
 
-const UserGeneralDetailInformation = () => {
+const UserGeneralDetailInformation = (...params) => {
+  const UserData = params[0]?.friendList;
+
+  const MatchesScreenData = params[0];
+
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle null or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  const dateOfBirth = moment(
+    UserData?.dateOfBirth || MatchesScreenData?.dateOfBirth,
+  ).format('DD.MM.YYYY');
+
+  const formattedTime = moment(
+    UserData?.birthTime || MatchesScreenData?.birthTime,
+  ).format('hh:mm:ss A');
+
+  const Religion =
+    capitalizeFirstLetter(UserData?.religion) ||
+    capitalizeFirstLetter(MatchesScreenData?.religion);
+
+  const Cast =
+    capitalizeFirstLetter(UserData?.cast) ||
+    capitalizeFirstLetter(MatchesScreenData?.cast);
+
+  const SubCast = capitalizeFirstLetter(UserData?.community);
+
+  const CurrentCity =
+    capitalizeFirstLetter(UserData?.address?.currentCity) ||
+    capitalizeFirstLetter(MatchesScreenData?.currentCity);
+
+  const CurrentCountry =
+    capitalizeFirstLetter(UserData?.address?.currentCountry) ||
+    capitalizeFirstLetter(MatchesScreenData?.currentCountry);
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(15)}}>
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-          }}>
-          Date of Birth
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          02.03.1986
+    <SafeAreaView style={style.container}>
+      <View style={style.containerBody}>
+        <Text style={style.detailTittleText}>Date of Birth</Text>
+
+        <Text style={style.DetailsAnswerText}>
+          {/*02.03.1986*/}
+          {dateOfBirth}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Birth of Time
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          10:01:20 AM
+        <Text style={style.DetailTittleSecondText}>Birth of Time</Text>
+
+        <Text style={style.DetailsAnswerText}>
+          {/*10:01:20 AM*/}
+          {formattedTime}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Religion
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Hindu
+        <Text style={style.DetailTittleSecondText}>Religion</Text>
+
+        <Text style={style.DetailsAnswerText}>
+          {/*Hindu*/}
+          {Religion}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Caste/Sub Caste
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Patel, Kadva Patidar
+        <Text style={style.DetailTittleSecondText}>Caste/Sub Caste</Text>
+
+        <Text style={style.DetailsAnswerText}>
+          {/*Patel, Kadva Patidar*/}
+          {Cast}, {SubCast}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Current City
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          New York
+        <Text style={style.DetailTittleSecondText}>Current City</Text>
+
+        <Text style={style.DetailsAnswerText}>
+          {/*New York*/}
+          {CurrentCity}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Country of Living
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          United States of America
+        <Text style={style.DetailTittleSecondText}>Country of Living</Text>
+
+        <Text style={style.DetailsAnswerText}>
+          {/*United States of America*/}
+          {CurrentCountry}
         </Text>
       </View>
     </SafeAreaView>

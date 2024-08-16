@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import {changeStack, login} from '../../actions/authActions';
 import TextInputWithIcons from '../../components/TextInputWithIcon';
+import {hp} from '../../utils/helpers';
 
 const LoginScreen = ({navigation}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -47,51 +48,66 @@ const LoginScreen = ({navigation}) => {
           <Text style={style.headingTextStyle}>to Happy Milan</Text>
         </View>
 
-        <TextInput
-          inputValue={email}
-          IconNameDesign={icons.profileLogo}
-          placeholder={'Enter Your Email'}
-          iconSource={icons.mailLogo}
-          textInputStyle={style.textInputStyle}
-          containerStyle={style.containerStyle}
-          iconSources
-          handleInputChange={emailInput => setEmail(emailInput)}
-          iconStyle={{width: 21, height: 16, resizeMode: 'contain'}}
-        />
-
-        {/*<View style={{justifyContent: 'center', flex: 1}}>*/}
-        {/*<TextInputWithIcons*/}
-        {/*  placeholder="enter email"*/}
-        {/*  leftIconSource={icons.email_sms_icon}*/}
-        {/*  rightIconSource={icons.secureEyeLogo}*/}
-        {/*  onChangeText={setEmail}*/}
-        {/*  value={email}*/}
-        {/*  containerStyle={{marginTop: 44, marginBottom: 20}}*/}
+        {/*<TextInput*/}
+        {/*  inputValue={email}*/}
+        {/*  IconNameDesign={icons.profileLogo}*/}
+        {/*  placeholder={'Enter Your Email'}*/}
+        {/*  iconSource={icons.mailLogo}*/}
+        {/*  textInputStyle={style.textInputStyle}*/}
+        {/*  containerStyle={style.containerStyle}*/}
+        {/*  iconSources*/}
+        {/*  handleInputChange={emailInput => setEmail(emailInput)}*/}
+        {/*  iconStyle={{width: 21, height: 16, resizeMode: 'contain'}}*/}
         {/*/>*/}
-        {/*</View>*/}
 
-        <TextInput
-          inputValue={password}
-          IconNameDesign={icons.profileLogo}
-          placeholder={'Enter Password'}
-          iconSource={icons.logLogo}
-          iconStyle={{
-            width: 14,
-            height: 18,
-            resizeMode: 'contain',
-            tintColor: colors.blue,
-          }}
-          iconSecures
-          iconSources
-          iconSecure={
-            isPasswordVisible ? icons.show_Password_icon : icons.secureEyeLogo
-          }
-          secureTextEntry={!isPasswordVisible}
-          textInputStyle={{textAlign: 'center', marginLeft: 20}}
-          onIconPress={togglePasswordVisibility}
-          containerStyle={style.passwordContainerStyle}
-          handleInputChange={passwordInput => setPassword(passwordInput)}
-        />
+        <View style={{justifyContent: 'center'}}>
+          <TextInputWithIcons
+            placeholder="Enter Your Email"
+            leftIconSource={icons.mailLogo}
+            onChangeText={emailInput => setEmail(emailInput)}
+            value={email}
+            containerStyle={{marginTop: 44, marginBottom: 20}}
+            iconsStyle={{tintColor: 'blue'}}
+          />
+        </View>
+
+        <View style={{justifyContent: 'center'}}>
+          <TextInputWithIcons
+            placeholder="Enter Password"
+            leftIconSource={icons.logLogo}
+            rightIconSource={icons.secureEyeLogo}
+            secureEyeIcon={icons.secureEyeLogo}
+            showPasswordIcon={icons.show_Password_icon}
+            value={password}
+            onChangeText={passwordInput => setPassword(passwordInput)}
+            containerStyle={{marginBottom: 20}}
+            isPassword={true}
+            iconsStyle={{tintColor: 'blue', height: hp(18), width: hp(15)}}
+          />
+        </View>
+
+        {/*<TextInput*/}
+        {/*  inputValue={password}*/}
+        {/*  IconNameDesign={icons.profileLogo}*/}
+        {/*  placeholder={'Enter Password'}*/}
+        {/*  iconSource={icons.logLogo}*/}
+        {/*  iconStyle={{*/}
+        {/*    width: 14,*/}
+        {/*    height: 18,*/}
+        {/*    resizeMode: 'contain',*/}
+        {/*    tintColor: colors.blue,*/}
+        {/*  }}*/}
+        {/*  iconSecures*/}
+        {/*  iconSources*/}
+        {/*  iconSecure={*/}
+        {/*    isPasswordVisible ? icons.show_Password_icon : icons.secureEyeLogo*/}
+        {/*  }*/}
+        {/*  secureTextEntry={!isPasswordVisible}*/}
+        {/*  textInputStyle={{textAlign: 'center', marginLeft: 20}}*/}
+        {/*  onIconPress={togglePasswordVisibility}*/}
+        {/*  containerStyle={style.passwordContainerStyle}*/}
+        {/*  handleInputChange={passwordInput => setPassword(passwordInput)}*/}
+        {/*/>*/}
 
         <GradientButton
           buttonName={'Login'}

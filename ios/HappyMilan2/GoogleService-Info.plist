@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>478268963840-7p1r8a6dcufm52in0prcfpq2h03nqsle.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.478268963840-7p1r8a6dcufm52in0prcfpq2h03nqsle</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>478268963840-pgiog77bere529u2vvi79evvfdtd9fsr.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAIhcklBM_-8BO0EKLzOw0zeOVTLFEVAeQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>478268963840</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.HappyMilan2</string>
+	<key>PROJECT_ID</key>
+	<string>happymilan-130a5</string>
+	<key>STORAGE_BUCKET</key>
+	<string>happymilan-130a5.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:478268963840:ios:baeb385b9e7d92852cace5</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Give $(PRODUCT_NAME) permission to use your microphone. Your record wont be shared without your permission.</string>
+</dict>
+</plist>

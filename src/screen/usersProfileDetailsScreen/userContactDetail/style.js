@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 
-const style = StyleSheet.create({
+export const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
@@ -31,5 +31,3 @@ const style = StyleSheet.create({
     marginTop: hp(15),
   },
 });
-
-export default style;

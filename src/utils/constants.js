@@ -102,6 +102,39 @@ export const UserDetailsProfile = [
   },
 ];
 
+export const UserDetailsProfile1 = [
+  {
+    phaseName: 'General Information',
+    component: params => <UserGeneralDetailInformation {...params} />,
+    icon: require('../assets/icons/profile_logo.png'),
+  },
+  {
+    phaseName: 'Address Details',
+    component: params => <UserAddressDetails {...params} />,
+    icon: require('../assets/icons/address_location_logo.png'),
+  },
+  {
+    phaseName: 'Contact Details',
+    component: params => <UserContactDetail {...params} />,
+    icon: require('../assets/icons/phone_logo.png'),
+  },
+  {
+    phaseName: 'Education Details',
+    component: params => <UserEducationDetail {...params} />,
+    icon: require('../assets/icons/education_logo.png'),
+  },
+  {
+    phaseName: 'Professional Details',
+    component: params => <UserProfessionalsDetails {...params} />,
+    icon: require('../assets/icons/professional_logo.png'),
+  },
+  {
+    phaseName: 'Hobbies and Interest',
+    component: params => <UserHobbiesAndInterest {...params} />,
+    icon: require('../assets/icons/interner_logo.png'),
+  },
+];
+
 export const AdminDetailsProfile = [
   {
     phaseName: 'General Information',

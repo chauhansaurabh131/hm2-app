@@ -23,7 +23,67 @@ const UserDetailScreen = ({navigation}) => {
   const route = useRoute();
   const {selectedBox} = route.params ?? {};
 
-  console.log(' === selectedBox ===> ', selectedBox);
+  const {userData, matchesUserData} = route.params;
+
+  // console.log(' === userData ===> ', userData);
+  const imageUrls =
+    userData?.friendList?.userProfilePic.map(pic => pic.url) ||
+    matchesUserData?.userAllImage;
+
+  // const imageUrls = matchesUserData?.userAllImage || [];
+
+  const convertHeightToFeetAndInches = heightInCm => {
+    const heightInInches = heightInCm / 2.54;
+    const feet = Math.floor(heightInInches / 12);
+    const inches = Math.round(heightInInches % 12);
+    return `${feet}'${inches}"`;
+  };
+
+  const calculateAge = dateOfBirth => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    // Adjust age if the current date is before the birthday in the current year
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle null or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  const Name =
+    capitalizeFirstLetter(userData?.friendList?.firstName) &&
+    capitalizeFirstLetter(matchesUserData?.firstName);
+
+  const LastName =
+    capitalizeFirstLetter(userData?.friendList?.lastName) ||
+    capitalizeFirstLetter(matchesUserData?.lastName);
+
+  const dateOfBirth = userData?.friendList?.dateOfBirth;
+
+  const age = calculateAge(dateOfBirth);
+  const gender = userData?.friendList?.gender || matchesUserData?.gender;
+  const heightInCm = userData?.friendList?.height;
+  const heightFormatted = convertHeightToFeetAndInches(heightInCm);
+  const motherTongue = userData?.friendList?.motherTongue;
+  const cast = userData?.friendList?.cast;
+  const jobTitle = userData?.friendList?.userProfessional?.jobTitle;
+  const workCity = userData?.friendList?.userProfessional?.workCity;
+  const workCountry = userData?.friendList?.userProfessional?.workCountry;
+  const aboutMe = userData?.friendList?.writeBoutYourSelf;
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -50,12 +110,9 @@ const UserDetailScreen = ({navigation}) => {
       </View>
       <ScrollView>
         <View>
-          {/*<Image*/}
-          {/*  source={images.user_one_Image}*/}
-          {/*  style={style.userProfileImageStyle}*/}
-          {/*/>*/}
-          <ImagePaginationComponent />
+          {/*<ImagePaginationComponent />*/}
 
+          <ImagePaginationComponent imageUrls={imageUrls} />
           <View style={style.UserDetailsContainer}>
             <View
               style={{
@@ -67,31 +124,45 @@ const UserDetailScreen = ({navigation}) => {
               <View style={style.onlineBodyStyle}>
                 <Text style={style.bodyTextStyle}>Online</Text>
               </View>
-              <Text style={style.userNameTextStyle}>Roshan Patel</Text>
+              <Text style={style.userNameTextStyle}>
+                {Name} {LastName}
+              </Text>
 
               <View style={style.userDetailsDescriptionContainer}>
-                <Text style={style.userDetailsTextStyle}>Male</Text>
-                <Text style={style.userDetailsTextStyle}>36,</Text>
-                <Text style={style.userDetailsTextStyle}>4’ 5”</Text>
+                <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                <Text style={style.userDetailsTextStyle}>
+                  {age || matchesUserData.age} ,
+                </Text>
+                <Text style={style.userDetailsTextStyle}>
+                  {heightFormatted || matchesUserData?.height}
+                </Text>
 
                 <View style={style.verticalLineStyle} />
 
-                <Text style={style.userDetailsTextStyle}>Gujarati</Text>
-                <Text style={style.userDetailsTextStyle}>Patel</Text>
-                <Text style={style.userDetailsTextStyle}>(2.1km)</Text>
+                <Text style={style.userDetailsTextStyle}>
+                  {motherTongue || matchesUserData?.motherTongue}
+                </Text>
+                <Text style={style.userDetailsTextStyle}>
+                  {cast || matchesUserData?.cast}
+                </Text>
+                {/*<Text style={style.userDetailsTextStyle}>(2.1km)</Text>*/}
               </View>
 
-              {/*<View style={style.userDetailsDescriptionContainer}>*/}
-              {/*  <Text style={style.userDetailsTextStyle}>*/}
-              {/*    Software Engineer*/}
-              {/*  </Text>*/}
+              <View style={style.userDetailsDescriptionContainer}>
+                <Text style={style.userDetailsTextStyle}>
+                  {jobTitle || matchesUserData?.JobTittle}
+                </Text>
 
-              {/*  <View style={style.verticalLineStyle} />*/}
+                <View style={style.verticalLineStyle} />
 
-              {/*  <Text style={style.userDetailsTextStyle}>NY</Text>*/}
-              {/*  <Text style={style.userDetailsTextStyle}>United</Text>*/}
-              {/*  <Text style={style.userDetailsTextStyle}>States</Text>*/}
-              {/*</View>*/}
+                <Text style={style.userDetailsTextStyle}>
+                  {workCity || matchesUserData?.workCity}
+                </Text>
+                <Text style={style.userDetailsTextStyle}>
+                  {workCountry || matchesUserData?.workCountry}
+                </Text>
+                {/*<Text style={style.userDetailsTextStyle}>States</Text>*/}
+              </View>
 
               <View style={style.bottomImageContainer}>
                 <TouchableOpacity
@@ -147,13 +218,14 @@ const UserDetailScreen = ({navigation}) => {
           <Text
             numberOfLines={showFullDescription ? undefined : 4}
             style={style.descriptionBodyText}>
-            I'd describe myself as someone who's reliable, trendy, smart and
-            someone who always has a smile on the face. I am a big Nature &
-            Animal lover. I have lived in different parts of India and
-            appreciate all cultures & customs.... I'd describe myself as someone
-            who's reliable, trendy, smart and someone who always has a smile on
-            the face. I am a big Nature & Animal lover. I have lived in
-            different parts of India and appreciate all cultures & customs.
+            {/*I'd describe myself as someone who's reliable, trendy, smart and*/}
+            {/*someone who always has a smile on the face. I am a big Nature &*/}
+            {/*Animal lover. I have lived in different parts of India and*/}
+            {/*appreciate all cultures & customs.... I'd describe myself as someone*/}
+            {/*who's reliable, trendy, smart and someone who always has a smile on*/}
+            {/*the face. I am a big Nature & Animal lover. I have lived in*/}
+            {/*different parts of India and appreciate all cultures & customs.*/}
+            {aboutMe || matchesUserData.about}
           </Text>
 
           <TouchableOpacity
@@ -172,7 +244,7 @@ const UserDetailScreen = ({navigation}) => {
             />
           </TouchableOpacity>
 
-          <UsersProfileDetailsScreen />
+          <UsersProfileDetailsScreen userData={userData || matchesUserData} />
 
           <View style={{height: 50}} />
         </View>

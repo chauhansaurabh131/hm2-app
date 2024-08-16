@@ -112,7 +112,10 @@ const MainScreenDemo = ({navigation}) => {
               </View>
             </TouchableOpacity>
 
-            <View
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('LoginScreen');
+              }}
               style={{
                 flexDirection: 'row',
                 alignSelf: 'center',
@@ -136,7 +139,7 @@ const MainScreenDemo = ({navigation}) => {
                   style={style.profileVectorStyle}
                 />
               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>

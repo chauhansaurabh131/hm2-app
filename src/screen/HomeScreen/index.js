@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -25,6 +25,7 @@ import {userDatas} from '../../actions/homeActions';
 import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
 import Toast from 'react-native-toast-message';
 import {colors} from '../../utils/colors';
+import io from 'socket.io-client';
 
 const HomeScreen = ({route}) => {
   const [showModal, setShowModal] = useState(true);
@@ -32,19 +33,62 @@ const HomeScreen = ({route}) => {
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
     useState(false);
   const [activeLine, setActiveLine] = useState(1);
+  const [status, setStatus] = useState('Disconnected');
+  const socketRef = useRef(null);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const {selectedBox} = route.params ?? {};
 
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    // Initialize socket connection
+    const socketIo = io('https://happymilan.tech', {
+      path: '/api/socket.io',
+      query: {token: accessToken},
+      // transports: ['websocket'], // Optional: specify transport
+    });
+
+    // Update connection status
+    socketIo.on('connect', () => {
+      console.log('Connected to socket');
+      socketIo.emit('userActive');
+    });
+
+    socketIo.on('onlineUser', data => {
+      console.log('Data from socket:', data);
+    });
+    // socketIo.emit('userActive');
+    socketIo.on('disconnect', () => {
+      setStatus('Disconnected');
+      console.log('Disconnected from socket');
+      socketIo.emit('userInActive');
+    });
+
+    setSocket(socketIo);
+
+    // Cleanup on component unmount
+    return () => {
+      socketIo.disconnect();
+      setSocket(null);
+    };
+  }, [accessToken]);
+
+  // console.log(' === var ===> ', user?.tokens?.access?.token);
+
   useEffect(() => {
     dispatch(userDatas());
   }, [dispatch]);
 
   const {userData} = useSelector(state => state.home);
-
-  const {user} = useSelector(state => state.auth);
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 

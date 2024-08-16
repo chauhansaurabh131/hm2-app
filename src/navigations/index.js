@@ -1,7 +1,7 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer, useTheme} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import {Image, Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import GeneralInformationScreen from '../screen/generalInformationScreen';
@@ -24,13 +24,13 @@ import MainScreenDemo from '../screen/mainScreenDemo';
 import ExploreScreen from '../screen/exploreScreen';
 import DemoPractiveCodeScreen from '../screen/demoPractiveCodeScreen';
 import ChatUserScreen from '../screen/chatUserScreen';
-import {MyContext} from '../utils/Provider';
 import {useSelector} from 'react-redux';
 import SetProfilePictureScreen from '../screen/setProfilePictureScreen';
 import SelectImageScreen from '../screen/selectImageScreen';
 import AddProfilePictureScreen from '../screen/addProfilePictureScreen';
 import PartnerPreferencesScreen from '../screen/partnerPreferencesScreen';
 import UserDetailsScreen from '../screen/userDetailsScreen';
+import Message from '../screen/message';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,10 +46,6 @@ const MainNavigator = () => {
       screenOptions={{headerShown: false}}
       initialRouteName="MainScreenDemo">
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
-      <Stack.Screen
-        name="DemoPractiveCodeScreen"
-        component={DemoPractiveCodeScreen}
-      />
       <Stack.Screen
         name="GeneralInformation"
         component={GeneralInformationScreen}
@@ -134,11 +130,12 @@ const MainNavigator = () => {
       <Stack.Navigator
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
+        <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
-        {/*<Stack.Screen*/}
-        {/*  name={'DemoPractiveCodeScreen'}*/}
-        {/*  component={DemoPractiveCodeScreen}*/}
-        {/*/>*/}
+        <Stack.Screen
+          name={'DemoPractiveCodeScreen'}
+          component={DemoPractiveCodeScreen}
+        />
 
         <Stack.Screen
           name={'GeneralInformationScreen'}
@@ -167,7 +164,7 @@ const MainNavigator = () => {
           component={UserDetailsScreen}
         />
 
-        <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
+        <Stack.Screen name={'Message'} component={Message} />
       </Stack.Navigator>
     );
   };

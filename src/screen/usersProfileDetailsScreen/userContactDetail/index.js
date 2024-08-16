@@ -1,73 +1,60 @@
 import React from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
-import style from './style';
-import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {style} from './style';
 
-const UserContactDetail = () => {
+const UserContactDetail = (...params) => {
+  const UserData = params[0]?.friendList;
+
+  console.log(' === UserData ===> ', UserData?.email);
+
+  const MatchesScreenData = params[0];
+
+  const rawMobileNumber =
+    MatchesScreenData?.mobileNumber?.toString() ||
+    UserData?.mobileNumber?.toString();
+
+  const rawHomeMobileNumber =
+    MatchesScreenData?.homeMobileNumber?.toString() ||
+    UserData?.homeMobileNumber?.toString();
+
+  const email = MatchesScreenData?.email || UserData?.email;
+
+  // Function to format the mobile number as "+91 90001 01021"
+  const formatMobileNumber = number => {
+    if (number && number.length === 12) {
+      const countryCode = `+${number.slice(0, 2)}`;
+      const firstPart = number.slice(2, 7);
+      const secondPart = number.slice(7);
+      return `${countryCode} ${firstPart} ${secondPart}`;
+    }
+    return number;
+  };
+
+  const mobileNumber = formatMobileNumber(rawMobileNumber);
+  const HomeMobileNumber = formatMobileNumber(rawHomeMobileNumber);
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(15)}}>
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-          }}>
-          Mobile Number
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          +91 90001 01021
+    <SafeAreaView style={style.container}>
+      <View style={style.containerBody}>
+        <Text style={style.detailTittleText}>Mobile Number</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*+91 90001 01021*/}
+          {mobileNumber}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Home Number
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          +91 90001 01021
+        <Text style={style.detailsTittleTextStyle}>Home Number</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*+91 90001 01021*/}
+          {HomeMobileNumber}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Email Address
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          riyashah@gmail.com
+        <Text style={style.detailsTittleTextStyle}>Email Address</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*riyashah@gmail.com*/}
+          {email}
         </Text>
       </View>
     </SafeAreaView>

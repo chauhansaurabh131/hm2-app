@@ -100,6 +100,14 @@ export const icons = {
   simple_camera_icon: require('./icons/simple_camera_icon.png'),
   send_icon: require('./icons/send_icon.png'),
   smile_emoji_icon: require('./icons/smile_emoji_icon.png'),
+  mic_icon: require('./icons/mic_icon.png'),
+  mic_rec_icon: require('./icons/mic_rec_icon.png'),
+  audio_play_icon: require('./icons/audio_play_icon.png'),
+  pause_audio_icon: require('./icons/pause_audio_icon.png'),
+  red_mic_icon: require('./icons/red_mic_icon.png'),
+  view_profile_icon: require('./icons/view_profile_icon.png'),
+  block_icon: require('./icons/block_icon.png'),
+  report_icon: require('./icons/report_icon.png'),
 };
 
 export const gif = {

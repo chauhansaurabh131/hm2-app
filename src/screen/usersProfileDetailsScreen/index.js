@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
-import {UserDetailsProfile} from '../../utils/constants';
+import {UserDetailsProfile, UserDetailsProfile1} from '../../utils/constants';
 import {colors} from '../../utils/colors';
 import * as Progress from 'react-native-progress';
 
@@ -74,7 +74,7 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
   );
 };
 
-const UsersProfileDetailsScreen = () => {
+const UsersProfileDetailsScreen = ({userData}) => {
   const phaseReducerInitialState = {
     activeIndex: 0,
   };
@@ -84,7 +84,7 @@ const UsersProfileDetailsScreen = () => {
     phaseReducerInitialState,
   );
 
-  const RenderComp = () => UserDetailsProfile[activeIndex].component;
+  const RenderComp = () => UserDetailsProfile1[activeIndex].component(userData);
   const navigateToScreen = screenNumber => {
     dispatch({type: NUMBER_SCREEN, screenNumber});
   };
@@ -100,7 +100,7 @@ const UsersProfileDetailsScreen = () => {
           height: hp(48),
           justifyContent: 'space-between',
         }}
-        data={UserDetailsProfile}
+        data={UserDetailsProfile1}
         renderItem={({item, index}) =>
           renderIcons({
             item,
@@ -119,7 +119,7 @@ const UsersProfileDetailsScreen = () => {
           lineHeight: hp(26),
           fontFamily: fontFamily.poppins500,
         }}>
-        {UserDetailsProfile[activeIndex].phaseName}
+        {UserDetailsProfile1[activeIndex].phaseName}
       </Text>
 
       <View style={{alignSelf: 'center', height: hp(1), marginTop: hp(15)}}>
@@ -133,6 +133,7 @@ const UsersProfileDetailsScreen = () => {
       </View>
 
       <RenderComp />
+      {/*{UserDetailsProfile[activeIndex].component({name: 1})}*/}
     </SafeAreaView>
   );
 };

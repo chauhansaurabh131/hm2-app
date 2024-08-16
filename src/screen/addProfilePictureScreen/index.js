@@ -154,12 +154,15 @@ const AddProfilePictureScreen = ({route}) => {
             console.error('File size is undefined');
           }
 
+          console.log(' === selectedImage ===> ', selectedImage.node.type);
+
           // Fetch the presigned URL with the image data
           const data = await RNBlobUtil.fetch(
             'PUT',
             presignedUrl,
             {
               'Content-Type': getContentType(selectedImage.node.type),
+              'x-amz-acl': 'public-read',
             },
             RNBlobUtil.wrap(selectedImage.node.image.uri),
           );

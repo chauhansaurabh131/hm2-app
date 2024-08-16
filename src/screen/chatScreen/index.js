@@ -16,11 +16,20 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAllFriends} from '../../actions/chatActions';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
+import io from 'socket.io-client';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const ChatScreen = ({navigation}) => {
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const userImage = user?.user?.userProfilePic?.[0]?.url;
+
   const [userInput, setUserInput] = useState('');
+  const [status, setStatus] = useState('Disconnected');
+  const [socket, setSocket] = useState(null);
+  const [topModalVisible, setTopModalVisible] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -32,12 +41,66 @@ const ChatScreen = ({navigation}) => {
 
   const friends = myAllFriends.data?.results || [];
 
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    // Initialize socket connection
+    const socketIo = io('https://happymilan.tech', {
+      path: '/api/socket.io',
+      query: {token: accessToken},
+      // transports: ['websocket'], // Optional: specify transport
+    });
+
+    // Update connection status
+    socketIo.on('connect', () => {
+      console.log('Connected to socket');
+      socketIo.emit('userActive');
+    });
+
+    socketIo.on('onlineUser', data => {
+      console.log('Data from socket:', data);
+    });
+    // socketIo.emit('userActive');
+    socketIo.on('disconnect', () => {
+      setStatus('Disconnected');
+      console.log('Disconnected from socket');
+      socketIo.emit('userInActive');
+    });
+
+    setSocket(socketIo);
+
+    // Cleanup on component unmount
+    return () => {
+      socketIo.disconnect();
+      setSocket(null);
+    };
+  }, [accessToken]);
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    // Call toggleModal to show the top modal
+    toggleModal();
+  };
+
   const FilterData = ({item}) => {
-    console.log(' === item ===> ', item);
-    const onlineStatusColor =
-      item.online === 'online' ? colors.blue : '#A7A7A7';
+    if (!item || !item.friendList) {
+      return null;
+    }
+
+    const onlineStatusColor = item.friendList.isUserActive
+      ? colors.blue
+      : '#A7A7A7';
+    const onlineStatusText = item.friendList.isUserActive
+      ? 'Online'
+      : 'Offline';
 
     const handleItemPress = userData => {
+      // navigation.navigate('DemoPractiveCodeScreen', {
       navigation.navigate('ChatUserScreen', {
         userData,
       });
@@ -81,7 +144,8 @@ const ChatScreen = ({navigation}) => {
                 color: onlineStatusColor,
                 marginTop: 5,
               }}>
-              {item.online}
+              {/*{item.online}*/}
+              {onlineStatusText}
             </Text>
           </View>
           <Text
@@ -93,7 +157,7 @@ const ChatScreen = ({navigation}) => {
               fontFamily: fontFamily.poppins400,
               color: colors.black,
             }}>
-            Hi, I am busy, I’ll drop you a message after a some time ago
+            Hi, I am busy, I’ll drop you a message after some time.
           </Text>
         </View>
       </TouchableOpacity>
@@ -109,11 +173,15 @@ const ChatScreen = ({navigation}) => {
             style={style.customerHeaderLogo}
           />
 
-          <TouchableOpacity activeOpacity={0.7}>
-            <Image
-              source={images.profileDisplayImage}
-              style={style.profileLogoStyle}
-            />
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            {userImage ? (
+              <Image source={{uri: userImage}} style={style.profileLogoStyle} />
+            ) : (
+              <Image
+                source={images.profileDisplayImage}
+                style={style.profileLogoStyle}
+              />
+            )}
           </TouchableOpacity>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -145,7 +213,6 @@ const ChatScreen = ({navigation}) => {
                 top: 5,
                 width: 42,
                 height: 40,
-                // backgroundColor: '#F5FBFF',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -159,6 +226,12 @@ const ChatScreen = ({navigation}) => {
           </View>
         </View>
       </View>
+
+      <HomeTopSheetComponent
+        isVisible={topModalVisible}
+        onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}
+      />
 
       <View style={{marginHorizontal: wp(26)}}>
         {isUserDataLoading ? (
@@ -204,7 +277,9 @@ const ChatScreen = ({navigation}) => {
           <FlatList
             data={friends}
             renderItem={FilterData}
-            keyExtractor={item => item.friendList._id} // Assuming _id is a unique identifier
+            keyExtractor={item =>
+              item.friendList?._id || item.id || Math.random().toString()
+            }
             showsVerticalScrollIndicator={false}
             ListFooterComponent={<View style={{height: hp(120)}} />}
           />

@@ -13,21 +13,32 @@ const TextInputWithIcons = ({
   placeholder,
   leftIconSource,
   rightIconSource,
+  secureEyeIcon,
+  showPasswordIcon,
   containerStyle,
   textInputStyle,
   iconStyle,
   onChangeText,
   value,
-  iconPress,
+  isPassword,
   iconsStyle,
 }) => {
   const [text, setText] = useState(value || '');
+  const [isSecure, setIsSecure] = useState(isPassword);
+  const [currentIcon, setCurrentIcon] = useState(rightIconSource);
 
   const handleTextChange = newValue => {
     setText(newValue);
     if (onChangeText) {
       onChangeText(newValue);
     }
+  };
+
+  const toggleSecureEntry = () => {
+    setIsSecure(prevState => !prevState);
+    setCurrentIcon(prevState =>
+      prevState === secureEyeIcon ? showPasswordIcon : secureEyeIcon,
+    );
   };
 
   return (
@@ -45,10 +56,13 @@ const TextInputWithIcons = ({
         ]}
         onChangeText={handleTextChange}
         value={text}
+        secureTextEntry={isSecure}
       />
-      <TouchableOpacity onPress={iconPress}>
-        <Image source={rightIconSource} style={[styles.icon, iconStyle]} />
-      </TouchableOpacity>
+      {isPassword && (
+        <TouchableOpacity onPress={toggleSecureEntry}>
+          <Image source={currentIcon} style={[styles.icon, iconStyle]} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -58,7 +72,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: wp(270),
     height: hp(50),
-
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -75,16 +88,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   icon: {
-    width: 16,
-    height: 16,
+    width: hp(16),
+    height: hp(18),
     resizeMode: 'contain',
-    marginRight: 15,
+    marginRight: wp(15),
   },
   icons: {
-    width: 16,
-    height: 16,
+    width: hp(16),
+    height: hp(14),
     resizeMode: 'contain',
-    marginLeft: 15,
+    marginLeft: wp(15),
   },
 });
 

@@ -1,115 +1,62 @@
 import React from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
-import style from './style';
-import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {style} from './style';
 
-const UserEducationDetail = () => {
+const UserEducationDetail = (...params) => {
+  const UserData = params[0]?.friendList;
+
+  const MatchesScreenData = params[0];
+
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle null or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  const degree = capitalizeFirstLetter(
+    MatchesScreenData?.degree || UserData?.userEducation?.degree,
+  );
+  const college = capitalizeFirstLetter(
+    MatchesScreenData?.collage || UserData?.userEducation?.collage,
+  );
+  const educationState = capitalizeFirstLetter(
+    MatchesScreenData?.educationState || UserData?.userEducation?.city,
+  );
+  const educationCountry = capitalizeFirstLetter(
+    MatchesScreenData?.educationCountry || UserData?.userEducation?.country,
+  );
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(15)}}>
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-          }}>
-          Degree
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          BCA
+    <SafeAreaView style={style.container}>
+      <View style={style.containerBody}>
+        <Text style={style.detailTittleText}>Degree</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*BCA*/}
+          {degree}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          College/University
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Delhi University
+        <Text style={style.detailsTittleTextStyle}>College/University</Text>
+        <Text style={style.detailSubTittleText}>
+          {/*Delhi University*/}
+          {college}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          City
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Noida
+        <Text style={style.detailsTittleTextStyle}>City</Text>
+        <Text style={style.detailSubTittleText}>
+          {/*Noida*/}
+          {educationState}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          State
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Delhi
-        </Text>
+        <Text style={style.detailsTittleTextStyle}>State</Text>
+        <Text style={style.detailSubTittleText}>Delhi</Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Country
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          India
+        <Text style={style.detailsTittleTextStyle}>Country</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*India*/}
+          {educationCountry}
         </Text>
       </View>
     </SafeAreaView>

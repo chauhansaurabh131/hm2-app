@@ -1,136 +1,80 @@
 import React from 'react';
 import {SafeAreaView, Text, View} from 'react-native';
-import style from './style';
-import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {style} from './style';
 
-const UserProfessionalsDetails = () => {
+const UserProfessionalsDetails = (...params) => {
+  const UserData = params[0]?.friendList;
+
+  const MatchesScreenData = params[0];
+
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle null or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  const Designation = capitalizeFirstLetter(
+    MatchesScreenData?.Designation || UserData?.userProfessional?.jobTitle,
+  );
+  const jobType = capitalizeFirstLetter(
+    MatchesScreenData?.jobType || UserData?.userProfessional?.jobType,
+  );
+  const companyName = capitalizeFirstLetter(
+    MatchesScreenData?.companyName || UserData?.userProfessional?.companyName,
+  );
+  const workCity = capitalizeFirstLetter(
+    MatchesScreenData?.workCity || UserData?.userProfessional?.workCity,
+  );
+  const workCountry = capitalizeFirstLetter(
+    MatchesScreenData?.workCountry || UserData?.userProfessional?.workCountry,
+  );
+  const currentSalary =
+    MatchesScreenData?.currentSalary ||
+    UserData?.userProfessional?.currentSalary;
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(15)}}>
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-          }}>
-          Current Designation
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Software Designer
+    <SafeAreaView style={style.container}>
+      <View style={style.containerBody}>
+        <Text style={style.detailTittleText}>Current Designation</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*Software Designer*/}
+          {Designation}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Job Type
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          private
+        <Text style={style.detailsTittleTextStyle}>Job Type</Text>
+        <Text style={style.detailSubTittleText}>
+          {/*private*/}
+          {jobType}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Company Name
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          MN Tech
+        <Text style={style.detailsTittleTextStyle}>Company Name</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*MN Tech*/}
+          {companyName}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          annual Salary
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          INR 6-8 Lacs
+        <Text style={style.detailsTittleTextStyle}>annual Salary</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*INR 6-8 Lacs*/}
+          {currentSalary}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Work in City
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Delhi
+        <Text style={style.detailsTittleTextStyle}>Work in City</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*Delhi*/}
+          {workCity}
         </Text>
 
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Work in Country
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          India
+        <Text style={style.detailsTittleTextStyle}>Work in Country</Text>
+
+        <Text style={style.detailSubTittleText}>
+          {/*India*/}
+          {workCountry}
         </Text>
       </View>
     </SafeAreaView>

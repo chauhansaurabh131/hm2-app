@@ -15,8 +15,9 @@ import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {changeStack, logout} from '../../actions/authActions';
+import io from 'socket.io-client';
 
 const HomeTopSheetComponent = ({
   isVisible,
@@ -29,6 +30,44 @@ const HomeTopSheetComponent = ({
   const [isModalVisible, setModalVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [modalTop, setModalTop] = useState(new Animated.Value(20));
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    const socketIo = io('https://happymilan.tech', {
+      path: '/api/socket.io',
+      query: {token: accessToken},
+    });
+
+    socketIo.on('connect', () => {
+      console.log('Connected to socket');
+      socketIo.emit('userInActive');
+    });
+
+    socketIo.on('onlineUser', data => {
+      console.log('Data from socket:', data);
+    });
+
+    socketIo.on('disconnect', () => {
+      console.log('Disconnected from socket');
+      socketIo.emit('userInActive');
+    });
+
+    setSocket(socketIo);
+
+    return () => {
+      if (socket) {
+        socket.emit('userInActive');
+        socket.disconnect();
+      }
+      setSocket(null);
+    };
+  }, [accessToken]);
 
   useEffect(() => {
     let timeoutId;
@@ -51,8 +90,13 @@ const HomeTopSheetComponent = ({
   };
 
   const handleLogout = () => {
+    // Uncomment out when logout to user (both)
     dispatch(logout());
     dispatch(logout(), () => dispatch(changeStack()));
+    if (socket) {
+      socket.emit('userInActive');
+      socket.disconnect();
+    }
     setConfirmationVisible(false);
     onBackdropPress(); // Close the main modal
   };
@@ -266,37 +310,6 @@ const HomeTopSheetComponent = ({
               </TouchableOpacity>
             </View>
           </View>
-          {/*<TouchableOpacity*/}
-          {/*  onPress={() => setConfirmationVisible(true)}*/}
-          {/*  activeOpacity={0.5}*/}
-          {/*  style={{*/}
-          {/*    width: '47%',*/}
-          {/*    height: hp(50),*/}
-          {/*    backgroundColor: '#F4FAFF',*/}
-          {/*    flexDirection: 'row',*/}
-          {/*    alignItems: 'center',*/}
-          {/*    justifyContent: 'center',*/}
-          {/*    borderRadius: 10,*/}
-          {/*    marginLeft: wp(27),*/}
-          {/*    marginBottom: hp(24),*/}
-          {/*    marginTop: hp(35),*/}
-          {/*  }}>*/}
-          {/*  <Text*/}
-          {/*    style={{*/}
-          {/*      color: colors.black,*/}
-          {/*      fontSize: fontSize(14),*/}
-          {/*      lineHeight: hp(21),*/}
-          {/*      fontWeight: '400',*/}
-          {/*    }}>*/}
-          {/*    Log Outs*/}
-          {/*  </Text>*/}
-          {/*  <View style={{width: 17}} />*/}
-          {/*  <Image*/}
-          {/*    source={icons.logOutIcon}*/}
-          {/*    style={{width: hp(14.7), height: hp(17.27)}}*/}
-          {/*  />*/}
-          {/*</TouchableOpacity>*/}
-
           <TouchableOpacity
             onPress={() => setConfirmationVisible(true)}
             style={{
@@ -337,12 +350,6 @@ const HomeTopSheetComponent = ({
             Are you sure you want to exit?
           </Text>
           <View style={styles.confirmationButtonContainer}>
-            {/*<TouchableOpacity*/}
-            {/*  // onPress={() => setConfirmationVisible(false)}*/}
-            {/*  onPress={onStayButtonPress}*/}
-            {/*  style={styles.stayButton}>*/}
-            {/*  <Text style={styles.stayButtonText}>Stay</Text>*/}
-            {/*</TouchableOpacity>*/}
             <TouchableOpacity activeOpacity={0.7} onPress={onStayButtonPress}>
               <LinearGradient
                 colors={['#0D4EB3', '#9413D0']}
@@ -367,11 +374,6 @@ const HomeTopSheetComponent = ({
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
-            {/*<TouchableOpacity*/}
-            {/*  onPress={handleLogout}*/}
-            {/*  style={styles.logoutButton}>*/}
-            {/*  <Text style={styles.logoutButtonText}>Log Out</Text>*/}
-            {/*</TouchableOpacity>*/}
 
             <TouchableOpacity
               activeOpacity={0.7}
