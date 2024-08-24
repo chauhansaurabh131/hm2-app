@@ -463,6 +463,7 @@ const MatchesScreen = ({navigation}) => {
         currentSalary: item?.userProfessional?.currentSalary,
         workCity: item?.userProfessional?.workCity,
         workCountry: item?.userProfessional?.workCountry,
+        hobbies: item?.hobbies,
       };
 
       console.log('User Data:', matchesUserData);

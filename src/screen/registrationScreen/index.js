@@ -10,19 +10,20 @@ import {
 } from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import {hp} from '../../utils/helpers';
+import {hp, wp} from '../../utils/helpers';
 import TextInputWithIcons from '../../components/textInputWithIcons';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {register} from '../../actions/authActions';
 import Toast from 'react-native-toast-message';
+import NewTextInputComponent from '../../components/newTextInputComponent';
 
 const RegistrationScreen = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [name, setName] = useState('test007');
+  const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
-  const [email, setEmail] = useState('kunal@yopmail.com');
+  const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -63,7 +64,7 @@ const RegistrationScreen = () => {
   const validateEmail = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-      setEmailError('Invalid email address');
+      setEmailError('Invalid E-mail Address or Mobile Number');
       return false;
     } else {
       setEmailError('');
@@ -85,38 +86,55 @@ const RegistrationScreen = () => {
           <View
             style={{
               marginTop: hp(64),
-              marginHorizontal: 52,
+              marginHorizontal: 40,
+              // backgroundColor: 'orange',
             }}>
-            <TextInputWithIcons
-              iconSources={true}
-              iconSource={icons.profileLogo}
-              placeholder={'Enter Your name'}
-              textInputStyle={{marginLeft: 10}}
-              inputContainerStyle={{width: '100%'}}
-              inputValue={name}
-              handleInputChange={text => setName(text)}
-              maxLength={15}
+            {/*<TextInputWithIcons*/}
+            {/*  iconSources={true}*/}
+            {/*  iconSource={icons.profileLogo}*/}
+            {/*  placeholder={'Enter Your name'}*/}
+            {/*  textInputStyle={{marginLeft: 10}}*/}
+            {/*  inputContainerStyle={{width: '100%'}}*/}
+            {/*  inputValue={name}*/}
+            {/*  handleInputChange={text => setName(text)}*/}
+            {/*  maxLength={15}*/}
+            {/*/>*/}
+
+            <NewTextInputComponent
+              value={name}
+              onChangeText={text => setName(text)}
+              placeholder="Enter Your Name"
+              // style={{marginBottom: 20}}
+              LeftIconName={icons.profileLogo}
             />
 
             {nameError ? (
               <Text style={{marginTop: 2, color: 'red'}}>{nameError}</Text>
             ) : null}
 
-            <TextInputWithIcons
-              IconNameDesign={icons.profileLogo}
-              placeholder={'Enter Your Email'}
-              editable={true}
-              iconSources
-              iconSource={icons.mailLogo}
-              iconSecure={icons.secureEyeLogo}
-              containerStyle={style.textInputContainerStyle}
-              secureTextEntry={isPasswordVisible}
-              onIconPress={togglePasswordVisibility}
-              iconStyle={style.iconStyle}
-              textInputStyle={{marginLeft: 10}}
-              inputContainerStyle={{marginTop: 20, width: '100%'}}
-              inputValue={email}
-              handleInputChange={text => setEmail(text)}
+            {/*<TextInputWithIcons*/}
+            {/*  IconNameDesign={icons.profileLogo}*/}
+            {/*  placeholder={'Enter Your Email'}*/}
+            {/*  editable={true}*/}
+            {/*  iconSources*/}
+            {/*  iconSource={icons.mailLogo}*/}
+            {/*  iconSecure={icons.secureEyeLogo}*/}
+            {/*  containerStyle={style.textInputContainerStyle}*/}
+            {/*  secureTextEntry={isPasswordVisible}*/}
+            {/*  onIconPress={togglePasswordVisibility}*/}
+            {/*  iconStyle={style.iconStyle}*/}
+            {/*  textInputStyle={{marginLeft: 10}}*/}
+            {/*  inputContainerStyle={{marginTop: 20, width: '100%'}}*/}
+            {/*  inputValue={email}*/}
+            {/*  handleInputChange={text => setEmail(text)}*/}
+            {/*/>*/}
+
+            <NewTextInputComponent
+              value={email}
+              onChangeText={text => setEmail(text)}
+              placeholder="Your Email or Mobile"
+              style={{marginTop: 20}}
+              LeftIconName={icons.profileLogo}
             />
             {emailError ? (
               <Text style={{color: 'red', marginTop: 2}}>{emailError}</Text>
@@ -129,32 +147,7 @@ const RegistrationScreen = () => {
               loading={loading}
             />
 
-            <Text style={style.continueWithTextStyle}>or continue with</Text>
-
-            <View style={style.socialMediaLogoContainer}>
-              <TouchableOpacity>
-                <View style={style.socialMediaCircleStyle}>
-                  <Image source={icons.googleLogo} style={style.logoStyle} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity>
-                <View style={style.socialMediaLogoContainers}>
-                  <Image source={icons.facebookLogo} style={style.logoStyle} />
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('NumberRegistrationScreen');
-                }}>
-                <View style={style.socialMediaCircleStyle}>
-                  <Image source={icons.phoneLogo} style={style.logoStyle} />
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <View style={style.privacyPolicyTextContainer}>
+            <View style={[style.privacyPolicyTextContainer, {marginTop: 34}]}>
               <Text style={style.privacyPolicyTextStyle}>
                 By creating account, I Agee to Happy Milan{' '}
               </Text>
@@ -178,7 +171,50 @@ const RegistrationScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <View style={style.bottomUnderLineStyle} />
+            <View
+              style={{
+                width: wp(267),
+                borderWidth: 0.5,
+                borderColor: '#E1E1E1',
+                alignSelf: 'center',
+                marginTop: hp(33),
+              }}
+            />
+
+            <View style={[style.socialMediaLogoContainer, {}]}>
+              <Text style={style.continueWithTextStyle}>or continue with</Text>
+              <TouchableOpacity>
+                <View style={style.socialMediaCircleStyle}>
+                  <Image source={icons.googleLogo} style={style.logoStyle} />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity>
+                <View style={style.socialMediaLogoContainers}>
+                  <Image source={icons.facebookLogo} style={style.logoStyle} />
+                </View>
+              </TouchableOpacity>
+
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => {*/}
+              {/*    navigation.navigate('NumberRegistrationScreen');*/}
+              {/*  }}>*/}
+              {/*  <View style={style.socialMediaCircleStyle}>*/}
+              {/*    <Image source={icons.phoneLogo} style={style.logoStyle} />*/}
+              {/*  </View>*/}
+              {/*</TouchableOpacity>*/}
+            </View>
+
+            {/*<View style={style.bottomUnderLineStyle} />*/}
+            <View
+              style={{
+                width: wp(267),
+                borderWidth: 0.5,
+                borderColor: '#E1E1E1',
+                alignSelf: 'center',
+                // marginTop: hp(33),
+              }}
+            />
 
             <TouchableOpacity
               style={style.memberLoginTextContainer}

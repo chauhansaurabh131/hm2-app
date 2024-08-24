@@ -42,6 +42,7 @@ const HomeScreen = ({route}) => {
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
+
   const accessToken = user?.tokens?.access?.token;
   const [socket, setSocket] = useState(null);
 
@@ -82,8 +83,6 @@ const HomeScreen = ({route}) => {
     };
   }, [accessToken]);
 
-  // console.log(' === var ===> ', user?.tokens?.access?.token);
-
   useEffect(() => {
     dispatch(userDatas());
   }, [dispatch]);
@@ -102,10 +101,13 @@ const HomeScreen = ({route}) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
-  const firstName = capitalizeFirstLetter(user?.user?.firstName || '');
+  const firstName = capitalizeFirstLetter(
+    user?.user?.firstName || user?.user?.name,
+  );
   const lastName = user?.user?.lastName;
   const name = user?.user?.name;
   const profilePicUrl = user?.user?.profilePic;
+  const UserUniqueId = user?.user?.userUniqueId;
 
   const handleButtonClick = () => {
     if (activeLine === 3) {
@@ -388,7 +390,7 @@ const HomeScreen = ({route}) => {
 
                   <View style={style.cardSubTittleContainer}>
                     <Text style={style.cardSubTittleTextStyle}>
-                      HM 10000122
+                      {UserUniqueId}
                     </Text>
                     <View style={style.cardCenterLineStyle} />
                     <Text style={style.cardSubTittleTextStyle}>

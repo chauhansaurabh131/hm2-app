@@ -31,6 +31,13 @@ import AddProfilePictureScreen from '../screen/addProfilePictureScreen';
 import PartnerPreferencesScreen from '../screen/partnerPreferencesScreen';
 import UserDetailsScreen from '../screen/userDetailsScreen';
 import Message from '../screen/message';
+import {style} from './style';
+import NewSignUpScreen from '../screen/newSignUpScreen';
+import NewLogInScreen from '../screen/newLogInScreen';
+import VerifyEmailOtpScreen from '../screen/verifyEmailOtpScreen';
+import NewSetPasswordScreen from '../screen/newSetPasswordScreen';
+import NewStartExploreScreen from '../screen/newStartExploreScreen';
+import NewMainScreen from '../screen/newMainScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,8 +51,25 @@ const MainNavigator = () => {
   const AuthStack = () => (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="MainScreenDemo">
+      initialRouteName="NewMainScreen">
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
+      <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
+      <Stack.Screen name="NewSignUpScreen" component={NewSignUpScreen} />
+      <Stack.Screen name="NewLogInScreen" component={NewLogInScreen} />
+
+      <Stack.Screen
+        name="VerifyEmailOtpScreen"
+        component={VerifyEmailOtpScreen}
+      />
+      <Stack.Screen
+        name="NewSetPasswordScreen"
+        component={NewSetPasswordScreen}
+      />
+      <Stack.Screen
+        name="NewStartExploreScreen"
+        component={NewStartExploreScreen}
+      />
+
       <Stack.Screen
         name="GeneralInformation"
         component={GeneralInformationScreen}
@@ -58,10 +82,10 @@ const MainNavigator = () => {
         name="NumberRegistrationScreen"
         component={NumberRegistrationScreen}
       />
-      <Stack.Screen
-        name="GeneralInformationScreen"
-        component={AddPersonalInfo}
-      />
+      {/*<Stack.Screen*/}
+      {/*  name="GeneralInformationScreen"*/}
+      {/*  component={AddPersonalInfo}*/}
+      {/*/>*/}
       <Stack.Screen
         name="NumberRegistrationTextInput"
         component={NumberRegistrationTextInput}
@@ -191,11 +215,7 @@ const MainNavigator = () => {
           keyboardHidesTabBar: true,
         }}
         screenOptions={{
-          tabBarStyle: {
-            height: isIOS ? hp(100) : hp(80),
-            borderTopRightRadius: 10,
-            borderTopLeftRadius: 10,
-          },
+          tabBarStyle: style.bottomTabNavigationContainer,
         }}>
         <Tab.Screen
           name="Home"
@@ -206,15 +226,7 @@ const MainNavigator = () => {
               <Image source={icons.homeIcon} style={getIconStyle(focused)} />
             ),
             tabBarLabel: ({focused}) => (
-              <Text
-                style={[
-                  getLabelStyle(focused),
-                  {
-                    fontSize: fontSize(10),
-                    lineHeight: hp(15),
-                    fontWeight: '500',
-                  },
-                ]}>
+              <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
                 Home
               </Text>
             ),
@@ -222,6 +234,7 @@ const MainNavigator = () => {
             headerShown: false,
           }}
         />
+
         {!isDatingSelected ? (
           <Tab.Screen
             name="Matches"
@@ -230,22 +243,12 @@ const MainNavigator = () => {
               tabBarIcon: ({color, size, focused}) => (
                 <Image
                   source={icons.matchesIcon}
-                  style={[
-                    getIconStyle(focused),
-                    {width: hp(22.5), height: hp(20)},
-                  ]}
+                  style={[getIconStyle(focused), style.matchesIconStyle]}
                 />
               ),
               tabBarLabel: ({focused}) => (
                 <Text
-                  style={[
-                    getLabelStyle(focused),
-                    {
-                      fontSize: fontSize(10),
-                      lineHeight: hp(15),
-                      fontWeight: '500',
-                    },
-                  ]}>
+                  style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
                   Matches
                 </Text>
               ),
@@ -262,22 +265,12 @@ const MainNavigator = () => {
               tabBarIcon: ({color, size, focused}) => (
                 <Image
                   source={icons.matchesIcon}
-                  style={[
-                    getIconStyle(focused),
-                    {width: hp(22.5), height: hp(20)},
-                  ]}
+                  style={[getIconStyle(focused), style.matchesIconStyle]}
                 />
               ),
               tabBarLabel: ({focused}) => (
                 <Text
-                  style={[
-                    getLabelStyle(focused),
-                    {
-                      fontSize: fontSize(10),
-                      lineHeight: hp(15),
-                      fontWeight: '500',
-                    },
-                  ]}>
+                  style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
                   Explore
                 </Text>
               ),
@@ -294,22 +287,11 @@ const MainNavigator = () => {
             tabBarIcon: ({color, size, focused}) => (
               <Image
                 source={icons.chatIcon}
-                style={[
-                  getIconStyle(focused),
-                  {width: hp(20.5), height: hp(20)},
-                ]}
+                style={[getIconStyle(focused), style.chatIconStyle]}
               />
             ),
             tabBarLabel: ({focused}) => (
-              <Text
-                style={[
-                  getLabelStyle(focused),
-                  {
-                    fontSize: fontSize(10),
-                    lineHeight: hp(15),
-                    fontWeight: '500',
-                  },
-                ]}>
+              <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
                 Chat
               </Text>
             ),
@@ -324,22 +306,11 @@ const MainNavigator = () => {
             tabBarIcon: ({color, size, focused}) => (
               <Image
                 source={icons.alertsIcon}
-                style={[
-                  getIconStyle(focused),
-                  {width: hp(16.1), height: hp(20)},
-                ]}
+                style={[getIconStyle(focused), style.alertIconStyle]}
               />
             ),
             tabBarLabel: ({focused}) => (
-              <Text
-                style={[
-                  getLabelStyle(focused),
-                  {
-                    fontSize: fontSize(10),
-                    lineHeight: hp(15),
-                    fontWeight: '500',
-                  },
-                ]}>
+              <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
                 Alerts
               </Text>
             ),
@@ -354,22 +325,11 @@ const MainNavigator = () => {
             tabBarIcon: ({color, size, focused}) => (
               <Image
                 source={icons.upgradeIcon}
-                style={[
-                  getIconStyle(focused),
-                  {width: hp(20.98), height: hp(20)},
-                ]}
+                style={[getIconStyle(focused), style.upgradeIconStyle]}
               />
             ),
             tabBarLabel: ({focused}) => (
-              <Text
-                style={[
-                  getLabelStyle(focused),
-                  {
-                    fontSize: fontSize(10),
-                    lineHeight: hp(15),
-                    fontWeight: '500',
-                  },
-                ]}>
+              <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
                 Upgrader
               </Text>
             ),
@@ -378,17 +338,17 @@ const MainNavigator = () => {
           }}
         />
 
-        {/*<Tab.Screen*/}
-        {/*  name="ChatUserScreen"*/}
-        {/*  component={UsersChatsScreen}*/}
-        {/*  initialParams={*/}
-        {/*    {*/}
-        {/*      // selectedBox: selectedBox,*/}
-        {/*      // userData: route.params?.userData,*/}
-        {/*    }*/}
-        {/*  }*/}
-        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
-        {/*/>*/}
+        <Tab.Screen
+          name="UserDetailsScreen"
+          component={UserDetailsScreen}
+          initialParams={
+            {
+              // selectedBox: selectedBox,
+              // userData: route.params?.userData,
+            }
+          }
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
       </Tab.Navigator>
     );
   };

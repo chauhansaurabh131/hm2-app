@@ -29,6 +29,10 @@ export const images = {
   empty_male_Image: require('./images/empty_Male_img.jpg'),
   empty_female_Image: require('./images/empty_Female_img.jpg'),
   modal_top_img: require('./images/modal_top_img.png'),
+  main_Screen_Img_one: require('./images/main_Screen_Img_1.png'),
+  main_Screen_Img_two: require('./images/main_Screen_Img_2.png'),
+  main_Screen_Img_three: require('./images/main_Screen_Img_3.png'),
+  main_Screen_Img_four: require('./images/main_Screen_Img_4.png'),
 };
 
 export const icons = {
@@ -108,6 +112,8 @@ export const icons = {
   view_profile_icon: require('./icons/view_profile_icon.png'),
   block_icon: require('./icons/block_icon.png'),
   report_icon: require('./icons/report_icon.png'),
+  long_term_icon: require('./icons/long_Term_Icon.png'),
+  new_dating_icon: require('./icons/new_Dating_icon.png'),
 };
 
 export const gif = {

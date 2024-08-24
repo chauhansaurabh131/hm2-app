@@ -31,9 +31,10 @@ const CommonGradientButton = ({
           end={{x: 1, y: 0}}
           style={[
             {
-              width: wp(270),
+              width: wp(320),
+              // width: '100%',
               height: hp(50),
-              borderRadius: 10,
+              borderRadius: 25,
               alignItems: 'center',
               alignSelf: 'center',
               justifyContent: 'center',

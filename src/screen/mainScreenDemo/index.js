@@ -6,6 +6,7 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import style from '../mainScreen/style';
 import {colors} from '../../utils/colors';
 import Xyz from '../xyz';
+import NewSignUpScreen from '../newSignUpScreen';
 
 const MainScreenDemo = ({navigation}) => {
   return (
@@ -90,7 +91,7 @@ const MainScreenDemo = ({navigation}) => {
 
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('RegistrationScreen')}
+              onPress={() => navigation.navigate('NewSignUpScreen')}
               // onPress={() => navigation.navigate('DemoPractiveCodeScreen')}
             >
               <View

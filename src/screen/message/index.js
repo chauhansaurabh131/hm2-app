@@ -1,50 +1,56 @@
 import React, {useState} from 'react';
-import {View, TextInput, TouchableOpacity, Modal} from 'react-native';
-import EmojiSelector from 'react-native-emoji-selector';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {SafeAreaView, Text, View, StyleSheet, Button} from 'react-native';
 
-const EmojiInput = () => {
+import NewTextInputComponent from '../../components/newTextInputComponent';
+import {icons} from '../../assets'; // Import the CustomTextInput component
+
+const Message = () => {
   const [text, setText] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  const handleEmojiSelect = emoji => {
-    setText(prevText => prevText + emoji);
-    setShowEmojiPicker(false); // Close emoji picker after selecting an emoji
+  const handleChangeText = input => {
+    setText(input);
+  };
+
+  const handlePress = () => {
+    console.log('TextInput value:', text);
   };
 
   return (
-    <View style={{flex: 1, padding: 10}}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          borderWidth: 1,
-          borderColor: '#ccc',
-          borderRadius: 5,
-          padding: 10,
-        }}>
-        <TouchableOpacity onPress={() => setShowEmojiPicker(true)}>
-          <Icon name="smile-o" size={24} color="#000" />
-        </TouchableOpacity>
-        <TextInput
-          style={{flex: 1, marginLeft: 10}}
-          value={text}
-          onChangeText={setText}
-          placeholder="Type a message"
-        />
-      </View>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Message</Text>
+      <NewTextInputComponent
+        value={text}
+        onChangeText={handleChangeText}
+        placeholder="Your Email or Mobile"
+        style={styles.textInput}
+        LeftIconName={icons.profileLogo}
+      />
+      {/*<Button title="Submit" onPress={handlePress} />*/}
 
-      <Modal visible={showEmojiPicker} animationType="slide" transparent={true}>
-        <View style={{flex: 1, justifyContent: 'flex-end'}}>
-          <EmojiSelector
-            onEmojiSelected={handleEmojiSelect}
-            showSearchBar={false}
-            columns={8}
-          />
-        </View>
-      </Modal>
-    </View>
+      <NewTextInputComponent
+        value={text}
+        onChangeText={handleChangeText}
+        placeholder="Enter Password"
+        style={styles.textInput}
+        LeftIconName={icons.logLogo}
+        RightIconName={icons.secureEyeLogo}
+      />
+    </SafeAreaView>
   );
 };
 
-export default EmojiInput;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  textInput: {
+    marginBottom: 20,
+  },
+});
+
+export default Message;

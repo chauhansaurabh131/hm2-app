@@ -39,6 +39,7 @@ const formatTime = timestamp => {
 };
 
 const ChatUserScreen = ({route}) => {
+  console.log(' === route ===> ', route);
   const {userData} = route.params;
 
   const navigation = useNavigation();
@@ -697,6 +698,7 @@ const ChatUserScreen = ({route}) => {
                 //   navigation.navigate('UserDetailsScreen');
                 // }}
                 onViewProfilePress={() => {
+                  console.log(' === userData ===> ', userData);
                   navigation.navigate('UserDetailsScreen', {userData});
                 }}
               />

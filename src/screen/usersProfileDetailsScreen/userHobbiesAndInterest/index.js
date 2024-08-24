@@ -1,80 +1,57 @@
 import React from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
-import style from './style';
+import {SafeAreaView, Text, View, FlatList, StyleSheet} from 'react-native';
 import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {hp, wp} from '../../../utils/helpers';
 
 const UserHobbiesAndInterest = (...params) => {
+  const UserData = params[0]?.friendList;
+
+  console.log(' === UserData.... ===> ', UserData?.hobbies);
+
   const MatchesScreenData = params[0];
 
-  console.log(' === MatchesScreenData.... ===> ', MatchesScreenData);
+  const hobbies = MatchesScreenData?.hobbies || UserData?.hobbies;
+
+  const renderHobby = ({item}) => (
+    <View style={styles.hobbyBox}>
+      <Text style={styles.hobbyText}>{item}</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginTop: hp(15)}}>
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-          }}>
-          Creative
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Writing, Painting
-        </Text>
-
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Fun
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Movie
-        </Text>
-
-        <Text
-          style={{
-            fontSize: fontSize(14),
-            lineHeight: hp(21),
-            fontFamily: fontFamily.poppins500,
-            color: colors.black,
-            marginTop: hp(15),
-          }}>
-          Fitness
-        </Text>
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(18),
-            lineHeight: hp(28),
-            fontFamily: fontFamily.poppins600,
-            marginTop: hp(2),
-          }}>
-          Walking
-        </Text>
+        <FlatList
+          data={hobbies}
+          renderItem={renderHobby}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={3} // Display 3 items per row
+          contentContainerStyle={styles.hobbiesContainer}
+        />
       </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  hobbiesContainer: {
+    // alignItems: 'center',
+  },
+  hobbyBox: {
+    // backgroundColor: colors.lightGray, // Adjust this color as needed
+    backgroundColor: '#E8E9EB', // Adjust this color as needed
+    padding: wp(2),
+    margin: wp(2),
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: wp(90),
+    height: wp(50), // Ensure the box is square
+  },
+  hobbyText: {
+    fontSize: 16,
+    color: colors.black,
+    textAlign: 'center',
+  },
+});
 export default UserHobbiesAndInterest;
