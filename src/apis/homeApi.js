@@ -1,7 +1,8 @@
 import {post, put, get, upload} from './index';
 
 const getUserAllData = async data => {
-  return get('/api/v1/user/user/', data, false);
+  // return get('/api/v1/user/user/', data, false);
+  return get('/api/v1/user/user/getUserByGender', data, true);
 };
 
 const sendFriendsRequest = async data => {
@@ -44,6 +45,26 @@ const partnerReferences = async data => {
   return post('/api/v1/user/partner', data, true);
 };
 
+const paymentDetail = async data => {
+  return get('/api/v1/admin/plan/get-plan', data, true);
+};
+
+const addShortListsData = async data => {
+  return post('/api/v1/user/shortlist/create-shortlist', data, true);
+};
+
+// const removeAddShortList = async data => {
+//   return post('/api/v1/user/shortlist/create-shortlist', data, true);
+// };
+
+// const userLikes = async data => {
+//   return post('/api/v1/user/like/create-like', data, true);
+// };
+//
+// const user_Dis_Like = async data => {
+//   return post('/api/v1/user/like/create-like', data, true);
+// };
+
 export const home = {
   getUserAllData,
   sendFriendsRequest,
@@ -55,4 +76,9 @@ export const home = {
   professionalDetail,
   addProfilePicture,
   partnerReferences,
+  paymentDetail,
+  addShortListsData,
+  // removeAddShortList,
+  // userLikes,
+  // user_Dis_Like,
 };

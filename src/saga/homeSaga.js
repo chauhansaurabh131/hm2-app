@@ -154,6 +154,66 @@ function* partnerReferences(action) {
   }
 }
 
+// function* getPaymentDetail(action) {
+//   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
+//   console.log(' === var ===> ', action);
+//   try {
+//     const response = yield call(home.paymentDetail, action.data);
+//     yield put(homeActions.paymentDetailsSuccess(response.data));
+//
+//     if (action.data.callBack) {
+//       action.data.callBack();
+//     }
+//   } catch (error) {
+//     yield put(homeActions.paymentDetailsFailure());
+//   }
+// }
+
+function* getPaymentDetail(action) {
+  try {
+    const response = yield call(home.paymentDetail, action.data);
+    yield put(homeActions.paymentDetailsSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.paymentDetailsFailure());
+  }
+}
+
+function* addShortLists(action) {
+  try {
+    const response = yield call(home.addShortListsData, action.data);
+    yield put(homeActions.addShortListSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.addShortListFailure());
+  }
+}
+
+// function* removeShortLists(action) {
+//   try {
+//     const response = yield call(home.addShortListsData, action.data);
+//     yield put(homeActions.removeShortListSuccess(response.data));
+//   } catch (error) {
+//     yield put(homeActions.removeShortListFailure());
+//   }
+// }
+
+// function* userLikes(action) {
+//   try {
+//     const response = yield call(home.userLikes, action.data);
+//     yield put(homeActions.userLikeSuccess(response.data));
+//   } catch (error) {
+//     yield put(homeActions.userLikeFailure());
+//   }
+// }
+//
+// function* user_Dis_Likes(action) {
+//   try {
+//     const response = yield call(home.userLikes, action.data);
+//     yield put(homeActions.userLikeSuccess(response.data));
+//   } catch (error) {
+//     yield put(homeActions.userLikeFailure());
+//   }
+// }
+
 function* homeSaga() {
   yield all([takeLatest(TYPES.GET_USER_DATA, getUserData)]);
   yield all([takeLatest(TYPES.SEND_REQUEST, sendFriendRequest)]);
@@ -170,6 +230,11 @@ function* homeSaga() {
   yield all([takeLatest(TYPES.PROFESSIONAL_DETAILS, professionalDetail)]);
   yield all([takeLatest(TYPES.ADD_PROFILE_PICTURE, addProfilePicture)]);
   yield all([takeLatest(TYPES.PARTNER_PREFERENCES_DETAILS, partnerReferences)]);
+  yield all([takeLatest(TYPES.GET_ALL_PAYMENT_DETAILS, getPaymentDetail)]);
+  yield all([takeLatest(TYPES.ADD_SHORT_LIST, addShortLists)]);
+  // yield all([takeLatest(TYPES.REMOVE_SHORT_LIST, removeShortLists)]);
+  // yield all([takeLatest(TYPES.USER_LIKE, userLikes)]);
+  // yield all([takeLatest(TYPES.USER_DIS_LIKE, user_Dis_Likes)]);
 }
 
 export default homeSaga;

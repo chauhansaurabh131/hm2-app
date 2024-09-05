@@ -38,6 +38,15 @@ import VerifyEmailOtpScreen from '../screen/verifyEmailOtpScreen';
 import NewSetPasswordScreen from '../screen/newSetPasswordScreen';
 import NewStartExploreScreen from '../screen/newStartExploreScreen';
 import NewMainScreen from '../screen/newMainScreen';
+import ResetPasswordScreen from '../screen/resetPasswordScreen';
+import ResetVerifyScreen from '../screen/resetVerifyScreen';
+import VerifySetPasswordScreen from '../screen/verifySetPasswordScreen';
+import DemoCode from '../screen/demoCode';
+import MyProfileScreen from '../screen/myProfileScreen';
+import AccountsScreen from '../screen/accountsScreen';
+import CredentialsScreen from '../screen/CredentialsScreen';
+import HideDeleteProfileScreen from '../screen/hideDeleteProfileScreen';
+import PrivacyScreen from '../screen/privacyScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,6 +61,7 @@ const MainNavigator = () => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="NewMainScreen">
+      <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
       <Stack.Screen name="NewSignUpScreen" component={NewSignUpScreen} />
@@ -68,6 +78,17 @@ const MainNavigator = () => {
       <Stack.Screen
         name="NewStartExploreScreen"
         component={NewStartExploreScreen}
+      />
+
+      <Stack.Screen
+        name="ResetPasswordScreen"
+        component={ResetPasswordScreen}
+      />
+
+      <Stack.Screen name="ResetVerifyScreen" component={ResetVerifyScreen} />
+      <Stack.Screen
+        name="VerifySetPasswordScreen"
+        component={VerifySetPasswordScreen}
       />
 
       <Stack.Screen
@@ -154,6 +175,7 @@ const MainNavigator = () => {
       <Stack.Navigator
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
+        {/*<Stack.Screen name="DemoCode" component={DemoCode} />*/}
         <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
         <Stack.Screen
@@ -347,6 +369,35 @@ const MainNavigator = () => {
               // userData: route.params?.userData,
             }
           }
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="MyProfileScreen"
+          component={MyProfileScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="AccountsScreen"
+          component={AccountsScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="CredentialsScreen"
+          component={CredentialsScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="HideDeleteProfileScreen"
+          component={HideDeleteProfileScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+        <Tab.Screen
+          name="PrivacyScreen"
+          component={PrivacyScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
       </Tab.Navigator>

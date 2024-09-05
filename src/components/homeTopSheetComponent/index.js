@@ -18,6 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeStack, logout} from '../../actions/authActions';
 import io from 'socket.io-client';
+import style from '../../screen/chatScreen/style';
 
 const HomeTopSheetComponent = ({
   isVisible,
@@ -33,6 +34,10 @@ const HomeTopSheetComponent = ({
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const [socket, setSocket] = useState(null);
+
+  // const userImage = user?.user?.userProfilePic?.[0]?.url;
+  const userImage = user?.user?.profilePic;
+  const UserUniqueId = user?.user?.userUniqueId;
 
   useEffect(() => {
     if (!accessToken) {
@@ -119,15 +124,27 @@ const HomeTopSheetComponent = ({
         style={{top: modalTop}}>
         <View style={styles.modalContainer}>
           <View style={styles.modalBodyContainer}>
-            <Image
-              source={images.profileDisplayImage}
-              style={styles.modalHeaderProfileStyle}
-            />
+            {/*<Image*/}
+            {/*  source={images.profileDisplayImage}*/}
+            {/*  style={styles.modalHeaderProfileStyle}*/}
+            {/*/>*/}
+
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={styles.modalHeaderProfileStyle}
+              />
+            ) : (
+              <Image
+                source={images.empty_male_Image}
+                style={styles.modalHeaderProfileStyle}
+              />
+            )}
 
             <Text style={styles.userNameTextStyle}>Riya Shah</Text>
 
             <View style={styles.userDescriptionContainer}>
-              <Text style={styles.userNumberTextStyle}>HM 10000122</Text>
+              <Text style={styles.userNumberTextStyle}>{UserUniqueId}</Text>
               <View style={styles.userDescriptionTextStyle} />
               <Text
                 style={{

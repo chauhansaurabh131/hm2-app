@@ -72,7 +72,7 @@ const style = StyleSheet.create({
 
   descriptionBodyUnderlineStyleDropdown: {
     width: '100%',
-    borderWidth: 1,
+    borderWidth: 0.7,
     borderColor: '#E7E7E7',
     marginTop: hp(13),
   },
@@ -173,7 +173,7 @@ const style = StyleSheet.create({
   confirmButtonStyle: {
     width: wp(126),
     height: hp(50),
-    borderRadius: 10,
+    borderRadius: 50,
     justifyContent: 'center',
   },
   confirmButtonTextStyle: {

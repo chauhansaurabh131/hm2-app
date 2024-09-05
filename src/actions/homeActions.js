@@ -135,3 +135,74 @@ export const partnerReferencesSuccess = data => ({
 export const partnerReferencesFailure = () => ({
   type: TYPES.PARTNER_PREFERENCES_DETAILS_FAILED,
 });
+
+//GET ALL PAYMENT DETAILS
+export function paymentDetails(data) {
+  console.log(' === data ===> ', data);
+  return {type: TYPES.GET_ALL_PAYMENT_DETAILS, data};
+}
+
+export function paymentDetailsSuccess(data) {
+  return {type: TYPES.GET_ALL_PAYMENT_DETAILS_SUCCESS, data};
+}
+
+export const paymentDetailsFailure = () => ({
+  type: TYPES.GET_ALL_PAYMENT_DETAILS_FAILED,
+});
+
+// ADD SHORT LIST
+export function addShortList(data) {
+  console.log(' === addShortList.... ===> ', data);
+  return {type: TYPES.ADD_SHORT_LIST, data};
+}
+
+export function addShortListSuccess(data) {
+  return {type: TYPES.ADD_SHORT_LIST_SUCCESS, data};
+}
+
+export const addShortListFailure = () => ({
+  type: TYPES.ADD_SHORT_LIST_FAILED,
+});
+
+// // REMOVE SHORT LIST DATA
+// export function removeShortList(data) {
+//   console.log(' === addShortList.... ===> ', data);
+//   return {type: TYPES.REMOVE_SHORT_LIST, data};
+// }
+//
+// export function removeShortListSuccess(data) {
+//   return {type: TYPES.REMOVE_SHORT_LIST_SUCCESS, data};
+// }
+//
+// export const removeShortListFailure = () => ({
+//   type: TYPES.REMOVE_SHORT_LIST_FAILED,
+// });
+
+// USER LIKE
+// export function userLike(data) {
+//   console.log(' === data ===> ', data);
+//   return {type: TYPES.USER_LIKE, data};
+// }
+//
+// export function userLikeSuccess(data) {
+//   return {type: TYPES.USER_LIKE_SUCCESS, data};
+// }
+//
+// export const userLikeFailure = () => ({
+//   type: TYPES.USER_LIKE_FAILED,
+// });
+//
+// // USER DIS_LIKE
+//
+// export function userDis_Like(data) {
+//   console.log(' === data ===> ', data);
+//   return {type: TYPES.USER_DIS_LIKE, data};
+// }
+//
+// export function userDis_LikeSuccess(data) {
+//   return {type: TYPES.USER_DIS_SUCCESS, data};
+// }
+//
+// export const userDis_LikeFailure = () => ({
+//   type: TYPES.USER_DIS_FAILED,
+// });

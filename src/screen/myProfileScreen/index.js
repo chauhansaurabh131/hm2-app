@@ -14,6 +14,7 @@ import StoryComponent from '../../components/storyComponent';
 import {hp, wp} from '../../utils/helpers';
 import AdminProfileDetailsScreen from '../adminProfileDetailsScreen';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSelector} from 'react-redux';
 
 const MyProfileScreen = () => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -23,6 +24,23 @@ const MyProfileScreen = () => {
     "I'd describe myself as someone who's reliable, trendy, smart and someone who always has a smile on the face. I am a big Nature & Animal lover. I have lived in different parts of India and appreciate all cultures & customs.... I'd describe myself as someone who's reliable, trendy, smart and someone who always has a smile on the face. I am a big Nature & Animal lover. I have lived in different parts of India and appreciate all cultures & customs.",
   );
   const [editedDescription, setEditedDescription] = useState(description);
+
+  const {user} = useSelector(state => state.auth);
+
+  // console.log(' === user.... ===> ', user.user);
+
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle null or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  const firstName = capitalizeFirstLetter(user?.user?.firstName);
+  const lastName = capitalizeFirstLetter(user?.user?.lastName);
+  const gender = capitalizeFirstLetter(user.user.gender);
+  const age = user.user.age;
+  const height = user.user.height;
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -87,12 +105,16 @@ const MyProfileScreen = () => {
                 <View style={style.onlineBodyStyle}>
                   <Text style={style.bodyTextStyle}>Online</Text>
                 </View>
-                <Text style={style.userNameTextStyle}>Roshan Patel</Text>
+                <Text style={style.userNameTextStyle}>
+                  {firstName} {lastName}
+                </Text>
 
                 <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>Male</Text>
-                  <Text style={style.userDetailsTextStyle}>36,</Text>
-                  <Text style={style.userDetailsTextStyle}>4’ 5”</Text>
+                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {age || 'N/A'},
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}>{height}</Text>
 
                   <View style={style.verticalLineStyle} />
 

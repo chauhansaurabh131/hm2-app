@@ -42,6 +42,7 @@ const HomeScreen = ({route}) => {
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
 
   const accessToken = user?.tokens?.access?.token;
   const [socket, setSocket] = useState(null);
@@ -198,10 +199,22 @@ const HomeScreen = ({route}) => {
             activeOpacity={0.7}
             onPress={openTopSheetModal}
             style={style.headerTopSheetImageContainer}>
-            <Image
-              source={images.profileDisplayImage}
-              style={style.headerTopSheetImageStyle}
-            />
+            {/*<Image*/}
+            {/*  source={images.profileDisplayImage}*/}
+            {/*  style={style.headerTopSheetImageStyle}*/}
+            {/*/>*/}
+
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.headerTopSheetImageStyle}
+              />
+            ) : (
+              <Image
+                source={images.empty_male_Image}
+                style={style.headerTopSheetImageStyle}
+              />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -378,14 +391,15 @@ const HomeScreen = ({route}) => {
                   source={
                     profilePicUrl
                       ? {uri: profilePicUrl}
-                      : images.profileDisplayImage
+                      : images.empty_male_Image
                   }
                   style={style.imageStyle}
                 />
                 <View style={style.cardTextContainer}>
                   {/*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*/}
                   <Text style={style.cardUserTextStyle}>
-                    {firstName} {lastName}
+                    {/*{firstName} {lastName}*/}
+                    {name}
                   </Text>
 
                   <View style={style.cardSubTittleContainer}>

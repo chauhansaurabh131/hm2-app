@@ -1,5 +1,6 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   Image,
   SafeAreaView,
   Text,
@@ -11,20 +12,61 @@ import style from './style';
 import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {isIOS} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDetails} from '../../actions/homeActions';
+import * as text from 'formik';
+import {colors} from '../../utils/colors';
+import {changeStack, logout} from '../../actions/authActions';
 
 const CredentialsScreen = () => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef();
   const passwordBottomSheetRef = useRef();
+  const bottomSheetPasswordChangeRef2 = useRef(null);
   const [selectedCredential, setSelectedCredential] = useState(null);
-  const [currentEmail, setCurrentEmail] = useState('jit*****@gmail.com');
+  // const [currentEmail, setCurrentEmail] = useState('jit*****@gmail.com');
+  const [currentEmail, setCurrentEmail] = useState('');
   const [newEmail, setNewEmail] = useState('');
-  const [currentMobile, setCurrentMobile] = useState('*******902');
+  // const [currentMobile, setCurrentMobile] = useState('*******902');
+  const [currentMobile, setCurrentMobile] = useState('');
   const [newMobile, setNewMobile] = useState(''); // New mobile number
   const [verificationCodeSent, setVerificationCodeSent] = useState(false);
   const [verificationDone, setVerificationDone] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] =
+    useState(false);
+  const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
+
+  const apiDispatch = useDispatch();
+
+  const {user} = useSelector(state => state.auth);
+
+  // console.log(' === user ===> ', user?.tokens?.access?.token);
+
+  const token = user?.tokens?.access?.token;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user && user?.user?.email) {
+      setCurrentEmail(user?.user?.email);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && user?.user?.mobileNumber) {
+      setCurrentMobile(user?.user?.mobileNumber);
+    }
+  }, [user]);
+
+  // const email = user.user.email;
 
   const handleNewMobileChange = text => {
     const numericValue = text.replace(/[^0-9]/g, '');
@@ -46,9 +88,106 @@ const CredentialsScreen = () => {
   };
 
   const handleSubmit = () => {
-    if (newEmail.trim() !== '') {
-      setCurrentEmail(newEmail);
+    // if (newEmail.trim() !== '') {
+    //   setCurrentEmail(newEmail);
+    // }
+
+    console.log(' === newEmail ===> ', newEmail);
+
+    apiDispatch(updateDetails({email: newEmail}));
+
+    bottomSheetRef.current.close();
+    passwordBottomSheetRef.current.close();
+  };
+
+  // const onUpdatePasswordPress = () => {
+  //   if (newPassword === confirmPassword) {
+  //     passwordBottomSheetRef.current.close();
+  //     setTimeout(() => {
+  //       bottomSheetPasswordChangeRef2.current.open();
+  //     }, 100); // Small delay to ensure the first sheet closes before opening the second
+  //   } else {
+  //     Alert.alert(
+  //       'Password Mismatch',
+  //       'New Password and Confirm Password do not match.',
+  //     );
+  //   }
+  // };
+
+  const onUpdatePasswordPress = async () => {
+    // Check if new password and confirm password match
+    if (newPassword === confirmPassword) {
+      try {
+        console.log('Making API call with token:', token); // Debugging line
+
+        // Make the API call
+        const response = await fetch(
+          'https://happymilan.tech/api/v1/user/auth/update-password',
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`, // Include the token in the request headers
+            },
+            body: JSON.stringify({
+              oldPassword: currentPassword,
+              newPassword: newPassword,
+            }),
+          },
+        );
+
+        console.log('Response Status:', response.status); // Debugging line
+        console.log('Response URL:', response.url); // Debugging line
+
+        if (response.status === 404) {
+          console.error('Error: Endpoint not found. Please check the URL.');
+          Alert.alert(
+            'Error',
+            'The endpoint could not be found. Please contact support.',
+          );
+          return;
+        }
+
+        // Parse the JSON response
+        const result = await response.json();
+
+        // Check if the response indicates success
+        if (response.ok) {
+          // Close the first bottom sheet and open the second one
+          passwordBottomSheetRef.current.close();
+          setTimeout(() => {
+            bottomSheetPasswordChangeRef2.current.open();
+          }, 100); // Small delay to ensure the first sheet closes before opening the second
+        } else {
+          // Show alert if API call fails
+          Alert.alert(
+            'Update Failed',
+            result.message || 'An error occurred. Please try again.',
+          );
+        }
+      } catch (error) {
+        // Handle network or other errors
+        console.error('Error:', error); // Debugging line
+        Alert.alert(
+          'Error',
+          'Network error or unexpected issue. Please try again later.',
+        );
+      }
+    } else {
+      // Show alert if passwords do not match
+      Alert.alert(
+        'Password Mismatch',
+        'New Password and Confirm Password do not match.',
+      );
     }
+  };
+
+  const currentMobileString = String(currentMobile);
+
+  const onMobileChangePress = () => {
+    // setVerificationCodeSent(true);
+
+    apiDispatch(updateDetails({mobileNumber: newMobile}));
 
     bottomSheetRef.current.close();
     passwordBottomSheetRef.current.close();
@@ -66,6 +205,10 @@ const CredentialsScreen = () => {
       setCurrentMobile(newMobile);
     }
     bottomSheetRef.current.close();
+  };
+
+  const closeSecondBottomSheet = () => {
+    bottomSheetPasswordChangeRef2.current.close();
   };
 
   const renderBottomSheetContent = () => {
@@ -132,10 +275,8 @@ const CredentialsScreen = () => {
                   </Text>
 
                   <TextInput
-                    value={
-                      currentMobile.substring(0, 7).replace(/\d/g, '*') +
-                      currentMobile.substring(7)
-                    } // Show first 7 digits as asterisks and last 3 digits as numbers
+                    placeholder={currentMobileString}
+                    placeholderTextColor={'black'}
                     editable={false}
                     style={style.textInputContainer}
                   />
@@ -171,7 +312,8 @@ const CredentialsScreen = () => {
                     <TouchableOpacity
                       activeOpacity={0.5}
                       onPress={() => {
-                        setVerificationCodeSent(true);
+                        // setVerificationCodeSent(true);
+                        onMobileChangePress();
                       }}>
                       <LinearGradient
                         colors={['#0D4EB3', '#9413D0']}
@@ -279,15 +421,97 @@ const CredentialsScreen = () => {
             Enter Current Password
           </Text>
 
-          <TextInput placeholder={'Type'} style={style.textInputContainer} />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TextInput
+              placeholder={'Type'}
+              style={style.textInputContainer}
+              secureTextEntry={!isCurrentPasswordVisible}
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
+            />
+
+            <TouchableOpacity
+              style={{position: 'absolute', right: 15}}
+              onPress={() =>
+                setIsCurrentPasswordVisible(!isCurrentPasswordVisible)
+              }>
+              <Image
+                source={
+                  isCurrentPasswordVisible
+                    ? icons.show_Password_icon
+                    : icons.secureEyeLogo
+                }
+                style={{
+                  width: hp(16),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  top: 5,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
 
           <Text style={style.bottomSheetBodyTitleText}>New Password</Text>
 
-          <TextInput placeholder={'Type'} style={style.textInputContainer} />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TextInput
+              placeholder={'Type'}
+              style={style.textInputContainer}
+              secureTextEntry={!isNewPasswordVisible}
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+
+            <TouchableOpacity
+              style={{position: 'absolute', right: 15}}
+              onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}>
+              <Image
+                source={
+                  isNewPasswordVisible
+                    ? icons.show_Password_icon
+                    : icons.secureEyeLogo
+                }
+                style={{
+                  width: hp(16),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  top: 5,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
 
           <Text style={style.bottomSheetBodyTitleText}>Confirm Password</Text>
 
-          <TextInput placeholder={'Type'} style={style.textInputContainer} />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TextInput
+              placeholder={'Type'}
+              style={style.textInputContainer}
+              secureTextEntry={!isConfirmPasswordVisible}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <TouchableOpacity
+              style={{position: 'absolute', right: 15}}
+              onPress={() =>
+                setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+              }>
+              <Image
+                source={
+                  isConfirmPasswordVisible
+                    ? icons.show_Password_icon
+                    : icons.secureEyeLogo
+                }
+                style={{
+                  width: hp(16),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  top: 5,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
 
           <View style={style.bottomSheetButtonContainer}>
             <TouchableOpacity activeOpacity={0.7} onPress={handleSubmit}>
@@ -300,7 +524,9 @@ const CredentialsScreen = () => {
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.5} onPress={handleSubmit}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={onUpdatePasswordPress}>
               <LinearGradient
                 colors={['#0D4EB3', '#9413D0']}
                 start={{x: 0, y: 0}}
@@ -390,8 +616,9 @@ const CredentialsScreen = () => {
 
         <View style={style.bodyFillFullContainer}>
           <Text style={style.UserEmailTextStyle}>
-            {currentMobile.substring(0, 7).replace(/\d/g, '*') +
-              currentMobile.substring(7)}
+            {/*{currentMobile.substring(0, 7).replace(/\d/g, '*') +*/}
+            {/*  currentMobile.substring(7)}*/}
+            {currentMobile}
           </Text>
 
           <Image source={icons.green_check_icon} style={style.checkIconStyle} />
@@ -438,6 +665,89 @@ const CredentialsScreen = () => {
           },
         }}>
         {renderPasswordBottomSheetContent()}
+      </RBSheet>
+
+      {/*PASSWORD CHANGE SECOND BOTTOMSHEET*/}
+      <RBSheet
+        ref={bottomSheetPasswordChangeRef2}
+        height={350} // Set the height of the bottom sheet
+        closeOnPressMask={false} // Allows closing when clicking outside the bottom sheet
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            padding: 20,
+          },
+        }}>
+        <View>
+          <Image
+            source={icons.confirm_check_icon}
+            tintColor={colors.blue}
+            style={{
+              alignSelf: 'center',
+              height: hp(40),
+              width: hp(40),
+              resizeMode: 'contain',
+              marginTop: hp(30),
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              textAlign: 'center',
+              marginTop: hp(31),
+              fontSize: fontSize(18),
+              lineHeight: hp(27),
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Password has been changed
+          </Text>
+
+          <Text
+            style={{
+              color: '#9B9B9B',
+              textAlign: 'center',
+              marginTop: hp(5),
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+            }}>
+            Please login again to confirm the credentials
+          </Text>
+
+          <TouchableOpacity
+            style={{marginTop: 50, alignItems: 'center'}}
+            onPress={closeSecondBottomSheet} // Close the second bottom sheet
+          >
+            <LinearGradient
+              colors={['#0D4EB3', '#9413D0']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0.5}}
+              style={{
+                // marginTop: hp(50),
+                width: wp(176),
+                height: hp(50),
+                borderRadius: 25,
+                justifyContent: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(logout(), () => dispatch(changeStack()));
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    textAlign: 'center',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(26),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  Login Again
+                </Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </RBSheet>
     </SafeAreaView>
   );

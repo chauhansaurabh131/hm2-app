@@ -3,17 +3,22 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
-const ProfileCheckboxGroup = ({data, selectedId}) => {
+const ProfileCheckboxGroup = ({data, selectedId, onChange, containerRow}) => {
   const [checkedId, setCheckedId] = useState(selectedId);
 
   const handleCheckboxChange = id => {
     setCheckedId(id);
+    // Call the onChange callback with the selected item
+    const selectedItem = data.find(item => item.id === id);
+    if (onChange) {
+      onChange(selectedItem.label);
+    }
   };
 
   return (
     <View>
       {data.map(item => (
-        <View key={item.id} style={styles.row}>
+        <View key={item.id} style={[styles.row, containerRow]}>
           <TouchableOpacity
             onPress={() => handleCheckboxChange(item.id)}
             style={styles.checkboxContainer}>
@@ -55,7 +60,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#000',
+    backgroundColor: colors.blue,
   },
   textContainer: {
     flex: 1,
@@ -67,9 +72,10 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   subTitle: {
-    fontSize: fontSize(10),
-    lineHeight: hp(14),
-    color: '#464646',
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
+    color: '#818181',
   },
 });
 

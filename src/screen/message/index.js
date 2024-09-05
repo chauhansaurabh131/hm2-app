@@ -1,56 +1,110 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Text, View, StyleSheet, Button} from 'react-native';
-
-import NewTextInputComponent from '../../components/newTextInputComponent';
-import {icons} from '../../assets'; // Import the CustomTextInput component
+import React, {useEffect} from 'react';
+import {SafeAreaView, Text, TouchableOpacity, Alert} from 'react-native';
+import RazorpayCheckout from 'react-native-razorpay';
+import axios from 'axios';
+import {colors} from '../../utils/colors';
+import {useDispatch, useSelector} from 'react-redux';
+import {paymentDetails} from '../../actions/homeActions';
 
 const Message = () => {
-  const [text, setText] = useState('');
+  const {user} = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
-  const handleChangeText = input => {
-    setText(input);
-  };
+  useEffect(() => {
+    dispatch(paymentDetails());
+  }, [dispatch]);
 
-  const handlePress = () => {
-    console.log('TextInput value:', text);
+  const payment = useSelector(state => state.home);
+  const PlanDetails = payment?.paymentDetail;
+  const token = user?.tokens?.access?.token;
+
+  const handlePayment = async () => {
+    try {
+      // Create the order
+      const response = await axios.post(
+        'https://happymilan.tech/api/v1/user/razorpay/order',
+        {planId: PlanDetails?.data[0]?.id},
+        {headers: {Authorization: `Bearer ${token}`}},
+      );
+
+      console.log('Order Creation Response:', response.data);
+
+      const {orderId, amount, paymentHistoryToken} = response.data;
+
+      if (!paymentHistoryToken) {
+        throw new Error('Payment history token is missing from the response');
+      }
+
+      console.log('Payment History Token:', paymentHistoryToken);
+
+      // Proceed with Razorpay payment
+      const options = {
+        description: 'Credits towards consultation',
+        image: 'https://i.imgur.com/3g7nmJC.png',
+        currency: 'INR',
+        key: 'rzp_live_2SoKzqAUA6FY69',
+        amount: amount.toString(),
+        order_id: orderId,
+        name: 'foo',
+        prefill: {
+          email: 'void@razorpay.com',
+          contact: '9191919191',
+          name: 'Razorpay Software',
+        },
+        theme: {color: '#F37254'},
+      };
+
+      RazorpayCheckout.open(options)
+        .then(async data => {
+          const {razorpay_payment_id} = data;
+
+          console.log(`Success: ${razorpay_payment_id}`);
+          console.log('Payment History Token:', paymentHistoryToken);
+          console.log('===  Token:', token);
+
+          // Verification API call with paymentHistoryToken as query parameter
+          try {
+            const verificationResponse = await axios.post(
+              `https://happymilan.tech/api/v1/user/razorpay/is-order-complete?paymentHistoryToken=${encodeURIComponent(
+                paymentHistoryToken,
+              )}&authToken=${encodeURIComponent(token)}`,
+              {razorpay_payment_id},
+              {headers: {Authorization: `Bearer ${token}`}},
+            );
+
+            console.log(
+              'Payment verification response:',
+              verificationResponse.data,
+            );
+            Alert.alert('Success', 'Payment verified successfully.');
+          } catch (verificationError) {
+            console.error(
+              'Verification Error:',
+              verificationError.response?.data || verificationError.message,
+            );
+            Alert.alert(
+              'Error',
+              'Payment verification failed. Please contact support.',
+            );
+          }
+        })
+        .catch(error => {
+          console.error(`Payment Error: ${error.code} | ${error.description}`);
+          Alert.alert('Payment Error', 'Payment failed. Please try again.');
+        });
+    } catch (error) {
+      console.error('Error:', error.response?.data || error.message);
+      Alert.alert('Error', 'Failed to create order. Please try again.');
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Message</Text>
-      <NewTextInputComponent
-        value={text}
-        onChangeText={handleChangeText}
-        placeholder="Your Email or Mobile"
-        style={styles.textInput}
-        LeftIconName={icons.profileLogo}
-      />
-      {/*<Button title="Submit" onPress={handlePress} />*/}
-
-      <NewTextInputComponent
-        value={text}
-        onChangeText={handleChangeText}
-        placeholder="Enter Password"
-        style={styles.textInput}
-        LeftIconName={icons.logLogo}
-        RightIconName={icons.secureEyeLogo}
-      />
+    <SafeAreaView style={{flex: 1, justifyContent: 'center'}}>
+      <TouchableOpacity onPress={handlePayment}>
+        <Text style={{color: colors.black, alignSelf: 'center'}}>Payment</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  textInput: {
-    marginBottom: 20,
-  },
-});
 
 export default Message;

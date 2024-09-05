@@ -1,11 +1,10 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   Modal,
-  Pressable,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -13,34 +12,47 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import style from './style';
 import {icons, images} from '../../assets';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
-import {CurrentCity} from '../../utils/data';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import CommonGradientButton from '../../components/commonGradientButton';
+import {useDispatch, useSelector} from 'react-redux';
+import axios from 'axios';
+import {changeStack, logout} from '../../actions/authActions';
+import {updateDetails} from '../../actions/homeActions';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectDurationModal, setSelectDurationModal] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState('');
 
-  const [hideButtonGradient, setHideButtonGradient] = useState(false);
-  const [showButtonGradient, setShowButtonGradient] = useState(true);
-  const [showText, setShowText] = useState(false);
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [isDeleteButtonPressed, setIsDeleteButtonPressed] = useState(false);
+  const apiDispatch = useDispatch();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [isTabBarVisible, setIsTabBarVisible] = useState(true);
+  const {user} = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  console.log(' === user ===> ', user?.tokens?.access?.token);
+  const token = user?.tokens?.access?.token;
+
+  const getLabelFromValue = value => {
+    const selectedItem = SELECT_DURATION.find(item => item.value === value);
+    return selectedItem ? selectedItem.label : '';
+  };
+
+  const handleDurationChange = value => {
+    const label = getLabelFromValue(value);
+    setSelectedDuration(label);
+  };
 
   const SELECT_DURATION = [
-    {label: '1 Week', value: '1'},
-    {label: '2 Week', value: '2'},
-    {label: '1 Month', value: '3'},
-    {label: '3 Month', value: '4'},
-    {label: '6 Month', value: '5'},
+    {label: 'oneWeek', value: '1'},
+    {label: 'twoWeek', value: '2'},
+    {label: 'oneMonth', value: '3'},
+    {label: 'threeMonth', value: '4'},
+    {label: 'sixMonth', value: '5'},
   ];
 
   const SELECT_REASON = [
@@ -50,33 +62,42 @@ const HideDeleteProfileScreen = () => {
     {label: 'Other Reason', value: '4'},
   ];
 
-  // const handleBackdropPress = () => {
-  //   setIsOpen(false);
-  // };
-
-  // const handleHidePress = () => {
-  //   setHideButtonGradient(true);
-  //   setShowButtonGradient(false);
-  //   setShowText(true);
-  // };
-
-  // const handleShowPress = () => {
-  //   setShowButtonGradient(true);
-  //   setHideButtonGradient(false);
-  //   setShowText(false);
-  // };
-
-  // const handleDeleteProfile = () => {
-  //   setShowDeleteConfirmation(true);
-  //   setIsDeleteButtonPressed(true);
-  // };
-
   const handleDeleteButtonPress = () => {
     setModalVisible(true);
   };
 
   const handleModalClose = () => {
     setModalVisible(false);
+    // console.log(' === Deleted Account ===> ');
+  };
+
+  const onDeleteAccountPress = async () => {
+    console.log(' === ID ===> ', user?.user.id);
+    try {
+      const response = await axios.delete(
+        'https://happymilan.tech/api/v1/user/user/', // Adjust the URL as needed
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the authentication token
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        // Successfully deleted
+        setModalVisible(false); // Close the delete confirmation modal
+        dispatch(logout(), () => dispatch(changeStack()));
+      }
+    } catch (error) {
+      // Log detailed error response
+      console.error('Error deleting account:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+      Alert.alert('Failed to delete account. Please try again later.'); // Show error message
+    }
   };
 
   const selectSetDurationModalOPen = () => {
@@ -85,6 +106,28 @@ const HideDeleteProfileScreen = () => {
 
   const SelectSetDurationModalClose = () => {
     setSelectDurationModal(false);
+  };
+
+  const onHideProfilePress = () => {
+    // setSelectDurationModal(false);
+    // console.log('Selected Duration:', selectedDuration);
+    if (!selectedDuration) {
+      Alert.alert(
+        'Please select a duration',
+        'You need to select a duration before hiding your profile.',
+      );
+    } else {
+      // console.log('Selected Duration:', selectedDuration);
+      apiDispatch(
+        updateDetails({
+          profileHideAndDelete: {
+            timeForProfileHide: selectedDuration,
+            isProfileHide: true,
+          },
+        }),
+      );
+      setSelectDurationModal(false);
+    }
   };
 
   return (
@@ -139,6 +182,7 @@ const HideDeleteProfileScreen = () => {
             searchPlaceholder={'Search Select Duration'}
             height={55}
             placeholderStyle={{color: colors.black, marginLeft: 15}}
+            onChange={handleDurationChange}
           />
 
           <View style={{flex: 1, alignItems: 'flex-end'}}>
@@ -192,7 +236,7 @@ const HideDeleteProfileScreen = () => {
                 style={{
                   width: wp(107),
                   height: hp(50),
-                  borderRadius: 10,
+                  borderRadius: 50,
                   justifyContent: 'center',
                 }}>
                 <Text style={{color: colors.white, textAlign: 'center'}}>
@@ -231,14 +275,14 @@ const HideDeleteProfileScreen = () => {
                     style={{
                       width: wp(126),
                       height: hp(50),
-                      borderRadius: 10,
+                      borderRadius: 50,
                       borderWidth: 1,
                       justifyContent: 'center',
                       borderColor: 'transparent', // Set border color to transparent
                     }}>
                     <View
                       style={{
-                        borderRadius: 10, // <-- Inner Border Radius
+                        borderRadius: 50, // <-- Inner Border Radius
                         flex: 1,
                         backgroundColor: colors.white,
                         justifyContent: 'center',
@@ -259,13 +303,15 @@ const HideDeleteProfileScreen = () => {
                     </View>
                   </LinearGradient>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleModalClose}>
+                <TouchableOpacity onPress={onDeleteAccountPress}>
                   <LinearGradient
                     colors={['#0D4EB3', '#9413D0']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}
                     style={style.confirmButtonStyle}>
-                    <Text style={style.confirmButtonTextStyle}>Yes, Hide</Text>
+                    <Text style={style.confirmButtonTextStyle}>
+                      Yes, Delete
+                    </Text>
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
@@ -273,6 +319,7 @@ const HideDeleteProfileScreen = () => {
           </View>
         </Modal>
 
+        {/*HIDE PROFILE MODAL*/}
         <Modal
           animationType="none"
           transparent={true}
@@ -311,7 +358,7 @@ const HideDeleteProfileScreen = () => {
                   color: colors.black,
                   marginTop: hp(3),
                 }}>
-                Delete Your Profile?
+                Hide Your Profile?
               </Text>
 
               <View
@@ -335,14 +382,14 @@ const HideDeleteProfileScreen = () => {
                     style={{
                       width: wp(126),
                       height: hp(50),
-                      borderRadius: 10,
+                      borderRadius: 50,
                       borderWidth: 1,
                       justifyContent: 'center',
                       borderColor: 'transparent', // Set border color to transparent
                     }}>
                     <View
                       style={{
-                        borderRadius: 10, // <-- Inner Border Radius
+                        borderRadius: 50, // <-- Inner Border Radius
                         flex: 1,
                         backgroundColor: colors.white,
                         justifyContent: 'center',
@@ -365,7 +412,7 @@ const HideDeleteProfileScreen = () => {
                 </TouchableOpacity>
 
                 <CommonGradientButton
-                  onPress={SelectSetDurationModalClose}
+                  onPress={onHideProfilePress}
                   buttonName={'Yes, Hide'}
                   containerStyle={{width: wp(126), height: hp(50)}}
                 />

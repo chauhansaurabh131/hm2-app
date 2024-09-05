@@ -13,6 +13,11 @@ const initialState = {
   professionalDetails: [],
   addProfilePicture: [],
   addPartnerReferences: [],
+  paymentDetail: [],
+  isGetPaymentDetailsLoading: false,
+  // userLike: [],
+  addShortListData: [],
+  // removeShortListData: [],
 };
 export default (state = initialState, action) => {
   // console.log(' === Reducer_action.data ===> ', action.data);
@@ -99,44 +104,72 @@ export default (state = initialState, action) => {
     case TYPES.ADD_EDUCATION_DETAILS_FAILED:
       return {...state, isSendRequestLoading: false};
 
-    // //PROFESSIONAL DETAILS APIS
-    // case TYPES.PROFESSIONAL_DETAILS:
-    //   return {...state, isSendRequestLoading: true};
-    //
-    // case TYPES.ADD_PROFESSIONAL_DETAILS_SUCCESS:
-    //   return {
-    //     ...state,
-    //     professionalDetails: action.data,
-    //     isSendRequestLoading: false,
-    //   };
-    // case TYPES.ADD_PROFESSIONAL_DETAILS_FAILED:
-    //   return {...state, isSendRequestLoading: false};
+    //GET ALL PAYMENT DETAILS
+    case TYPES.GET_ALL_PAYMENT_DETAILS:
+      return {...state, isGetPaymentDetailsLoading: true};
 
-    // //ADD PROFILE PICTURE APIS
-    // case TYPES.ADD_PROFILE_PICTURE:
-    //   return {...state, isSendRequestLoading: true};
-    //
-    // case TYPES.ADD_PROFILE_PICTURE_SUCCESS:
-    //   return {
-    //     ...state,
-    //     addProfilePicture: action.data,
-    //     isSendRequestLoading: false,
-    //   };
-    // case TYPES.ADD_PROFILE_PICTURE_FAILED:
-    //   return {...state, isSendRequestLoading: false};
+    case TYPES.GET_ALL_PAYMENT_DETAILS_SUCCESS:
+      return {
+        ...state,
+        paymentDetail: action.data,
+        isGetPaymentDetailsLoading: false,
+      };
+    case TYPES.GET_ALL_PAYMENT_DETAILS_FAILED:
+      return {...state, isGetPaymentDetailsLoading: false};
 
-    // //ADD PARTNER REFERENCES
-    // case TYPES.PARTNER_PREFERENCES_DETAILS:
-    //   return {...state, isSendRequestLoading: true};
+    // ADD SHORT LIST
+    case TYPES.ADD_SHORT_LIST:
+      return {...state, isGetPaymentDetailsLoading: true};
+
+    case TYPES.ADD_SHORT_LIST_SUCCESS:
+      return {
+        ...state,
+        addShortListData: action.data,
+        isGetPaymentDetailsLoading: false,
+      };
+    case TYPES.ADD_SHORT_LIST_FAILED:
+      return {...state, isGetPaymentDetailsLoading: false};
+
+    // // REMOVE SHORT LIST
     //
-    // case TYPES.PARTNER_PREFERENCES_DETAILS_SUCCESS:
+    // case TYPES.REMOVE_SHORT_LIST:
+    //   return {...state, isGetPaymentDetailsLoading: true};
+    //
+    // case TYPES.REMOVE_SHORT_LIST_SUCCESS:
     //   return {
     //     ...state,
-    //     addPartnerReferences: action.data,
-    //     isSendRequestLoading: false,
+    //     removeShortListData: action.data,
+    //     isGetPaymentDetailsLoading: false,
     //   };
-    // case TYPES.PARTNER_PREFERENCES_DETAILS_FAILED:
-    //   return {...state, isSendRequestLoading: false};
+    // case TYPES.REMOVE_SHORT_LIST_FAILED:
+    //   return {...state, isGetPaymentDetailsLoading: false};
+
+    // USER LIKE
+    // case TYPES.USER_LIKE:
+    //   return {...state, isGetPaymentDetailsLoading: true};
+    //
+    // case TYPES.USER_LIKE_SUCCESS:
+    //   return {
+    //     ...state,
+    //     userLike: action.data,
+    //     isGetPaymentDetailsLoading: false,
+    //   };
+    // case TYPES.USER_LIKE_FAILED:
+    //   return {...state, isGetPaymentDetailsLoading: false};
+
+    // USER DIS_LIKE
+
+    // case TYPES.USER_DIS_LIKE:
+    //   return {...state, isGetPaymentDetailsLoading: true};
+    //
+    // case TYPES.USER_DIS_SUCCESS:
+    //   return {
+    //     ...state,
+    //     userLike: action.data,
+    //     isGetPaymentDetailsLoading: false,
+    //   };
+    // case TYPES.USER_DIS_FAILED:
+    //   return {...state, isGetPaymentDetailsLoading: false};
 
     default:
       return state;

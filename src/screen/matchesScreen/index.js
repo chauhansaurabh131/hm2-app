@@ -46,11 +46,15 @@ const MatchesScreen = ({navigation}) => {
     state => state.home,
   );
 
+  // console.log(' === userData/////// ===> ', userData);
+
   const {declineFriends, myAllFriends, isUserDataLoading} = useSelector(
     state => state.chat,
   );
 
   const friends = myAllFriends.data?.results || [];
+
+  // console.log(' === friends.... ===> ', friends);
 
   const tabsData = [
     {id: 'new', label: 'New'},
@@ -393,7 +397,7 @@ const MatchesScreen = ({navigation}) => {
     //   item?.userProfilePic.map(pic => pic.url),
     // );
 
-    console.log(' === renderUserItem..... ===> ', item?.hobbies);
+    // console.log(' === renderUserItem..... ===> ', item);
 
     const userAllImage = Array.isArray(item?.userProfilePic)
       ? item.userProfilePic.map(pic => pic.url)
@@ -464,9 +468,10 @@ const MatchesScreen = ({navigation}) => {
         workCity: item?.userProfessional?.workCity,
         workCountry: item?.userProfessional?.workCountry,
         hobbies: item?.hobbies,
+        matchPercentage: item?.matchPercentage,
       };
 
-      console.log('User Data:', matchesUserData);
+      // console.log('User Data:', matchesUserData);
 
       // Navigate to UserDetailsScreen
       navigation.navigate('UserDetailsScreen', {matchesUserData});
@@ -558,7 +563,8 @@ const MatchesScreen = ({navigation}) => {
                       lineHeight: hp(18),
                       fontFamily: fontFamily.poppins500,
                     }}>
-                    85% Match
+                    {/*85% Match*/}
+                    {item?.matchPercentage}% Match
                   </Text>
                 </TouchableOpacity>
 

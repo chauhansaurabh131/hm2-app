@@ -31,9 +31,9 @@ const style = StyleSheet.create({
     marginTop: hp(31),
   },
   headingCredentialsImageStyle: {
-    width: hp(21.2),
+    width: hp(11),
     height: hp(14),
-    tintColor: colors.black,
+    resizeMode: 'contain',
   },
   headingCredentialsText: {
     marginLeft: wp(12.8),
@@ -52,10 +52,8 @@ const style = StyleSheet.create({
   },
   underLineHeaderStyle: {
     width: '100%',
-    height: 1,
     borderWidth: 1,
     borderColor: '#F2F2F2',
-    // borderColor: 'red',
     marginTop: hp(12),
   },
   bodyContainer: {
@@ -73,7 +71,7 @@ const style = StyleSheet.create({
     width: '100%',
     borderWidth: 1,
     borderColor: '#E7E7E7',
-    marginTop: hp(15),
+    marginTop: hp(28),
   },
 });
 

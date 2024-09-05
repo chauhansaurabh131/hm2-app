@@ -75,13 +75,16 @@ const NewLogInScreen = () => {
             />
 
             <CommonGradientButton
-              buttonName={'Send Code'}
+              buttonName={'Login'}
               containerStyle={{width: '100%', marginTop: hp(20)}}
               onPress={onPressLogin}
               loading={loading}
             />
 
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('ResetPasswordScreen');
+              }}>
               <Text
                 style={{
                   alignSelf: 'center',

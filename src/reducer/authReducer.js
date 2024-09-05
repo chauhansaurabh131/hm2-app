@@ -1,4 +1,5 @@
 import * as TYPES from '../actions/actionTypes';
+import {SET_LOADING} from '../store/type/types';
 
 const initialState = {
   isLoggedIn: false,
@@ -30,6 +31,12 @@ export default (state = initialState, action) => {
 
     case TYPES.CHANGE_STACK:
       return {...state, isLoggedIn: !state.isLoggedIn};
+
+    case SET_LOADING:
+      return {
+        ...state,
+        loading: action.payload,
+      };
 
     //UPDATE USER DETAILS
     case TYPES.SET_UPDATE_USER_DETAILS:

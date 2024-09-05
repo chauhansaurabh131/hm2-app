@@ -114,6 +114,12 @@ export const icons = {
   report_icon: require('./icons/report_icon.png'),
   long_term_icon: require('./icons/long_Term_Icon.png'),
   new_dating_icon: require('./icons/new_Dating_icon.png'),
+  user_like_icon: require('./icons/user_like_icon.png'),
+  user_Thums_Down: require('./icons/user_Thums_Down.png'),
+  user_add_short_list: require('./icons/user_add_short_list.png'),
+  not_share_icon: require('./icons/not_share_icon.png'),
+  copy_icon: require('./icons/copy_icon.png'),
+  privacy_setting_icon: require('./icons/privacy_setting_icon.png'),
 };
 
 export const gif = {

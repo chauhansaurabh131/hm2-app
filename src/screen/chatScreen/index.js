@@ -24,7 +24,7 @@ const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const ChatScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
-  const userImage = user?.user?.userProfilePic?.[0]?.url;
+  const userImage = user?.user?.profilePic;
 
   const [userInput, setUserInput] = useState('');
   const [status, setStatus] = useState('Disconnected');
@@ -178,7 +178,7 @@ const ChatScreen = ({navigation}) => {
               <Image source={{uri: userImage}} style={style.profileLogoStyle} />
             ) : (
               <Image
-                source={images.profileDisplayImage}
+                source={images.empty_male_Image}
                 style={style.profileLogoStyle}
               />
             )}

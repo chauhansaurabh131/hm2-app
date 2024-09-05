@@ -4,31 +4,47 @@ import style from './style';
 import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import ProfileCheckboxGroup from '../../components/profileCheckBox';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDetails} from '../../actions/homeActions';
+import {hp} from '../../utils/helpers';
 
 const PrivacyScreen = () => {
   const navigation = useNavigation();
 
+  const {user} = useSelector(state => state.auth);
+
+  const apiDispatch = useDispatch();
+
   const Display_Name = [
-    {id: 1, label: 'Rihan Gajjar'},
-    {id: 2, label: 'R Gajjar'},
-    {id: 3, label: 'Rihan G'},
-    {id: 4, label: 'Profile ID: SH00289943'},
+    {id: 1, label: `${user?.user.firstName} ${user?.user.lastName}`},
+    {id: 2, label: user?.user.firstName},
+    {id: 3, label: `Profile ID: ${user?.user.userUniqueId}`},
   ];
 
-  const Number_Privacy_Data = [
-    {id: 1, label: 'Visible to all'},
-    {id: 2, label: 'Only visible to registered Members'},
-  ];
+  const handleCheckboxChange = label => {
+    apiDispatch(updateDetails({name: label}));
+  };
+
+  const selectedId =
+    Display_Name.findIndex(item => item.label === user?.user.name) + 1;
 
   const Profile_Privacy = [
     {
       id: 1,
-      label: 'Visible to all, including unregistered visitors',
-      subTitle: '(photo and Name will not be visible on Profile)',
+      label: 'Private Profile',
+      subTitle: 'Only Full Name will be visible',
     },
     {
       id: 2,
-      label: 'Only visible to registered Members',
+      label: 'Visible to Premium Members Only',
+      subTitle:
+        'Full Name, Photo Gallery, Contact, Address will be\nhidden to unregistered members.',
+    },
+    {
+      id: 3,
+      label: 'Only Accepted Members',
+      subTitle:
+        'Full Name and Photos will be visible and contact,\naddress will not be visible',
     },
   ];
 
@@ -45,12 +61,13 @@ const PrivacyScreen = () => {
             style={style.profileImageStyle}
           />
         </View>
+
         <View style={style.headingTittleContainer}>
           <Image
-            source={icons.delete_Profile_icon}
+            source={icons.privacy_setting_icon}
             style={style.headingCredentialsImageStyle}
           />
-          <Text style={style.headingCredentialsText}>Hide/Delete Profile</Text>
+          <Text style={style.headingCredentialsText}>Privacy setting</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>
@@ -61,35 +78,33 @@ const PrivacyScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+
       <View style={style.underLineHeaderStyle} />
-      {/*BODY*/}
 
       <View style={style.bodyContainer}>
         <Text style={style.bodyTittleTextStyle}>Select Display Name</Text>
 
-        <ProfileCheckboxGroup data={Display_Name} selectedId={1} />
+        <View style={{marginTop: hp(15)}}>
+          <ProfileCheckboxGroup
+            data={Display_Name}
+            selectedId={selectedId || 1} // Default to 1 if `selectedId` is undefined
+            onChange={handleCheckboxChange}
+          />
+        </View>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
-          Who can see your mobile Number?{' '}
+        <Text style={[style.bodyTittleTextStyle, {marginTop: 27}]}>
+          Select Profile Privacy Option
         </Text>
 
-        <ProfileCheckboxGroup data={Number_Privacy_Data} selectedId={1} />
-
-        <View style={style.descriptionBodyUnderlineStyle} selectedId={1} />
-
-        <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
-          Who can see your email address?
-        </Text>
-        <ProfileCheckboxGroup data={Number_Privacy_Data} selectedId={1} />
-
-        <View style={style.descriptionBodyUnderlineStyle} />
-
-        <Text style={[style.bodyTittleTextStyle, {marginTop: 14}]}>
-          Profile Privacy
-        </Text>
-        <ProfileCheckboxGroup data={Profile_Privacy} selectedId={1} />
+        <View style={{marginTop: hp(22)}}>
+          <ProfileCheckboxGroup
+            data={Profile_Privacy}
+            selectedId={1}
+            containerRow={{marginTop: 10}}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -11,17 +11,11 @@ import {colors} from '../../utils/colors';
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {icons, images} from '../../assets';
-import {
-  fontFamily,
-  fontSize,
-  hp,
-  isIOS,
-  screenHeight,
-  wp,
-} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, screenHeight, wp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {paymentDetails} from '../../actions/homeActions';
+import {useDispatch, useSelector} from 'react-redux';
 
 const UpgradeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('silver');
@@ -30,6 +24,18 @@ const UpgradeScreen = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState('');
   const [pressed, setPressed] = useState(false);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(paymentDetails());
+  }, [dispatch]);
+
+  const payment = useSelector(state => state.home);
+
+  const PlanDetails = payment?.paymentDetail;
+
+  // console.log(' === PlanDetails.... ===> ', PlanDetails);
 
   const openBottomSheet = (newPrice, oldPrice) => {
     setSelectedPrice({newPrice, oldPrice});

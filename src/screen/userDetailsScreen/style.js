@@ -60,11 +60,13 @@ const style = StyleSheet.create({
     marginHorizontal: wp(17),
   },
   onlineBodyStyle: {
-    width: wp(34.8),
-    height: hp(12),
+    width: wp(6),
+    height: hp(6),
     borderRadius: 5,
     backgroundColor: '#24FF00',
-    justifyContent: 'center',
+    // justifyContent: 'center',
+    marginLeft: wp(5),
+    top: 15,
   },
   bodyTextStyle: {
     color: colors.black,
@@ -134,8 +136,7 @@ const style = StyleSheet.create({
     resizeMode: 'contain',
   },
   startIconContainer: {
-    position: 'absolute',
-    right: 10,
+    marginLeft: wp(22),
   },
   starIcon: {
     width: hp(21.67),
@@ -146,7 +147,8 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 15,
-    marginTop: -10,
+    // marginTop: -10,
+    marginTop: 5,
   },
   dislikeIcon: {
     width: hp(40),
@@ -170,6 +172,21 @@ const style = StyleSheet.create({
     width: hp(40),
     height: hp(40),
     resizeMode: 'contain',
+  },
+  matchesText: {
+    textAlign: 'center',
+    fontSize: fontSize(10),
+    lineHeight: hp(15),
+    fontFamily: fontFamily.poppins400,
+    color: colors.white,
+  },
+  matchesContainer: {
+    width: hp(87),
+    height: hp(24),
+    borderRadius: 15,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 10,
   },
 });
 

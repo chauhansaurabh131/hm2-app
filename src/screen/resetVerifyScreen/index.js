@@ -1,70 +1,91 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
-  SafeAreaView,
-  TextInput,
-  View,
-  StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
   Image,
+  Keyboard,
+  SafeAreaView,
   Text,
+  TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  Alert,
 } from 'react-native';
-import {colors} from '../../utils/colors';
-import {hp, wp, fontSize, fontFamily, isIOS} from '../../utils/helpers';
+import axios from 'axios';
 import {icons, images} from '../../assets';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
+import {colors} from '../../utils/colors';
+import {useNavigation} from '@react-navigation/native';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {verifyOTP} from '../../actions/authActions';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
 
-const VerifyEmailOtpScreen = ({route}) => {
+const ResetVerifyScreen = ({route}) => {
   const {email = ''} = route.params;
+  const navigation = useNavigation();
 
   const [otp, setOtp] = useState(['', '', '', '']);
+  const [loading, setLoading] = useState(false);
   const inputRefs = useRef([]);
-
-  const {otpVerifiedDetails, loading} = useSelector(state => state.auth);
-
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const hiddenChars = email.substring(0, 3);
   const domain = email.substring(email.indexOf('@'));
   const maskedEmail = hiddenChars + '******' + domain;
 
   const handleOtpChange = (value, index) => {
-    // Ensure that only numeric values are accepted
     if (/^[0-9]$/.test(value)) {
       const otpCopy = [...otp];
       otpCopy[index] = value;
       setOtp(otpCopy);
 
-      // Automatically focus on the next input field
       if (value && index < 3) {
         inputRefs.current[index + 1].focus();
       }
     } else if (value === '') {
-      // Handle backspace to clear the value
       const otpCopy = [...otp];
       otpCopy[index] = '';
       setOtp(otpCopy);
 
-      // Automatically go back to the previous input if the current one is empty
       if (index > 0) {
         inputRefs.current[index - 1].focus();
       }
     }
   };
 
-  const onVerifyCodePress = () => {
+  const onVerifyCodePress = async () => {
     const enteredOtp = otp.join('');
-    console.log('Entered OTP:', enteredOtp);
-    dispatch(
-      verifyOTP({email, otp: otp.join('')}, () =>
-        navigation.navigate('NewSetPasswordScreen'),
-      ),
-    );
+    if (enteredOtp.length !== 4) {
+      Alert.alert('Invalid OTP', 'Please enter the 4-digit OTP.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        'https://happymilan.tech/api/v1/user/auth/verify-reset-otp',
+        {
+          email,
+          otp: enteredOtp,
+        },
+      );
+
+      if (response.status === 200) {
+        // Navigate to VerifySetPasswordScreen on successful verification
+        navigation.navigate('VerifySetPasswordScreen', {email, otp});
+      } else {
+        Alert.alert(
+          'Verification Failed',
+          'The OTP you entered is incorrect. Please try again.',
+        );
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      Alert.alert(
+        'Error',
+        'An error occurred while verifying the OTP. Please try again.',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,8 +148,20 @@ const VerifyEmailOtpScreen = ({route}) => {
             </Text>
           </View>
 
-          <View style={styles.container}>
-            <View style={styles.otpContainer}>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: hp(20),
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: wp(330),
+                height: hp(150),
+              }}>
               {otp.map((digit, index) => (
                 <TextInput
                   key={index}
@@ -138,9 +171,19 @@ const VerifyEmailOtpScreen = ({route}) => {
                   maxLength={1}
                   secureTextEntry={false}
                   style={[
-                    styles.otpInput,
-                    digit ? styles.activeInput : styles.inactiveInput,
-                    digit ? styles.digitStyle : styles.placeholderStyle,
+                    {
+                      width: wp(60),
+                      height: hp(50),
+                      textAlign: 'center',
+                      fontSize: fontSize(24),
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#D9D9D9',
+                      fontWeight: 'bold',
+                    },
+                    digit
+                      ? {borderBottomColor: colors.black}
+                      : {borderBottomColor: '#D9D9D9'},
+                    digit ? {color: colors.black} : {color: '#D9D9D9'},
                   ]}
                   ref={ref => (inputRefs.current[index] = ref)}
                   placeholder="0"
@@ -165,9 +208,6 @@ const VerifyEmailOtpScreen = ({route}) => {
 
           <View
             style={{
-              // position: 'absolute',
-              // bottom: 0,
-              // alignSelf: 'center',
               marginTop: hp(90),
               alignSelf: 'center',
             }}>
@@ -187,7 +227,6 @@ const VerifyEmailOtpScreen = ({route}) => {
                 alignSelf: 'center',
                 marginBottom: isIOS ? hp(10) : hp(30),
                 marginTop: hp(58),
-
                 alignItems: 'center',
               }}
               onPress={() => {
@@ -213,40 +252,4 @@ const VerifyEmailOtpScreen = ({route}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: hp(20),
-  },
-  otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: wp(330),
-    height: hp(150),
-  },
-  otpInput: {
-    width: wp(60),
-    height: hp(50),
-    textAlign: 'center',
-    fontSize: fontSize(24),
-    borderBottomWidth: 1,
-    borderBottomColor: '#D9D9D9',
-    fontWeight: 'bold',
-  },
-  activeInput: {
-    borderBottomColor: colors.black,
-  },
-  inactiveInput: {
-    borderBottomColor: '#D9D9D9',
-  },
-  digitStyle: {
-    color: colors.black,
-  },
-  placeholderStyle: {
-    color: '#D9D9D9',
-  },
-});
-
-export default VerifyEmailOtpScreen;
+export default ResetVerifyScreen;
