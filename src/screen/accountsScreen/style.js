@@ -74,13 +74,13 @@ const style = StyleSheet.create({
     color: colors.black,
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
   },
   credentialDescriptionTextStyle: {
     color: colors.black,
     marginTop: hp(9),
-    fontSize: fontSize(8),
-    lineHeight: hp(12),
+    fontSize: fontSize(9),
+    lineHeight: hp(15),
     fontFamily: fontFamily.poppins400,
     marginRight: 17,
   },
@@ -111,6 +111,7 @@ const style = StyleSheet.create({
     height: hp(14),
     resizeMode: 'contain',
     top: 4,
+    tintColor: 'black',
   },
 });
 

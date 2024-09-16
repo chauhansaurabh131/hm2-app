@@ -11,7 +11,14 @@ import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import {icons} from '../../../assets';
 
-const AdminAddressDetailsScreen = () => {
+const AdminAddressDetailsScreen = (...params) => {
+  const userPersonalData = params[0];
+
+  // console.log(
+  //   ' === var ===> ',
+  //   userPersonalData?.address?.originResidenceAddress,
+  // );
+
   const [residingAddress, setResidingAddress] = useState(
     '01-02, Delhi Street, Delhi, India',
   );
@@ -38,7 +45,7 @@ const AdminAddressDetailsScreen = () => {
               fontFamily: fontFamily.poppins500,
               color: colors.black,
             }}>
-            Date of Birth
+            Current Residing Address
           </Text>
           {isEditing ? (
             <TextInput
@@ -79,7 +86,7 @@ const AdminAddressDetailsScreen = () => {
               fontFamily: fontFamily.poppins500,
               color: colors.black,
             }}>
-            Date of Birth
+            Current City
           </Text>
           {isEditing ? (
             <TextInput
@@ -120,7 +127,7 @@ const AdminAddressDetailsScreen = () => {
               fontFamily: fontFamily.poppins500,
               color: colors.black,
             }}>
-            Date of Birth
+            Current Residing Country
           </Text>
           {isEditing ? (
             <TextInput
@@ -161,7 +168,7 @@ const AdminAddressDetailsScreen = () => {
               fontFamily: fontFamily.poppins500,
               color: colors.black,
             }}>
-            Date of Birth
+            Permanent Address
           </Text>
           {isEditing ? (
             <TextInput

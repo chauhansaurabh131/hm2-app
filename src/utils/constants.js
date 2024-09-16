@@ -24,7 +24,8 @@ export const STANDARD_SCREEN_WIDTH = 390;
 
 export const TOKEN = 'TOKEN';
 export const REFRESH_TOKEN = 'REFRESH_TOKEN';
-export const BASE_URL = 'https://happymilan.tech';
+// export const BASE_URL = 'https://happymilan.tech';
+export const BASE_URL = 'https://stag.mntech.website';
 
 // https://happymilan.tech/api/v1/user/auth/register
 
@@ -138,12 +139,12 @@ export const UserDetailsProfile1 = [
 export const AdminDetailsProfile = [
   {
     phaseName: 'General Information',
-    component: <AdminGeneralInformationScreen />,
+    component: params => <AdminGeneralInformationScreen {...params} />,
     icon: require('../assets/icons/profile_logo.png'),
   },
   {
     phaseName: 'Address Details',
-    component: <AdminAddressDetailsScreen />,
+    component: params => <AdminAddressDetailsScreen {...params} />,
     icon: require('../assets/icons/address_location_logo.png'),
   },
   {

@@ -51,7 +51,8 @@ const VerifySetPasswordScreen = ({route}) => {
       setLoading(true); // Show loader
       try {
         const response = await axios.post(
-          'https://happymilan.tech/api/v1/user/auth/reset-password',
+          // 'https://happymilan.tech/api/v1/user/auth/reset-password',
+          ' https://stag.mntech.website/api/v1/user/auth/reset-password',
           {
             email,
             password,

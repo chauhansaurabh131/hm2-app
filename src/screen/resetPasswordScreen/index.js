@@ -33,7 +33,8 @@ const ResetPasswordScreen = () => {
 
     try {
       const response = await axios.post(
-        'https://happymilan.tech/api/v1/user/auth/forgot-password',
+        // 'https://happymilan.tech/api/v1/user/auth/forgot-password',
+        'https://stag.mntech.website/api/v1/user/auth/forgot-password',
         {email},
         {headers: {'Content-Type': 'application/json'}},
       );

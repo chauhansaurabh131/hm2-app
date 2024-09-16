@@ -47,10 +47,20 @@ import AccountsScreen from '../screen/accountsScreen';
 import CredentialsScreen from '../screen/CredentialsScreen';
 import HideDeleteProfileScreen from '../screen/hideDeleteProfileScreen';
 import PrivacyScreen from '../screen/privacyScreen';
+import ConnectToWebScreen from '../screen/connectToWebScreen ';
+import QRCodeScreen from '../screen/QRCodeScreen';
+import EmailSmsAlertScreen from '../screen/emailSmsAlertScreen';
+import {createStackNavigator} from '@react-navigation/stack';
+import PlanScreen from '../screen/planScreen';
+import KycDetailsScreen from '../screen/kycDetailsScreen ';
+import CreatingProfileScreen from '../screen/creatingProfileScreen';
+import DatingHomeScreen from '../screen/DatingHomeScreen';
+import DatingExploreScreen from '../screen/datingExploreScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const ExtrasStack = createNativeStackNavigator();
+const ExtraStack = createStackNavigator();
 
 const MainNavigator = () => {
   const [isDatingSelected, setIsDatingSelected] = useState(false);
@@ -153,6 +163,60 @@ const MainNavigator = () => {
     );
   };
 
+  const ExtraScreens = () => {
+    return (
+      <ExtraStack.Navigator>
+        <ExtraStack.Screen
+          name="AccountsScreen"
+          component={AccountsScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="CredentialsScreen"
+          component={CredentialsScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="HideDeleteProfileScreen"
+          component={HideDeleteProfileScreen}
+          options={{headerShown: false}}
+        />
+
+        {/*<ExtraStack.Screen*/}
+        {/*  name="HomeTabs"*/}
+        {/*  component={HomeTabs}*/}
+        {/*  options={{headerShown: false}}*/}
+        {/*/>*/}
+
+        <ExtraStack.Screen
+          name="PrivacyScreen"
+          component={PrivacyScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="EmailSmsAlertScreen"
+          component={EmailSmsAlertScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="PlanScreen"
+          component={PlanScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="KycDetailsScreen"
+          component={KycDetailsScreen}
+          options={{headerShown: false}}
+        />
+      </ExtraStack.Navigator>
+    );
+  };
+
   const UsersChatsScreen = ({route}) => {
     const {selectedBox} = route.params ?? {};
     return (
@@ -175,9 +239,17 @@ const MainNavigator = () => {
       <Stack.Navigator
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
-        {/*<Stack.Screen name="DemoCode" component={DemoCode} />*/}
+        <Stack.Screen name="DemoCode" component={DemoCode} />
+
+        <Stack.Screen name={'DatingHomeScreen'} component={DatingHomeScreen} />
+        <Stack.Screen
+          name={'DatingExploreScreen'}
+          component={DatingExploreScreen}
+        />
+
         <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
+
         <Stack.Screen
           name={'DemoPractiveCodeScreen'}
           component={DemoPractiveCodeScreen}
@@ -208,6 +280,18 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'UserDetailsScreen'}
           component={UserDetailsScreen}
+        />
+
+        <Stack.Screen
+          name={'ConnectToWebScreen'}
+          component={ConnectToWebScreen}
+        />
+
+        <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
+
+        <Stack.Screen
+          name="CreatingProfileScreen"
+          component={CreatingProfileScreen}
         />
 
         <Stack.Screen name={'Message'} component={Message} />
@@ -257,50 +341,25 @@ const MainNavigator = () => {
           }}
         />
 
-        {!isDatingSelected ? (
-          <Tab.Screen
-            name="Matches"
-            component={MatchesScreen}
-            options={{
-              tabBarIcon: ({color, size, focused}) => (
-                <Image
-                  source={icons.matchesIcon}
-                  style={[getIconStyle(focused), style.matchesIconStyle]}
-                />
-              ),
-              tabBarLabel: ({focused}) => (
-                <Text
-                  style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
-                  Matches
-                </Text>
-              ),
-              tabBarButton: props => <CustomTabBarButton {...props} />,
-              headerShown: false,
-            }}
-          />
-        ) : (
-          <Tab.Screen
-            name="Explore"
-            component={ExploreScreen}
-            // initialParams={{selectedBox}}
-            options={{
-              tabBarIcon: ({color, size, focused}) => (
-                <Image
-                  source={icons.matchesIcon}
-                  style={[getIconStyle(focused), style.matchesIconStyle]}
-                />
-              ),
-              tabBarLabel: ({focused}) => (
-                <Text
-                  style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
-                  Explore
-                </Text>
-              ),
-              tabBarButton: props => <CustomTabBarButton {...props} />,
-              headerShown: false,
-            }}
-          />
-        )}
+        <Tab.Screen
+          name="Matches"
+          component={MatchesScreen}
+          options={{
+            tabBarIcon: ({color, size, focused}) => (
+              <Image
+                source={icons.matchesIcon}
+                style={[getIconStyle(focused), style.matchesIconStyle]}
+              />
+            ),
+            tabBarLabel: ({focused}) => (
+              <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
+                Matches
+              </Text>
+            ),
+            tabBarButton: props => <CustomTabBarButton {...props} />,
+            headerShown: false,
+          }}
+        />
 
         <Tab.Screen
           name="Chat"
@@ -378,26 +437,32 @@ const MainNavigator = () => {
           options={{tabBarButton: () => null, headerShown: false}}
         />
 
+        {/*<Tab.Screen*/}
+        {/*  name="AccountsScreen"*/}
+        {/*  component={AccountsScreen}*/}
+        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
+        {/*/>*/}
+
+        {/*<Tab.Screen*/}
+        {/*  name="CredentialsScreen"*/}
+        {/*  component={CredentialsScreen}*/}
+        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
+        {/*/>*/}
+
+        {/*<Tab.Screen*/}
+        {/*  name="HideDeleteProfileScreen"*/}
+        {/*  component={HideDeleteProfileScreen}*/}
+        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
+        {/*/>*/}
+        {/*<Tab.Screen*/}
+        {/*  name="PrivacyScreen"*/}
+        {/*  component={PrivacyScreen}*/}
+        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
+        {/*/>*/}
+
         <Tab.Screen
           name="AccountsScreen"
-          component={AccountsScreen}
-          options={{tabBarButton: () => null, headerShown: false}}
-        />
-
-        <Tab.Screen
-          name="CredentialsScreen"
-          component={CredentialsScreen}
-          options={{tabBarButton: () => null, headerShown: false}}
-        />
-
-        <Tab.Screen
-          name="HideDeleteProfileScreen"
-          component={HideDeleteProfileScreen}
-          options={{tabBarButton: () => null, headerShown: false}}
-        />
-        <Tab.Screen
-          name="PrivacyScreen"
-          component={PrivacyScreen}
+          component={ExtraScreens}
           options={{tabBarButton: () => null, headerShown: false}}
         />
       </Tab.Navigator>

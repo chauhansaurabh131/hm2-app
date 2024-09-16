@@ -61,7 +61,8 @@ const ResetVerifyScreen = ({route}) => {
 
     try {
       const response = await axios.post(
-        'https://happymilan.tech/api/v1/user/auth/verify-reset-otp',
+        // 'https://happymilan.tech/api/v1/user/auth/verify-reset-otp',
+        'https://stag.mntech.website/api/v1/user/auth/verify-reset-otp',
         {
           email,
           otp: enteredOtp,

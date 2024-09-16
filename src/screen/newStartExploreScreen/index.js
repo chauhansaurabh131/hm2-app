@@ -8,17 +8,42 @@ import CommonGradientButton from '../../components/commonGradientButton';
 import {style} from './style';
 import {changeStack} from '../../actions/authActions';
 import {useDispatch} from 'react-redux';
+import {updateDetails} from '../../actions/homeActions';
 
 const NewStartExploreScreen = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null); // State to manage selected option
+  const apiDispatch = useDispatch();
   const dispatch = useDispatch();
 
   const selectionOptionClick = () => {
     // if (selectedBox === 'marriage') {
-    dispatch(changeStack());
+    // dispatch(changeStack());
     // } else {
     // }
+    if (selectedOption === 'longTerm') {
+      console.log('marriage');
+      apiDispatch(
+        updateDetails(
+          {
+            appUsesType: 'marriage',
+          },
+          () => dispatch(changeStack()),
+        ),
+      );
+    } else if (selectedOption === 'dating') {
+      console.log('dating');
+      apiDispatch(
+        updateDetails(
+          {
+            appUsesType: 'dating',
+          },
+          () => dispatch(changeStack()),
+        ),
+      );
+    } else if (selectedOption === 'social') {
+      console.log('social');
+    }
   };
 
   return (

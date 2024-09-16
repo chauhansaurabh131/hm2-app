@@ -39,6 +39,15 @@ const HomeTopSheetComponent = ({
   const userImage = user?.user?.profilePic;
   const UserUniqueId = user?.user?.userUniqueId;
 
+  const capitalizeFirstLetter = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+  const name = capitalizeFirstLetter(user?.user?.name);
+
+  // console.log(' === user... ===> ', user?.user?.name);
+
+  // console.log(' === isModalVisible  open===> ', isModalVisible);
+
   useEffect(() => {
     if (!accessToken) {
       return;
@@ -91,7 +100,9 @@ const HomeTopSheetComponent = ({
   }, [isVisible]);
 
   const toggleModal = () => {
+    console.log(' === isModalVisible ===> ', isModalVisible);
     setModalVisible(!isModalVisible);
+    // setModalVisible(true);
   };
 
   const handleLogout = () => {
@@ -113,7 +124,7 @@ const HomeTopSheetComponent = ({
 
   return (
     <SafeAreaView>
-      <TouchableOpacity onPress={toggleModal} />
+      {/*<TouchableOpacity onPress={toggleModal} />*/}
 
       <Modal
         isVisible={isVisible}
@@ -141,7 +152,7 @@ const HomeTopSheetComponent = ({
               />
             )}
 
-            <Text style={styles.userNameTextStyle}>Riya Shah</Text>
+            <Text style={styles.userNameTextStyle}>{name}</Text>
 
             <View style={styles.userDescriptionContainer}>
               <Text style={styles.userNumberTextStyle}>{UserUniqueId}</Text>
@@ -199,8 +210,8 @@ const HomeTopSheetComponent = ({
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
-                  navigation.navigate('MyProfileScreen');
                   toggleModal();
+                  navigation.navigate('MyProfileScreen');
                 }}>
                 <View
                   style={{
@@ -300,6 +311,11 @@ const HomeTopSheetComponent = ({
               </TouchableOpacity>
 
               <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('ConnectToWebScreen');
+                  console.log(' press> ', 'press');
+                  toggleModal(); // Close the modal after navigation
+                }}
                 activeOpacity={0.5}
                 style={{
                   flexDirection: 'row',
@@ -322,7 +338,7 @@ const HomeTopSheetComponent = ({
                     lineHeight: hp(21),
                     fontWeight: '400',
                   }}>
-                  Link a Device
+                  Connect to Web
                 </Text>
               </TouchableOpacity>
             </View>

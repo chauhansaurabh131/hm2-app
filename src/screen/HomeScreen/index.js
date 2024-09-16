@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -19,7 +19,7 @@ import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatList
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import FastImage from 'react-native-fast-image';
 import CommonGradientButton from '../../components/commonGradientButton';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {userDatas} from '../../actions/homeActions';
 import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
@@ -90,6 +90,10 @@ const HomeScreen = ({route}) => {
 
   const {userData} = useSelector(state => state.home);
 
+  // {userData?.data?.length}
+
+  console.log(' === 1111 ===> ', userData);
+
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
   useEffect(() => {
@@ -106,7 +110,7 @@ const HomeScreen = ({route}) => {
     user?.user?.firstName || user?.user?.name,
   );
   const lastName = user?.user?.lastName;
-  const name = user?.user?.name;
+  const name = capitalizeFirstLetter(user?.user?.name);
   const profilePicUrl = user?.user?.profilePic;
   const UserUniqueId = user?.user?.userUniqueId;
 
@@ -164,8 +168,15 @@ const HomeScreen = ({route}) => {
   };
 
   const toggleModal = () => {
+    // console.log(' === toggleModal ===> ', topModalVisible);
     setTopModalVisible(!topModalVisible);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      setTopModalVisible(false);
+    }, []),
+  );
 
   const verificationModalToggle = () => {
     setCompleteModalModalVisible(false);

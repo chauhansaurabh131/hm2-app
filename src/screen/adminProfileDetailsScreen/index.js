@@ -75,7 +75,7 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
   );
 };
 
-const AdminProfileDetailsScreen = ({onEditButtonPress}) => {
+const AdminProfileDetailsScreen = ({onEditButtonPress, userData}) => {
   const phaseReducerInitialState = {
     activeIndex: 0,
   };
@@ -85,7 +85,7 @@ const AdminProfileDetailsScreen = ({onEditButtonPress}) => {
     phaseReducerInitialState,
   );
 
-  const RenderComp = () => AdminDetailsProfile[activeIndex].component;
+  const RenderComp = () => AdminDetailsProfile[activeIndex].component(userData);
   const navigateToScreen = screenNumber => {
     dispatch({type: NUMBER_SCREEN, screenNumber});
   };

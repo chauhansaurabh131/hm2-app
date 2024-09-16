@@ -33,6 +33,15 @@ export const images = {
   main_Screen_Img_two: require('./images/main_Screen_Img_2.png'),
   main_Screen_Img_three: require('./images/main_Screen_Img_3.png'),
   main_Screen_Img_four: require('./images/main_Screen_Img_4.png'),
+  plan_background_img: require('./images/plan_background_img.png'),
+  meet_new_friends_img: require('./images/meet_new_friend_img.png'),
+  looking_love_img: require('./images/looking_love_img.png'),
+  movie_date_img: require('./images/movie_Date_img.png'),
+  foodies_img: require('./images/foodies_img.png'),
+  travel_Buddies_img: require('./images/travel_Buddies_img.png'),
+  game_lover_img: require('./images/game_lover_img.png'),
+  chit_chat_img: require('./images/chit_chat_img.png'),
+  adventurous_img: require('./images/adventurous_img.png'),
 };
 
 export const icons = {
@@ -120,6 +129,10 @@ export const icons = {
   not_share_icon: require('./icons/not_share_icon.png'),
   copy_icon: require('./icons/copy_icon.png'),
   privacy_setting_icon: require('./icons/privacy_setting_icon.png'),
+  connect_web_icon: require('./icons/connect_web_icon.png'),
+  notification_icon: require('./icons/notificaton_icon.png'),
+  plan_icon: require('./icons/plan_icon.png'),
+  kyc_icon: require('./icons/kyc_icon.png'),
 };
 
 export const gif = {

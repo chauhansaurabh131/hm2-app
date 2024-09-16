@@ -26,8 +26,11 @@ const MyProfileScreen = () => {
   const [editedDescription, setEditedDescription] = useState(description);
 
   const {user} = useSelector(state => state.auth);
+  const userData = user.user;
 
   // console.log(' === user.... ===> ', user.user);
+
+  const profileImage = user?.user?.profilePic;
 
   const capitalizeFirstLetter = string => {
     if (!string) {
@@ -77,8 +80,15 @@ const MyProfileScreen = () => {
 
       <ScrollView>
         <View>
+          {/*<Image*/}
+          {/*  source={images.profileDisplayImage}*/}
+          {/*  style={style.userProfileImage}*/}
+          {/*/>*/}
+
           <Image
-            source={images.profileDisplayImage}
+            source={
+              profileImage ? {uri: profileImage} : images.empty_male_Image
+            }
             style={style.userProfileImage}
           />
           <LinearGradient
@@ -251,6 +261,7 @@ const MyProfileScreen = () => {
 
           <AdminProfileDetailsScreen
             onEditButtonPress={handleEditDescription}
+            userData={userData}
           />
 
           {isEditing && (

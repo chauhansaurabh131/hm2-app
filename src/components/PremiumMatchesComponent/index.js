@@ -6,23 +6,61 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import {icons, images} from '../../assets';
 import {fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {addShortList, sendRequest} from '../../actions/homeActions';
+import {addShortList, sendRequest, userDatas} from '../../actions/homeActions';
 
 const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
   const {user} = useSelector(state => state.auth);
-
-  // console.log(' === user... ===> ', user.user.id);
-  const [shortlistedUsers, setShortlistedUsers] = useState([]);
-
+  const {userData} = useSelector(state => state.home);
   const dispatch = useDispatch();
 
-  const {userData} = useSelector(state => state.home);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]); // Store combined users here
+  const [loadingMore, setLoadingMore] = useState(false); // Track if loading more data
+
+  const totalPages = userData?.data?.totalPages || 1;
+
+  useEffect(() => {
+    dispatch(userDatas({page: 1})); // Load the first page on mount
+  }, []);
+
+  useEffect(() => {
+    if (userData?.data?.users) {
+      if (currentPage === 1) {
+        // On the first page, replace users
+        setUsers(userData.data.users);
+      } else {
+        // On other pages, append users
+        setUsers(prevUsers => [...prevUsers, ...userData.data.users]);
+      }
+      setLoadingMore(false); // Stop loading after data is appended
+    }
+  }, [userData]);
+
+  const renderFooter = () => {
+    if (loadingMore) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
+    }
+    return null; // No more data or still loading, no footer needed
+  };
+
+  const loadMoreData = () => {
+    if (currentPage < totalPages && !loadingMore) {
+      setLoadingMore(true); // Start loading
+      setCurrentPage(prevPage => prevPage + 1); // Increment page
+      dispatch(userDatas({page: currentPage + 1})); // Fetch the next page
+    }
+  };
+
+  const [shortlistedUsers, setShortlistedUsers] = useState([]);
+
+  console.log(' === userData.... ===> ', userData);
 
   const fetchShortlistedUsers = async () => {
     const token = user?.tokens?.access?.token;
@@ -175,8 +213,13 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
 
   return (
     <FlatList
-      data={userData.data}
-      keyExtractor={item => item.id}
+      // data={userData?.data?.users}
+      data={users}
+      // keyExtractor={item => item.id}
+      keyExtractor={(item, index) => index.toString()}
+      ListFooterComponent={renderFooter}
+      onEndReached={loadMoreData}
+      onEndReachedThreshold={0.5}
       renderItem={({item}) => {
         // console.log(' === item..... ===> ', item.userShortListDetails);
 
