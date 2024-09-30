@@ -56,6 +56,12 @@ import KycDetailsScreen from '../screen/kycDetailsScreen ';
 import CreatingProfileScreen from '../screen/creatingProfileScreen';
 import DatingHomeScreen from '../screen/DatingHomeScreen';
 import DatingExploreScreen from '../screen/datingExploreScreen';
+import Abc from '../screen/abc';
+import SuccessStoryPageScreen from '../screen/successStoryPageScreen';
+import SuccessStoryEditInformationScreen from '../screen/successStoryEditInformationScreen';
+import DatingCreatingProfile from '../screen/datingAllScreen/DatingCreatingProfile';
+import AddDatingPersonalInfo from '../screen/datingAllScreen/addDatingPersonalInfo';
+import DatingPartnerPreferenceScreen from '../screen/datingAllScreen/datingPartnerPreferenceScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,7 +71,14 @@ const ExtraStack = createStackNavigator();
 const MainNavigator = () => {
   const [isDatingSelected, setIsDatingSelected] = useState(false);
 
-  const {isLoggedIn} = useSelector(state => state.auth);
+  const {isLoggedIn, appUsesType, user} = useSelector(state => state.auth);
+
+  console.log(' === user ===> ', user?.user?.appUsesType);
+
+  const appType = user?.user?.appUsesType;
+
+  console.log(' === appType ===> ', appUsesType);
+  console.log(' === isDating ===> ', appUsesType === 'dating');
 
   const AuthStack = () => (
     <Stack.Navigator
@@ -241,6 +254,9 @@ const MainNavigator = () => {
         initialRouteName={'HomeTabs'}>
         <Stack.Screen name="DemoCode" component={DemoCode} />
 
+        <Stack.Screen name="Abc" component={Abc} />
+        <Stack.Screen name="ExploreScreen" component={ExploreScreen} />
+
         <Stack.Screen name={'DatingHomeScreen'} component={DatingHomeScreen} />
         <Stack.Screen
           name={'DatingExploreScreen'}
@@ -253,6 +269,11 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'DemoPractiveCodeScreen'}
           component={DemoPractiveCodeScreen}
+        />
+
+        <Stack.Screen
+          name="CreatingProfileScreen"
+          component={CreatingProfileScreen}
         />
 
         <Stack.Screen
@@ -287,12 +308,31 @@ const MainNavigator = () => {
           component={ConnectToWebScreen}
         />
 
-        <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
+        <Stack.Screen
+          name={'SuccessStoryPageScreen'}
+          component={SuccessStoryPageScreen}
+        />
 
         <Stack.Screen
-          name="CreatingProfileScreen"
-          component={CreatingProfileScreen}
+          name={'SuccessStoryEditInformationScreen'}
+          component={SuccessStoryEditInformationScreen}
         />
+
+        <Stack.Screen
+          name="DatingCreatingProfile"
+          component={DatingCreatingProfile}
+        />
+
+        <Stack.Screen
+          name={'AddDatingPersonalInfo'}
+          component={AddDatingPersonalInfo}
+        />
+
+        <Stack.Screen
+          name={'DatingPartnerPreferenceScreen'}
+          component={DatingPartnerPreferenceScreen}
+        />
+        <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
 
         <Stack.Screen name={'Message'} component={Message} />
       </Stack.Navigator>
@@ -325,21 +365,42 @@ const MainNavigator = () => {
         }}>
         <Tab.Screen
           name="Home"
-          component={HomeScreen}
+          component={appType === 'dating' ? DatingHomeScreen : HomeScreen}
           // initialParams={{selectedBox: selectedBox}}
           options={{
             tabBarIcon: ({color, size, focused}) => (
-              <Image source={icons.homeIcon} style={getIconStyle(focused)} />
+              <Image
+                source={appType === 'dating' ? icons.starIcon : icons.homeIcon}
+                style={getIconStyle(focused)}
+              />
             ),
             tabBarLabel: ({focused}) => (
               <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
-                Home
+                {appType === 'dating' ? 'daing' : 'Home'}
               </Text>
             ),
             tabBarButton: props => <CustomTabBarButton {...props} />,
             headerShown: false,
           }}
         />
+
+        {/*<Tab.Screen*/}
+        {/*  name="Home"*/}
+        {/*  component={appType === 'dating' ? ChatScreen : HomeScreen}*/}
+        {/*  // initialParams={{selectedBox: selectedBox}}*/}
+        {/*  options={{*/}
+        {/*    tabBarIcon: ({color, size, focused}) => (*/}
+        {/*      <Image source={icons.homeIcon} style={getIconStyle(focused)} />*/}
+        {/*    ),*/}
+        {/*    tabBarLabel: ({focused}) => (*/}
+        {/*      <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>*/}
+        {/*        Home*/}
+        {/*      </Text>*/}
+        {/*    ),*/}
+        {/*    tabBarButton: props => <CustomTabBarButton {...props} />,*/}
+        {/*    headerShown: false,*/}
+        {/*  }}*/}
+        {/*/>*/}
 
         <Tab.Screen
           name="Matches"

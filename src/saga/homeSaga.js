@@ -1,4 +1,4 @@
-import {all, call, put, takeLatest} from 'redux-saga/effects';
+import {all, call, put, takeLatest, takeEvery} from 'redux-saga/effects';
 import {home} from '../apis/homeApi';
 import * as homeActions from '../actions/homeActions';
 import * as TYPES from '../actions/actionTypes';
@@ -39,7 +39,7 @@ function* sendFriendRequest(action) {
 
 function* getFriendRequest(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.getAllFriendRequestData, action.data);
     yield put(homeActions.getAllRequestDataSuccess(response.data));
@@ -74,7 +74,7 @@ function* acceptedDeclineFriendRequest(action) {
 
 function* setUpdateDetails(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.setUserUpdateDetails, action.data.payload);
     yield put(homeActions.setUpdateDetailsSuccess(response.data));
@@ -88,7 +88,7 @@ function* setUpdateDetails(action) {
 
 function* updateAddress(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.updateUserAddress, action.data.payload);
     yield put(homeActions.addressDetailsSuccess(response.data));
@@ -102,7 +102,7 @@ function* updateAddress(action) {
 
 function* educationDetails(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.educationDetail, action.data.payload);
     yield put(homeActions.addEducationsSuccess(response.data));
@@ -116,7 +116,7 @@ function* educationDetails(action) {
 
 function* professionalDetail(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.professionalDetail, action.data.payload);
     yield put(homeActions.addProfessionalDetailSuccess(response.data));
@@ -142,7 +142,7 @@ function* addProfilePicture(action) {
 
 function* partnerReferences(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.partnerReferences, action.data.payload);
     yield put(homeActions.partnerReferencesSuccess(response.data));
@@ -228,7 +228,7 @@ function* homeSaga() {
   yield all([takeLatest(TYPES.SET_USER_ADDRESS, updateAddress)]);
   yield all([takeLatest(TYPES.EDUCATION_DETAILS, educationDetails)]);
   yield all([takeLatest(TYPES.PROFESSIONAL_DETAILS, professionalDetail)]);
-  yield all([takeLatest(TYPES.ADD_PROFILE_PICTURE, addProfilePicture)]);
+  yield all([takeEvery(TYPES.ADD_PROFILE_PICTURE, addProfilePicture)]);
   yield all([takeLatest(TYPES.PARTNER_PREFERENCES_DETAILS, partnerReferences)]);
   yield all([takeLatest(TYPES.GET_ALL_PAYMENT_DETAILS, getPaymentDetail)]);
   yield all([takeLatest(TYPES.ADD_SHORT_LIST, addShortLists)]);

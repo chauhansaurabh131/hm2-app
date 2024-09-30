@@ -28,7 +28,7 @@ const MyProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
-  // console.log(' === user.... ===> ', user.user);
+  console.log(' === user.... ===> ', user.user);
 
   const profileImage = user?.user?.profilePic;
 
@@ -160,27 +160,27 @@ const MyProfileScreen = () => {
                     />
                   </TouchableOpacity>
 
-                  <TouchableOpacity>
-                    <Image
-                      source={icons.video_icon}
-                      style={{
-                        width: hp(24.1),
-                        height: hp(20),
-                        resizeMode: 'contain',
-                      }}
-                    />
-                  </TouchableOpacity>
+                  {/*<TouchableOpacity>*/}
+                  {/*  <Image*/}
+                  {/*    source={icons.video_icon}*/}
+                  {/*    style={{*/}
+                  {/*      width: hp(24.1),*/}
+                  {/*      height: hp(20),*/}
+                  {/*      resizeMode: 'contain',*/}
+                  {/*    }}*/}
+                  {/*  />*/}
+                  {/*</TouchableOpacity>*/}
 
-                  <TouchableOpacity style={{position: 'absolute', right: 10}}>
-                    <Image
-                      source={icons.starIcon}
-                      style={{
-                        width: hp(21.67),
-                        height: hp(20),
-                        resizeMode: 'contain',
-                      }}
-                    />
-                  </TouchableOpacity>
+                  {/*<TouchableOpacity style={{position: 'absolute', right: 10}}>*/}
+                  {/*  <Image*/}
+                  {/*    source={icons.starIcon}*/}
+                  {/*    style={{*/}
+                  {/*      width: hp(21.67),*/}
+                  {/*      height: hp(20),*/}
+                  {/*      resizeMode: 'contain',*/}
+                  {/*    }}*/}
+                  {/*  />*/}
+                  {/*</TouchableOpacity>*/}
                 </View>
               </View>
             </View>

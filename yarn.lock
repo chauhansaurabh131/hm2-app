@@ -1214,10 +1214,10 @@
     "@types/hoist-non-react-statics" "^3.3.1"
     hoist-non-react-statics "^3.3.0"
 
-"@gorhom/bottom-sheet@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.npmjs.org/@gorhom/bottom-sheet/-/bottom-sheet-4.6.0.tgz"
-  integrity sha512-XgNflkhATUqTIiMDGuLaQZAtjUzcrhGOEJGHT+7Tou1ctTMb958YRGGnU9KFo5TkD6YCZcfWfxHPi9F0FF+DjA==
+"@gorhom/bottom-sheet@^4.6.4":
+  version "4.6.4"
+  resolved "https://registry.npmjs.org/@gorhom/bottom-sheet/-/bottom-sheet-4.6.4.tgz"
+  integrity sha512-0itLMblLBvepE065w3a60S030c2rNUsGshPC7wbWDm31VyqoaU2xjzh/ojH62YIJOcobBr5QoC30IxBBKDGovQ==
   dependencies:
     "@gorhom/portal" "1.0.14"
     invariant "^2.2.4"
@@ -6899,11 +6899,6 @@ react-native-razorpay@^2.3.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/react-native-razorpay/-/react-native-razorpay-2.3.0.tgz"
   integrity sha512-xxiZCPuZmiRq5UHDr+D4OoyxEjMu0ujC+RaE+rYo938EK0Vc21dZRUVxMVP1L2WgzA8PYwmD5FWvdHNtWLQC4Q==
-
-react-native-reanimated-carousel@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.npmjs.org/react-native-reanimated-carousel/-/react-native-reanimated-carousel-3.5.1.tgz"
-  integrity sha512-9BBQV6JAYSQm2lV7MFtT4mzapXmW4IZO6s38gfiJL84Jg23ivGB1UykcNQauKgtHyhtW2NuZJzItb1s42lM+hA==
 
 react-native-reanimated@^3.7.0:
   version "3.7.0"

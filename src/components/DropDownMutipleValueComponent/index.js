@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, TouchableOpacity, Text, Image} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {colors} from '../../utils/colors';
 import {fontSize, hp, wp} from '../../utils/helpers';
+import {icons} from '../../assets';
 
 const DropdownComponent = ({
   dropdownStyle,
@@ -20,7 +21,6 @@ const DropdownComponent = ({
   setSelectedItems,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
-  const [value, setValue] = useState(null);
 
   const handleDropdownChange = item => {
     const index = selectedItems.indexOf(item.value);
@@ -38,46 +38,31 @@ const DropdownComponent = ({
     setSelectedItems(newSelectedItems);
   };
 
-  const getPlaceholderText = () => {
-    if (selectedItems.length === 0) {
-      return placeholder;
-    } else {
-      return selectedItems.map(value => {
-        const label = data.find(item => item.value === value).label;
-        return (
-          <TouchableOpacity
-            key={value}
-            onPress={() => removeSelectedValue(value)}
-            style={styles.selectedItem}>
-            <Text style={styles.selectedText}>{label}</Text>
-            <View
-              style={{
-                backgroundColor: '#E2E2E2',
-                width: 20,
-                height: 20,
-                borderRadius: 10,
-                justifyContent: 'center',
-              }}>
-              <Text style={styles.removeButton}>X</Text>
-            </View>
-          </TouchableOpacity>
-        );
-      });
-    }
+  const renderSelectedItems = () => {
+    return selectedItems.map(value => {
+      const label = data.find(item => item.value === value)?.label;
+      return (
+        <TouchableOpacity
+          key={value}
+          onPress={() => removeSelectedValue(value)}
+          style={styles.selectedItem}>
+          <Text style={styles.selectedText}>{label}</Text>
+          <View style={styles.removeButtonContainer}>
+            <Text style={styles.removeButton}>X</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    });
   };
 
   const renderItem = item => {
-    const itemTextStyle = {
-      ...styles.textItem,
-      color: value === item.value ? 'black' : 'black', // Change text color to red if item is selected
-    };
-
     return (
       <View style={styles.item}>
-        <Text style={itemTextStyle}>{item.label}</Text>
+        <Text style={styles.textItem}>{item.label}</Text>
       </View>
     );
   };
+
   return (
     <View style={styles.container}>
       <Dropdown
@@ -89,22 +74,25 @@ const DropdownComponent = ({
         placeholderStyle={[styles.placeholderStyle, placeholderStyle]}
         selectedTextStyle={[styles.selectedTextStyle, selectedTextStyle]}
         inputSearchStyle={[styles.inputSearchStyle, inputSearchStyle]}
-        iconStyle={[styles.iconStyle, iconStyle]}
         data={data}
         search={search}
         maxHeight={300}
-        iconColor={colors.blue}
         labelField="label"
         valueField="value"
-        placeholder={getPlaceholderText()}
+        placeholder={placeholder}
         searchPlaceholder={searchPlaceholder}
-        value={selectedItems}
+        value={null} // Ensure TextInput stays empty
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={handleDropdownChange}
         multiselect
+        nestedScrollEnabled={true}
         renderItem={renderItem}
+        renderRightIcon={() => (
+          <Image source={icons.drooDownLogo} style={styles.iconStyle} />
+        )}
       />
+      <View style={styles.selectedItemsContainer}>{renderSelectedItems()}</View>
     </View>
   );
 };
@@ -116,9 +104,11 @@ const styles = StyleSheet.create({
   dropdown: {
     height: hp(50),
     width: wp(339),
-    borderColor: colors.lightGreyBorder,
-    borderWidth: 1,
-    borderRadius: 10,
+    // borderColor: colors.lightGreyBorder,
+    borderColor: '#C0C0C0',
+    borderWidth: 0,
+    borderBottomWidth: 1,
+    borderRadius: 0,
     paddingHorizontal: 8,
   },
   dropdownFocused: {},
@@ -131,35 +121,56 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   iconStyle: {
-    width: 20,
-    height: 20,
+    width: hp(12),
+    height: hp(18),
+    resizeMode: 'contain',
+    marginRight: 9,
+    tintColor: '#5F6368',
   },
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
     color: colors.black,
   },
+  selectedItemsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+    borderRadius: 10, // Optional: Add border radius here for selected items
+    overflow: 'hidden', // Ensure the border radius is respected
+  },
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 15,
     padding: 4,
-    backgroundColor: 'white', // Background color for selected item
-    borderRadius: 10,
+    backgroundColor: '#F3F3F3',
+    borderRadius: 50,
+    height: hp(40),
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginTop: 10,
   },
   selectedText: {
     marginRight: 8,
     color: colors.black,
   },
-  removeButton: {
-    color: colors.black, // Color for 'X' button
-    fontSize: fontSize(11),
+  removeButtonContainer: {
+    backgroundColor: '#5F6368',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  removeButton: {
+    color: colors.white,
+    fontSize: fontSize(11),
     textAlign: 'center',
   },
   textItem: {
-    // flex: 1,
     fontSize: 16,
     padding: 20,
+    color: 'black',
   },
 });

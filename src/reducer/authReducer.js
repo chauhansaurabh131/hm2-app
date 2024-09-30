@@ -7,6 +7,7 @@ const initialState = {
   user: null,
   isUpdatingProfile: false,
   isAddressLoading: false,
+  appUsesType: '',
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -30,7 +31,12 @@ export default (state = initialState, action) => {
       return {...state, loading: false};
 
     case TYPES.CHANGE_STACK:
-      return {...state, isLoggedIn: !state.isLoggedIn};
+      console.log(' === var ===> ', action.data);
+      return {
+        ...state,
+        isLoggedIn: !state.isLoggedIn,
+        appUsesType: action.data,
+      };
 
     case SET_LOADING:
       return {

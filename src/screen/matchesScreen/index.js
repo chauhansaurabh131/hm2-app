@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   Modal,
@@ -18,11 +19,16 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   accepted_Decline_Request,
   getAllRequest,
+  userDatas,
 } from '../../actions/homeActions';
 import {USER_LIST} from '../../utils/data';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {getAllDeclineFriend, getAllFriends} from '../../actions/chatActions';
 import {it} from '@jest/globals';
+import DatingHomeScreen from '../DatingHomeScreen';
+import DemoNewPagination from '../../components/demoNewPagination';
+import MatchesInNewScreen from '../matchesAllScreen/matchesInNewScreen';
+import MatchesInAcceptedScreen from '../matchesAllScreen/matchesInAcceptedScreen';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -34,19 +40,70 @@ const MatchesScreen = ({navigation}) => {
   const [userActions, setUserActions] = useState({});
   const [requestStatus, setRequestStatus] = useState(null);
 
-  const dispatch = useDispatch();
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [users, setUsers] = useState([]); // Store combined users here
+  // const [loadingMore, setLoadingMore] = useState(false); // Track if loading more data
+  //
+  // const totalPages = userData?.data?.[0]?.totalPages || 1;
 
   useEffect(() => {
     dispatch(getAllRequest());
     dispatch(getAllDeclineFriend());
-    dispatch(getAllFriends());
+    // dispatch(getAllFriends());
+    dispatch(userDatas({page: 1}));
   }, [dispatch]);
 
-  const {getAllRequestData, isFriendRequestDataLoading, userData} = useSelector(
+  // useEffect(() => {
+  //   dispatch(userDatas({page: 1})); // Load the first page on mount
+  // }, []);
+  //
+  // useEffect(() => {
+  //   if (userData?.data?.[0]?.paginatedResults) {
+  //     if (currentPage === 1) {
+  //       // On the first page, replace users
+  //       setUsers(userData.data[0].paginatedResults);
+  //     } else {
+  //       // On subsequent pages, append users
+  //       setUsers(prevUsers => [
+  //         ...prevUsers,
+  //         ...userData.data[0].paginatedResults,
+  //       ]);
+  //     }
+  //     setLoadingMore(false); // Stop loading after data is appended
+  //   }
+  // }, [userData]);
+
+  // const loadMoreData = () => {
+  //   if (currentPage < totalPages && !loadingMore) {
+  //     setLoadingMore(true); // Start loading more
+  //     const nextPage = currentPage + 1;
+  //     setCurrentPage(nextPage); // Increment the current page
+  //     dispatch(userDatas({page: nextPage})); // Fetch the next page
+  //   }
+  // };
+
+  // const renderFooter = () => {
+  //   return (
+  //     <View>
+  //       {loadingMore ? (
+  //         <View style={{paddingVertical: 20, alignItems: 'center'}}>
+  //           <ActivityIndicator size="large" color="#0000ff" />
+  //         </View>
+  //       ) : (
+  //         // Add an empty view with margin for extra space when loading is finished
+  //         <View style={{height: 150}} />
+  //       )}
+  //     </View>
+  //   );
+  // };
+
+  const dispatch = useDispatch();
+
+  const {getAllRequestData, isFriendRequestDataLoading} = useSelector(
     state => state.home,
   );
 
-  // console.log(' === userData/////// ===> ', userData);
+  // console.log(' === userData/////// ===> ', userData?.data[0].paginatedResults);
 
   const {declineFriends, myAllFriends, isUserDataLoading} = useSelector(
     state => state.chat,
@@ -65,6 +122,7 @@ const MatchesScreen = ({navigation}) => {
     {id: 'sent', label: 'Sent'},
     {id: 'deleted', label: 'Deleted'},
     {id: 'blocked', label: 'Blocked'},
+    {id: 'Demo', label: 'Demo'},
   ];
 
   const openModal = () => {
@@ -392,13 +450,6 @@ const MatchesScreen = ({navigation}) => {
 
   // USER NEW RENDER LIST //
   const renderUserItem = ({item}) => {
-    // console.log(
-    //   ' === item....... ===> ',
-    //   item?.userProfilePic.map(pic => pic.url),
-    // );
-
-    // console.log(' === renderUserItem..... ===> ', item);
-
     const userAllImage = Array.isArray(item?.userProfilePic)
       ? item.userProfilePic.map(pic => pic.url)
       : [];
@@ -759,60 +810,62 @@ const MatchesScreen = ({navigation}) => {
       case 'new':
         return (
           <View>
-            <FlatList
-              data={userData.data}
-              keyExtractor={item => item.id}
-              renderItem={renderUserItem}
-              showsVerticalScrollIndicator={false}
-              ListFooterComponent={<View style={{height: 130}} />}
-            />
+            {/*<FlatList*/}
+            {/*  data={userData.data}*/}
+            {/*  keyExtractor={item => item.id}*/}
+            {/*  renderItem={renderUserItem}*/}
+            {/*  showsVerticalScrollIndicator={false}*/}
+            {/*  ListFooterComponent={<View style={{height: 130}} />}*/}
+            {/*/>*/}
+            <MatchesInNewScreen />
           </View>
         );
       case 'accepted':
         // <Text>Accepted</Text>;
         return (
           <View>
-            {isUserDataLoading ? (
-              <View style={style.receivedShimmerContainer}>
-                <ShimmerPlaceholder style={style.receivedShimmerImageBody} />
-                <View style={style.receivedShimmerImageBodyInside}>
-                  <ShimmerPlaceholder style={style.receivedShimmerName} />
+            {/*{isUserDataLoading ? (*/}
+            {/*  <View style={style.receivedShimmerContainer}>*/}
+            {/*    <ShimmerPlaceholder style={style.receivedShimmerImageBody} />*/}
+            {/*    <View style={style.receivedShimmerImageBodyInside}>*/}
+            {/*      <ShimmerPlaceholder style={style.receivedShimmerName} />*/}
 
-                  <View style={style.receivedShimmerInsideOne}>
-                    <ShimmerPlaceholder style={style.receivedShimmerData} />
-                  </View>
+            {/*      <View style={style.receivedShimmerInsideOne}>*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerData} />*/}
+            {/*      </View>*/}
 
-                  <View style={style.receivedShimmerButtonContainer}>
-                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
-                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
-                  </View>
-                </View>
-              </View>
-            ) : myAllFriends?.data?.length === 0 ? (
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: hp(250),
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: colors.gray,
-                    fontSize: fontSize(21),
-                    lineHeight: hp(26),
-                  }}>
-                  No friend requests
-                </Text>
-              </View>
-            ) : (
-              <FlatList
-                data={friends}
-                keyExtractor={item => item.friendList._id}
-                renderItem={renderAccptedUserItem}
-                showsVerticalScrollIndicator={false}
-                ListFooterComponent={<View style={{height: 130}} />}
-              />
-            )}
+            {/*      <View style={style.receivedShimmerButtonContainer}>*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerButton} />*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerButton} />*/}
+            {/*      </View>*/}
+            {/*    </View>*/}
+            {/*  </View>*/}
+            {/*) : myAllFriends?.data?.length === 0 ? (*/}
+            {/*  <View*/}
+            {/*    style={{*/}
+            {/*      alignItems: 'center',*/}
+            {/*      marginTop: hp(250),*/}
+            {/*      justifyContent: 'center',*/}
+            {/*    }}>*/}
+            {/*    <Text*/}
+            {/*      style={{*/}
+            {/*        color: colors.gray,*/}
+            {/*        fontSize: fontSize(21),*/}
+            {/*        lineHeight: hp(26),*/}
+            {/*      }}>*/}
+            {/*      No friend requests*/}
+            {/*    </Text>*/}
+            {/*  </View>*/}
+            {/*) : (*/}
+            {/*  <FlatList*/}
+            {/*    data={friends}*/}
+            {/*    keyExtractor={item => item.friendList._id}*/}
+            {/*    renderItem={renderAccptedUserItem}*/}
+            {/*    showsVerticalScrollIndicator={false}*/}
+            {/*    ListFooterComponent={<View style={{height: 130}} />}*/}
+            {/*  />*/}
+            {/*)}*/}
+            <MatchesInAcceptedScreen />
           </View>
         );
 
@@ -891,11 +944,17 @@ const MatchesScreen = ({navigation}) => {
                   marginTop: hp(250),
                   justifyContent: 'center',
                 }}>
+                <Image
+                  source={icons.no_Profile_Found_img}
+                  style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
+                />
                 <Text
                   style={{
-                    color: colors.gray,
-                    fontSize: fontSize(21),
-                    lineHeight: hp(26),
+                    color: colors.black,
+                    fontSize: fontSize(18),
+                    lineHeight: hp(27),
+                    fontFamily: fontFamily.poppins400,
+                    marginTop: hp(12),
                   }}>
                   No friend requests
                 </Text>
@@ -916,6 +975,14 @@ const MatchesScreen = ({navigation}) => {
         return <Text>Deleted</Text>;
       case 'blocked':
         return <Text>Blocked</Text>;
+      case 'Demo':
+        return (
+          <View>
+            {/*<Text>Demo</Text>*/}
+            {/*<DatingHomeScreen />*/}
+            <DemoNewPagination text="Hello" />
+          </View>
+        );
       default:
         return null;
     }

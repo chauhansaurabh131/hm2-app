@@ -1,56 +1,108 @@
 import React, {useState} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import {images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {useNavigation} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDetails} from '../../actions/homeActions';
+import style from './style';
 
 const CreatingProfileScreen = () => {
-  const dropdownData = ['MySelf', 'For My Son', 'For My Daughter'];
+  const dropdownData = [
+    'My Self',
+    'My Son',
+    'My Daughter',
+    'My Brother',
+    'My Friend',
+  ];
   const [selectedOption, setSelectedOption] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
+  const navigation = useNavigation();
+  const apiDispatch = useDispatch();
+
+  const {isUpdatingProfile} = useSelector(state => state.auth);
+  console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
+
+  const formatSelectedOption = option => {
+    return option
+      .split(' ')
+      .map(
+        (word, index) =>
+          index === 0
+            ? word.toLowerCase() // Make the first word lowercase
+            : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(), // Capitalize the first letter of subsequent words
+      )
+      .join('');
+  };
+
   const onStartNowPress = () => {
-    console.log(' === selected option ===> ', selectedOption);
-    console.log(' === firstName ===> ', firstName);
-    console.log(' === lastName ===> ', lastName);
+    const formattedOption = formatSelectedOption(selectedOption);
+
+    if (!selectedOption) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select an option.',
+      });
+      return;
+    } else if (!firstName) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please enter first name.',
+      });
+      return;
+    } else if (!lastName) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please enter last name.',
+      });
+      return;
+    }
+
+    apiDispatch(
+      updateDetails(
+        {
+          creatingProfileFor: formattedOption,
+          firstName: firstName,
+          lastName: lastName,
+        },
+        () => {
+          navigation.navigate('GeneralInformationScreen');
+        },
+      ),
+    );
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{marginHorizontal: wp(24)}}>
-        <Image
-          source={images.happyMilanColorLogo}
-          style={{
-            width: wp(96),
-            height: hp(24),
-            resizeMode: 'contain',
-            marginTop: hp(15),
-            marginLeft: wp(18),
-            marginBottom: hp(20),
-          }}
-        />
+    <SafeAreaView style={style.container}>
+      <View style={style.containerBody}>
+        <Image source={images.happyMilanColorLogo} style={style.appLogoStyle} />
 
-        <Text
-          style={{
-            color: 'black',
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
-            fontFamily: fontFamily.poppins600,
-            textAlign: 'center',
-            marginTop: hp(90),
-          }}>
-          I’m creating profile for?
-        </Text>
+        <Text style={style.tittleText}>I’m creating profile for?</Text>
 
-        <NewDropDownTextInput
-          placeholder="Select an option"
-          dropdownData={dropdownData}
-          onValueChange={setSelectedOption}
-        />
+        <View style={style.bodyContainer}>
+          <NewDropDownTextInput
+            placeholder="Select an option"
+            dropdownData={dropdownData}
+            onValueChange={setSelectedOption}
+          />
+        </View>
 
-        <View style={{marginTop: hp(20)}}>
+        <View style={style.spaceMarginStyle}>
           <FloatingLabelInput
             label="First Name"
             value={firstName}
@@ -58,7 +110,7 @@ const CreatingProfileScreen = () => {
           />
         </View>
 
-        <View style={{marginTop: hp(20)}}>
+        <View style={style.spaceMarginStyle}>
           <FloatingLabelInput
             label="Last Name"
             value={lastName}
@@ -69,26 +121,17 @@ const CreatingProfileScreen = () => {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={onStartNowPress}
-          style={{
-            width: '100%',
-            height: hp(50),
-            borderRadius: 50,
-            backgroundColor: 'black',
-            marginTop: hp(50),
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              textAlign: 'center',
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-            }}>
-            Start Now
-          </Text>
+          style={style.startButton}
+          disabled={isUpdatingProfile} // Disable button while loading
+        >
+          {isUpdatingProfile ? (
+            <ActivityIndicator size="large" color="#FFFFFF" />
+          ) : (
+            <Text style={style.startText}>Start Now</Text>
+          )}
         </TouchableOpacity>
       </View>
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

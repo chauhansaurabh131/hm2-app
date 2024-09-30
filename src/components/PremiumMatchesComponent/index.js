@@ -24,20 +24,23 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
   const [users, setUsers] = useState([]); // Store combined users here
   const [loadingMore, setLoadingMore] = useState(false); // Track if loading more data
 
-  const totalPages = userData?.data?.totalPages || 1;
+  const totalPages = userData?.data?.[0]?.totalPages || 1;
 
   useEffect(() => {
     dispatch(userDatas({page: 1})); // Load the first page on mount
   }, []);
 
   useEffect(() => {
-    if (userData?.data?.users) {
+    if (userData?.data?.[0]?.paginatedResults) {
       if (currentPage === 1) {
         // On the first page, replace users
-        setUsers(userData.data.users);
+        setUsers(userData.data[0].paginatedResults);
       } else {
         // On other pages, append users
-        setUsers(prevUsers => [...prevUsers, ...userData.data.users]);
+        setUsers(prevUsers => [
+          ...prevUsers,
+          ...userData.data[0].paginatedResults,
+        ]);
       }
       setLoadingMore(false); // Stop loading after data is appended
     }
@@ -53,14 +56,15 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
   const loadMoreData = () => {
     if (currentPage < totalPages && !loadingMore) {
       setLoadingMore(true); // Start loading
-      setCurrentPage(prevPage => prevPage + 1); // Increment page
-      dispatch(userDatas({page: currentPage + 1})); // Fetch the next page
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      dispatch(userDatas({page: nextPage})); // Fetch the next page
     }
   };
 
   const [shortlistedUsers, setShortlistedUsers] = useState([]);
 
-  console.log(' === userData.... ===> ', userData);
+  // console.log(' === userData.... ===> ', userData);
 
   const fetchShortlistedUsers = async () => {
     const token = user?.tokens?.access?.token;

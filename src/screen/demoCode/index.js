@@ -1,131 +1,97 @@
 import React, {useState, useEffect} from 'react';
-import {Dimensions, View, Text, Image, StyleSheet} from 'react-native';
+import {SafeAreaView, View, Text, StyleSheet, Image} from 'react-native';
 import Swiper from 'react-native-deck-swiper';
-import {images} from '../../assets';
-import {wp} from '../../utils/helpers'; // Update your image imports as necessary
-
-const {width: viewportWidth} = Dimensions.get('window');
+import {hp} from '../../utils/helpers';
 
 const DemoCode = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [aImageIndex, setAImageIndex] = useState(0);
-  const [bImageIndex, setBImageIndex] = useState(0); // State for B images
+  const [cards, setCards] = useState([
+    {
+      id: 1,
+      text: 'Card 1',
+      images: [
+        require('../../assets/images/couple_One.png'),
+        require('../../assets/images/couple_Two.png'),
+        require('../../assets/images/couple_Three.png'),
+      ],
+    },
+    {
+      id: 2,
+      text: 'Card 2',
+      image: require('../../assets/images/couple_Two.png'),
+    },
+    {
+      id: 3,
+      text: 'Card 3',
+      image: require('../../assets/images/couple_Three.png'),
+    },
+    {
+      id: 4,
+      text: 'Card 4',
+      image: require('../../assets/images/couple_img_three.png'),
+    },
+    {
+      id: 5,
+      text: 'Card 5',
+      image: require('../../assets/images/couple_logo.png'),
+    },
+  ]);
 
-  // Define images for title 'A'
-  const aImages = [
-    images.looking_love_img,
-    images.couple_One_Image,
-    images.couple_Two_Image,
-    images.couple_Three_Image,
-  ];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [activeCardId, setActiveCardId] = useState(1); // Track the active card ID
 
-  // Define images for title 'B'
-  const bImages = [
-    images.couple_Three_Image,
-    images.demo_Five_Image,
-    images.demo_Two_Image,
-  ];
-
-  const imageDatas = [
-    {id: '1', source: aImages[aImageIndex], title: 'A'},
-    {id: '2', source: bImages[bImageIndex], title: 'B'}, // Update for multiple images for B
-    {id: '3', source: images.movie_date_img, title: 'C'},
-    {id: '4', source: images.foodies_img, title: 'D'},
-    {id: '5', source: images.travel_Buddies_img, title: 'E'},
-    {id: '6', source: images.game_lover_img, title: 'F'},
-    {id: '7', source: images.chit_chat_img, title: 'G'},
-    {id: '8', source: images.adventurous_img, title: 'H'},
-  ];
-
-  // Separate useEffect for A images
   useEffect(() => {
-    if (imageDatas[currentIndex].title === 'A') {
-      const interval = setInterval(() => {
-        setAImageIndex(prevIndex => (prevIndex + 1) % aImages.length);
+    let interval;
+
+    if (activeCardId === 1) {
+      // Only change images if Card 1 is active
+      interval = setInterval(() => {
+        setCurrentImageIndex(
+          prevIndex => (prevIndex + 1) % cards[0].images.length,
+        );
       }, 2000);
-      return () => clearInterval(interval);
     }
-  }, [currentIndex, aImageIndex]);
 
-  // Separate useEffect for B images
-  useEffect(() => {
-    if (imageDatas[currentIndex].title === 'B') {
-      const interval = setInterval(() => {
-        setBImageIndex(prevIndex => (prevIndex + 1) % bImages.length);
-        console.log('B Image Index Updated:', bImageIndex); // Logging for debugging
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [currentIndex, bImageIndex]);
+    return () => clearInterval(interval);
+  }, [activeCardId, cards[0].images.length]);
 
-  const handleSwiped = index => {
-    setCurrentIndex(index % imageDatas.length);
-  };
-
-  const renderPagination = () => {
-    const totalDots =
-      imageDatas[currentIndex].title === 'A'
-        ? aImages.length
-        : imageDatas[currentIndex].title === 'B'
-        ? bImages.length
-        : 1; // Adjust for other images that don't have multiple slides
-
-    const activeIndex =
-      imageDatas[currentIndex].title === 'A'
-        ? aImageIndex
-        : imageDatas[currentIndex].title === 'B'
-        ? bImageIndex
-        : 0;
+  const renderCard = card => {
+    const isCardOne = card.id === 1;
 
     return (
-      <View style={styles.paginationContainer}>
-        {Array.from({length: totalDots}).map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.paginationDot,
-              index === activeIndex ? styles.activeDot : styles.inactiveDot,
-            ]}
-          />
-        ))}
+      <View style={styles.card}>
+        <Image
+          source={isCardOne ? card.images[currentImageIndex] : card.image}
+          style={styles.cardImage}
+          resizeMode="cover"
+        />
+        <Text style={styles.cardText}>{card.text}</Text>
       </View>
     );
   };
 
-  const renderCard = (item, index) => {
-    return (
-      <View style={styles.itemContainer}>
-        <Image source={item.source} style={styles.image} />
-        <View style={styles.paginationWrapper}>
-          {index === currentIndex && renderPagination()}
-        </View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-        </View>
-      </View>
-    );
+  const onSwiped = cardIndex => {
+    setActiveCardId(cards[cardIndex + 1]?.id || null); // Set the active card ID when swiping
+  };
+
+  const onSwipedAll = () => {
+    console.log('All cards swiped');
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Swiper
-        cards={imageDatas}
-        renderCard={card => renderCard(card, imageDatas.indexOf(card))}
-        cardIndex={currentIndex}
-        backgroundColor={'#f7f7f7'}
+        cards={cards}
+        renderCard={renderCard}
+        onSwipedAll={onSwipedAll}
+        onSwiped={onSwiped} // Handle card swipe event
         stackSize={3}
-        infinite={true}
-        onSwiped={handleSwiped}
-        onSwipedRight={cardIndex => {
-          console.log('Liked:', imageDatas[cardIndex]);
-        }}
-        onSwipedLeft={cardIndex => {
-          console.log('Disliked:', imageDatas[cardIndex]);
-        }}
+        backgroundColor="white"
+        cardIndex={0}
+        animateOverlayLabelsOpacity
         verticalSwipe={false}
         horizontalSwipe={true}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -135,58 +101,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  itemContainer: {
+  card: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    width: '100%',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#E8E8E8',
+    backgroundColor: '#FFF',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.8,
-    shadowRadius: 5,
-    padding: 10,
-    backgroundColor: 'orange',
-    position: 'relative',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
-  paginationWrapper: {
-    position: 'absolute',
-    top: 10,
-    width: '100%',
-    alignItems: 'center',
-    zIndex: 1,
+  cardText: {
+    fontSize: 24,
+    color: 'black',
+    marginBottom: 20,
   },
-  image: {
-    width: wp(300),
-    height: '100%',
-    borderRadius: 10,
-  },
-  titleContainer: {
-    position: 'absolute',
-    bottom: 30,
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  title: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-  },
-  paginationContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  paginationDot: {
-    width: 35,
-    height: 8,
-    borderRadius: 4,
-    margin: 5,
-  },
-  activeDot: {
-    backgroundColor: 'white',
-  },
-  inactiveDot: {
-    backgroundColor: 'black',
+  cardImage: {
+    width: '95%',
+    height: hp(606),
   },
 });
 

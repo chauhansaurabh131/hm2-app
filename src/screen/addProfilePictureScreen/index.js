@@ -59,56 +59,6 @@ const AddProfilePictureScreen = ({route}) => {
     setIsImageSelected(true);
   };
 
-  // const handleUploadImage = async () => {
-  //   try {
-  //     const selectedImage = selectedItems[selectedImageIndex];
-  //
-  //     // Check if selectedImage and its properties exist
-  //     if (
-  //       !selectedImage ||
-  //       !selectedImage.node ||
-  //       !selectedImage.node.image ||
-  //       !selectedImage.node.image.uri
-  //     ) {
-  //       Alert.alert('Error', 'No image selected.');
-  //       return;
-  //     }
-  //
-  //     const callBack = response => {
-  //       const presignedUrl = response.data?.data?.url;
-  //       RNBlobUtil.fetch(
-  //         'PUT',
-  //         presignedUrl,
-  //         {},
-  //         RNBlobUtil.wrap(selectedImage.node.image.uri),
-  //       )
-  //         .then(data => {
-  //           //TODO Navigate to home page
-  //           console.log(' === data ===> ', data);
-  //           navigation.navigate('PartnerPreferencesScreen');
-  //         })
-  //         .catch(err => {
-  //           console.log(' === err ===> ', err);
-  //         });
-  //     };
-  //
-  //     dispatch(
-  //       addProfilePicture(
-  //         {
-  //           key: `${selectedImage.node.id}.jpg`,
-  //           contentType: getContentType(selectedImage.node.type),
-  //           isProfilePic: true,
-  //           profileType: 'profileImage',
-  //         },
-  //         callBack,
-  //       ),
-  //     );
-  //   } catch (error) {
-  //     console.error('Error uploading image:', error);
-  //     Alert.alert('Error', 'Failed to upload image.');
-  //   }
-  // };
-
   const handleUploadImage = async () => {
     try {
       const selectedImage = selectedItems[selectedImageIndex];

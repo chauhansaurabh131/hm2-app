@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Image,
   SafeAreaView,
@@ -11,11 +12,9 @@ import style from './style';
 import React, {useReducer, useState} from 'react';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import LinearGradient from 'react-native-linear-gradient';
 import {images} from '../../assets';
 import {useRoute} from '@react-navigation/native';
 import GeneralInformationDetailsScreen from '../generalInformationDetailsScreen';
-import CommonGradientButton from '../../components/commonGradientButton';
 import AddressDetailsScreen from '../addressDetailsScreen';
 import ContactDetailsScreen from '../contactDetailsScreen';
 import EducationDetailsScreen from '../educationDetailsScreen';
@@ -26,7 +25,9 @@ import {
   professionalDetail,
   updateDetails,
 } from '../../actions/homeActions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import Toast from 'react-native-toast-message';
+import ImagePicker from 'react-native-image-crop-picker';
 
 // Import other screens as needed
 
@@ -54,46 +55,47 @@ const phaseReducer = (state, action) => {
 };
 
 const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
-  const color = () => {
-    if (index === activeIndex) {
-      return ['#0D4EB3', '#9413D0'];
-    } else {
-      if (index < activeIndex) {
-        return ['#17C270', '#17C270'];
-      } else {
-        return ['#FFFFFF', '#FFFFFF'];
-      }
-    }
-  };
+  // const color = () => {
+  //   if (index === activeIndex) {
+  //     return ['#0D4EB3', '#9413D0'];
+  //   } else {
+  //     if (index < activeIndex) {
+  //       return ['#17C270', '#17C270'];
+  //     } else {
+  //       return ['#FFFFFF', '#FFFFFF'];
+  //     }
+  //   }
+  // };
 
-  const tintColor = () => (index <= activeIndex ? 'white' : 'black');
+  const tintColor = () => (index <= activeIndex ? '#000000' : '#B0B0B0');
 
   return (
     <TouchableOpacity
       disabled={index > activeIndex + 1}
       activeOpacity={1}
       onPress={() => onPressIcon(index)}>
-      <LinearGradient
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}
-        colors={color()}
+      {/*<LinearGradient*/}
+      {/*  start={{x: 0, y: 0}}*/}
+      {/*  end={{x: 1, y: 0}}*/}
+      {/*  // colors={color()}*/}
+      {/*  style={{*/}
+      {/*    height: hp(48),*/}
+      {/*    width: hp(48),*/}
+      {/*    alignItems: 'center',*/}
+      {/*    justifyContent: 'center',*/}
+      {/*    borderRadius: 50,*/}
+      {/*  }}>*/}
+      <Image
+        source={item.icon}
         style={{
-          height: hp(48),
-          width: hp(48),
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 50,
-        }}>
-        <Image
-          source={item.icon}
-          style={{
-            height: hp(16),
-            width: hp(16),
-            tintColor: tintColor(),
-          }}
-          resizeMode={'contain'}
-        />
-      </LinearGradient>
+          height: hp(18),
+          width: hp(18),
+          tintColor: tintColor(),
+          // backgroundColor: 'red',
+        }}
+        resizeMode={'contain'}
+      />
+      {/*</LinearGradient>*/}
     </TouchableOpacity>
   );
 };
@@ -103,6 +105,9 @@ const AddPersonalInfo = ({navigation}) => {
     activeIndex: 0,
   };
 
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const {isUpdatingProfile} = useSelector(state => state.auth);
   const apiDispatch = useDispatch();
   const route = useRoute();
 
@@ -117,26 +122,15 @@ const AddPersonalInfo = ({navigation}) => {
   const [selectedFun, setSelectedFun] = useState([]);
   const [selectedFitness, setSelectedFitness] = useState([]);
 
-  const CREATIVE = [
-    {label: 'Writing', value: '1'},
-    {label: 'Play Instrument', value: '2'},
-    {label: 'Game', value: '3'},
-    // Add more options as needed
-  ];
-
-  const FUN = [
-    {label: 'Movie', value: '1'},
-    {label: 'Sports', value: '2'},
-    // ... other options
-  ];
-
-  const FITNESS = [
-    {label: 'Running', value: '1'},
-    {label: 'Cycling', value: '2'},
-    // ... other options
-  ];
-
   // GENERAL INFORMATION SCREEN
+
+  const [genderSelectedOption, genderSetSelectedOption] = useState('');
+  const [maritalSelectedOption, maritalSetSelectedOption] = useState('');
+  const [selectCaste, setSelectCaste] = useState('');
+  const [selectReligion, setSelectReligion] = useState('');
+  const [userHeight, setUserHeight] = useState('');
+  const [userWeight, setUserWeight] = useState('');
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [selectedGender, setSelectedGender] = useState(null);
@@ -144,12 +138,15 @@ const AddPersonalInfo = ({navigation}) => {
   const [selectHours, setSelectHours] = useState('');
   const [selectMinutes, setSelectMinutes] = useState('');
   const [selectSecond, setSelectSecond] = useState('');
-  const [selectReligion, setSelectReligion] = useState('');
-  const [selectCaste, setSelectCaste] = useState('');
+
   const [addDescription, setAddDescription] = useState('');
 
   //ADDRESS DETAILS SCREEN
+  const [currentAddress, setCurrentAddress] = useState('');
+  const [currentCountry, setCurrentCountry] = useState('');
+  const [currentState, setCurrentState] = useState('');
   const [selectCurrentCity, setSelectCurrentCity] = useState('');
+
   const [selectCurrentLiving, setSelectCurrentLiving] = useState('');
   const [currentResidingAddress, setCurrentResidingAddress] = useState('');
 
@@ -172,11 +169,9 @@ const AddPersonalInfo = ({navigation}) => {
   const [salary, setSalary] = useState('');
   const [workInCity, setWorkInCity] = useState('');
   const [workInCountry, setWorkInCountry] = useState('');
-  // const [selectedCreative, setSelectedCreative] = useState([]);
 
-  //CONDITIONS
-  const [firstNameError, setFirstNameError] = useState('');
-  const [lastNameError, setLastNameError] = useState('');
+  //Select Hobbies
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const PersonalInfoPhases = [
     {
@@ -185,7 +180,7 @@ const AddPersonalInfo = ({navigation}) => {
       icon: require('../../assets/icons/profile_logo.png'),
     },
     {
-      phaseName: 'Address Details',
+      phaseName: 'Location Details',
       Component: AddressDetailsScreen,
       icon: require('../../assets/icons/address_location_logo.png'),
     },
@@ -201,92 +196,111 @@ const AddPersonalInfo = ({navigation}) => {
     },
 
     {
-      phaseName: 'Professional Details',
+      phaseName: 'Job Details',
       Component: ProfessionalsDetailsScreen,
       icon: require('../../assets/icons/professional_logo.png'),
     },
     {
-      phaseName: 'Hobbies and Interest',
+      phaseName: 'Hobbies',
       Component: HobbiesAndInterestScreen,
+      // Component: Abc,
       icon: require('../../assets/icons/interner_logo.png'),
     },
   ];
 
   const RenderComp = PersonalInfoPhases[activeIndex].Component;
 
+  const openGallery = () => {
+    ImagePicker.openPicker({
+      multiple: true,
+      mediaType: 'All',
+    })
+      .then(images => {
+        const formattedImages = images.map(image => ({
+          uri: image.path,
+        }));
+        setSelectedImages(formattedImages);
+        navigation.navigate('SetProfilePictureScreen', {
+          selectedImages: formattedImages,
+          setSelectedImages, // Pass the setter function
+        });
+      })
+      .catch(error => {
+        console.log('Error opening gallery:', error);
+      });
+  };
+
   const navigateToScreen = screenNumber => {
     dispatch({type: NUMBER_SCREEN, screenNumber});
   };
 
-  const mapSelectedValuesToLabels = (selectedValues, options) => {
-    return selectedValues.map(value => {
-      const option = options.find(option => option.value === value);
-      return option ? option.label : null;
-    });
-  };
-
   const navigateToNext = () => {
-    // if (!firstName.trim()) {
-    //   setFirstNameError('Please enter your first name');
-    //   return;
-    // } else {
-    //   console.log(' === var ===> 1');
-    //   setFirstNameError('');
-    // }
-    //
-    // if (!lastName.trim()) {
-    //   setLastNameError('Please enter your last name');
-    //   return;
-    // } else {
-    //   console.log(' === var ===> 2');
-    //   setLastNameError('');
-    // }
-
-    const selectedCreativeLabels = mapSelectedValuesToLabels(
-      selectedCreative,
-      CREATIVE,
-    );
-    const selectedFunLabels = mapSelectedValuesToLabels(selectedFun, FUN);
-    const selectedFitnessLabels = mapSelectedValuesToLabels(
-      selectedFitness,
-      FITNESS,
-    );
-
-    const hobbiesPayload = [
-      {
-        category: 'Creative',
-        values: selectedCreativeLabels,
-      },
-      {
-        category: 'Fun',
-        values: selectedFunLabels,
-      },
-      {
-        category: 'Fitness',
-        values: selectedFitnessLabels,
-      },
-    ];
-
-    console.log(' === var ===> ', selectedCreativeLabels);
+    if (!genderSelectedOption) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your gender.',
+      });
+      return;
+    } else if (!maritalSelectedOption) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your marital.',
+      });
+      return;
+    } else if (!selectCaste) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your caste.',
+      });
+      return;
+    } else if (!selectReligion) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your caste.',
+      });
+      return;
+    } else if (!userHeight) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your height.',
+      });
+      return;
+    } else if (!userWeight) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your weight.',
+      });
+      return; // Stop navigation if caste is not religion
+    }
 
     if (activeIndex === PersonalInfoPhases.length - 1) {
-      navigation.navigate('SetProfilePictureScreen');
+      // navigation.navigate('SetProfilePictureScreen');
+      openGallery();
     } else {
       if (activeIndex === 0) {
-        // Call updateDetails API for General Information
-        const dateOfBirthISO = selectedDate ? selectedDate.toISOString() : null;
         apiDispatch(
           updateDetails(
             {
-              firstName: firstName,
-              lastName: lastName,
-              gender: selectedGender,
-              dateOfBirth: dateOfBirthISO,
-              birthTime: [selectHours, selectMinutes, selectSecond],
+              gender: genderSelectedOption,
+              maritalStatus: maritalSelectedOption,
+              caste: selectCaste,
               religion: selectReligion,
-              cast: selectCaste,
-              writeBoutYourSelf: addDescription,
-              userProfileCompleted: true,
+              height: userHeight,
+              weight: userWeight,
+
+              // firstName: firstName,
+              // lastName: lastName,
+              // dateOfBirth: dateOfBirthISO,
+              // birthTime: [selectHours, selectMinutes, selectSecond],
+              //
+              // writeBoutYourSelf: addDescription,
+              // userProfileCompleted: true,
             },
             () => dispatch({type: NEXT_SCREEN}),
           ),
@@ -296,15 +310,17 @@ const AddPersonalInfo = ({navigation}) => {
         apiDispatch(
           addressDetails(
             {
-              currentResidenceAddress: currentResidingAddress,
+              currentResidenceAddress: currentAddress,
+              currentCountry: currentCountry,
+              currentState: currentState,
               currentCity: selectCurrentCity,
-              currentCountry: selectCurrentLiving,
             },
             () => dispatch({type: NEXT_SCREEN}),
           ),
         );
       } else if (activeIndex === 2) {
         // Call addressDetails API for Address Details
+
         apiDispatch(
           updateDetails(
             {
@@ -317,6 +333,7 @@ const AddPersonalInfo = ({navigation}) => {
         );
       } else if (activeIndex === 3) {
         // Call addressDetails API for Address Details
+
         apiDispatch(
           updateDetails(
             {
@@ -331,6 +348,7 @@ const AddPersonalInfo = ({navigation}) => {
         );
       } else if (activeIndex === 4) {
         // Call addressDetails API for Address Details
+
         apiDispatch(
           professionalDetail(
             {
@@ -348,11 +366,12 @@ const AddPersonalInfo = ({navigation}) => {
         apiDispatch(
           updateDetails(
             {
-              hobbies: hobbiesPayload,
+              hobbies: selectedItems.map(item => item.label),
             },
-            () => navigation.navigate('SetProfilePictureScreen'),
+            // () => navigation.navigate('SetProfilePictureScreen'),
           ),
         );
+        openGallery();
       } else {
         // Just navigate to the next screen for other phases
         dispatch({type: NEXT_SCREEN});
@@ -364,7 +383,8 @@ const AddPersonalInfo = ({navigation}) => {
     if (activeIndex > 0) {
       dispatch({type: BACK_SCREEN});
     } else {
-      navigation.navigate('HomeTabs', {selectedBox});
+      // navigation.navigate('HomeTabs', {selectedBox});
+      navigation.navigate('CreatingProfileScreen', {selectedBox});
     }
   };
 
@@ -389,7 +409,10 @@ const AddPersonalInfo = ({navigation}) => {
           contentContainerStyle={{
             flex: 1,
             height: hp(48),
-            justifyContent: 'space-evenly',
+            // justifyContent: 'space-evenly',
+            justifyContent: 'space-between',
+            marginHorizontal: 18,
+            marginTop: 20,
           }}
           data={PersonalInfoPhases}
           renderItem={({item, index}) =>
@@ -405,35 +428,58 @@ const AddPersonalInfo = ({navigation}) => {
 
       <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          // flexDirection: 'row',
+          // justifyContent: 'space-between',
           marginHorizontal: 17,
         }}>
-        <Text style={{color: colors.black, marginTop: hp(15)}}>
+        <Text
+          style={{
+            color: colors.black,
+            marginTop: hp(37),
+            // backgroundColor: 'red',
+            // alignItems: 'center',
+            textAlign: 'center',
+            fontSize: fontSize(20),
+            lineHeight: hp(30),
+            fontFamily: fontFamily.poppins600,
+          }}>
           {PersonalInfoPhases[activeIndex].phaseName}
         </Text>
 
-        {activeIndex > 0 && (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('HomeTabs');
-            }}>
-            <Text
-              style={{
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
-                color: colors.blue,
-                marginTop: hp(15),
-              }}>
-              Skip
-            </Text>
-          </TouchableOpacity>
-        )}
+        {/*{activeIndex > 0 && (*/}
+        {/*  <TouchableOpacity*/}
+        {/*    onPress={() => {*/}
+        {/*      navigation.navigate('HomeTabs');*/}
+        {/*    }}>*/}
+        {/*    <Text*/}
+        {/*      style={{*/}
+        {/*        fontSize: fontSize(14),*/}
+        {/*        lineHeight: hp(21),*/}
+        {/*        fontFamily: fontFamily.poppins400,*/}
+        {/*        color: colors.blue,*/}
+        {/*        marginTop: hp(15),*/}
+        {/*      }}>*/}
+        {/*      Skip*/}
+        {/*    </Text>*/}
+        {/*  </TouchableOpacity>*/}
+        {/*)}*/}
       </View>
 
       {RenderComp && (
         <RenderComp
+          genderSelectedOption={genderSelectedOption}
+          genderSetSelectedOption={genderSetSelectedOption}
+          maritalSelectedOption={maritalSelectedOption}
+          maritalSetSelectedOption={maritalSetSelectedOption}
+          selectCaste={selectCaste}
+          setSelectCaste={setSelectCaste}
+          selectReligion={selectReligion}
+          setSelectReligion={setSelectReligion}
+          userHeight={userHeight}
+          setUserHeight={setUserHeight}
+          userWeight={userWeight}
+          setUserWeight={setUserWeight}
+          // OLD
           firstName={firstName}
           setFirstName={setFirstName}
           lastName={lastName}
@@ -448,20 +494,25 @@ const AddPersonalInfo = ({navigation}) => {
           setSelectMinutes={setSelectMinutes}
           selectSecond={selectSecond}
           setSelectSecond={setSelectSecond}
-          selectReligion={selectReligion}
-          setSelectReligion={setSelectReligion}
-          selectCaste={selectCaste}
-          setSelectCaste={setSelectCaste}
           selectCurrentLiving={selectCurrentLiving}
           setSelectCurrentLiving={setSelectCurrentLiving}
           addDescription={addDescription}
           setAddDescription={setAddDescription}
           //CONTACT DETAILS SCREEN
+
+          currentAddress={currentAddress}
+          setCurrentAddress={setCurrentAddress}
+          currentCountry={currentCountry}
+          setCurrentCountry={setCurrentCountry}
+          currentState={currentState}
+          setCurrentState={setCurrentState}
           selectCurrentCity={selectCurrentCity}
           setSelectCurrentCity={setSelectCurrentCity}
+          //OLD
           currentResidingAddress={currentResidingAddress}
           setCurrentResidingAddress={setCurrentResidingAddress}
           //CONTACT SCREEN
+
           mobileNumber={mobileNumber}
           setMobileNumber={setMobileNumber}
           homeNumber={homeNumber}
@@ -496,9 +547,8 @@ const AddPersonalInfo = ({navigation}) => {
           setSelectedFun={setSelectedFun}
           selectedFitness={selectedFitness}
           setSelectedFitness={setSelectedFitness}
-          //CONDITIONS
-          firstNameError={firstNameError}
-          lastNameError={lastNameError}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
         />
       )}
 
@@ -513,19 +563,19 @@ const AddPersonalInfo = ({navigation}) => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={{
-            width: wp(162),
-            height: hp(50),
+            width: wp(133),
+            height: hp(44),
             borderRadius: 25,
             borderWidth: 1,
-            borderColor: colors.blue,
+            borderColor: colors.black,
             justifyContent: 'center',
           }}
           onPress={navigateToBack}>
           <Text
             style={{
               textAlign: 'center',
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
               fontFamily: fontFamily.poppins400,
               color: colors.black,
             }}>
@@ -533,12 +583,35 @@ const AddPersonalInfo = ({navigation}) => {
           </Text>
         </TouchableOpacity>
 
-        <CommonGradientButton
-          buttonName={'Next'}
-          containerStyle={{width: wp(162), height: hp(50), borderRadius: 25}}
+        {/*<CommonGradientButton*/}
+        {/*  buttonName={'Next'}*/}
+        {/*  containerStyle={{width: wp(162), height: hp(50), borderRadius: 25}}*/}
+        {/*  onPress={navigateToNext}*/}
+        {/*/>*/}
+
+        <TouchableOpacity
           onPress={navigateToNext}
-        />
+          style={{
+            width: wp(176),
+            height: hp(44),
+            borderRadius: 30,
+            backgroundColor: colors.black,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: colors.white,
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins400,
+            }}>
+            {/*Continue*/}
+            {activeIndex === 5 ? 'Add Photos' : 'Continue'}
+          </Text>
+        </TouchableOpacity>
       </View>
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

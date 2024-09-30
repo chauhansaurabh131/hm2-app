@@ -42,6 +42,7 @@ export const images = {
   game_lover_img: require('./images/game_lover_img.png'),
   chit_chat_img: require('./images/chit_chat_img.png'),
   adventurous_img: require('./images/adventurous_img.png'),
+  gradient_button_background_img: require('./images/gradient_background_img.png'),
 };
 
 export const icons = {
@@ -133,6 +134,11 @@ export const icons = {
   notification_icon: require('./icons/notificaton_icon.png'),
   plan_icon: require('./icons/plan_icon.png'),
   kyc_icon: require('./icons/kyc_icon.png'),
+  no_Profile_Found_img: require('./icons/no_Profile_Found_icon.png'),
+  date_Dislike_icon: require('./icons/date_Dislike_icon.png'),
+  date_Star_icon: require('./icons/date_star_icon.png'),
+  date_like_icon: require('./icons/date_like_icon.png'),
+  date_send_icon: require('./icons/date_send_icon.png'),
 };
 
 export const gif = {

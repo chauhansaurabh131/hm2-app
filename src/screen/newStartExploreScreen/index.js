@@ -28,7 +28,7 @@ const NewStartExploreScreen = () => {
           {
             appUsesType: 'marriage',
           },
-          () => dispatch(changeStack()),
+          () => dispatch(changeStack('marriage')),
         ),
       );
     } else if (selectedOption === 'dating') {
@@ -38,7 +38,7 @@ const NewStartExploreScreen = () => {
           {
             appUsesType: 'dating',
           },
-          () => dispatch(changeStack()),
+          () => dispatch(changeStack('dating')),
         ),
       );
     } else if (selectedOption === 'social') {

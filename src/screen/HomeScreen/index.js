@@ -42,6 +42,8 @@ const HomeScreen = ({route}) => {
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
+
+  // console.log(' === user ===> ', user);
   const userImage = user?.user?.profilePic;
 
   const accessToken = user?.tokens?.access?.token;
@@ -92,7 +94,7 @@ const HomeScreen = ({route}) => {
 
   // {userData?.data?.length}
 
-  console.log(' === 1111 ===> ', userData);
+  // console.log(' === 1111 ===> ', userData?.data[0]?.totalDocs);
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
@@ -118,7 +120,8 @@ const HomeScreen = ({route}) => {
     if (activeLine === 3) {
       setShowModal(false);
       setActiveLine(1); // Reset the active line
-      navigation.navigate('GeneralInformationScreen');
+      // navigation.navigate('GeneralInformationScreen');
+      navigation.navigate('CreatingProfileScreen');
     } else {
       setActiveLine(prev => prev + 1);
     }
@@ -140,13 +143,37 @@ const HomeScreen = ({route}) => {
   const getDisplayDescriptionText = () => {
     switch (activeLine) {
       case 1:
-        return 'Boost your profile by sharing more about yourself, your interests, and your ideal partner. A detailed profile improves your chances of finding the perfect match';
+        return (
+          'Boost your profile by sharing more\n' +
+          'about yourself, your interests, and your\n' +
+          'ideal partner. A detailed profile\n' +
+          'improves your chances of finding the\n' +
+          'perfect match'
+        );
       case 2:
-        return 'Your privacy is our priority. Take advantage of our security features, and be assured that your information is in safe hands';
+        return (
+          'Your privacy is our priority. Take\n' +
+          'advantage of our security features,\n' +
+          'and be assured that your information is\n' +
+          'improves your chances of finding the\n' +
+          ''
+        );
       case 3:
-        return 'Your privacy is our priority. Take advantage of our security features, and be assured that your information is in safe hands';
+        return (
+          'Your privacy is our priority. Take\n' +
+          'advantage of our security features,\n' +
+          'and be assured that your information is\n' +
+          'improves your chances of finding the\n' +
+          ''
+        );
       default:
-        return 'Boost your profile by sharing more about yourself, your interests, and your ideal partner. A detailed profile improves your chances of finding the perfect match';
+        return (
+          'Boost your profile by sharing more\n' +
+          'about yourself, your interests, and your\n' +
+          'ideal partner. A detailed profile\n' +
+          'improves your chances of finding the\n' +
+          'perfect match'
+        );
     }
   };
 
@@ -180,7 +207,8 @@ const HomeScreen = ({route}) => {
 
   const verificationModalToggle = () => {
     setCompleteModalModalVisible(false);
-    navigation.navigate('GeneralInformationScreen', {selectedBox});
+    // navigation.navigate('GeneralInformationScreen', {selectedBox});
+    navigation.navigate('CreatingProfileScreen', {selectedBox});
   };
 
   const openTopSheetModal = () => {
@@ -348,7 +376,7 @@ const HomeScreen = ({route}) => {
                       key={index}
                       style={{
                         width: wp(50),
-                        borderWidth: 0.5,
+                        borderWidth: 1,
                         borderColor:
                           activeLine === line ? '#8225AF' : '#E8E8E8',
                         marginHorizontal: 5,
@@ -356,34 +384,40 @@ const HomeScreen = ({route}) => {
                     />
                   ))}
                 </View>
-
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={handleButtonClick}>
-                  <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0.5}}
-                    style={{
-                      marginTop: hp(50),
-                      width: wp(176),
-                      height: hp(50),
-                      borderRadius: 25,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        color: colors.white,
-                        textAlign: 'center',
-                        fontSize: fontSize(16),
-                        lineHeight: hp(26),
-                        fontFamily: fontFamily.poppins500,
-                      }}>
-                      {getButtpnText()}
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
               </View>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleButtonClick}
+                style={{
+                  // backgroundColor: 'red',
+                  flex: 1,
+                  position: 'absolute',
+                  bottom: 35,
+                }}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0.5}}
+                  style={{
+                    marginTop: hp(50),
+                    width: wp(176),
+                    height: hp(50),
+                    borderRadius: 25,
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.white,
+                      textAlign: 'center',
+                      fontSize: fontSize(16),
+                      lineHeight: hp(26),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    {getButtpnText()}
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -481,7 +515,7 @@ const HomeScreen = ({route}) => {
           <View style={style.premiumTextContainer}>
             <Text style={style.premiumTextStyle}>New Matches</Text>
             <Text style={style.premiumTextsStyle}>
-              {userData?.data?.length}
+              {/*{userData?.data[0]?.totalDocs}*/}
             </Text>
           </View>
 

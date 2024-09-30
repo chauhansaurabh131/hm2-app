@@ -1,17 +1,18 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   StyleSheet,
   Image,
   TouchableOpacity,
-  FlatList,
   Text,
   Animated,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import {icons} from '../../assets';
 import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../utils/helpers'; // Make sure you have the icons in your assets
+import {fontFamily, fontSize, hp} from '../../utils/helpers'; // Ensure you have the icons in your assets
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const NewDropDownTextInput = ({
   placeholder,
@@ -19,16 +20,20 @@ const NewDropDownTextInput = ({
   onValueChange,
 }) => {
   const [value, setValue] = useState('');
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isFocused, setFocused] = useState(false);
+  const refRBSheet = useRef(null);
 
   // Create animated state for the floating label
   const labelPosition = new Animated.Value(value ? 1 : 0);
 
   const handleFocus = () => {
     setFocused(true);
-    // Toggle dropdown visibility when clicking on TextInput
-    setDropdownVisible(prevState => !prevState);
+    // Open bottom sheet when clicking on TextInput
+    if (refRBSheet.current) {
+      refRBSheet.current.open();
+    } else {
+      console.log('Bottom sheet ref is null');
+    }
 
     Animated.timing(labelPosition, {
       toValue: 1, // Move label to the top
@@ -50,7 +55,7 @@ const NewDropDownTextInput = ({
 
   const handleSelectOption = item => {
     setValue(item);
-    setDropdownVisible(false); // Close dropdown after selecting an option
+    refRBSheet.current.close(); // Close bottom sheet after selecting an option
     Animated.timing(labelPosition, {
       toValue: 1, // Keep label at the top
       duration: 200,
@@ -63,7 +68,7 @@ const NewDropDownTextInput = ({
 
   const labelStyle = {
     position: 'absolute',
-    left: 10,
+    // left: 10,
     top: labelPosition.interpolate({
       inputRange: [0, 1],
       outputRange: [20, -10], // Move the label up when value is selected or input is focused
@@ -80,56 +85,73 @@ const NewDropDownTextInput = ({
       {/* Floating label */}
       <Animated.Text style={labelStyle}>{placeholder}</Animated.Text>
 
-      {/* Custom TextInput with Icon */}
-      <TextInput
-        style={styles.input}
-        value={value}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onChangeText={setValue}
-        placeholderTextColor={'transparent'} // Hide default placeholder text
-        editable={!isDropdownVisible} // Disable typing when dropdown is visible
-      />
-      <TouchableOpacity style={styles.icon}>
+      {/* Wrap TextInput in TouchableOpacity to open the bottom sheet */}
+      <TouchableOpacity onPress={handleFocus} activeOpacity={1}>
+        <TextInput
+          style={styles.input}
+          value={value}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholderTextColor="transparent" // Hide default placeholder text
+          editable={false} // Prevent typing inside the TextInput
+          pointerEvents="none" // Disable interactions with TextInput
+        />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.icon} onPress={handleFocus}>
         <Image source={icons.drooDownLogo} style={styles.iconStyle} />
       </TouchableOpacity>
 
-      {/* Dropdown menu */}
-      {isDropdownVisible && (
+      {/* Bottom sheet */}
+      <RBSheet
+        ref={refRBSheet}
+        height={300} // Set the height of the bottom sheet
+        closeOnDragDown={true}
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
         <View style={styles.dropdownContainer}>
-          <FlatList
-            data={dropdownData}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
+          <ScrollView style={{marginBottom: 25}}>
+            {dropdownData.map((item, index) => (
               <TouchableOpacity
+                key={index}
                 style={styles.dropdownItem}
                 onPress={() => handleSelectOption(item)}>
                 <Text style={styles.dropdownText}>{item}</Text>
+                {/*<View*/}
+                {/*  style={{*/}
+                {/*    width: '100%',*/}
+                {/*    borderWidth: 0.5,*/}
+                {/*    borderColor: 'black',*/}
+                {/*  }}*/}
+                {/*/>*/}
               </TouchableOpacity>
-            )}
-          />
+            ))}
+          </ScrollView>
+          <View style={{height: 10}} />
         </View>
-      )}
+      </RBSheet>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginTop: 70,
     position: 'relative', // Ensure the label is overlaid on the input
   },
   input: {
     height: 50,
-    borderColor: 'black',
+    borderColor: '#C0C0C0',
     borderBottomWidth: 1, // Only bottom border
     width: '100%',
-    paddingLeft: 10,
+    paddingLeft: 0,
     paddingRight: 35, // Space for the icon on the right side
     color: 'black',
     fontSize: fontSize(20),
-    lineHeight: hp(30),
-    fontFamily: fontFamily.poppins500,
+    lineHeight: 30, // Ensure hp(30) returns a valid number
+    fontFamily: 'poppins_medium', // Ensure this font family is correctly loaded
   },
   icon: {
     position: 'absolute',
@@ -144,16 +166,19 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     backgroundColor: 'white',
     borderColor: 'gray',
-    borderWidth: 1,
-    marginTop: 5,
-    maxHeight: 150, // Limit dropdown height
+    // borderWidth: 1,
+    // maxHeight: 150, // Limit dropdown height
   },
   dropdownItem: {
     paddingVertical: 10,
     paddingHorizontal: 10,
+    marginHorizontal: 17,
   },
   dropdownText: {
     color: 'black',
+    fontSize: fontSize(16),
+    lineHeight: 24,
+    fontFamily: fontFamily.poppins500,
   },
 });
 

@@ -41,6 +41,12 @@ export const COUNTRY_LIST = [
   {label: 'sri-lanka', value: '8'},
 ];
 
+export const Language = [
+  {label: 'hindi', value: '1'},
+  {label: 'english', value: '2'},
+  {label: 'gujarati', value: '3'},
+];
+
 export const RELIGION_LIST = [
   {label: 'Hinduism', value: '1'},
   {label: 'Christianity', value: '2'},

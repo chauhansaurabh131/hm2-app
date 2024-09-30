@@ -55,7 +55,7 @@ export function logout(clear) {
   return {type: TYPES.LOGOUT_START, clear};
 }
 
-export const changeStack = () => ({type: TYPES.CHANGE_STACK});
+export const changeStack = data => ({type: TYPES.CHANGE_STACK, data});
 
 export const SetLoading = payload => {
   return {type: SET_LOADING, payload};

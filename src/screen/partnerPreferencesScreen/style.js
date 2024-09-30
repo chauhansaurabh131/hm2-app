@@ -7,111 +7,80 @@ const style = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  containerBody: {
-    marginHorizontal: wp(18),
-    flex: 1,
+  headerContainer: {
+    marginHorizontal: wp(17),
   },
-  headerImageStyle: {
-    width: wp(96),
-    height: hp(24),
-    marginTop: hp(15),
-    resizeMode: 'stretch',
-    marginBottom: hp(15),
+  headingText: {
+    color: 'black',
+    marginTop: hp(10),
+    fontSize: fontSize(20),
+    lineHeight: hp(30),
+    fontFamily: fontFamily.poppins600,
+    textAlign: 'center',
   },
-  headerTittleContainer: {
-    marginTop: hp(15),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: hp(8),
+  bodyContainer: {
+    marginHorizontal: wp(17),
+    marginTop: hp(40),
   },
-  partnerPreferencesTextStyle: {
-    color: colors.black,
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
-  },
-  doItLaterTextStyle: {
-    color: colors.blue,
-    fontSize: fontSize(16),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-  },
-  bodyTittleTextStyle: {
-    color: colors.black,
+  headingSubText: {
+    color: '#9A9A9A',
     fontSize: fontSize(12),
     lineHeight: hp(18),
-    fontFamily: fontFamily.poppins400,
-    marginBottom: hp(3),
-    marginTop: hp(15),
+    fontFamily: fontFamily.poppins500,
   },
-
-  bottomButtonContainer: {
+  ageContainer: {
+    marginTop: hp(5),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: hp(17),
+  },
+  ageContainerStyle: {
+    width: '45%',
+  },
+  headingSubTittleText: {
+    color: '#9A9A9A',
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins500,
+    marginTop: hp(17),
+  },
+  space: {
+    height: hp(150),
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: wp(17),
+    height: hp(87),
+    alignItems: 'center',
   },
   backButtonContainer: {
-    width: wp(162),
-    height: hp(50),
-    borderRadius: 10,
+    width: wp(133),
+    height: hp(44),
+    borderRadius: 25,
     borderWidth: 1,
-    borderColor: colors.blue,
+    borderColor: colors.black,
     justifyContent: 'center',
   },
   backButtonText: {
-    color: colors.black,
     textAlign: 'center',
-    fontSize: hp(16),
+    fontSize: fontSize(16),
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
-  },
-  continueButtonContainer: {
-    width: wp(162),
-    height: hp(50),
-  },
-  bodyContainer: {
-    marginTop: hp(19),
-  },
-  headerListBody: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  chooseAgeText: {
     color: colors.black,
-    fontSize: fontSize(12),
-    lineHeight: hp(21),
+  },
+  dashboardButton: {
+    width: wp(176),
+    height: hp(44),
+    borderRadius: 30,
+    backgroundColor: colors.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dashboardText: {
+    color: colors.white,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
-    marginBottom: hp(7),
-  },
-  chooseAgeContainer: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-  },
-  chooseAgeSpace: {
-    marginRight: 10,
-  },
-  toText: {
-    marginRight: 10,
-    color: colors.black,
-    fontSize: fontSize(12),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-    alignSelf: 'center',
-  },
-  chooseHeightText: {
-    color: colors.black,
-    fontSize: fontSize(12),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-    marginBottom: hp(7),
-  },
-  chooseHeightContainer: {
-    flexDirection: 'row',
-  },
-  chooseHeightSpace: {
-    marginRight: 10,
   },
 });
 

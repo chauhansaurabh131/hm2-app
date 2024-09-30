@@ -40,6 +40,7 @@ const NewTextInputComponent = ({
         placeholderTextColor={colors.black}
         secureTextEntry={isPasswordInput && !isPasswordVisible} // Conditionally hide/show password
         maxLength={maxLength}
+        importantForAutofill="no"
       />
       {RightIconName && (
         <TouchableOpacity onPress={togglePasswordVisibility}>

@@ -1,94 +1,129 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
-import {colors} from '../../utils/colors';
+import {
+  View,
+  TextInput,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Text,
+  SafeAreaView,
+} from 'react-native';
+import {icons} from '../../assets';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
 
 const DropdownHeightAndAgeComponent = ({
-  data,
+  options,
   placeholder,
-  dropdownContainer,
   selectedValue,
-  onValueChange,
+  setSelectedValue,
 }) => {
-  const [value, setValue] = useState(selectedValue || null);
-  const [isFocus, setIsFocus] = useState(false);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
-  const renderItem = item => {
-    const itemTextStyle = {
-      ...styles.textItem,
-      color: value === item.value ? 'black' : 'black',
-    };
+  const toggleDropdown = () => {
+    setDropdownVisible(prev => !prev);
+  };
 
-    return (
-      <View style={styles.item}>
-        <Text style={itemTextStyle}>{item.label}</Text>
-      </View>
-    );
+  const handleSelect = value => {
+    setSelectedValue(value); // Update input value with selected option
+    setDropdownVisible(false);
+  };
+
+  const handleInputChange = text => {
+    // Allow only digits and limit to 3 characters
+    const numericText = text.replace(/[^0-9]/g, '').slice(0, 3);
+    setInputValue(numericText);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Dropdown
-        style={[styles.dropdown, dropdownContainer]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        iconColor={colors.blue}
-        data={data}
-        search={false}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={placeholder}
-        value={value}
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={item => {
-          setValue(item.value);
-          onValueChange(item.value);
-          setIsFocus(false);
-        }}
-        renderItem={renderItem}
-        searchPlaceholder={'select'}
-      />
+    <SafeAreaView>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.textInput}
+          placeholder={placeholder}
+          placeholderTextColor={'gray'}
+          value={selectedValue} // Bind the input value
+          editable={false} // Make it read-only
+        />
+        <TouchableOpacity
+          onPress={toggleDropdown}
+          style={styles.imageContainer}>
+          <Image source={icons.drooDownLogo} style={styles.image} />
+        </TouchableOpacity>
+      </View>
+
+      {isDropdownVisible && (
+        <View style={styles.dropdownContainer}>
+          <FlatList
+            data={options}
+            keyExtractor={item => item}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => handleSelect(item)}
+                style={styles.dropdownItem}>
+                <Text style={styles.dropdownText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            nestedScrollEnabled={true}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
-  dropdown: {
-    width: 56,
-    height: 36,
-    borderColor: '#E6E6E6',
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 50,
+    borderBottomColor: '#C0C0C0',
+    borderBottomWidth: 1,
+  },
+  textInput: {
+    flex: 1,
+    height: '100%',
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    color: 'black',
+    fontSize: fontSize(18),
+    lineHeight: hp(27),
+    fontFamily: fontFamily.poppins500,
+  },
+  image: {
+    width: hp(12), // Adjust size as needed
+    height: hp(8), // Adjust size as needed
+    tintColor: '#5F6368',
+    resizeMode: 'contain',
+  },
+  imageContainer: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    top: -3,
+  },
+  dropdownContainer: {
     borderWidth: 1,
-    borderRadius: 5,
+    borderColor: '#C0C0C0',
+    width: '100%',
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 50, // Adjust based on your layout
+    zIndex: 99,
+    marginTop: 10,
+    borderRadius: 10,
   },
-  placeholderStyle: {
-    fontSize: 16,
-    color: 'black',
-    marginLeft: 8,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: 'black',
-    marginLeft: 8,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-    marginRight: 3,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-    color: 'black',
-  },
-  textItem: {
-    fontSize: 18,
+  dropdownItem: {
     padding: 10,
-    textAlign: 'center',
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: 'black',
   },
 });
 
