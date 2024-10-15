@@ -23,10 +23,10 @@ const style = StyleSheet.create({
     lineHeight: hp(30),
     fontFamily: fontFamily.poppins600,
     textAlign: 'center',
-    marginTop: hp(90),
+    marginTop: hp(70),
   },
   bodyContainer: {
-    marginTop: hp(92),
+    marginTop: hp(55),
   },
   spaceMarginStyle: {
     marginTop: hp(37),

@@ -214,6 +214,23 @@ function* addShortLists(action) {
 //   }
 // }
 
+function* AddDatingPartnerReferences(action) {
+  const accessToken = yield call(AsyncStorage.getItem, TOKEN);
+  // console.log(' === accessToken ===> ', accessToken);
+  try {
+    const response = yield call(
+      home.datingPartnerReferencesApi,
+      action.data.payload,
+    );
+    yield put(homeActions.datingPartnerReferencesSuccess(response.data));
+    if (action.data.callBack) {
+      action.data.callBack();
+    }
+  } catch (error) {
+    yield put(homeActions.datingPartnerReferencesFailure());
+  }
+}
+
 function* homeSaga() {
   yield all([takeLatest(TYPES.GET_USER_DATA, getUserData)]);
   yield all([takeLatest(TYPES.SEND_REQUEST, sendFriendRequest)]);
@@ -232,6 +249,12 @@ function* homeSaga() {
   yield all([takeLatest(TYPES.PARTNER_PREFERENCES_DETAILS, partnerReferences)]);
   yield all([takeLatest(TYPES.GET_ALL_PAYMENT_DETAILS, getPaymentDetail)]);
   yield all([takeLatest(TYPES.ADD_SHORT_LIST, addShortLists)]);
+  yield all([
+    takeLatest(
+      TYPES.DATING_PARTNER_PREFERENCES_DETAILS,
+      AddDatingPartnerReferences,
+    ),
+  ]);
   // yield all([takeLatest(TYPES.REMOVE_SHORT_LIST, removeShortLists)]);
   // yield all([takeLatest(TYPES.USER_LIKE, userLikes)]);
   // yield all([takeLatest(TYPES.USER_DIS_LIKE, user_Dis_Likes)]);

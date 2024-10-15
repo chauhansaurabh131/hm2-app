@@ -28,8 +28,6 @@ const MyProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
-  console.log(' === user.... ===> ', user.user);
-
   const profileImage = user?.user?.profilePic;
 
   const capitalizeFirstLetter = string => {

@@ -9,18 +9,14 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {icons, images} from '../../assets'; // Assuming you have imported your icons and images
-import {colors} from '../../utils/colors'; // Assuming you have defined your colors
-import {useNavigation, useRoute} from '@react-navigation/native';
-import CommonGradientButton from '../../components/commonGradientButton'; // Adjust as per your component structure
-import {useDispatch, useSelector} from 'react-redux'; // Assuming you use Redux for state management
-import {
-  addProfilePicture,
-  addProfilePictureFailure,
-} from '../../actions/homeActions'; // Assuming this action is defined
-import style from './style'; // Adjust the import path for your style
+import {icons, images} from '../../assets';
+import {colors} from '../../utils/colors';
+import {useNavigation} from '@react-navigation/native';
+import CommonGradientButton from '../../components/commonGradientButton';
+import {useDispatch} from 'react-redux';
+import {addProfilePicture} from '../../actions/homeActions';
+import style from './style';
 
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TOKEN} from '../../utils/constants';
 import RNBlobUtil from 'react-native-blob-util';

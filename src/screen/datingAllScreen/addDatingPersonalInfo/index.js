@@ -11,11 +11,12 @@ import {images} from '../../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import {colors} from '../../../utils/colors';
 import Toast from 'react-native-toast-message';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import DatingGeneralDetailsScreen from '../datingGeneralDetailsScreen';
 import DatingLocationScreen from '../datingLocationScreen';
 import DatingHobbiesScreen from '../datingHobbiesScreen';
 import ImagePicker from 'react-native-image-crop-picker';
+import {updateDetails} from '../../../actions/homeActions';
 
 const NEXT_SCREEN = 'NEXT_SCREEN';
 const NUMBER_SCREEN = 'NUMBER_SCREEN';
@@ -48,6 +49,15 @@ const AddDatingPersonalInfo = ({navigation}) => {
   const [selectedImages, setSelectedImages] = useState([]);
 
   const apiDispatch = useDispatch();
+
+  const {user} = useSelector(state => state.auth);
+
+  console.log(' === AddDatingPersonalInfo ===> ', user?.user);
+
+  console.log(
+    ' === interestedIn ===> ',
+    user?.user?.datingData[0]?.interestedIn,
+  );
 
   const [{activeIndex}, dispatch] = useReducer(
     phaseReducer,
@@ -86,6 +96,7 @@ const AddDatingPersonalInfo = ({navigation}) => {
   const [educationLevel, setEducationLevel] = useState('');
   const [occupation, setOccupation] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
+  const [annualIncome, setAnnualIncome] = useState('');
 
   const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
     const tintColor = () => (index <= activeIndex ? '#000000' : '#B0B0B0');
@@ -138,47 +149,87 @@ const AddDatingPersonalInfo = ({navigation}) => {
     if (activeIndex > 0) {
       dispatch({type: BACK_SCREEN});
     } else {
-      // navigation.navigate('HomeTabs', {selectedBox});
+      navigation.navigate('DatingCreatingProfile');
       // navigation.navigate('CreatingProfileScreen', {selectedBox});
     }
   };
 
   const navigateToNext = () => {
-    if (activeIndex === PersonalInfoPhases.length - 1) {
-      openGallery();
-      // navigation.navigate('DatingSetProfilePictureScreen');
-    } else {
-      if (activeIndex === 0) {
-        console.log(' === genderSelectedOption ===> ', genderSelectedOption);
-        console.log(' === userHeight ===> ', userHeight);
-        console.log(' === languageSpoken ===> ', languageSpoken);
-        console.log(
-          ' === religionSelectedOption ===> ',
-          religionSelectedOption,
-        );
-        console.log(' === ethnicityData ===> ', ethnicityData);
-        console.log(' === bio ===> ', bio);
-        dispatch({type: NEXT_SCREEN});
-      } else if (activeIndex === 1) {
-        console.log(' === mobileNumber ===> ', mobileNumber);
-        console.log(' === currentLiving ===> ', currentLiving);
-        console.log(' === educationLevel ===> ', educationLevel);
-        console.log(' === occupation ===> ', occupation);
-        dispatch({type: NEXT_SCREEN});
-      } else if (activeIndex === 2) {
-        console.log(' === TEST ===> ');
-        console.log(
-          ' === Hobbies ===> ',
-          selectedItems.map(item => item.label),
-        );
-        openGallery();
+    console.log(' === activeIndex ===> ', activeIndex);
+    // if (activeIndex === PersonalInfoPhases.length - 1) {
+    //   console.log(
+    //     ' === PersonalInfoPhases.length ===> ',
+    //     PersonalInfoPhases.length,
+    //   );
+    //   // openGallery();
+    //   navigation.navigate('HomeTabs');
+    // } else {
+    if (activeIndex === 0) {
+      console.log(' === activeIndex ===> ', activeIndex);
+      const motherTongueString = languageSpoken.join(', ');
 
-        // dispatch({type: NEXT_SCREEN});
-      } else {
-        // Just navigate to the next screen for other phases
-        dispatch({type: NEXT_SCREEN});
-      }
+      const updatedDatingData = {
+        ...user?.user?.datingData[0], // Get existing datingData (like interestedIn)
+        Ethnicity: ethnicityData, // Add new Ethnicity field
+      };
+
+      apiDispatch(
+        updateDetails(
+          {
+            gender: genderSelectedOption,
+            height: userHeight,
+            motherTongue: motherTongueString,
+            religion: religionSelectedOption,
+            datingData: [updatedDatingData],
+            writeBoutYourSelf: bio,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+
+      // dispatch({type: NEXT_SCREEN});
+    } else if (activeIndex === 1) {
+      const updatedDatingData = {
+        ...user?.user?.datingData[0],
+        CurrentlyLiving: currentLiving,
+        educationLevel: educationLevel,
+        Occupation: occupation,
+        annualIncome: annualIncome,
+      };
+
+      apiDispatch(
+        updateDetails(
+          {
+            mobileNumber: mobileNumber,
+            datingData: [updatedDatingData],
+            userProfileCompleted: true,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+    } else if (activeIndex === 2) {
+      // console.log(
+      //   ' === Hobbies ===> ',
+      //   selectedItems.map(item => item.label),
+      // );
+      //
+      // dispatch({type: NEXT_SCREEN});
+      // navigation.navigate('HomeTabs');
+
+      apiDispatch(
+        updateDetails(
+          {
+            hobbies: selectedItems.map(item => item.label),
+          },
+          // () => navigation.navigate('SetProfilePictureScreen'),
+          () => openGallery(),
+        ),
+      );
+    } else {
+      // Just navigate to the next screen for other phases
+      dispatch({type: NEXT_SCREEN});
     }
+    // }
   };
 
   return (
@@ -259,6 +310,8 @@ const AddDatingPersonalInfo = ({navigation}) => {
           setOccupation={setOccupation}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
+          annualIncome={annualIncome}
+          setAnnualIncome={setAnnualIncome}
         />
       )}
 

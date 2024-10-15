@@ -41,6 +41,17 @@ export const COUNTRY_LIST = [
   {label: 'sri-lanka', value: '8'},
 ];
 
+export const Dating_List = [
+  {label: 'Meet New Friends', value: '1'},
+  {label: 'Looking for Love', value: '2'},
+  {label: 'Movie Date', value: '3'},
+  {label: 'Foodies', value: '4'},
+  {label: 'Travel Buddies', value: '5'},
+  {label: 'Game Lover', value: '6'},
+  {label: 'Chit-Chat', value: '7'},
+  {label: 'Adventurous', value: '8'},
+];
+
 export const Language = [
   {label: 'hindi', value: '1'},
   {label: 'english', value: '2'},

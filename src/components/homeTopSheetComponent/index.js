@@ -35,6 +35,8 @@ const HomeTopSheetComponent = ({
   const accessToken = user?.tokens?.access?.token;
   const [socket, setSocket] = useState(null);
 
+  const appType = user?.user?.appUsesType;
+
   // const userImage = user?.user?.userProfilePic?.[0]?.url;
   const userImage = user?.user?.profilePic;
   const UserUniqueId = user?.user?.userUniqueId;
@@ -42,7 +44,7 @@ const HomeTopSheetComponent = ({
   const capitalizeFirstLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-  const name = capitalizeFirstLetter(user?.user?.name);
+  const name = capitalizeFirstLetter(user?.user?.name || '');
 
   // console.log(' === user... ===> ', user?.user?.name);
 
@@ -211,7 +213,12 @@ const HomeTopSheetComponent = ({
                 activeOpacity={0.7}
                 onPress={() => {
                   toggleModal();
-                  navigation.navigate('MyProfileScreen');
+                  {
+                    appType === 'dating'
+                      ? navigation.navigate('DatingProfileScreen')
+                      : navigation.navigate('MyProfileScreen');
+                  }
+                  // navigation.navigate('MyProfileScreen');
                 }}>
                 <View
                   style={{

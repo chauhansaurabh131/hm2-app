@@ -43,6 +43,8 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
+  console.log(' === HomeScreen_____ ===> ', user);
+
   // console.log(' === user ===> ', user);
   const userImage = user?.user?.profilePic;
 
@@ -98,21 +100,46 @@ const HomeScreen = ({route}) => {
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
+  const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
+
+  // console.log(' === 8888 ===> ', user?.user?.userPartner);
+
+  console.log(
+    ' === userPartnerPreCompleted ===> ',
+    user?.user?.userPartnerPreCompleted,
+  );
+
+  console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+
   useEffect(() => {
     if (userProfileCompleted) {
       setShowModal(false);
     }
   }, [userProfileCompleted]);
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (!userProfileCompleted === true) {
+  //       setShowModal(true);
+  //     }
+  //   }, []),
+  // );
+
   const capitalizeFirstLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  // console.log(
+  //   ' === user?.user?.firstName ===> ',
+  //   user?.user?.firstName,
+  //   user?.user?.name,
+  // );
+
   const firstName = capitalizeFirstLetter(
-    user?.user?.firstName || user?.user?.name,
+    user?.user?.firstName || user?.user?.name || '',
   );
   const lastName = user?.user?.lastName;
-  const name = capitalizeFirstLetter(user?.user?.name);
+  const name = capitalizeFirstLetter(user?.user?.name || '');
   const profilePicUrl = user?.user?.profilePic;
   const UserUniqueId = user?.user?.userUniqueId;
 
@@ -519,7 +546,21 @@ const HomeScreen = ({route}) => {
             </Text>
           </View>
 
-          <PremiumMatchesComponent data={NEW_MATCHES} />
+          {/*<PremiumMatchesComponent data={NEW_MATCHES} />*/}
+          {/*<PremiumMatchesComponent />*/}
+
+          {/*{userProfileCompleted === true &&*/}
+          {/*user?.userPartnerPreCompleted === true ? (*/}
+          {/*  <PremiumMatchesComponent />*/}
+          {/*) : (*/}
+          {/*  <Text>Fill form</Text>*/}
+          {/*)}*/}
+
+          {userProfileCompleted === true && userPartnerPreCompleted === true ? (
+            <PremiumMatchesComponent />
+          ) : (
+            <Text>Fill form</Text>
+          )}
 
           <TouchableOpacity activeOpacity={0.7}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>

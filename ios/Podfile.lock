@@ -965,6 +965,14 @@ PODS:
     - React-debug
   - react-native-blob-util (0.19.9):
     - React-Core
+  - react-native-camera (4.2.1):
+    - React-Core
+    - react-native-camera/RCT (= 4.2.1)
+    - react-native-camera/RN (= 4.2.1)
+  - react-native-camera/RCT (4.2.1):
+    - React-Core
+  - react-native-camera/RN (4.2.1):
+    - React-Core
   - react-native-cameraroll (7.8.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1254,6 +1262,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
@@ -1381,6 +1390,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
   react-native-cameraroll:
     :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-date-picker:
@@ -1516,6 +1527,7 @@ SPEC CHECKSUMS:
   React-logger: 008caec0d6a587abc1e71be21bfac5ba1662fe6a
   React-Mapbuffer: 61ea9cee50694d54fe13ce17af91216828d68a62
   react-native-blob-util: 18b510205c080a453574a7d2344d64673d0ad9af
+  react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-cameraroll: f1ba2f666ab9af500ec93f1b08094d78ffc9b522
   react-native-date-picker: 312c387d2ff873c66c5e4cf78ff6827fa91644e2
   react-native-document-picker: 5b97e24a7f1a1e4a50a72c540a043f32d29a70a2

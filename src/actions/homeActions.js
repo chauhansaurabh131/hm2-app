@@ -206,3 +206,20 @@ export const addShortListFailure = () => ({
 // export const userDis_LikeFailure = () => ({
 //   type: TYPES.USER_DIS_FAILED,
 // });
+
+//ADD DATING PARTNER REFERENCES
+export function datingPartnerReferences(payload, callBack) {
+  return {
+    type: TYPES.DATING_PARTNER_PREFERENCES_DETAILS,
+    data: {payload, callBack},
+  };
+}
+
+export const datingPartnerReferencesSuccess = data => ({
+  type: TYPES.DATING_PARTNER_PREFERENCES_DETAILS_SUCCESS,
+  data,
+});
+
+export const datingPartnerReferencesFailure = () => ({
+  type: TYPES.DATING_PARTNER_PREFERENCES_DETAILS_FAILED,
+});

@@ -139,10 +139,23 @@ export const icons = {
   date_Star_icon: require('./icons/date_star_icon.png'),
   date_like_icon: require('./icons/date_like_icon.png'),
   date_send_icon: require('./icons/date_send_icon.png'),
+  swipe_icon: require('./icons/swipe_icon.png'),
+  new_like_icon: require('./icons/new_like_icon.png'),
+  new_user_like_icon: require('./icons/user_new_like_icon.png'),
+  new_star_icon: require('./icons/new_star_icon.png'),
+  new_user_addStar_icon: require('./icons/new_user_addStar_icon.png'),
+  select_time_icon: require('./icons/select_time_icon.png'),
+  new_send_icon: require('./icons/new_send_icon.png'),
+  new_user_send_icon: require('./icons/new_user_send_icon.png'),
+  edit_gradient_icon: require('./icons/edit_gradient_icon.png'),
 };
 
 export const gif = {
   // verification_modal: require('./gif/new.png'),
   congrats_modal: require('./gif/Congrats.gif'),
   register_modal: require('./gif/Register.gif'),
+};
+
+export const svgs = {
+  newsLikeIcon: require('../assets/svgIcon/new_like_icon.svg'),
 };

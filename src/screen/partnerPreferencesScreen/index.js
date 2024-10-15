@@ -10,8 +10,8 @@ import AppColorLogo from '../../components/appColorLogo';
 import DropdownHeightAndAgeComponent from '../../components/DropdownHeightAndAgeComponent';
 import {COUNTRY_LIST, CurrentState, Fun} from '../../utils/data';
 import DropDownMutipleValueComponent from '../../components/DropDownMutipleValueComponent';
-import {useDispatch} from 'react-redux';
-import {partnerReferences} from '../../actions/homeActions';
+import {useDispatch, useSelector} from 'react-redux';
+import {partnerReferences, updateDetails} from '../../actions/homeActions';
 
 import ReusableDropdown from '../../components/ReusableDropdown';
 import {useNavigation} from '@react-navigation/native';
@@ -37,7 +37,12 @@ const PartnerPreferencesScreen = () => {
   const dropdownPreferIncome = ['100000', '200000', '300000'];
 
   const dispatch = useDispatch();
+  const apiDispatch = useDispatch();
   const navigation = useNavigation();
+
+  const {user} = useSelector(state => state.auth);
+
+  console.log(' === PartnerPreferencesScreen..... ===> ', user);
 
   const getSelectedCountryLabels = () => {
     return countryList
@@ -75,6 +80,37 @@ const PartnerPreferencesScreen = () => {
       .filter(label => label); // Filter out any null values
   };
 
+  // const onDashboardPress = () => {
+  //   const payload = {
+  //     age: {min: selectedAgeFrom, max: selectedAgeTo},
+  //     height: {min: selectHeightFrom, max: selectedHeightTo},
+  //     country: getSelectedCountryLabels(),
+  //     state: getSelectedStateLabels(),
+  //     city: getSelectedPartnerCountryLabels(),
+  //     income: preferIncome,
+  //     fun: getSelectedPartnerHobbiesLabels(),
+  //     diet: [preferDiet],
+  //   };
+  //
+  //   dispatch(
+  //     partnerReferences(payload, () => {
+  //       navigation.navigate('HomeTabs');
+  //       // userPartnerPreCompleted();
+  //     }),
+  //   );
+  //
+  //   // apiDispatch(
+  //   //   updateDetails(
+  //   //     {
+  //   //       userPartnerPreCompleted: true,
+  //   //       // userProfileCompleted: true,
+  //   //     },
+  //   //     // () => navigation.navigate('PartnerPreferencesScreen'),
+  //   //     () => navigation.navigate('HomeTabs'),
+  //   //   ),
+  //   // );
+  // };
+
   const onDashboardPress = () => {
     const payload = {
       age: {min: selectedAgeFrom, max: selectedAgeTo},
@@ -87,9 +123,21 @@ const PartnerPreferencesScreen = () => {
       diet: [preferDiet],
     };
 
+    // First API Call: partnerReferences
     dispatch(
       partnerReferences(payload, () => {
-        // navigation.navigate('HomeTabs');
+        // On success of partnerReferences, call updateDetails
+        apiDispatch(
+          updateDetails(
+            {
+              userPartnerPreCompleted: true, // Setting the userPartnerPreCompleted to true
+            },
+            () => {
+              // On success of updateDetails, navigate to HomeTabs
+              navigation.navigate('HomeTabs');
+            },
+          ),
+        );
       }),
     );
   };

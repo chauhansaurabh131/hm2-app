@@ -279,103 +279,103 @@ const AddPersonalInfo = ({navigation}) => {
       return; // Stop navigation if caste is not religion
     }
 
-    if (activeIndex === PersonalInfoPhases.length - 1) {
-      // navigation.navigate('SetProfilePictureScreen');
+    // if (activeIndex === PersonalInfoPhases.length - 1) {
+    //   // navigation.navigate('SetProfilePictureScreen');
+    //   openGallery();
+    // } else {
+    if (activeIndex === 0) {
+      apiDispatch(
+        updateDetails(
+          {
+            gender: genderSelectedOption,
+            maritalStatus: maritalSelectedOption,
+            caste: selectCaste,
+            religion: selectReligion,
+            height: userHeight,
+            weight: userWeight,
+
+            // firstName: firstName,
+            // lastName: lastName,
+            // dateOfBirth: dateOfBirthISO,
+            // birthTime: [selectHours, selectMinutes, selectSecond],
+            //
+            // writeBoutYourSelf: addDescription,
+            // userProfileCompleted: true,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+    } else if (activeIndex === 1) {
+      // Call addressDetails API for Address Details
+      apiDispatch(
+        addressDetails(
+          {
+            currentResidenceAddress: currentAddress,
+            currentCountry: currentCountry,
+            currentState: currentState,
+            currentCity: selectCurrentCity,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+    } else if (activeIndex === 2) {
+      // Call addressDetails API for Address Details
+
+      apiDispatch(
+        updateDetails(
+          {
+            mobileNumber: mobileNumber,
+            homeMobileNumber: homeNumber,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+    } else if (activeIndex === 3) {
+      // Call addressDetails API for Address Details
+
+      apiDispatch(
+        updateDetails(
+          {
+            degree: degree,
+            collage: collage,
+            city: collageCity,
+            state: collageState,
+            country: collageCountry,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+    } else if (activeIndex === 4) {
+      // Call addressDetails API for Address Details
+
+      apiDispatch(
+        professionalDetail(
+          {
+            jobTitle: jobTitle,
+            jobType: jobType,
+            companyName: companyName,
+            currentSalary: salary,
+            workCity: workInCity,
+            workCountry: workInCountry,
+          },
+          () => dispatch({type: NEXT_SCREEN}),
+        ),
+      );
+    } else if (activeIndex === 5) {
+      apiDispatch(
+        updateDetails(
+          {
+            hobbies: selectedItems.map(item => item.label),
+            userProfileCompleted: true,
+          },
+          // () => navigation.navigate('SetProfilePictureScreen'),
+        ),
+      );
       openGallery();
-    } else {
-      if (activeIndex === 0) {
-        apiDispatch(
-          updateDetails(
-            {
-              gender: genderSelectedOption,
-              maritalStatus: maritalSelectedOption,
-              caste: selectCaste,
-              religion: selectReligion,
-              height: userHeight,
-              weight: userWeight,
-
-              // firstName: firstName,
-              // lastName: lastName,
-              // dateOfBirth: dateOfBirthISO,
-              // birthTime: [selectHours, selectMinutes, selectSecond],
-              //
-              // writeBoutYourSelf: addDescription,
-              // userProfileCompleted: true,
-            },
-            () => dispatch({type: NEXT_SCREEN}),
-          ),
-        );
-      } else if (activeIndex === 1) {
-        // Call addressDetails API for Address Details
-        apiDispatch(
-          addressDetails(
-            {
-              currentResidenceAddress: currentAddress,
-              currentCountry: currentCountry,
-              currentState: currentState,
-              currentCity: selectCurrentCity,
-            },
-            () => dispatch({type: NEXT_SCREEN}),
-          ),
-        );
-      } else if (activeIndex === 2) {
-        // Call addressDetails API for Address Details
-
-        apiDispatch(
-          updateDetails(
-            {
-              mobileNumber: mobileNumber,
-              homeMobileNumber: homeNumber,
-              // userProfileCompleted: false,
-            },
-            () => dispatch({type: NEXT_SCREEN}),
-          ),
-        );
-      } else if (activeIndex === 3) {
-        // Call addressDetails API for Address Details
-
-        apiDispatch(
-          updateDetails(
-            {
-              degree: degree,
-              collage: collage,
-              city: collageCity,
-              state: collageState,
-              country: collageCountry,
-            },
-            () => dispatch({type: NEXT_SCREEN}),
-          ),
-        );
-      } else if (activeIndex === 4) {
-        // Call addressDetails API for Address Details
-
-        apiDispatch(
-          professionalDetail(
-            {
-              jobTitle: jobTitle,
-              jobType: jobType,
-              companyName: companyName,
-              currentSalary: salary,
-              workCity: workInCity,
-              workCountry: workInCountry,
-            },
-            () => dispatch({type: NEXT_SCREEN}),
-          ),
-        );
-      } else if (activeIndex === 5) {
-        apiDispatch(
-          updateDetails(
-            {
-              hobbies: selectedItems.map(item => item.label),
-            },
-            // () => navigation.navigate('SetProfilePictureScreen'),
-          ),
-        );
-        openGallery();
-      } else {
-        // Just navigate to the next screen for other phases
-        dispatch({type: NEXT_SCREEN});
-      }
+      // } else {
+      //   // Just navigate to the next screen for other phases
+      //   dispatch({type: NEXT_SCREEN});
+      // }
     }
   };
 

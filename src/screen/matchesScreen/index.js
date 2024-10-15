@@ -167,6 +167,7 @@ const MatchesScreen = ({navigation}) => {
   };
 
   const handleAccept = (requestId, userId) => {
+    console.log(' === requestId, userId ===> ', requestId, userId);
     // setUserActions(prevActions => ({...prevActions, [requestId]: 'accepted'}));
     setRequestStatus('accepted');
     dispatch(
@@ -179,7 +180,7 @@ const MatchesScreen = ({navigation}) => {
   };
   // USER REQUEST LIST RENDER ITEM //
   const renderUserRequestItem = ({item}) => {
-    const {user, id} = item; // Destructure `user` and `id` from `item`
+    const {user, id, _id} = item; // Destructure `user` and `id` from `item`
     const {
       firstName,
       lastName,
@@ -299,13 +300,13 @@ const MatchesScreen = ({navigation}) => {
                         backgroundColor: colors.white,
                         justifyContent: 'center',
                       }}
-                      onPress={() => handleDecline(id, userId)}>
+                      onPress={() => handleDecline(id || _id, userId)}>
                       <Text style={style.declineTextStyle}>Decline</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                       activeOpacity={0.5}
-                      onPress={() => handleAccept(id, userId)}>
+                      onPress={() => handleAccept(id || _id, userId)}>
                       <LinearGradient
                         colors={['#0D4EB3', '#9413D0']}
                         start={{x: 0, y: 0}}

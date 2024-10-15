@@ -6,196 +6,248 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
+  Alert,
 } from 'react-native';
-import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {addShortList, sendRequest} from '../../actions/homeActions';
 import {icons, images} from '../../assets';
 import {fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {addShortList, sendRequest, userDatas} from '../../actions/homeActions';
 
-const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
+const PremiumMatchesComponent = ({isOnline}) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
+
   const {user} = useSelector(state => state.auth);
-  const {userData} = useSelector(state => state.home);
+  const accessToken = user?.tokens?.access?.token;
   const dispatch = useDispatch();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [users, setUsers] = useState([]); // Store combined users here
-  const [loadingMore, setLoadingMore] = useState(false); // Track if loading more data
+  console.log(' === PremiumMatchesComponent_______ ===> ', user);
 
-  const totalPages = userData?.data?.[0]?.totalPages || 1;
+  console.log(' === accessToken ===> ', accessToken);
 
-  useEffect(() => {
-    dispatch(userDatas({page: 1})); // Load the first page on mount
-  }, []);
-
-  useEffect(() => {
-    if (userData?.data?.[0]?.paginatedResults) {
-      if (currentPage === 1) {
-        // On the first page, replace users
-        setUsers(userData.data[0].paginatedResults);
-      } else {
-        // On other pages, append users
-        setUsers(prevUsers => [
-          ...prevUsers,
-          ...userData.data[0].paginatedResults,
-        ]);
-      }
-      setLoadingMore(false); // Stop loading after data is appended
+  // USER ALL DATA FETCH API
+  const fetchData = async (pageNumber = 1) => {
+    if (!hasMoreData) {
+      return;
     }
-  }, [userData]);
 
-  const renderFooter = () => {
-    if (loadingMore) {
-      return <ActivityIndicator size="large" color="#0000ff" />;
-    }
-    return null; // No more data or still loading, no footer needed
-  };
-
-  const loadMoreData = () => {
-    if (currentPage < totalPages && !loadingMore) {
-      setLoadingMore(true); // Start loading
-      const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
-      dispatch(userDatas({page: nextPage})); // Fetch the next page
-    }
-  };
-
-  const [shortlistedUsers, setShortlistedUsers] = useState([]);
-
-  // console.log(' === userData.... ===> ', userData);
-
-  const fetchShortlistedUsers = async () => {
-    const token = user?.tokens?.access?.token;
     try {
-      const response = await axios.get(
-        `https://happymilan.tech/api/v1/user/shortlist/get-short-list/${user.user.id}`,
+      console.log('Fetching data for page:', pageNumber);
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/user/getUserByGender?page=${pageNumber}`,
         {
+          method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
-      const fetchedShortlistedUsers = response.data.data;
-      setShortlistedUsers(fetchedShortlistedUsers);
-      console.log('Fetched shortlisted users:', fetchedShortlistedUsers);
-    } catch (error) {
-      console.error(
-        'Error fetching shortlisted users:',
-        error.response?.data || error.message,
-      );
-    }
-  };
 
-  const isUserShortlisted = userId => {
-    return shortlistedUsers.some(user => user.userId === userId);
+      const json = await response.json();
+      const newData = json?.data[0]?.paginatedResults || [];
+
+      if (newData.length === 0) {
+        setHasMoreData(false);
+      } else {
+        setData(prevData => [...prevData, ...newData]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch data. Please try again.');
+    } finally {
+      setLoading(false);
+      setIsFetchingMore(false);
+    }
   };
 
   useEffect(() => {
-    if (user?.user?.id) {
-      fetchShortlistedUsers();
-    }
-  }, [user]);
+    fetchData();
+  }, []);
 
+  // SEND REQUEST FUNCTION
   const onFriendRequestButtonPress = item => {
     const token = user?.tokens?.access?.token;
     dispatch(sendRequest({friend: item?._id, user: user.user.id}));
   };
 
-  const onShortListPress = async item => {
-    const token = user?.tokens?.access?.token;
-    const itemId = item._id;
-    const isShortlisted = isUserShortlisted(itemId);
+  // LIKE & DISLIKE FUNCTION
+  const handleLikePress = async item => {
+    // console.log(' === var ===> ', item?.userLikeDetails?._id);
+    const deleteId = item?.userLikeDetails?._id;
+    const isAlreadyLiked = item?.userLikeDetails?.isLike || false;
+    const success = await likeOrUnlikeUser(
+      item._id || item.id,
+      isAlreadyLiked,
+      deleteId,
+    );
 
-    console.log('Item ID:', itemId);
+    // Update state if the API call is successful
+    if (success !== null) {
+      setData(prevData =>
+        prevData.map(user =>
+          user._id === item._id
+            ? {
+                ...user,
+                userLikeDetails: {
+                  ...user.userLikeDetails,
+                  isLike: success,
+                },
+              }
+            : user,
+        ),
+      );
+    }
+  };
+
+  const likeOrUnlikeUser = async (likedUserId, isAlreadyLiked, deleteId) => {
+    try {
+      const url = isAlreadyLiked
+        ? `https://stag.mntech.website/api/v1/user/like/update-like/${deleteId}`
+        : 'https://stag.mntech.website/api/v1/user/like/create-like';
+      const method = isAlreadyLiked ? 'PUT' : 'POST';
+      const body = JSON.stringify({
+        likedUserId,
+        isLike: !isAlreadyLiked,
+      });
+
+      console.log(`Calling ${isAlreadyLiked ? 'PUT' : 'POST'} API for like`);
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body,
+      });
+
+      const result = await response.json();
+      console.log('Response:', result);
+
+      if (response.ok) {
+        return !isAlreadyLiked; // Toggle the like state
+      } else {
+        throw new Error(result.message || 'Error liking user');
+      }
+    } catch (error) {
+      console.error('Error liking/unliking user:', error.message);
+      Alert.alert('Error', 'Failed to like/unlike user. Please try again.');
+      return null;
+    }
+  };
+
+  //SHORTLIST FUNCTION
+  const handleShortlistPress = async item => {
+    const isShortlisted = !!item.userShortListDetails; // If `userShortListDetails` exists, the user is shortlisted
+    const shortlistId = item._id;
 
     if (isShortlisted) {
-      // If the item is already shortlisted, remove it
-      try {
-        const shortlistToDelete = shortlistedUsers.find(
-          user => user.userId === itemId,
-        );
-        if (!shortlistToDelete) {
-          console.error('No shortlist found to delete');
-          return;
-        }
-
-        const response = await axios.delete(
-          `https://happymilan.tech/api/v1/user/shortlist/delete-short-list/${shortlistToDelete.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        console.log('Shortlist deleted:', response.data);
-        setShortlistedUsers(
-          shortlistedUsers.filter(user => user.userId !== itemId),
-        );
-      } catch (error) {
-        console.error(
-          'Error deleting shortlist:',
-          error.response?.data || error.message,
+      // If the user is already shortlisted, delete from shortlist
+      const success = await removeFromShortlist(item.userShortListDetails._id);
+      if (success) {
+        setData(prevData =>
+          prevData.map(user =>
+            user._id === item._id
+              ? {
+                  ...user,
+                  userShortListDetails: null, // Remove shortlist details on success
+                }
+              : user,
+          ),
         );
       }
     } else {
-      // If the item is not shortlisted, add it
-      try {
-        const response = await axios.post(
-          'https://happymilan.tech/api/v1/user/shortlist/create-shortlist',
-          {shortlistId: itemId}, // Use itemId to create the shortlist
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const newShortlist = response.data.data;
-        console.log('Shortlist created:', newShortlist);
-
-        setShortlistedUsers([
-          ...shortlistedUsers,
-          {userId: itemId, id: newShortlist.id},
-        ]);
-      } catch (error) {
-        console.error(
-          'Error creating shortlist:',
-          error.response?.data || error.message,
+      // If the user is not shortlisted, add to shortlist
+      const success = await addToShortlist(shortlistId);
+      if (success) {
+        setData(prevData =>
+          prevData.map(user =>
+            user._id === item._id
+              ? {
+                  ...user,
+                  userShortListDetails: {_id: shortlistId}, // Add shortlist details on success
+                }
+              : user,
+          ),
         );
       }
     }
   };
 
-  const onLikePress = async item => {
-    console.log(' === var ===> ', item._id);
-    const token = user?.tokens?.access?.token;
-
-    console.log(' === token ===> ', token);
-
+  // API call to remove user from shortlist
+  const removeFromShortlist = async deleteId => {
     try {
-      const response = await axios.post(
-        'https://happymilan.tech/api/v1/user/like/create-like',
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${deleteId}`,
         {
-          likedUserId: item._id,
-          isLike: true,
-        },
-        {
+          method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
 
-      console.log('Like API response:', response.data);
+      const result = await response.json();
+      console.log('Remove from Shortlist Response:', result);
+
+      if (response.ok) {
+        // Alert.alert('Success', 'User removed from shortlist!');
+        console.log(' === Success ===> ', 'User removed from shortlist!');
+        return true;
+      } else {
+        throw new Error(result.message || 'Error removing user from shortlist');
+      }
     } catch (error) {
-      console.error(
-        'Error creating like:',
-        error.response?.data || error.message,
+      console.error('Error removing from shortlist:', error.message);
+      // Alert.alert(
+      //   'Error',
+      //   'Failed to remove from shortlist. Please try again.',
+      // );
+      console.log(
+        ' === Error ===> ',
+        'Failed to remove from shortlist. Please try again.',
       );
+      return false;
+    }
+  };
+
+  // API call to shortlist a user
+  const addToShortlist = async shortlistId => {
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({shortlistId}),
+        },
+      );
+
+      const result = await response.json();
+      console.log('Shortlist Response:', result);
+
+      if (response.ok) {
+        // Alert.alert('Success', 'User added to shortlist!');
+        console.log(' === Success ===> ', 'User added to shortlist!');
+        return true;
+      } else {
+        throw new Error(result.message || 'Error adding user to shortlist');
+      }
+    } catch (error) {
+      console.error('Error adding to shortlist:', error.message);
+      // Alert.alert('Error', 'Failed to add to shortlist. Please try again.');
+      console.log(
+        ' === Error ===> ',
+        'Failed to add to shortlist. Please try again.',
+      );
+      return false;
     }
   };
 
@@ -211,87 +263,91 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
     ) {
       age--;
     }
-
     return age;
   };
 
-  return (
-    <FlatList
-      // data={userData?.data?.users}
-      data={users}
-      // keyExtractor={item => item.id}
-      keyExtractor={(item, index) => index.toString()}
-      ListFooterComponent={renderFooter}
-      onEndReached={loadMoreData}
-      onEndReachedThreshold={0.5}
-      renderItem={({item}) => {
-        // console.log(' === item..... ===> ', item.userShortListDetails);
+  const loadMoreData = () => {
+    if (!isFetchingMore && hasMoreData) {
+      setIsFetchingMore(true);
+      setPage(prevPage => {
+        const nextPage = prevPage + 1;
+        fetchData(nextPage);
+        return nextPage;
+      });
+    }
+  };
 
-        const currentCity = item.address ? item.address.currentCity : '';
-        const currentCountry = item.address ? item.address.currentCountry : '';
-        const age = calculateAge(item.dateOfBirth);
+  const renderUserItem = ({item}) => {
+    // console.log(' === send  ===> ', item?.friendsDetails);
 
-        const imageStyle = item.profilePic
-          ? styles.image
-          : [styles.image, styles.imageWithBorder];
+    const likeIconSource = item?.userLikeDetails?.isLike
+      ? icons.new_user_like_icon // Show this if user liked the item
+      : icons.new_like_icon;
 
-        // const isShortlisted = shortlistedUsers.some(
-        //   user => user.itemId === item._id,
-        // );
+    const shortlistIconSource = item.userShortListDetails
+      ? icons.new_user_addStar_icon // If already shortlisted, show upgrade icon
+      : icons.new_star_icon; // If not shortlisted, show star icon
 
-        const isShortlisted = isUserShortlisted(item._id);
+    const currentCity = item.address ? item.address.currentCity : '';
+    const currentCountry = item.address ? item.address.currentCountry : '';
+    const age = calculateAge(item.dateOfBirth);
 
-        return (
-          <View style={styles.itemContainer}>
-            <View>
-              <Image
-                style={imageStyle}
-                source={
-                  item.profilePic
-                    ? {uri: item.profilePic}
-                    : images.empty_male_Image
-                }
-              />
-              <View style={styles.overlayContainer}>
-                {isOnline && (
-                  <View style={styles.onlineBodyContainer}>
-                    <Text style={styles.onlineText}>Online</Text>
-                  </View>
-                )}
+    // Extract the friend status
+    const friendStatus = item?.friendsDetails?.status;
 
-                <View style={{position: 'absolute', right: 0, padding: 10}}>
-                  <TouchableOpacity onPress={() => onShortListPress(item)}>
-                    <Image
-                      style={styles.starIcon}
-                      source={
-                        isShortlisted
-                          ? icons.user_add_short_list // Replace with your shortlist image
-                          : icons.starIcon // Default star icon
-                      }
-                    />
+    // Set the icon based on the friend request status
+    const friendIconSource =
+      friendStatus === 'accepted' || friendStatus === 'requested'
+        ? icons.new_user_send_icon // Show cancel request icon
+        : icons.new_send_icon; // Show share icon if no request
 
-                    {/*<Image*/}
-                    {/*  style={styles.starIcon}*/}
-                    {/*  source={*/}
-                    {/*    item.userShortListDetails*/}
-                    {/*      ? item.userShortListDetails.length > 0*/}
-                    {/*        ? icons.starIcon*/}
-                    {/*        : icons.user_add_short_list*/}
-                    {/*      : isShortlisted*/}
-                    {/*      ? icons.user_add_short_list*/}
-                    {/*      : icons.starIcon*/}
-                    {/*  }*/}
-                    {/*/>*/}
-                  </TouchableOpacity>
+    return (
+      <View style={styles.itemContainer}>
+        <View
+          style={{
+            height: hp(213),
+            borderRadius: 5,
+            backgroundColor: '#FFFFFF',
+            shadowColor: '#000',
+            shadowOpacity: 0.5,
+            shadowRadius: 6,
+            elevation: 2,
+          }}>
+          <View>
+            <Image
+              style={
+                item.profilePic
+                  ? styles.image
+                  : [styles.image, styles.imageWithBorder]
+              }
+              source={
+                item.profilePic
+                  ? {uri: item.profilePic}
+                  : images.empty_male_Image
+              }
+            />
+            <View style={styles.overlayContainer}>
+              {isOnline && (
+                <View style={styles.onlineBodyContainer}>
+                  <Text style={styles.onlineText}>Online</Text>
                 </View>
-              </View>
+              )}
+
+              <TouchableOpacity
+                onPress={() => handleShortlistPress(item)}
+                style={{position: 'absolute', right: 0, padding: 10}}>
+                <Image source={shortlistIconSource} style={styles.starIcon} />
+              </TouchableOpacity>
             </View>
+          </View>
+
+          <View style={{alignItems: 'center'}}>
             <Text style={styles.name}>
               {item.firstName} {item.lastName}
             </Text>
             <View style={styles.nameContainer}>
               <Text style={styles.nameDetailTextStyle}>{age || 'N/A'}</Text>
-              <Text style={styles.nameDetailTextStyle}>yrs,</Text>
+              <Text style={styles.nameDetailTextStyle}> yrs, </Text>
               <Text style={styles.nameDetailTextStyle}>
                 {item.state || 'N/A'}
               </Text>
@@ -301,41 +357,64 @@ const PremiumMatchesComponent = ({data, shareButtonPress, isOnline}) => {
                 {currentCity || 'N/A'}, {currentCountry || 'N/A'}
               </Text>
             </View>
-
             <View style={styles.shareImageContainer}>
-              <View style={styles.shareImageContainerStyle}>
-                <TouchableOpacity>
-                  <Image
-                    source={icons.thumsDownIcon}
-                    style={styles.shareImageStyle}
-                  />
-                </TouchableOpacity>
-              </View>
+              {/*<TouchableOpacity style={styles.shareImageContainerStyle}>*/}
+              {/*  <Image*/}
+              {/*    source={icons.thumsDownIcon}*/}
+              {/*    style={styles.shareImageStyle}*/}
+              {/*  />*/}
+              {/*</TouchableOpacity>*/}
 
-              <View style={styles.shareImageContainerStyle}>
-                <TouchableOpacity onPress={() => onLikePress(item)}>
-                  <Image
-                    source={icons.likeIcon}
-                    style={styles.shareImageStyle}
-                  />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.shareImageContainerStyle}
+                onPress={() => handleLikePress(item)}>
+                <Image source={likeIconSource} style={styles.shareImageStyle} />
+              </TouchableOpacity>
 
-              <View style={styles.shareImageContainerStyle}>
-                <TouchableOpacity
-                  onPress={() => onFriendRequestButtonPress(item)}>
-                  <Image
-                    source={icons.shareIcon}
-                    style={styles.shareImageStyle}
-                  />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.shareImageContainerStyle}
+                onPress={() => onFriendRequestButtonPress(item)}>
+                <Image
+                  source={friendIconSource}
+                  style={styles.shareImageStyle}
+                />
+              </TouchableOpacity>
             </View>
           </View>
-        );
-      }}
-      horizontal
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderUserItem}
+      keyExtractor={(item, index) => (item._id || item.id || item.name) + index}
+      onEndReached={loadMoreData}
+      onEndReachedThreshold={0.5}
+      horizontal={true}
       showsHorizontalScrollIndicator={false}
+      ListFooterComponent={
+        isFetchingMore ? (
+          <View style={{alignItems: 'center'}}>
+            <Text>Loading Data...</Text>
+          </View>
+        ) : null
+      }
+      ListEmptyComponent={
+        !loading && !isFetchingMore ? (
+          <View
+            style={{
+              padding: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text>No data available</Text>
+          </View>
+        ) : null
+      }
+      // contentContainerStyle={{paddingBottom: 200}}
     />
   );
 };
@@ -356,7 +435,7 @@ const styles = StyleSheet.create({
   },
   imageWithBorder: {
     borderWidth: 0.5,
-    borderColor: '#D3D3D3', // Adjust the border color as needed
+    borderColor: '#D3D3D3',
   },
   overlayContainer: {
     position: 'absolute',
@@ -375,7 +454,6 @@ const styles = StyleSheet.create({
     width: hp(10.83),
     height: hp(10),
     resizeMode: 'contain',
-    tintColor: colors.blue,
   },
   name: {
     fontSize: fontSize(10),
@@ -393,14 +471,14 @@ const styles = StyleSheet.create({
   },
   shareImageContainer: {
     flexDirection: 'row',
-    marginTop: hp(2),
+    marginTop: hp(5),
   },
   shareImageContainerStyle: {
     marginHorizontal: 4,
   },
   shareImageStyle: {
-    width: hp(16),
-    height: hp(16),
+    width: hp(32),
+    height: hp(20),
     resizeMode: 'contain',
   },
 });

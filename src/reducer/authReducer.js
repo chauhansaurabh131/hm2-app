@@ -124,12 +124,48 @@ export default (state = initialState, action) => {
       return {...state, isSendRequestLoading: true};
 
     case TYPES.PARTNER_PREFERENCES_DETAILS_SUCCESS:
+      console.log(
+        ' === PARTNER_PREFERENCES_DETAILS_SUCCESS ===> ',
+        JSON.stringify(
+          {
+            ...state.user.user,
+            userPartner: action.data.data,
+          },
+          null,
+          2,
+        ),
+      );
+      // return {
+      //   ...state,
+      //   user: {...state.user.user, userPartner: action.data.data},
+      //   isUpdatingProfile: false,
+      // };
+
       return {
         ...state,
-        user: {...state.user.user, userPartner: action.data?.data},
+        user: {
+          ...state.user,
+          user: {...state.user.user, userPartner: action.data.data},
+        },
         isUpdatingProfile: false,
       };
     case TYPES.PARTNER_PREFERENCES_DETAILS_FAILED:
+      return {...state, isSendRequestLoading: false};
+
+    //ADD DATING PARTNER REFERENCES
+    case TYPES.DATING_PARTNER_PREFERENCES_DETAILS:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.DATING_PARTNER_PREFERENCES_DETAILS_SUCCESS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          user: {...state.user.user, userDatingPartner: action.data.data},
+        },
+        isUpdatingProfile: false,
+      };
+    case TYPES.DATING_PARTNER_PREFERENCES_DETAILS_FAILED:
       return {...state, isSendRequestLoading: false};
 
     default:

@@ -9,13 +9,16 @@ import {
 } from 'react-native';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
-import {images} from '../../assets';
+import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
 import style from './style';
+import Abc from '../abc';
+import DOBTextInputComponent from '../../components/DOBTextInputComponent';
+import BirthOfTimeTextInput from '../../components/BirthOfTimeTextInput';
 
 const CreatingProfileScreen = () => {
   const dropdownData = [
@@ -28,6 +31,8 @@ const CreatingProfileScreen = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [birthOfTime, setBirthOfTime] = useState('');
 
   const navigation = useNavigation();
   const apiDispatch = useDispatch();
@@ -49,6 +54,15 @@ const CreatingProfileScreen = () => {
 
   const onStartNowPress = () => {
     const formattedOption = formatSelectedOption(selectedOption);
+
+    const [day, month, year] = dateOfBirth.split('/');
+    const dob = new Date(`${year}-${month}-${day}`);
+
+    const [hours, minutes] = birthOfTime.split(':').map(Number);
+    const birthTime = new Date(dob); // Start with the dob date
+    birthTime.setHours(hours, minutes, 0, 0);
+
+    // console.log(' === birthOfTime ===> ', birthOfTime);
 
     if (!selectedOption) {
       Toast.show({
@@ -73,12 +87,32 @@ const CreatingProfileScreen = () => {
       return;
     }
 
+    if (isNaN(dob.getTime())) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Date',
+        text2: 'Please enter a valid date.',
+      });
+      return;
+    }
+
+    if (isNaN(birthTime.getTime())) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Date',
+        text2: 'Please enter a valid date of time.',
+      });
+      return;
+    }
+
     apiDispatch(
       updateDetails(
         {
           creatingProfileFor: formattedOption,
           firstName: firstName,
           lastName: lastName,
+          dateOfBirth: dob,
+          birthTime: birthTime,
         },
         () => {
           navigation.navigate('GeneralInformationScreen');
@@ -115,6 +149,25 @@ const CreatingProfileScreen = () => {
             label="Last Name"
             value={lastName}
             onChangeText={setLastName}
+          />
+        </View>
+
+        <View style={style.spaceMarginStyle}>
+          <DOBTextInputComponent
+            label="Date of Birth"
+            value={dateOfBirth} // Bind the value to dateOfBirth state
+            onChangeText={setDateOfBirth} // Set the onChangeText handler
+            imageSource={icons.calendar_icon}
+          />
+        </View>
+
+        <View style={style.spaceMarginStyle}>
+          <BirthOfTimeTextInput
+            label="Time of Birth"
+            value={birthOfTime}
+            onChangeText={setBirthOfTime}
+            showImage={true}
+            imageSource={icons.select_time_icon} // Example image source
           />
         </View>
 

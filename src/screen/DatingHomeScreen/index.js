@@ -1,202 +1,131 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
+  Modal,
   SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {colors} from '../../utils/colors';
+
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import style from '../exploreScreen/style';
 import CustomProgressBar from '../../components/customProgressBar';
 import GradientButton from '../../components/GradientButton';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Swiper from 'react-native-deck-swiper';
 import LinearGradient from 'react-native-linear-gradient';
+import {useDispatch, useSelector} from 'react-redux';
+import DatingSwipeDataComponent from '../../components/datingSwipeDataComponent';
+import {style} from './style';
+import {colors} from '../../utils/colors';
+import axios from 'axios';
 
 const DatingHomeScreen = () => {
+  const [showModal, setShowModal] = useState(true);
+  const [activeLine, setActiveLine] = useState(1);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [bottomsheetVisible, setBottomSheVisible] = useState(false);
   const [progress, setProgress] = useState(0.6); // Initial progress value
   const [ageprogress, setAgeProgress] = useState(0.1); // Initial progress value
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [activeCardId, setActiveCardId] = useState(1); // Track the active card ID
+  const [cards, setCards] = useState([]);
+  const [initialCards, setInitialCards] = useState([]); // State to hold the initial cards
+  const [resetKey, setResetKey] = useState(0); // State to handle resetting the swiper
+  const [swipedAllCards, setSwipedAllCards] = useState(false);
+
   const RBSheetRef = useRef();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const [cards, setCards] = useState([
-    {
-      id: 1,
-      text: 'Card 1',
-      images: [
-        require('../../assets/images/couple_One.png'),
-        require('../../assets/images/couple_Two.png'),
-        require('../../assets/images/couple_Three.png'),
-      ],
-    },
-    {
-      id: 2,
-      text: 'Card 2',
-      image: require('../../assets/images/couple_Two.png'),
-    },
-    {
-      id: 3,
-      text: 'Card 3',
-      image: require('../../assets/images/couple_Three.png'),
-    },
-    {
-      id: 4,
-      text: 'Card 4',
-      image: require('../../assets/images/couple_img_three.png'),
-    },
-    {
-      id: 5,
-      text: 'Card 5',
-      image: require('../../assets/images/couple_logo.png'),
-    },
-  ]);
+  const {user} = useSelector(state => state.auth);
 
-  const handleSend = cardText => {
-    console.log(`Card sent______: ${cardText}`); // Log the card text to the terminal
+  // console.log(' === user999999 ===> ', user);
+
+  const getButtpnText = () => {
+    switch (activeLine) {
+      case 1:
+        return 'Next';
+      case 2:
+        return 'Next';
+      case 3:
+        return 'Let’s do it';
+      default:
+        return 'Next';
+    }
+  };
+  const getDisplayText = () => {
+    switch (activeLine) {
+      case 1:
+        return 'Explore Matches';
+      case 2:
+        return 'Stay Safe & Secure';
+      case 3:
+        return 'Complete Your Profile';
+      default:
+        return 'Explore Matches';
+    }
   };
 
-  const renderCard = card => {
-    const isCardOne = card.id === 1;
-
-    return (
-      <View
-        style={{
-          // flex: 1,
-
-          justifyContent: 'center',
-          // alignItems: 'center',
-          borderRadius: 20,
-          borderWidth: 2,
-          borderColor: '#E8E8E8',
-          backgroundColor: '#FFF',
-          shadowColor: '#000',
-          shadowOffset: {width: 0, height: 1},
-          shadowOpacity: 0.2,
-          shadowRadius: 1.41,
-          elevation: 2,
-          height: hp(530),
-        }}>
-        <Image
-          source={isCardOne ? card.images[currentImageIndex] : card.image}
-          style={{width: '100%', height: '100%', borderRadius: 20}}
-          resizeMode="cover"
-        />
-        {/*<Text style={{fontSize: 24, color: 'black', marginBottom: 20}}>*/}
-        {/*  {card.text}*/}
-        {/*</Text>*/}
-
-        <LinearGradient
-          colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-          style={{
-            position: 'absolute',
-            bottom: -20,
-            left: 0,
-            right: 0,
-            borderRadius: 10,
-            width: '100%',
-            height: '40%',
-            marginBottom: hp(13),
-          }}
-        />
-
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 17,
-            flex: 1,
-          }}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity
-              style={{
-                width: hp(70),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.date_Dislike_icon}
-                style={{width: hp(19), height: hp(17)}}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                width: hp(70),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.date_Star_icon}
-                style={{width: hp(19), height: hp(17)}}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                width: hp(70),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.date_like_icon}
-                style={{width: hp(19), height: hp(17)}}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                width: hp(70),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              onPress={() => handleSend(card.text)}>
-              <Image
-                source={icons.date_send_icon}
-                style={{width: hp(19), height: hp(17)}}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
+  const getDisplayDescriptionText = () => {
+    switch (activeLine) {
+      case 1:
+        return (
+          'Boost your profile by sharing more\n' +
+          'about yourself, your interests, and your\n' +
+          'ideal partner. A detailed profile\n' +
+          'improves your chances of finding the\n' +
+          'perfect match'
+        );
+      case 2:
+        return (
+          'Your privacy is our priority. Take\n' +
+          'advantage of our security features,\n' +
+          'and be assured that your information is\n' +
+          'improves your chances of finding the\n' +
+          ''
+        );
+      case 3:
+        return (
+          'Your privacy is our priority. Take\n' +
+          'advantage of our security features,\n' +
+          'and be assured that your information is\n' +
+          'improves your chances of finding the\n' +
+          ''
+        );
+      default:
+        return (
+          'Boost your profile by sharing more\n' +
+          'about yourself, your interests, and your\n' +
+          'ideal partner. A detailed profile\n' +
+          'improves your chances of finding the\n' +
+          'perfect match'
+        );
+    }
   };
 
-  const onSwiped = cardIndex => {
-    setActiveCardId(cards[cardIndex + 1]?.id || null); // Set the active card ID when swiping
+  const handleButtonClick = () => {
+    if (activeLine === 3) {
+      setShowModal(false);
+      setActiveLine(1); // Reset the active line
+      navigation.navigate('DatingCreatingProfile');
+    } else {
+      setActiveLine(prev => prev + 1);
+    }
   };
 
-  const onSwipedAll = () => {
-    console.log('All cards swiped');
-  };
+  const userImage = user?.user?.profilePic;
+
+  const userProfileCompleted = user?.user?.userProfileCompleted;
+
+  useEffect(() => {
+    if (userProfileCompleted) {
+      setShowModal(false);
+    }
+  }, [userProfileCompleted]);
 
   const openTopSheetModal = () => {
     // Call toggleModal to show the top modal
@@ -221,52 +150,26 @@ const DatingHomeScreen = () => {
     }, []),
   );
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: 17}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: hp(12),
-          }}>
+    <SafeAreaView style={style.container}>
+      <View style={style.headerContainer}>
+        <View style={style.headerBody}>
           <Image
             source={images.happyMilanColorLogo}
-            style={{
-              width: wp(96),
-              height: hp(24),
-              resizeMode: 'contain',
-              marginTop: hp(2),
-            }}
+            style={style.appLogoStyle}
           />
 
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={openTopSheetModal}
             style={{alignSelf: 'center'}}>
-            {/*<Image*/}
-            {/*  source={images.profileDisplayImage}*/}
-            {/*  style={style.headerTopSheetImageStyle}*/}
-            {/*/>*/}
-
-            {/*{userImage ? (*/}
-            {/*  <Image*/}
-            {/*    source={{uri: userImage}}*/}
-            {/*    style={style.headerTopSheetImageStyle}*/}
-            {/*  />*/}
-            {/*) : (*/}
-            <Image
-              source={images.empty_male_Image}
-              style={{
-                width: hp(24),
-                height: hp(24),
-                borderRadius: 50,
-                marginRight: hp(10.5),
-                resizeMode: 'stretch',
-                right: -7,
-                marginTop: hp(2),
-              }}
-            />
-            {/*)}*/}
+            {userImage ? (
+              <Image source={{uri: userImage}} style={style.dropDownTopImage} />
+            ) : (
+              <Image
+                source={images.empty_male_Image}
+                style={style.dropDownTopImage}
+              />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -278,48 +181,22 @@ const DatingHomeScreen = () => {
         />
       </View>
 
-      <View
-        style={{
-          marginTop: hp(22),
-          marginHorizontal: 17,
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            // marginBottom: hp(20),
-          }}>
-          <Text
-            style={{
-              fontSize: fontSize(20),
-              lineHeight: hp(30),
-              fontFamily: fontFamily.poppins400,
-              color: colors.black,
-            }}>
-            Explore
-          </Text>
+      <View style={style.bodyContainer}>
+        <View style={style.bodyContainerStyle}>
+          <Text style={style.exploreText}>Explore</Text>
 
           <TouchableOpacity
             activeOpacity={0.5}
+            style={style.filterContainer}
             onPress={() => RBSheetRef.current.open()}>
-            <Image
-              source={icons.filter_icon}
-              style={{
-                width: hp(24),
-                height: hp(24),
-                resizeMode: 'contain',
-                marginRight: 2,
-              }}
-            />
+            <Image source={icons.filter_icon} style={style.filterIcon} />
           </TouchableOpacity>
         </View>
 
         <RBSheet
           ref={RBSheetRef}
           onClose={openBottomSheetModal}
-          height={425}
+          height={480}
           closeOnDragDown={true}
           closeOnPressMask={true}
           customStyles={{
@@ -334,68 +211,28 @@ const DatingHomeScreen = () => {
               borderTopRightRadius: 20,
             },
           }}>
-          <View style={{flex: 1, marginTop: hp(10)}}>
-            <Text
-              style={{
-                color: colors.black,
-                textAlign: 'center',
-                fontSize: fontSize(18),
-                lineHeight: hp(27),
-                fontFamily: fontFamily.poppins400,
-              }}>
-              Explore By
-            </Text>
+          <View style={style.bottomSheetContainer}>
+            <Text style={style.bottomSheetTittleText}>Explore By</Text>
 
-            <View style={{marginHorizontal: 26, marginTop: hp(34)}}>
+            <View style={style.bottomSheetFilterContainer}>
               <TextInput
                 placeholder={'Search by location'}
                 placeholderTextColor={'black'}
-                style={{
-                  width: '100%',
-                  height: hp(50),
-                  backgroundColor: '#F7F7F7',
-                  borderRadius: 10,
-                  padding: 15,
-                  paddingRight: 50,
-                }}
+                style={style.bottomSheetSearchTextInput}
               />
 
-              <Image
-                source={icons.search_icon}
-                style={{
-                  position: 'absolute',
-                  right: 15,
-                  top: 17,
-                  width: 15,
-                  height: 15,
-                  resizeMode: 'contain',
-                }}
-              />
+              <Image source={icons.search_icon} style={style.searchIcon} />
+            </View>
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: hp(29),
-                  marginBottom: hp(20),
-                }}>
-                <Text
-                  style={{
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                    color: colors.black,
-                  }}>
-                  Distance
-                </Text>
+            <View style={style.BottomSheetUnderLine} />
 
-                <Text
-                  style={{
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                    color: colors.blue,
-                  }}>{`${Math.ceil(progress * 10)} km`}</Text>
+            <View style={style.bottomSheetBody}>
+              <View style={style.distanceContainer}>
+                <Text style={style.distanceText}>Distance</Text>
+
+                <Text style={style.distanceTextSlider}>{`${Math.ceil(
+                  progress * 10,
+                )} km`}</Text>
               </View>
 
               <CustomProgressBar
@@ -403,40 +240,26 @@ const DatingHomeScreen = () => {
                 onMoveCircle={newProgress => setProgress(newProgress)}
               />
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: hp(29),
-                  marginBottom: hp(20),
-                }}>
-                <Text
-                  style={{
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                    color: colors.black,
-                  }}>
-                  Age
-                </Text>
+              <View style={style.ageContainer}>
+                <Text style={style.ageTextStyle}>Age</Text>
 
-                <Text
-                  style={{
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                    color: colors.blue,
-                  }}>{`18-${Math.max(Math.ceil(ageprogress * 50))}`}</Text>
+                <Text style={style.ageTextSlider}>{`18-${Math.max(
+                  Math.ceil(ageprogress * 50),
+                )}`}</Text>
               </View>
 
               <CustomProgressBar
                 progress={ageprogress}
                 onMoveCircle={newProgress => setAgeProgress(newProgress)}
               />
+            </View>
 
+            <View style={style.BottomSheetUnderLine} />
+
+            <View style={style.bottomSheetBody}>
               <GradientButton
                 buttonName={'Show Me'}
-                buttonTextStyle={style.bottomTextStyle}
+                buttonTextStyle={style.bottomSheetShowMeText}
                 containerStyle={style.BottomSheetButtonContainer}
                 onPress={closeBottomSheet}
               />
@@ -446,19 +269,96 @@ const DatingHomeScreen = () => {
       </View>
 
       <View style={{backgroundColor: 'green', marginTop: -40}}>
-        <Swiper
-          cards={cards}
-          renderCard={renderCard}
-          onSwipedAll={onSwipedAll}
-          onSwiped={onSwiped} // Handle card swipe event
-          stackSize={2}
-          backgroundColor="white"
-          cardIndex={0}
-          animateOverlayLabelsOpacity
-          verticalSwipe={false}
-          horizontalSwipe={true}
-        />
+        {/*<Swiper*/}
+        {/*  cards={cards}*/}
+        {/*  renderCard={renderCard}*/}
+        {/*  onSwipedAll={onSwipedAll}*/}
+        {/*  onSwiped={onSwiped} // Handle card swipe event*/}
+        {/*  stackSize={2}*/}
+        {/*  backgroundColor="white"*/}
+        {/*  cardIndex={0}*/}
+        {/*  animateOverlayLabelsOpacity*/}
+        {/*  verticalSwipe={false}*/}
+        {/*  horizontalSwipe={true}*/}
+        {/*/>*/}
+
+        {/*{user?.user?.userProfileCompleted === true ? (*/}
+        {/*  <DatingSwipeDataComponent />*/}
+        {/*) : (*/}
+        {/*  <Text>No data</Text>*/}
+        {/*)}*/}
+
+        {/*{cards.length > 0 ? (*/}
+        {/*  <Swiper*/}
+        {/*    key={resetKey} // Add a key to reset the swiper*/}
+        {/*    cards={cards}*/}
+        {/*    renderCard={renderCard}*/}
+        {/*    onSwipedAll={onSwipedAll}*/}
+        {/*    onSwiped={onSwiped}*/}
+        {/*    stackSize={2}*/}
+        {/*    backgroundColor="white"*/}
+        {/*    cardIndex={0}*/}
+        {/*    animateOverlayLabelsOpacity*/}
+        {/*    verticalSwipe={false}*/}
+        {/*    horizontalSwipe={true}*/}
+        {/*  />*/}
+        {/*) : (*/}
+        {/*  <Text>Loading...</Text>*/}
+        {/*)}*/}
+
+        <DatingSwipeDataComponent />
       </View>
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => {
+          setShowModal(!showModal);
+        }}>
+        <View style={style.modalContainer}>
+          <View style={style.modalBodyContainer}>
+            <Image source={images.modal_top_img} style={{width: '100%'}} />
+
+            <Text style={style.modalTittleText}>Congratulations</Text>
+
+            <View style={style.modalSubBodyContainer}>
+              <Text style={style.modalDisplayText}>{getDisplayText()}</Text>
+
+              <Text style={style.modalSubDisplayText}>
+                {getDisplayDescriptionText()}
+              </Text>
+
+              <View style={style.modalLineContainer}>
+                {[1, 2, 3].map((line, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      width: wp(50),
+                      borderWidth: 1,
+                      borderColor: activeLine === line ? '#8225AF' : '#E8E8E8',
+                      marginHorizontal: 5,
+                    }}
+                  />
+                ))}
+              </View>
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleButtonClick}
+              style={style.modalButtonContainer}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0.5}}
+                style={style.modalButtonGradient}>
+                <Text style={style.modalButtonText}>{getButtpnText()}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

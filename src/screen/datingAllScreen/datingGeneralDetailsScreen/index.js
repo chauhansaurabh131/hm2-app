@@ -18,7 +18,7 @@ const DatingGeneralDetailsScreen = ({
   bio,
 }) => {
   const genderDropdownData = ['male', 'female'];
-  const ReligionData = ['hindu', 'muslim', 'sikh', 'christian'];
+  const ReligionData = ['hindu', 'muslim', 'sikh'];
   const Language = ['hindi', 'english', 'gujarati'];
   const EthnicityData = ['AAA', 'BBB', 'CCC'];
 
@@ -37,6 +37,7 @@ const DatingGeneralDetailsScreen = ({
       <View style={{marginHorizontal: wp(17)}}>
         <View style={{marginTop: 30}}>
           <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{height: hp(10)}} />
             <NewDropDownTextInput
               placeholder="Gender"
               dropdownData={genderDropdownData}
@@ -67,7 +68,7 @@ const DatingGeneralDetailsScreen = ({
               <NewDropDownTextInput
                 placeholder="Religion"
                 dropdownData={ReligionData}
-                onValueChange={SetEthnicityData}
+                onValueChange={SetReligionSelectedOption}
               />
             </View>
 
@@ -75,7 +76,7 @@ const DatingGeneralDetailsScreen = ({
               <NewDropDownTextInput
                 placeholder="Ethnicity"
                 dropdownData={EthnicityData}
-                onValueChange={SetReligionSelectedOption}
+                onValueChange={SetEthnicityData}
               />
             </View>
 

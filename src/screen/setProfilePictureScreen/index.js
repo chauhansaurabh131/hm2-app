@@ -16,7 +16,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import AppColorLogo from '../../components/appColorLogo';
 import {colors} from '../../utils/colors';
 import RNBlobUtil from 'react-native-blob-util';
-import {addProfilePicture} from '../../actions/homeActions';
+import {addProfilePicture, updateDetails} from '../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
@@ -26,8 +26,13 @@ const SetProfilePictureScreen = ({route}) => {
   const [selectedImageUri, setSelectedImageUri] = useState(null);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
+
+  console.log(' === SetProfilePictureScreen ===> ', user?.user?.appUsesType);
+
+  const appUsesType = user?.user?.appUsesType;
 
   // console.log(' === selectedImages..... ===> ', selectedImages);
 
@@ -135,7 +140,18 @@ const SetProfilePictureScreen = ({route}) => {
 
           console.log(' === contentType ===> ', contentType);
           console.log('File uploaded successfully:', data);
-          navigation.navigate('HomeTabs');
+
+          {
+            appUsesType === 'dating'
+              ? navigation.navigate('DatingPartnerPreferenceScreen')
+              : navigation.navigate('PartnerPreferencesScreen', {
+                  userProfileCompleted: true,
+                });
+          }
+
+          // navigation.navigate('DatingPartnerPreferenceScreen');
+          // navigation.navigate('PartnerPreferencesScreen');
+          // userPartnerPreCompleted();
         } catch (err) {
           console.log(' === err ===> ', err);
         }
@@ -154,6 +170,19 @@ const SetProfilePictureScreen = ({route}) => {
       );
     }
   };
+
+  // const userPartnerPreCompleted = () => {
+  //   console.log(' === userPartnerPreCompleted _function ===> ');
+  //   apiDispatch(
+  //     updateDetails(
+  //       {
+  //         userPartnerPreCompleted: true,
+  //         // userProfileCompleted: true,
+  //       },
+  //       () => navigation.navigate('PartnerPreferencesScreen'),
+  //     ),
+  //   );
+  // };
 
   const getContentType = fileExtension => {
     switch (fileExtension) {

@@ -62,6 +62,8 @@ import SuccessStoryEditInformationScreen from '../screen/successStoryEditInforma
 import DatingCreatingProfile from '../screen/datingAllScreen/DatingCreatingProfile';
 import AddDatingPersonalInfo from '../screen/datingAllScreen/addDatingPersonalInfo';
 import DatingPartnerPreferenceScreen from '../screen/datingAllScreen/datingPartnerPreferenceScreen';
+import DatingProfileScreen from '../screen/datingAllScreen/datingProfileScreen';
+import DatingEditProfileScreen from '../screen/datingAllScreen/datingEditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -73,12 +75,14 @@ const MainNavigator = () => {
 
   const {isLoggedIn, appUsesType, user} = useSelector(state => state.auth);
 
-  console.log(' === user ===> ', user?.user?.appUsesType);
+  // console.log(' === user ===> ', user?.user?.appUsesType);
 
   const appType = user?.user?.appUsesType;
 
+  console.log(' === appType ===> ', appType);
+
   console.log(' === appType ===> ', appUsesType);
-  console.log(' === isDating ===> ', appUsesType === 'dating');
+  // console.log(' === isDating ===> ', appUsesType === 'dating');
 
   const AuthStack = () => (
     <Stack.Navigator
@@ -332,6 +336,11 @@ const MainNavigator = () => {
           name={'DatingPartnerPreferenceScreen'}
           component={DatingPartnerPreferenceScreen}
         />
+
+        <Stack.Screen
+          name={'DatingEditProfileScreen'}
+          component={DatingEditProfileScreen}
+        />
         <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
 
         <Stack.Screen name={'Message'} component={Message} />
@@ -340,12 +349,23 @@ const MainNavigator = () => {
   };
 
   const HomeTabs = ({route}) => {
+    console.log(' === HomeTabs ===> ', appType);
     // const {colors} = useTheme();
     const getIconStyle = isFocused => {
       return {
         width: hp(17.76),
         height: hp(20),
         tintColor: isFocused ? 'white' : '#120FBA',
+        resizeMode: 'contain',
+      };
+    };
+
+    const getDatingIconStyle = isFocused => {
+      return {
+        width: hp(24),
+        height: hp(20),
+        tintColor: isFocused ? 'white' : '#120FBA',
+        resizeMode: 'contain',
       };
     };
 
@@ -370,13 +390,20 @@ const MainNavigator = () => {
           options={{
             tabBarIcon: ({color, size, focused}) => (
               <Image
-                source={appType === 'dating' ? icons.starIcon : icons.homeIcon}
-                style={getIconStyle(focused)}
+                source={
+                  appType === 'dating' ? icons.swipe_icon : icons.homeIcon
+                }
+                // style={getIconStyle(focused)}
+                style={
+                  appType === 'dating'
+                    ? getDatingIconStyle(focused)
+                    : getIconStyle(focused)
+                } // Default style for home icon
               />
             ),
             tabBarLabel: ({focused}) => (
               <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
-                {appType === 'dating' ? 'daing' : 'Home'}
+                {appType === 'dating' ? 'Swipe' : 'Home'}
               </Text>
             ),
             tabBarButton: props => <CustomTabBarButton {...props} />,
@@ -404,7 +431,8 @@ const MainNavigator = () => {
 
         <Tab.Screen
           name="Matches"
-          component={MatchesScreen}
+          component={appType === 'dating' ? DatingExploreScreen : MatchesScreen}
+          // component={appType === 'dating' ? DatingHomeScreen : HomeScreen}
           options={{
             tabBarIcon: ({color, size, focused}) => (
               <Image
@@ -495,6 +523,12 @@ const MainNavigator = () => {
         <Tab.Screen
           name="MyProfileScreen"
           component={MyProfileScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="DatingProfileScreen"
+          component={DatingProfileScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
 

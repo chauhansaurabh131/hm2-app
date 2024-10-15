@@ -65,6 +65,10 @@ const addShortListsData = async data => {
 //   return post('/api/v1/user/like/create-like', data, true);
 // };
 
+const datingPartnerReferencesApi = async data => {
+  return post('/api/v1/user/dating-partner/', data, true);
+};
+
 export const home = {
   getUserAllData,
   sendFriendsRequest,
@@ -78,6 +82,7 @@ export const home = {
   partnerReferences,
   paymentDetail,
   addShortListsData,
+  datingPartnerReferencesApi,
   // removeAddShortList,
   // userLikes,
   // user_Dis_Like,
