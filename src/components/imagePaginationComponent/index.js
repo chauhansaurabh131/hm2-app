@@ -21,7 +21,7 @@ const ImagePaginationComponent = ({imageUrls}) => {
       <Image
         source={{uri: item}}
         style={{width: width, height: hp(500), backgroundColor: 'black'}}
-        resizeMode="contain"
+        resizeMode="stretch"
       />
       <LinearGradient
         colors={['transparent', 'rgba(0, 0, 0, 0.9)']}

@@ -11,7 +11,7 @@ import {
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {gif, icons, images} from '../../assets';
-import StoryComponent from '../../components/storyComponent';
+
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import PremiumMatchesFlatlistComponent from '../../components/premiumMatchesFlatlistComponent';
 import {NEW_MATCHES} from '../../utils/data';
@@ -26,6 +26,8 @@ import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
 import Toast from 'react-native-toast-message';
 import {colors} from '../../utils/colors';
 import io from 'socket.io-client';
+
+import NewAddStoryScreen from '../newAddStoryScreen';
 
 const HomeScreen = ({route}) => {
   const [showModal, setShowModal] = useState(true);
@@ -43,7 +45,7 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === HomeScreen_____ ===> ', user);
+  // console.log(' === HomeScreen_____ ===> ', user);
 
   // console.log(' === user ===> ', user);
   const userImage = user?.user?.profilePic;
@@ -285,7 +287,7 @@ const HomeScreen = ({route}) => {
         </View>
 
         <View style={{marginTop: hp(15)}}>
-          <StoryComponent />
+          <NewAddStoryScreen />
         </View>
 
         {/*<Modal*/}

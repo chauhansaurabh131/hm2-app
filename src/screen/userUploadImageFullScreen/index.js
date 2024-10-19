@@ -10,7 +10,7 @@ import {
 import style from './style';
 import {hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
-import StoryComponent from '../../components/storyComponent';
+// import StoryComponent from '../../components/storyComponent';
 import ImagePaginationComponent from '../../components/imagePaginationComponent';
 import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent ';
 import {useNavigation} from '@react-navigation/native';
@@ -45,9 +45,7 @@ const UserUploadImageFullScreen = () => {
             />
           </TouchableOpacity>
         </View>
-        <View style={style.userStoryContainer}>
-          <StoryComponent />
-        </View>
+        <View style={style.userStoryContainer}>{/*<StoryComponent />*/}</View>
       </View>
 
       {/*<ImagePaginationComponent />*/}

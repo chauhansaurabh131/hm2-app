@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import StoryComponent from '../../components/storyComponent';
 import {hp, wp} from '../../utils/helpers';
 import AdminProfileDetailsScreen from '../adminProfileDetailsScreen';
 import LinearGradient from 'react-native-linear-gradient';
@@ -72,9 +71,7 @@ const MyProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={style.userStoryContainer}>
-        <StoryComponent />
-      </View>
+      <View style={style.userStoryContainer}>{/*<StoryComponent />*/}</View>
 
       <ScrollView>
         <View>

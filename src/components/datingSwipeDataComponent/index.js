@@ -16,6 +16,8 @@ const DatingSwipeDataComponent = () => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
 
+  // console.log(' === DatingSwipeDataComponent ===> ', user?.user);
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -218,7 +220,7 @@ const DatingSwipeDataComponent = () => {
     <SafeAreaView style={{flex: 1}}>
       {/* Show loading message if accessToken or cards are not available */}
       {!accessToken || cards.length === 0 ? (
-        <Text>Loading...</Text>
+        <Text style={{color: 'black', marginTop: 50}}>Loading...</Text>
       ) : (
         <Swiper
           key={resetKey} // Add a key to reset the swiper

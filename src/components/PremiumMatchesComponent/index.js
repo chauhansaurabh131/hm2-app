@@ -25,9 +25,9 @@ const PremiumMatchesComponent = ({isOnline}) => {
   const accessToken = user?.tokens?.access?.token;
   const dispatch = useDispatch();
 
-  console.log(' === PremiumMatchesComponent_______ ===> ', user);
+  // console.log(' === PremiumMatchesComponent_______ ===> ', user);
 
-  console.log(' === accessToken ===> ', accessToken);
+  // console.log(' === accessToken ===> ', accessToken);
 
   // USER ALL DATA FETCH API
   const fetchData = async (pageNumber = 1) => {

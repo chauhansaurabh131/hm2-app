@@ -65,6 +65,9 @@ function* acceptedDeclineFriendRequest(action) {
     yield put(
       homeActions.acceptedDeclineFriendRequestSuccess(response.data?.data),
     );
+    if (action.data.callBack) {
+      action.data.callBack();
+    }
 
     console.log(' === SAGA...2222222 ===> ', response.data?.data);
   } catch (error) {

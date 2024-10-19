@@ -65,6 +65,11 @@ import DatingPartnerPreferenceScreen from '../screen/datingAllScreen/datingPartn
 import DatingProfileScreen from '../screen/datingAllScreen/datingProfileScreen';
 import DatingEditProfileScreen from '../screen/datingAllScreen/datingEditProfileScreen';
 
+import AddSetStoryImageComponent from '../components/addSetStoryImageComponent';
+import NewAddStoryScreen from '../screen/newAddStoryScreen';
+import ViewStatusScreen from '../screen/viewStatusScreen';
+import ViewUserStatusScreen from '../screen/viewUserStatusScreen';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const ExtrasStack = createNativeStackNavigator();
@@ -251,35 +256,125 @@ const MainNavigator = () => {
     );
   };
 
+  // const HomeStack = () => {
+  //   return (
+  //     <Stack.Navigator
+  //       screenOptions={{headerShown: false}}
+  //       initialRouteName={'HomeTabs'}>
+  //       <Stack.Screen name="DemoCode" component={DemoCode} />
+  //       <Stack.Screen name="Abc" component={Abc} />
+  //       <Stack.Screen name="ExploreScreen" component={ExploreScreen} />
+  //       <Stack.Screen name={'DatingHomeScreen'} component={DatingHomeScreen} />
+  //       <Stack.Screen
+  //         name={'DatingExploreScreen'}
+  //         component={DatingExploreScreen}
+  //       />
+  //       <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
+  //       <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
+  //       <Stack.Screen
+  //         name={'DemoPractiveCodeScreen'}
+  //         component={DemoPractiveCodeScreen}
+  //       />
+  //       <Stack.Screen
+  //         name="CreatingProfileScreen"
+  //         component={CreatingProfileScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'GeneralInformationScreen'}
+  //         component={AddPersonalInfo}
+  //       />
+  //       <Stack.Screen
+  //         name={'SetProfilePictureScreen'}
+  //         component={SetProfilePictureScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'SelectImageScreen'}
+  //         component={SelectImageScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'AddProfilePictureScreen'}
+  //         component={AddProfilePictureScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'PartnerPreferencesScreen'}
+  //         component={PartnerPreferencesScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'UserDetailsScreen'}
+  //         component={UserDetailsScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'ConnectToWebScreen'}
+  //         component={ConnectToWebScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'SuccessStoryPageScreen'}
+  //         component={SuccessStoryPageScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'SuccessStoryEditInformationScreen'}
+  //         component={SuccessStoryEditInformationScreen}
+  //       />
+  //       <Stack.Screen
+  //         name="DatingCreatingProfile"
+  //         component={DatingCreatingProfile}
+  //       />
+  //       `
+  //       <Stack.Screen
+  //         name={'AddDatingPersonalInfo'}
+  //         component={AddDatingPersonalInfo}
+  //       />
+  //       <Stack.Screen
+  //         name={'DatingPartnerPreferenceScreen'}
+  //         component={DatingPartnerPreferenceScreen}
+  //       />
+  //       <Stack.Screen
+  //         name={'DatingEditProfileScreen'}
+  //         component={DatingEditProfileScreen}
+  //       />
+  //       <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
+  //       <Stack.Screen name={'Message'} component={Message} />
+  //     </Stack.Navigator>
+  //   );
+  // };
+
   const HomeStack = () => {
     return (
       <Stack.Navigator
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
+        <Stack.Screen
+          name="AddSetStoryImageComponent"
+          component={AddSetStoryImageComponent}
+        />
+
+        <Stack.Screen
+          name="ViewUserStatusScreen"
+          component={ViewUserStatusScreen}
+        />
+        <Stack.Screen name="ViewStatusScreen" component={ViewStatusScreen} />
+        <Stack.Screen name="NewAddStoryScreen" component={NewAddStoryScreen} />
+
         <Stack.Screen name="DemoCode" component={DemoCode} />
 
         <Stack.Screen name="Abc" component={Abc} />
         <Stack.Screen name="ExploreScreen" component={ExploreScreen} />
-
         <Stack.Screen name={'DatingHomeScreen'} component={DatingHomeScreen} />
+
         <Stack.Screen
           name={'DatingExploreScreen'}
           component={DatingExploreScreen}
         />
-
         <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
-
         <Stack.Screen
           name={'DemoPractiveCodeScreen'}
           component={DemoPractiveCodeScreen}
         />
-
         <Stack.Screen
           name="CreatingProfileScreen"
           component={CreatingProfileScreen}
         />
-
         <Stack.Screen
           name={'GeneralInformationScreen'}
           component={AddPersonalInfo}
@@ -296,53 +391,43 @@ const MainNavigator = () => {
           name={'AddProfilePictureScreen'}
           component={AddProfilePictureScreen}
         />
-
         <Stack.Screen
           name={'PartnerPreferencesScreen'}
           component={PartnerPreferencesScreen}
         />
-
         <Stack.Screen
           name={'UserDetailsScreen'}
           component={UserDetailsScreen}
         />
-
         <Stack.Screen
           name={'ConnectToWebScreen'}
           component={ConnectToWebScreen}
         />
-
         <Stack.Screen
           name={'SuccessStoryPageScreen'}
           component={SuccessStoryPageScreen}
         />
-
         <Stack.Screen
           name={'SuccessStoryEditInformationScreen'}
           component={SuccessStoryEditInformationScreen}
         />
-
         <Stack.Screen
           name="DatingCreatingProfile"
           component={DatingCreatingProfile}
         />
-
         <Stack.Screen
-          name={'AddDatingPersonalInfo'}
+          name="AddDatingPersonalInfo"
           component={AddDatingPersonalInfo}
         />
-
         <Stack.Screen
-          name={'DatingPartnerPreferenceScreen'}
+          name="DatingPartnerPreferenceScreen"
           component={DatingPartnerPreferenceScreen}
         />
-
         <Stack.Screen
-          name={'DatingEditProfileScreen'}
+          name="DatingEditProfileScreen"
           component={DatingEditProfileScreen}
         />
         <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
-
         <Stack.Screen name={'Message'} component={Message} />
       </Stack.Navigator>
     );

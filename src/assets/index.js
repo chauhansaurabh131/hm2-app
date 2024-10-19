@@ -148,6 +148,12 @@ export const icons = {
   new_send_icon: require('./icons/new_send_icon.png'),
   new_user_send_icon: require('./icons/new_user_send_icon.png'),
   edit_gradient_icon: require('./icons/edit_gradient_icon.png'),
+  send_message_icon: require('./icons/send_message_icon.png'),
+  unFriend_icon: require('./icons/unfriend_icon.png'),
+  new_rectangle_send_icon: require('./icons/new_rectangle_sendd_icon.png'),
+  spam_icon: require('./icons/spam_icon.png'),
+  add_story_icon: require('./icons/add_story_icon.png'),
+  check_gradient_box_icon: require('./icons/check_gradient_box.png'),
 };
 
 export const gif = {

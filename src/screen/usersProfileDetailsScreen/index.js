@@ -72,7 +72,7 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
   );
 };
 const UsersProfileDetailsScreen = ({userData}) => {
-  console.log(' === userData///// ===> ', userData);
+  // console.log(' === userData///// ===> ', userData);
   const phaseReducerInitialState = {
     activeIndex: 0,
   };

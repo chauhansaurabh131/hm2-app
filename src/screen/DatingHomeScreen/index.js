@@ -149,6 +149,7 @@ const DatingHomeScreen = () => {
       setTopModalVisible(false);
     }, []),
   );
+
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainer}>

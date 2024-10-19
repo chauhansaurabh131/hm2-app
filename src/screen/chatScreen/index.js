@@ -18,6 +18,7 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import io from 'socket.io-client';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import {useFocusEffect} from '@react-navigation/native';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -33,9 +34,16 @@ const ChatScreen = ({navigation}) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllFriends());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getAllFriends());
+  // }, [dispatch]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Fetch the friends list only once when the screen is focused
+      dispatch(getAllFriends());
+    }, [dispatch]),
+  );
 
   const {myAllFriends, isUserDataLoading} = useSelector(state => state.chat);
 

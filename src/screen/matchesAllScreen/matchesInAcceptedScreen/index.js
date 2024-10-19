@@ -113,7 +113,6 @@ const MatchesInAcceptedScreen = () => {
     const workCountry = item.friendList?.userProfessional?.workCountry;
     const userState = item.friendList?.userProfessional?.state;
     const workCity = item.friendList?.userProfessional?.workCity;
-    console.log(' === age ===> ', age);
 
     // console.log(' === name ===> ', lastName);
 

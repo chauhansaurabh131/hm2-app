@@ -10,7 +10,7 @@ import {icons} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
-const ChatThreeDotComponent = ({onViewProfilePress}) => {
+const ChatThreeDotComponent = ({onViewProfilePress, onBlockProfilePress}) => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Menu>
@@ -47,7 +47,7 @@ const ChatThreeDotComponent = ({onViewProfilePress}) => {
             </View>
           </MenuOption>
 
-          <MenuOption onSelect={() => alert('Option 2')}>
+          <MenuOption onSelect={onBlockProfilePress}>
             <View
               style={{
                 flexDirection: 'row',

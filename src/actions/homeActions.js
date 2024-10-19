@@ -39,8 +39,11 @@ export function getAllRequestDataFail() {
 }
 
 // ACCEPTED_DECLINE_FRIEND_REQUEST //
-export function accepted_Decline_Request(payload) {
-  return {type: TYPES.ACCEPTED_DECLINE_FRIEND_REQUEST, data: {payload}};
+export function accepted_Decline_Request(payload, callBack) {
+  return {
+    type: TYPES.ACCEPTED_DECLINE_FRIEND_REQUEST,
+    data: {payload, callBack},
+  };
 }
 
 export const acceptedDeclineFriendRequestSuccess = data => ({

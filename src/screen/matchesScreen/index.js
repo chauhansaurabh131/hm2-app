@@ -29,6 +29,7 @@ import DatingHomeScreen from '../DatingHomeScreen';
 import DemoNewPagination from '../../components/demoNewPagination';
 import MatchesInNewScreen from '../matchesAllScreen/matchesInNewScreen';
 import MatchesInAcceptedScreen from '../matchesAllScreen/matchesInAcceptedScreen';
+import MatchesInBlockedScreen from '../matchesAllScreen/matchesInBlockedScreen';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -975,7 +976,12 @@ const MatchesScreen = ({navigation}) => {
       case 'deleted':
         return <Text>Deleted</Text>;
       case 'blocked':
-        return <Text>Blocked</Text>;
+        return (
+          <View>
+            {/*<Text>Blocked</Text>*/}
+            <MatchesInBlockedScreen />
+          </View>
+        );
       case 'Demo':
         return (
           <View>

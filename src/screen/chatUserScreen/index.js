@@ -14,7 +14,7 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import style from './style';
 import io from 'socket.io-client';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
 import RNBlobUtil from 'react-native-blob-util';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
@@ -26,6 +26,8 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {MenuProvider} from 'react-native-popup-menu';
 import DropdownMenu from '../message';
 import ChatThreeDotComponent from '../../components/chatThreeDotComponent';
+import {accepted_Decline_Request} from '../../actions/homeActions';
+import LinearGradient from 'react-native-linear-gradient';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -39,8 +41,13 @@ const formatTime = timestamp => {
 };
 
 const ChatUserScreen = ({route}) => {
-  console.log(' === route ===> ', route);
+  // console.log(' === route ===> ', route);
   const {userData} = route.params;
+
+  // console.log(' === userData..... ===> ', userData?._id);
+
+  const blockUserId = userData?.lastInitiatorUser;
+  const blockReqId = userData?._id;
 
   const navigation = useNavigation();
 
@@ -63,6 +70,7 @@ const ChatUserScreen = ({route}) => {
   const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
   const [fullscreenVideoUri, setFullscreenVideoUri] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
+  const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.userProfilePic?.[0]?.url;
@@ -70,6 +78,43 @@ const ChatUserScreen = ({route}) => {
   const accessToken = user?.tokens?.access?.token;
   const socketRef = useRef(null);
   const flatListRef = useRef(null);
+  const dispatch = useDispatch();
+
+  const handleBlockProfilePress = () => {
+    setIsBlockModalVisible(true); // Open the modal when block profile is pressed
+  };
+
+  const handleConfirmBlock = () => {
+    // Logic to block the user
+
+    console.log(
+      ' === handleConfirmBlock ===> ',
+      userData?.userList?._id,
+      userData?.friendList?._id,
+    );
+    // const blockUserId = userData?.lastInitiatorUser;
+    // const blockReqId = userData?._id;
+
+    dispatch(
+      accepted_Decline_Request(
+        {
+          user: blockUserId,
+          request: blockReqId,
+          status: 'blocked',
+        },
+        () => {
+          navigation.goBack();
+        },
+      ),
+    );
+
+    console.log('User blocked!');
+    setIsBlockModalVisible(false); // Close the modal after confirming
+  };
+
+  const handleCancelBlock = () => {
+    setIsBlockModalVisible(false); // Close the modal if canceled
+  };
 
   useEffect(() => {
     if (accessToken) {
@@ -698,13 +743,137 @@ const ChatUserScreen = ({route}) => {
                 //   navigation.navigate('UserDetailsScreen');
                 // }}
                 onViewProfilePress={() => {
-                  console.log(' === userData ===> ', userData);
+                  // console.log(' === userData ===> ', userData);
                   navigation.navigate('UserDetailsScreen', {userData});
                 }}
+                // onBlockProfilePress={() => {
+                //   console.log(
+                //     ' === onBlockProfilePress ===> ',
+                //     userData?.userList?._id,
+                //     userData?.friendList?._id,
+                //   );
+                // }}
+
+                onBlockProfilePress={handleBlockProfilePress}
               />
             </View>
           </View>
         </View>
+
+        {/* Modal for Block Confirmation */}
+        <Modal
+          visible={isBlockModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setIsBlockModalVisible(false)}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}>
+            <View
+              style={{
+                width: wp(350),
+                padding: 20,
+                backgroundColor: 'white',
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  color: 'black',
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  marginTop: 20,
+                }}>
+                Are you sure you want to
+              </Text>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  color: 'black',
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Block This User?
+              </Text>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: hp(30),
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={handleConfirmBlock}>
+                  <LinearGradient
+                    colors={['#2D46B9', '#8D1D8D']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
+                    style={{
+                      width: hp(122),
+                      height: hp(50),
+                      borderRadius: 50,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: 20,
+                    }}>
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Yes
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={handleCancelBlock}>
+                  <LinearGradient
+                    colors={['#0D4EB3', '#9413D0']}
+                    style={{
+                      width: wp(122),
+                      height: hp(50),
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      justifyContent: 'center',
+                      borderColor: 'transparent', // Set border color to transparent
+                    }}>
+                    <View
+                      style={{
+                        borderRadius: 50, // <-- Inner Border Radius
+                        flex: 1,
+                        backgroundColor: colors.white,
+                        justifyContent: 'center',
+                        margin: isIOS ? 0 : 1,
+                      }}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          backgroundColor: 'transparent',
+                          color: colors.black,
+                          margin: 10,
+                          fontSize: fontSize(16),
+                          lineHeight: hp(24),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        No
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}
