@@ -20,6 +20,7 @@ const DemoCode = () => {
   const [page, setPage] = useState(1);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
+  const [isShortlistProcessing, setIsShortlistProcessing] = useState(null); // Track the current processing item
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
@@ -90,10 +91,7 @@ const DemoCode = () => {
       );
 
       const result = await response.json();
-      console.log('Shortlist Response:', result);
-
       if (response.ok) {
-        Alert.alert('Success', 'User added to shortlist!');
         return true;
       } else {
         throw new Error(result.message || 'Error adding user to shortlist');
@@ -119,10 +117,7 @@ const DemoCode = () => {
       );
 
       const result = await response.json();
-      console.log('Remove from Shortlist Response:', result);
-
       if (response.ok) {
-        Alert.alert('Success', 'User removed from shortlist!');
         return true;
       } else {
         throw new Error(result.message || 'Error removing user from shortlist');
@@ -138,11 +133,12 @@ const DemoCode = () => {
   };
 
   const handleShortlistPress = async item => {
-    const isShortlisted = !!item.userShortListDetails; // If `userShortListDetails` exists, the user is shortlisted
+    const isShortlisted = !!item.userShortListDetails;
     const shortlistId = item._id;
 
+    setIsShortlistProcessing(shortlistId); // Set processing state for the current item
+
     if (isShortlisted) {
-      // If the user is already shortlisted, delete from shortlist
       const success = await removeFromShortlist(item.userShortListDetails._id);
       if (success) {
         setData(prevData =>
@@ -150,14 +146,13 @@ const DemoCode = () => {
             user._id === item._id
               ? {
                   ...user,
-                  userShortListDetails: null, // Remove shortlist details on success
+                  userShortListDetails: null,
                 }
               : user,
           ),
         );
       }
     } else {
-      // If the user is not shortlisted, add to shortlist
       const success = await addToShortlist(shortlistId);
       if (success) {
         setData(prevData =>
@@ -165,27 +160,25 @@ const DemoCode = () => {
             user._id === item._id
               ? {
                   ...user,
-                  userShortListDetails: {_id: shortlistId}, // Add shortlist details on success
+                  userShortListDetails: {_id: shortlistId},
                 }
               : user,
           ),
         );
       }
     }
+
+    setIsShortlistProcessing(null); // Reset processing state after the API call
   };
 
   const renderUserItem = ({item}) => {
-    console.log(' === var ===> ', item);
-
     const defaultImage = require('../../assets/images/empty_Male_img.jpg');
 
-    const likeIconSource = item?.userLikeDetails?.isLike
-      ? icons.user_like_icon // Show this if user liked the item
-      : icons.likeIcon; // Default icon if not liked by the user
-
     const shortlistIconSource = item.userShortListDetails
-      ? icons.upgradeIcon // If already shortlisted, show upgrade icon
-      : icons.starIcon; // If not shortlisted, show star icon
+      ? icons.upgradeIcon
+      : icons.starIcon;
+
+    const isProcessing = isShortlistProcessing === item._id;
 
     return (
       <View style={styles.userContainer}>
@@ -197,31 +190,20 @@ const DemoCode = () => {
 
           <TouchableOpacity
             style={{position: 'absolute', right: 20, top: 18}}
-            onPress={() => handleShortlistPress(item)}>
+            onPress={() => handleShortlistPress(item)}
+            disabled={isProcessing}>
+            {/* Disable button while processing */}
             <Image
               source={shortlistIconSource}
               style={{
                 width: 20,
                 height: 20,
+                opacity: isProcessing ? 0.5 : 1, // Show opacity if processing
               }}
             />
           </TouchableOpacity>
         </View>
         <Text style={styles.userName}>{item.name}</Text>
-
-        <View style={styles.iconContainer}>
-          <TouchableOpacity>
-            <Image source={icons.disLike_icon} style={styles.iconStyle} />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => handleLikePress(item)}>
-            <Image source={likeIconSource} style={styles.iconStyle} />
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Image source={icons.shareIcon} style={styles.iconStyle} />
-          </TouchableOpacity>
-        </View>
       </View>
     );
   };

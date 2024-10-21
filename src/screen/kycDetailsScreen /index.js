@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -11,28 +11,70 @@ import {
 import {icons, images} from '../../assets';
 import {style} from './style';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {colors} from '../../utils/colors';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CommonGradientButton from '../../components/commonGradientButton';
 import Toast from 'react-native-toast-message';
 import {launchImageLibrary} from 'react-native-image-picker';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import RNBlobUtil from 'react-native-blob-util'; // Import RNBlobUtil
+import {useSelector} from 'react-redux';
 
 const KycDetailsScreen = () => {
   const refRBSheet = useRef();
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [selectedID, setSelectedID] = useState(''); // State for selected ID
   const [selectedImage, setSelectedImage] = useState(null); // State for selected image
+  const [imageName, setImageName] = useState(''); // State for image file name
+  const [isSubmitted, setIsSubmitted] = useState(false); // State to track if submission is done
+  const [kycData, setKycData] = useState(null); // State to hold KYC data
 
-  console.log(' === topModalVisible ===> ', topModalVisible);
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const userId = user?.user?.id;
+
+  // Function to fetch KYC details
+  const fetchKycDetails = async () => {
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/kyc/by-user/${userId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // Use your auth token here
+          },
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('KYC Details:', result);
+        setKycData(result?.data?.[0]); // Save KYC details to state (first entry)
+      } else {
+        console.error('Failed to fetch KYC details');
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to Fetch KYC',
+          text2: 'Could not retrieve KYC details.',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching KYC details:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An error occurred while fetching KYC details.',
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Fetch KYC details when the component mounts
+    fetchKycDetails();
+  }, []);
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
-  };
-
-  const openTopSheetModal = () => {
-    toggleModal();
   };
 
   useFocusEffect(
@@ -41,8 +83,10 @@ const KycDetailsScreen = () => {
     }, []),
   );
 
+  // Log and set selected ID type
   const handleSelect = idType => {
     setSelectedID(idType); // Update the state with the selected value
+    console.log('Selected ID Type:', idType); // Log the selected ID type
     refRBSheet.current.close(); // Close the bottom sheet
   };
 
@@ -69,13 +113,25 @@ const KycDetailsScreen = () => {
           const {assets} = response;
           if (assets && assets.length > 0) {
             setSelectedImage(assets[0].uri); // Set the selected image URI
+            setImageName(assets[0].fileName); // Set the selected image file name
           }
         }
       });
     }
   };
 
+  // Function to remove the selected image
+  const handleRemoveImage = () => {
+    setSelectedImage(null); // Clear the selected image
+    setImageName(''); // Clear the image file name
+  };
+
+  const handleSubmit = async () => {
+    // Your handleSubmit logic here
+  };
+
   const navigation = useNavigation();
+
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainerView}>
@@ -84,7 +140,7 @@ const KycDetailsScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <TouchableOpacity onPress={openTopSheetModal}>
+          <TouchableOpacity onPress={toggleModal}>
             <Image
               source={images.profileDisplayImage}
               style={style.profileImageStyle}
@@ -115,104 +171,36 @@ const KycDetailsScreen = () => {
         onBackButtonPress={toggleModal}
       />
 
-      <View style={{marginHorizontal: wp(17), flex: 1, marginTop: hp(13)}}>
-        {selectedImage ? (
-          <View>
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontFamily: fontFamily.poppins500,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                }}>
-                Upload ID
-              </Text>
-              <Text
-                style={{
-                  color: '#B1B1B1',
-                  fontFamily: fontFamily.poppins500,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                }}>
-                : In Progress
-              </Text>
-            </View>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: fontSize(11),
-                lineHeight: hp(16),
-                fontFamily: fontFamily.poppins400,
-                marginTop: hp(14),
-              }}>
-              Thank you for submitting the document. We’ll review it and update
-              the status within{' '}
-              <Text style={{color: '#8225AF'}}>2 working days.</Text>
-            </Text>
-          </View>
+      <View style={style.submitFunctionContainer}>
+        {kycData?.isDocUpload ? (
+          <Text style={style.finalSubmitText}>
+            Thank you for submitting documents. We will review and update you
+            within 24 hours.
+          </Text>
         ) : (
           <>
-            <Text
-              style={{
-                color: colors.black,
-                fontFamily: fontFamily.poppins500,
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-              }}>
-              Upload ID
-            </Text>
+            <Text style={style.uploadIdText}>Upload ID</Text>
 
-            <Text
-              style={{
-                color: colors.black,
-                fontFamily: fontFamily.poppins400,
-                fontSize: fontSize(11),
-                lineHeight: hp(16),
-                marginTop: hp(11),
-              }}>
+            <Text style={style.subSubmitTextTittle}>
               Please submit a government issued-ID. Your ID will be{'\n'}deleted
-              once we verify your identity
+              once we verify your identity.
             </Text>
 
-            <View style={{position: 'relative', marginTop: 20}}>
-              {/* TouchableOpacity to open the bottom sheet when the TextInput is pressed */}
+            <View style={style.bottomSheetContainer}>
               <TouchableOpacity onPress={() => refRBSheet.current.open()}>
                 <TextInput
-                  style={{
-                    width: '100%',
-                    height: hp(45),
-                    borderWidth: 1,
-                    borderColor: 'black',
-                    borderRadius: 25,
-                    paddingLeft: 20,
-                    paddingRight: 50, // Adding padding to the right to avoid overlap with the icon
-                    color: 'black',
-                  }}
+                  style={style.selectedDocumentTextInput}
                   placeholder={'Select ID Type'}
                   placeholderTextColor={'black'}
-                  value={selectedID} // Display the selected value here
-                  editable={false} // Make the TextInput non-editable to use it for modal trigger only
+                  value={selectedID}
+                  editable={false}
                 />
-                {/* Image or icon on the right */}
-                <Image
-                  source={icons.drooDownLogo} // Replace with your image URL or local image
-                  style={{
-                    width: 10,
-                    height: 6,
-                    position: 'absolute',
-                    right: 25,
-                    top: 20,
-                    tintColor: 'black',
-                  }}
-                />
+                <Image source={icons.drooDownLogo} style={style.dropDownIcon} />
               </TouchableOpacity>
 
-              {/* Bottom Sheet */}
               <RBSheet
                 ref={refRBSheet}
-                height={300}
+                height={320}
                 openDuration={250}
                 customStyles={{
                   container: {
@@ -220,102 +208,59 @@ const KycDetailsScreen = () => {
                     borderTopRightRadius: 20,
                   },
                 }}>
-                <View
-                  style={{
-                    backgroundColor: 'orange',
-                    flex: 1,
-                    marginHorizontal: 30,
-                  }}>
-                  <Text
-                    style={{
-                      color: 'black',
-                      fontSize: fontSize(14),
-                      lineHeight: hp(21),
-                      fontFamily: fontFamily.poppins400,
-                      marginTop: hp(24),
-                      marginBottom: hp(23),
-                    }}>
-                    Select Photo ID Type
-                  </Text>
+                <View style={style.textInputContainer}>
+                  <Text style={style.photoTypeText}>Select Photo ID Type</Text>
 
-                  <View
-                    style={{
-                      width: '100%',
-                      borderColor: '#DADADA',
-                      borderWidth: 0.5,
-                      marginBottom: hp(23),
-                    }}
-                  />
+                  <View style={style.bottomSheetUnderLine} />
 
-                  {/* Options to select the ID type */}
-                  <TouchableOpacity onPress={() => handleSelect('Passport')}>
-                    <Text
-                      style={{
-                        color: 'black',
-                        fontSize: fontSize(14),
-                        lineHeight: hp(21),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Passport
-                    </Text>
+                  <TouchableOpacity onPress={() => handleSelect('passport')}>
+                    <Text style={style.passwordText}>Passport</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => handleSelect('Driving License')}>
-                    <Text
-                      style={{
-                        color: 'black',
-                        fontSize: fontSize(14),
-                        lineHeight: hp(21),
-                        fontFamily: fontFamily.poppins400,
-                        marginTop: hp(15),
-                      }}>
-                      Driving License
-                    </Text>
+                    onPress={() => handleSelect('driving-license')}>
+                    <Text style={style.bottomSheetText}>Driving License</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => handleSelect('Aadhar Card')}>
-                    <Text
-                      style={{
-                        color: 'black',
-                        fontSize: fontSize(14),
-                        lineHeight: hp(21),
-                        fontFamily: fontFamily.poppins400,
-                        marginTop: hp(15),
-                      }}>
-                      Aadhar Card
-                    </Text>
+                  <TouchableOpacity onPress={() => handleSelect('aadhar-card')}>
+                    <Text style={style.bottomSheetText}>Aadhar Card</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => handleSelect('Election Card')}>
-                    <Text
-                      style={{
-                        color: 'black',
-                        fontSize: fontSize(14),
-                        lineHeight: hp(21),
-                        fontFamily: fontFamily.poppins400,
-                        marginTop: hp(15),
-                      }}>
-                      Election Card
-                    </Text>
+                    onPress={() => handleSelect('election-card')}>
+                    <Text style={style.bottomSheetText}>Election Card</Text>
                   </TouchableOpacity>
                 </View>
               </RBSheet>
 
               <CommonGradientButton
                 buttonName={'Select Files'}
-                containerStyle={{
-                  width: '100%',
-                  height: hp(50),
-                  marginTop: hp(20),
-                }}
-                onPress={onSelectFilesPress} // Attach the modified function here
+                containerStyle={style.selectedFileButton}
+                onPress={onSelectFilesPress}
               />
             </View>
+
+            {selectedImage && (
+              <View style={style.selectedImageContainer}>
+                <Text style={style.selectedImageText}>{imageName}</Text>
+
+                <TouchableOpacity
+                  onPress={handleRemoveImage}
+                  style={style.cancelImageContainer}>
+                  <Text style={style.cancelText}>X</Text>
+                </TouchableOpacity>
+
+                <CommonGradientButton
+                  buttonName={'Submit'}
+                  containerStyle={style.submitButton}
+                  onPress={handleSubmit} // Submit the form when the button is clicked
+                />
+              </View>
+            )}
           </>
         )}
       </View>
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };
