@@ -7,6 +7,7 @@ const initialState = {
   user: null,
   isUpdatingProfile: false,
   isAddressLoading: false,
+  isEducationLoading: false,
   appUsesType: '',
 };
 export default (state = initialState, action) => {
@@ -72,29 +73,47 @@ export default (state = initialState, action) => {
     case TYPES.SET_USER_ADDRESS_FAILED:
       return {...state, isAddressLoading: false};
 
+    case TYPES.EDUCATION_DETAILS:
+      return {...state, isEducationLoading: true};
+
+    case TYPES.ADD_EDUCATION_DETAILS_SUCCESS:
+      console.log(
+        ' === ADD_EDUCATION_DETAILS_SUCCESS ===> ',
+        JSON.stringify(action.data?.data, null, 2),
+      );
+
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          user: {...state.user.user, userEducation: action.data.data},
+        },
+        isEducationLoading: false,
+      };
+
+    // return {
+    //   ...state,
+    //   user: {
+    //     ...state.user,
+    //     user: {...state.user.user, education: action.data.data},
+    //   },
+    //   isEducationLoading: false,
+    // };
+    case TYPES.ADD_EDUCATION_DETAILS_FAILED:
+      return {...state, isEducationLoading: false};
+
     // //PROFESSIONAL DETAILS APIS
     case TYPES.PROFESSIONAL_DETAILS:
       return {...state, isSendRequestLoading: true};
 
     case TYPES.ADD_PROFESSIONAL_DETAILS_SUCCESS:
-      // console.log(
-      //   ' === SET_USER_ADDRESS_SUCCESS ===> ',
-      //   JSON.stringify(
-      //     {
-      //       ...state.user.user,
-      //       userProfessional: action.data.data,
-      //     },
-      //     null,
-      //     2,
-      //   ),
-      // );
       return {
         ...state,
         user: {
           ...state.user,
           user: {...state.user.user, userProfessional: action.data.data},
         },
-        isAddressLoading: false,
+        isSendRequestLoading: false,
       };
     case TYPES.ADD_PROFESSIONAL_DETAILS_FAILED:
       return {...state, isSendRequestLoading: false};
@@ -104,10 +123,10 @@ export default (state = initialState, action) => {
       return {...state, isSendRequestLoading: true};
 
     case TYPES.ADD_PROFILE_PICTURE_SUCCESS:
-      console.log(
-        ' === SET_USER_ADDRESS_SUCCESS ===> ',
-        JSON.stringify(action.data?.data?.data?.userData, null, 2),
-      );
+      // console.log(
+      //   ' === SET_USER_ADDRESS_SUCCESS ===> ',
+      //   JSON.stringify(action.data?.data?.data?.userData, null, 2),
+      // );
       return {
         ...state,
         user: {

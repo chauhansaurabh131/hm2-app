@@ -15,9 +15,11 @@ const initialState = {
   addPartnerReferences: [],
   paymentDetail: [],
   isGetPaymentDetailsLoading: false,
+  isDataCountingLoader: false,
   // userLike: [],
   addShortListData: [],
   // removeShortListData: [],
+  dataCount: [],
 };
 export default (state = initialState, action) => {
   // console.log(' === Reducer_action.data ===> ', action.data);
@@ -92,17 +94,17 @@ export default (state = initialState, action) => {
     //   return {...state, isSendRequestLoading: false};
 
     //UPDATE EDUCATIONS DETAILS
-    case TYPES.EDUCATION_DETAILS:
-      return {...state, isSendRequestLoading: true};
-
-    case TYPES.ADD_EDUCATION_DETAILS_SUCCESS:
-      return {
-        ...state,
-        educationsDetails: action.data,
-        isSendRequestLoading: false,
-      };
-    case TYPES.ADD_EDUCATION_DETAILS_FAILED:
-      return {...state, isSendRequestLoading: false};
+    // case TYPES.EDUCATION_DETAILS:
+    //   return {...state, isSendRequestLoading: true};
+    //
+    // case TYPES.ADD_EDUCATION_DETAILS_SUCCESS:
+    //   return {
+    //     ...state,
+    //     educationsDetails: action.data,
+    //     isSendRequestLoading: false,
+    //   };
+    // case TYPES.ADD_EDUCATION_DETAILS_FAILED:
+    //   return {...state, isSendRequestLoading: false};
 
     //GET ALL PAYMENT DETAILS
     case TYPES.GET_ALL_PAYMENT_DETAILS:
@@ -129,6 +131,19 @@ export default (state = initialState, action) => {
       };
     case TYPES.ADD_SHORT_LIST_FAILED:
       return {...state, isGetPaymentDetailsLoading: false};
+
+    // GET DATA COUNTING LIST
+    case TYPES.DATA_COUNTING_LIST:
+      return {...state, isDataCountingLoader: true};
+
+    case TYPES.DATA_COUNTING_LIST_SUCCESS:
+      return {
+        ...state,
+        dataCount: action.data,
+        isDataCountingLoader: false,
+      };
+    case TYPES.DATA_COUNTING_LIST_FAILED:
+      return {...state, isDataCountingLoader: false};
 
     // // REMOVE SHORT LIST
     //

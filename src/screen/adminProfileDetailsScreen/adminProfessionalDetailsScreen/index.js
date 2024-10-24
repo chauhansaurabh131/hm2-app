@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   Text,
@@ -7,320 +8,161 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import {icons} from '../../../assets';
+import {useDispatch, useSelector} from 'react-redux';
+import {style} from './style';
+import {professionalDetail} from '../../../actions/homeActions';
+import {colors} from '../../../utils/colors';
 
-const AdminProfessionalDetailsScreen = () => {
-  const [currentDesignation, setCurrentDesignation] =
-    useState(' Software Designer');
-  const [jobType, setJobType] = useState('private');
-  const [companyName, setCompanyName] = useState('MN TECh');
-  const [salary, setSalary] = useState('INR 6-8 Lacs');
-  const [workCity, setWorkCity] = useState('Delhi');
-  const [workCountry, setWorkCountry] = useState('India');
+const AdminProfessionalDetailsScreen = (...params) => {
+  const userPersonalData = params[0];
+
+  const apiDispatch = useDispatch();
+
+  // const {isSendRequestLoading} = useSelector(state => state.auth);
+  // console.log(' === isSendRequestLoading ===> ', isSendRequestLoading);
+
+  const [currentDesignation, setCurrentDesignation] = useState(
+    userPersonalData?.userProfessional?.jobTitle || 'N/A',
+  );
+  const [jobType, setJobType] = useState(
+    userPersonalData?.userProfessional?.jobType || 'N/A',
+  );
+  const [companyName, setCompanyName] = useState(
+    userPersonalData?.userProfessional?.companyName || 'N/A',
+  );
+  const [salary, setSalary] = useState(
+    userPersonalData?.userProfessional?.currentSalary || 'N/A',
+  );
+  const [workCity, setWorkCity] = useState(
+    userPersonalData?.userProfessional?.workCity || 'N/A',
+  );
+  const [workCountry, setWorkCountry] = useState(
+    userPersonalData?.userProfessional?.workCountry || 'N/A',
+  );
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {
+    apiDispatch(
+      professionalDetail({
+        jobTitle: currentDesignation,
+        jobType: jobType,
+        companyName: companyName,
+        currentSalary: salary,
+        workCity: workCountry,
+        workCountry: workCountry,
+      }),
+    );
     setIsEditing(false);
     // Save data to your backend or perform any other necessary action
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(60)}}>
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+    <SafeAreaView style={style.container}>
+      <View style={style.bodyContainer}>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Current Designation</Text>
           {isEditing ? (
             <TextInput
               value={currentDesignation}
               onChangeText={setCurrentDesignation}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {currentDesignation}
-            </Text>
+            <Text style={style.subTittleText}>{currentDesignation}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Job Type</Text>
           {isEditing ? (
             <TextInput
               value={jobType}
               onChangeText={setJobType}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {jobType}
-            </Text>
+            <Text style={style.subTittleText}>{jobType}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Company Name</Text>
           {isEditing ? (
             <TextInput
               value={companyName}
               onChangeText={setCompanyName}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {companyName}
-            </Text>
+            <Text style={style.subTittleText}>{companyName}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Annual Salary</Text>
           {isEditing ? (
             <TextInput
               value={salary}
               onChangeText={setSalary}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {salary}
-            </Text>
+            <Text style={style.subTittleText}>{salary}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Work in City</Text>
           {isEditing ? (
             <TextInput
               value={workCity}
               onChangeText={setWorkCity}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {workCity}
-            </Text>
+            <Text style={style.subTittleText}>{workCity}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Work in Country</Text>
           {isEditing ? (
             <TextInput
               value={workCountry}
               onChangeText={setWorkCountry}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {workCountry}
-            </Text>
+            <Text style={style.subTittleText}>{workCountry}</Text>
           )}
         </View>
       </View>
 
       {isEditing ? (
-        <View style={{position: 'absolute', right: 0}}>
+        <View style={style.buttonContainer}>
           <TouchableOpacity
             onPress={handleSave}
-            style={{
-              marginTop: hp(10),
-              borderRadius: 5,
-              backgroundColor: '#F0F9FF',
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={icons.save_icon}
-              style={{
-                width: 20,
-                height: 20,
-                resizeMode: 'contain',
-                tintColor: 'ree',
-              }}
-            />
+            // disabled={isSendRequestLoading}
+            style={style.buttonBodyContainer}>
+            {/*{isSendRequestLoading ? (*/}
+            {/*  <ActivityIndicator size="small" color={colors.blue} />*/}
+            {/*) : (*/}
+            <Image source={icons.save_icon} style={style.saveIcon} />
+            {/*)}*/}
           </TouchableOpacity>
         </View>
       ) : (
-        <View
-          style={{
-            position: 'absolute',
-            right: 0,
-          }}>
+        <View style={style.buttonContainer}>
           <TouchableOpacity
+            // disabled={isSendRequestLoading}
             onPress={() => setIsEditing(true)}
-            style={{
-              marginTop: hp(10),
-              borderRadius: 5,
-              backgroundColor: '#F0F9FF',
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={icons.edit_icon}
-              style={{width: 25, height: 25, tintColor: colors.blue}}
-            />
+            style={style.buttonBodyContainer}>
+            {/*{isSendRequestLoading ? (*/}
+            {/*  <ActivityIndicator size="small" color={colors.blue} />*/}
+            {/*) : (*/}
+            <Image source={icons.edit_icon} style={style.editIcon} />
+            {/*)}*/}
           </TouchableOpacity>
         </View>
       )}

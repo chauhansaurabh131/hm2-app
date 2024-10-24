@@ -7007,6 +7007,11 @@ react-native-virtualized-view@^1.0.0:
   resolved "https://registry.npmjs.org/react-native-virtualized-view/-/react-native-virtualized-view-1.0.0.tgz"
   integrity sha512-7YyFMMkNzJ787/giGkKcm0JEx0IcLEE/XHREGz2I4K1RISQGFjEDe6iWsapOnHSR/e1vhebZJ8VmqhSpg5YPzg==
 
+react-native-vision-camera@^4.5.3:
+  version "4.5.3"
+  resolved "https://registry.npmjs.org/react-native-vision-camera/-/react-native-vision-camera-4.5.3.tgz"
+  integrity sha512-wulpS6ZY6SwuYMDD8csIFMFJ6lXeQq4bJvaAhwEnr0R9cZ53jDUs0/SFZva6UFEPIw64h0IdrrzuVTEufhDSgQ==
+
 react-native@0.73.0:
   version "0.73.0"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.0.tgz"
@@ -8255,6 +8260,11 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
+
+vision-camera-face-detector@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.npmjs.org/vision-camera-face-detector/-/vision-camera-face-detector-0.1.8.tgz"
+  integrity sha512-nlfOMjuHQF66gI162ZCSnmXbinYqNA0+NPzmjZxUwXPOAQidNqLERC8W9LBXhbnIJyMmflMT9X1utpF1D0TlAg==
 
 vlq@^1.0.0:
   version "1.0.1"

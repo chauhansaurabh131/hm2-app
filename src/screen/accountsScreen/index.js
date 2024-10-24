@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -8,24 +8,81 @@ import {
   View,
 } from 'react-native';
 import style from './style';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {hp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
-import {colors} from '../../utils/colors';
-import navigations from '../../navigations';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 const AccountsScreen = ({navigation}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
+  const [kycData, setKycData] = useState(null); // State to hold KYC data
+
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const userId = user?.user?.id;
+
+  const userImage = user?.user?.profilePic;
 
   const toggleModal = () => {
-    // console.log(' === toggleModal ===> ', topModalVisible);
     setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
+
+  // Function to fetch KYC details
+  const fetchKycDetails = async () => {
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/kyc/by-user/${userId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // Use your auth token here
+          },
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('KYC Details:', result);
+
+        // Save the last KYC details to state
+        const kycDataArray = result?.data;
+        if (kycDataArray && kycDataArray.length > 0) {
+          setKycData(kycDataArray[kycDataArray.length - 1]); // Get the last item
+        }
+      } else {
+        console.error('Failed to fetch KYC details');
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to Fetch KYC',
+          text2: 'Could not retrieve KYC details.',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching KYC details:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An error occurred while fetching KYC details.',
+      });
+    }
   };
 
   useFocusEffect(
     useCallback(() => {
       setTopModalVisible(false);
+    }, []),
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchKycDetails();
     }, []),
   );
 
@@ -38,10 +95,12 @@ const AccountsScreen = ({navigation}) => {
             style={style.customerHeaderImage}
           />
 
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileImageStyle}
-          />
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.profileImageStyle}
+            />
+          </TouchableOpacity>
         </View>
 
         <Text style={style.headerTittleStyle}>Account Setting</Text>
@@ -212,7 +271,7 @@ const AccountsScreen = ({navigation}) => {
             activeOpacity={0.5}
             style={{marginTop: hp(16)}}
             onPress={() => {
-              navigation.navigate('KycDetailsScreen');
+              navigation.navigate('KycDetailsScreen', {kycData});
             }}>
             <View style={style.bodyDescription}>
               <View style={{width: 25}}>

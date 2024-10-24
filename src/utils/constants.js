@@ -149,22 +149,22 @@ export const AdminDetailsProfile = [
   },
   {
     phaseName: 'Contact Details',
-    component: <AdminContactDetailsScreen />,
+    component: params => <AdminContactDetailsScreen {...params} />,
     icon: require('../assets/icons/phone_logo.png'),
   },
   {
     phaseName: 'Education Details',
-    component: <AdminEducationDetailsScreen />,
+    component: params => <AdminEducationDetailsScreen {...params} />,
     icon: require('../assets/icons/education_logo.png'),
   },
   {
     phaseName: 'Professional Details',
-    component: <AdminProfessionalDetailsScreen />,
+    component: params => <AdminProfessionalDetailsScreen {...params} />,
     icon: require('../assets/icons/professional_logo.png'),
   },
   {
     phaseName: 'Hobbies and Interest',
-    component: <AdminHobbiesAndInterestScreen />,
+    component: params => <AdminHobbiesAndInterestScreen {...params} />,
     icon: require('../assets/icons/interner_logo.png'),
   },
 ];

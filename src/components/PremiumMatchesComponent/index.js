@@ -9,7 +9,11 @@ import {
   Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {addShortList, sendRequest} from '../../actions/homeActions';
+import {
+  accepted_Decline_Request,
+  addShortList,
+  sendRequest,
+} from '../../actions/homeActions';
 import {icons, images} from '../../assets';
 import {fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
@@ -36,7 +40,6 @@ const PremiumMatchesComponent = ({isOnline}) => {
     }
 
     try {
-      console.log('Fetching data for page:', pageNumber);
       const response = await fetch(
         `https://stag.mntech.website/api/v1/user/user/getUserByGender?page=${pageNumber}`,
         {
@@ -51,9 +54,17 @@ const PremiumMatchesComponent = ({isOnline}) => {
       const newData = json?.data[0]?.paginatedResults || [];
 
       if (newData.length === 0) {
-        setHasMoreData(false);
+        setHasMoreData(false); // No more data to fetch
       } else {
-        setData(prevData => [...prevData, ...newData]);
+        setData(prevData => {
+          const mergedData = [...prevData];
+          newData.forEach(newItem => {
+            if (!mergedData.some(item => item._id === newItem._id)) {
+              mergedData.push(newItem); // Avoid duplicates
+            }
+          });
+          return mergedData; // Update with merged data
+        });
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -68,10 +79,119 @@ const PremiumMatchesComponent = ({isOnline}) => {
     fetchData();
   }, []);
 
+  const loadMoreData = () => {
+    if (!isFetchingMore && hasMoreData) {
+      setIsFetchingMore(true);
+      setPage(prevPage => {
+        const nextPage = prevPage + 1;
+        fetchData(nextPage); // Fetch more data when reaching the end
+        return nextPage;
+      });
+    }
+  };
+
   // SEND REQUEST FUNCTION
-  const onFriendRequestButtonPress = item => {
-    const token = user?.tokens?.access?.token;
-    dispatch(sendRequest({friend: item?._id, user: user.user.id}));
+  const onFriendRequestButtonPress = async item => {
+    console.log(' === onFriendRequestButtonPress ===> ', item?.friendsDetails);
+
+    const requestId = item?.friendsDetails?._id;
+
+    console.log(' === Friend Request ID ===> ', requestId);
+
+    // Check if the status is 'accepted'
+    if (item?.friendsDetails?.status === 'accepted') {
+      // If the status is 'accepted', remove the friend request
+      try {
+        await dispatch(
+          accepted_Decline_Request({
+            user: item?._id,
+            request: requestId, // Use the existing request ID
+            status: 'removed',
+          }),
+        );
+
+        // Update the UI after removing the friend request
+        setData(prevData =>
+          prevData.map(userItem =>
+            userItem._id === item._id
+              ? {
+                  ...userItem,
+                  friendsDetails: {
+                    ...userItem.friendsDetails,
+                    status: 'none', // Update status locally to reflect removal
+                  },
+                }
+              : userItem,
+          ),
+        );
+      } catch (error) {
+        console.error('Error removing friend request:', error);
+        Alert.alert(
+          'Error',
+          'Failed to remove friend request. Please try again.',
+        );
+      }
+    } else if (item?.friendsDetails?.status === 'requested') {
+      // If the status is 'requested', reject the friend request
+      try {
+        await dispatch(
+          accepted_Decline_Request({
+            user: item?._id,
+            request: requestId, // Use the existing request ID
+            status: 'removed',
+          }),
+        );
+
+        // Update the UI after rejecting the request
+        setData(prevData =>
+          prevData.map(userItem =>
+            userItem._id === item._id
+              ? {
+                  ...userItem,
+                  friendsDetails: {
+                    ...userItem.friendsDetails,
+                    status: 'none', // Update status locally to reflect rejection
+                  },
+                }
+              : userItem,
+          ),
+        );
+      } catch (error) {
+        console.error('Error rejecting friend request:', error);
+        Alert.alert(
+          'Error',
+          'Failed to reject friend request. Please try again.',
+        );
+      }
+    } else {
+      // Otherwise, send a new friend request
+      try {
+        const token = user?.tokens?.access?.token;
+
+        await dispatch(sendRequest({friend: item?._id, user: user.user.id}));
+
+        // Update the specific item in the data array to reflect the friend request status
+        setData(prevData =>
+          prevData.map(userItem =>
+            userItem._id === item._id
+              ? {
+                  ...userItem,
+                  friendsDetails: {
+                    ...userItem.friendsDetails,
+                    status: 'requested', // Update the status locally
+                  },
+                }
+              : userItem,
+          ),
+        );
+      } catch (error) {
+        console.error('Error sending friend request:', error);
+        Alert.alert(
+          'Error',
+          'Failed to send friend request. Please try again.',
+        );
+      }
+    }
   };
 
   // LIKE & DISLIKE FUNCTION
@@ -135,7 +255,7 @@ const PremiumMatchesComponent = ({isOnline}) => {
       }
     } catch (error) {
       console.error('Error liking/unliking user:', error.message);
-      Alert.alert('Error', 'Failed to like/unlike user. Please try again.');
+      // Alert.alert('Error', 'Failed to like/unlike user. Please try again.');
       return null;
     }
   };
@@ -266,17 +386,6 @@ const PremiumMatchesComponent = ({isOnline}) => {
     return age;
   };
 
-  const loadMoreData = () => {
-    if (!isFetchingMore && hasMoreData) {
-      setIsFetchingMore(true);
-      setPage(prevPage => {
-        const nextPage = prevPage + 1;
-        fetchData(nextPage);
-        return nextPage;
-      });
-    }
-  };
-
   const renderUserItem = ({item}) => {
     // console.log(' === send  ===> ', item?.friendsDetails);
 
@@ -297,9 +406,11 @@ const PremiumMatchesComponent = ({isOnline}) => {
 
     // Set the icon based on the friend request status
     const friendIconSource =
-      friendStatus === 'accepted' || friendStatus === 'requested'
-        ? icons.new_user_send_icon // Show cancel request icon
-        : icons.new_send_icon; // Show share icon if no request
+      friendStatus === 'accepted'
+        ? icons.new_user_send_icon // Request already accepted
+        : friendStatus === 'requested'
+        ? icons.new_user_send_icon // Request already sent, allow for rejection
+        : icons.new_send_icon; // No request sent, allow sending a request
 
     return (
       <View style={styles.itemContainer}>

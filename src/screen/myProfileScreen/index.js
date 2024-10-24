@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -13,9 +13,15 @@ import {icons, images} from '../../assets';
 import {hp, wp} from '../../utils/helpers';
 import AdminProfileDetailsScreen from '../adminProfileDetailsScreen';
 import LinearGradient from 'react-native-linear-gradient';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import NewAddStoryScreen from '../newAddStoryScreen';
+import {dataCountingList, userDatas} from '../../actions/homeActions';
+import ImagePaginationComponent from '../../components/imagePaginationComponent';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const MyProfileScreen = () => {
+  const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageRotation, setImageRotation] = useState('90deg');
   const [isEditing, setIsEditing] = useState(false);
@@ -24,10 +30,38 @@ const MyProfileScreen = () => {
   );
   const [editedDescription, setEditedDescription] = useState(description);
 
+  const navigation = useNavigation();
+
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
+  const imageUrls = userData?.userProfilePic.map(pic => pic.url);
+
   const profileImage = user?.user?.profilePic;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // dataCountingList();
+    dispatch(dataCountingList());
+  }, []);
+
+  const {dataCount} = useSelector(state => state.home);
+
+  useFocusEffect(
+    useCallback(() => {
+      setTopModalVisible(false);
+    }, []),
+  );
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
+
+  const toggleModal = () => {
+    // console.log(' === toggleModal ===> ', topModalVisible);
+    setTopModalVisible(!topModalVisible);
+  };
 
   const capitalizeFirstLetter = string => {
     if (!string) {
@@ -63,39 +97,40 @@ const MyProfileScreen = () => {
           style={style.customHeaderLogo}
         />
 
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
           <Image
-            source={images.profileDisplayImage}
+            source={
+              profileImage ? {uri: profileImage} : images.empty_male_Image
+            }
             style={style.profileLogoStyle}
           />
         </TouchableOpacity>
       </View>
 
-      <View style={style.userStoryContainer}>{/*<StoryComponent />*/}</View>
+      <View style={style.userStoryContainer}>
+        <NewAddStoryScreen />
+      </View>
+
+      {/*TOP SHEET*/}
+      <HomeTopSheetComponent
+        isVisible={topModalVisible}
+        onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}
+      />
 
       <ScrollView>
         <View>
-          {/*<Image*/}
-          {/*  source={images.profileDisplayImage}*/}
-          {/*  style={style.userProfileImage}*/}
+          <ImagePaginationComponent imageUrls={imageUrls} />
+          {/*<LinearGradient*/}
+          {/*  colors={['transparent', 'rgba(0, 0, 0, 0.9)']}*/}
+          {/*  style={{*/}
+          {/*    position: 'absolute',*/}
+          {/*    bottom: 0,*/}
+          {/*    left: 0,*/}
+          {/*    right: 0,*/}
+          {/*    height: 150,*/}
+          {/*  }}*/}
           {/*/>*/}
-
-          <Image
-            source={
-              profileImage ? {uri: profileImage} : images.empty_male_Image
-            }
-            style={style.userProfileImage}
-          />
-          <LinearGradient
-            colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 150,
-            }}
-          />
 
           <View style={style.UserDetailsContainer}>
             <View
@@ -143,6 +178,7 @@ const MyProfileScreen = () => {
                   <TouchableOpacity
                     onPress={() => {
                       // navigation.navigate('UserUploadImageFullScreen');
+                      // navigation.navigate('SetProfilePictureScreen');
                     }}>
                     <Image
                       source={icons.image_icon}
@@ -154,28 +190,6 @@ const MyProfileScreen = () => {
                       }}
                     />
                   </TouchableOpacity>
-
-                  {/*<TouchableOpacity>*/}
-                  {/*  <Image*/}
-                  {/*    source={icons.video_icon}*/}
-                  {/*    style={{*/}
-                  {/*      width: hp(24.1),*/}
-                  {/*      height: hp(20),*/}
-                  {/*      resizeMode: 'contain',*/}
-                  {/*    }}*/}
-                  {/*  />*/}
-                  {/*</TouchableOpacity>*/}
-
-                  {/*<TouchableOpacity style={{position: 'absolute', right: 10}}>*/}
-                  {/*  <Image*/}
-                  {/*    source={icons.starIcon}*/}
-                  {/*    style={{*/}
-                  {/*      width: hp(21.67),*/}
-                  {/*      height: hp(20),*/}
-                  {/*      resizeMode: 'contain',*/}
-                  {/*    }}*/}
-                  {/*  />*/}
-                  {/*</TouchableOpacity>*/}
                 </View>
               </View>
             </View>
@@ -191,7 +205,9 @@ const MyProfileScreen = () => {
                 style={style.likeProfileIcon}
               />
               <View>
-                <Text style={style.TittleTextStyle}>1200</Text>
+                <Text style={style.TittleTextStyle}>
+                  {dataCount?.totalLikes}
+                </Text>
                 <Text style={style.subTittleTextStyle}>Likes</Text>
               </View>
             </View>
@@ -202,7 +218,9 @@ const MyProfileScreen = () => {
                 style={style.upArrowIcon}
               />
               <View>
-                <Text style={style.TittleTextStyle}>50</Text>
+                <Text style={style.TittleTextStyle}>
+                  {dataCount?.totalRequestsSent}
+                </Text>
                 <Text style={style.subTittleTextStyle}>Sent</Text>
               </View>
             </View>
@@ -213,7 +231,9 @@ const MyProfileScreen = () => {
                 style={style.downArrowIcon}
               />
               <View>
-                <Text style={style.TittleTextStyle}>180</Text>
+                <Text style={style.TittleTextStyle}>
+                  {dataCount?.totalRequestsReceived}
+                </Text>
                 <Text style={style.subTittleTextStyle}>Received</Text>
               </View>
             </View>

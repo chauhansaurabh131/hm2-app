@@ -10,16 +10,16 @@ export const style = StyleSheet.create({
   bodyContainer: {
     marginTop: hp(30),
   },
-  tittleContainer: {
+  residencyContainer: {
     marginBottom: hp(15),
   },
-  tittleTextStyle: {
+  titleText: {
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
-  textInputStyle: {
+  textInputContainer: {
     color: colors.black,
     fontSize: fontSize(18),
     lineHeight: hp(28),
@@ -31,36 +31,36 @@ export const style = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 5,
   },
-  textInputTextStyle: {
+  subTittleText: {
     color: colors.black,
     fontSize: fontSize(18),
     lineHeight: hp(28),
     fontFamily: fontFamily.poppins600,
     marginTop: hp(2),
   },
-  buttonContainer: {
+  editButtonContainer: {
     position: 'absolute',
     right: 0,
     top: -45,
   },
-  buttonStyle: {
+  buttonContainer: {
     marginTop: hp(10),
     borderRadius: 25,
     backgroundColor: '#F0F9FF',
-    width: 40,
-    height: 40,
+    width: hp(40),
+    height: hp(40),
     alignItems: 'center',
     justifyContent: 'center',
   },
   saveIcon: {
-    width: 20,
-    height: 20,
+    width: hp(20),
+    height: hp(20),
     resizeMode: 'contain',
     tintColor: 'ree',
   },
   editIcon: {
-    width: 25,
-    height: 25,
+    width: hp(25),
+    height: hp(25),
     tintColor: colors.blue,
   },
 });

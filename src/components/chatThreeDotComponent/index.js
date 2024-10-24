@@ -110,6 +110,6 @@ const optionsStyles = {
     backgroundColor: '#fff',
     borderColor: '#ddd',
     borderWidth: 1,
-    marginTop: 15,
+    marginTop: hp(25),
   },
 };

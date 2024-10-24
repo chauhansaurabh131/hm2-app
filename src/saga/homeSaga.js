@@ -4,6 +4,11 @@ import * as homeActions from '../actions/homeActions';
 import * as TYPES from '../actions/actionTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
+import {DATA_COUNTING_LIST} from '../actions/actionTypes';
+import {
+  dataCountingListFailure,
+  dataCountingListSuccess,
+} from '../actions/homeActions';
 
 function* getUserData(action) {
   try {
@@ -190,6 +195,15 @@ function* addShortLists(action) {
   }
 }
 
+function* dataCountLists(action) {
+  try {
+    const response = yield call(home.addDataCountingData, action.data);
+    yield put(homeActions.dataCountingListSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.dataCountingListFailure());
+  }
+}
+
 // function* removeShortLists(action) {
 //   try {
 //     const response = yield call(home.addShortListsData, action.data);
@@ -252,6 +266,7 @@ function* homeSaga() {
   yield all([takeLatest(TYPES.PARTNER_PREFERENCES_DETAILS, partnerReferences)]);
   yield all([takeLatest(TYPES.GET_ALL_PAYMENT_DETAILS, getPaymentDetail)]);
   yield all([takeLatest(TYPES.ADD_SHORT_LIST, addShortLists)]);
+  yield all([takeLatest(TYPES.DATA_COUNTING_LIST, dataCountLists)]);
   yield all([
     takeLatest(
       TYPES.DATING_PARTNER_PREFERENCES_DETAILS,

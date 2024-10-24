@@ -11,7 +11,10 @@ import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import {icons} from '../../../assets';
 
-const AdminHobbiesAndInterestScreen = () => {
+const AdminHobbiesAndInterestScreen = (...params) => {
+  const userPersonalData = params[0];
+
+  console.log(' === userPersonalData ===> ', userPersonalData?.hobbies);
   const [creative, setCreative] = useState('Writing, Painting');
   const [fun, setFun] = useState('Movie');
   const [fitness, setFitness] = useState('Walking');

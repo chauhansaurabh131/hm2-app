@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
@@ -7,13 +7,25 @@ import ProfileCheckboxGroup from '../../components/profileCheckBox';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
 import {hp} from '../../utils/helpers';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 
 const PrivacyScreen = () => {
+  const [topModalVisible, setTopModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
 
-  const apiDispatch = useDispatch();
+  const userImage = user?.user?.profilePic;
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
 
   const Display_Name = [
     {id: 1, label: `${user?.user.firstName} ${user?.user.lastName}`},
@@ -56,11 +68,20 @@ const PrivacyScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileImageStyle}
-          />
+
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.profileImageStyle}
+            />
+          </TouchableOpacity>
         </View>
+
+        <HomeTopSheetComponent
+          isVisible={topModalVisible}
+          onBackdropPress={toggleModal}
+          onBackButtonPress={toggleModal}
+        />
 
         <View style={style.headingTittleContainer}>
           <Image

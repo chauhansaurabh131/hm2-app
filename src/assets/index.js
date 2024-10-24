@@ -154,6 +154,7 @@ export const icons = {
   spam_icon: require('./icons/spam_icon.png'),
   add_story_icon: require('./icons/add_story_icon.png'),
   check_gradient_box_icon: require('./icons/check_gradient_box.png'),
+  no_message_icon: require('./icons/no_message_icon.png'),
 };
 
 export const gif = {

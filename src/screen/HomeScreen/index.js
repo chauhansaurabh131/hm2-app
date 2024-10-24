@@ -28,6 +28,7 @@ import {colors} from '../../utils/colors';
 import io from 'socket.io-client';
 
 import NewAddStoryScreen from '../newAddStoryScreen';
+import {RequestUserPermission} from '../../service/pushNotification';
 
 const HomeScreen = ({route}) => {
   const [showModal, setShowModal] = useState(true);
@@ -44,6 +45,11 @@ const HomeScreen = ({route}) => {
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
+
+  useEffect(() => {
+    RequestUserPermission();
+    // requestPermissions();
+  }, []);
 
   // console.log(' === HomeScreen_____ ===> ', user);
 
@@ -106,10 +112,10 @@ const HomeScreen = ({route}) => {
 
   // console.log(' === 8888 ===> ', user?.user?.userPartner);
 
-  console.log(
-    ' === userPartnerPreCompleted ===> ',
-    user?.user?.userPartnerPreCompleted,
-  );
+  // console.log(
+  //   ' === userPartnerPreCompleted ===> ',
+  //   user?.user?.userPartnerPreCompleted,
+  // );
 
   console.log(' === userProfileCompleted ===> ', userProfileCompleted);
 
@@ -241,7 +247,6 @@ const HomeScreen = ({route}) => {
   };
 
   const openTopSheetModal = () => {
-    // Call toggleModal to show the top modal
     toggleModal();
   };
 
@@ -263,26 +268,15 @@ const HomeScreen = ({route}) => {
             }}
           />
 
+          {/*TOP PROFILE BUTTON TOGGLE*/}
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={openTopSheetModal}
             style={style.headerTopSheetImageContainer}>
-            {/*<Image*/}
-            {/*  source={images.profileDisplayImage}*/}
-            {/*  style={style.headerTopSheetImageStyle}*/}
-            {/*/>*/}
-
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={style.headerTopSheetImageStyle}
-              />
-            ) : (
-              <Image
-                source={images.empty_male_Image}
-                style={style.headerTopSheetImageStyle}
-              />
-            )}
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.headerTopSheetImageStyle}
+            />
           </TouchableOpacity>
         </View>
 
@@ -548,23 +542,17 @@ const HomeScreen = ({route}) => {
             </Text>
           </View>
 
-          {/*<PremiumMatchesComponent data={NEW_MATCHES} />*/}
-          {/*<PremiumMatchesComponent />*/}
-
-          {/*{userProfileCompleted === true &&*/}
-          {/*user?.userPartnerPreCompleted === true ? (*/}
-          {/*  <PremiumMatchesComponent />*/}
-          {/*) : (*/}
-          {/*  <Text>Fill form</Text>*/}
-          {/*)}*/}
-
           {userProfileCompleted === true && userPartnerPreCompleted === true ? (
             <PremiumMatchesComponent />
           ) : (
             <Text>Fill form</Text>
           )}
 
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              navigation.navigate('Matches');
+            }}>
             <Text style={style.showMeAllTextStyle}>Show Me All</Text>
           </TouchableOpacity>
 

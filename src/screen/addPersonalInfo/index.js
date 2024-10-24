@@ -22,6 +22,7 @@ import ProfessionalsDetailsScreen from '../professionalDetailsScreen';
 import HobbiesAndInterestScreen from '../hobbiesAndInterestScreen';
 import {
   addressDetails,
+  educationDetails,
   professionalDetail,
   updateDetails,
 } from '../../actions/homeActions';
@@ -334,7 +335,8 @@ const AddPersonalInfo = ({navigation}) => {
       // Call addressDetails API for Address Details
 
       apiDispatch(
-        updateDetails(
+        // updateDetails(
+        educationDetails(
           {
             degree: degree,
             collage: collage,

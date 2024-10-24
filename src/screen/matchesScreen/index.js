@@ -46,6 +46,8 @@ const MatchesScreen = ({navigation}) => {
   // const [loadingMore, setLoadingMore] = useState(false); // Track if loading more data
   //
   // const totalPages = userData?.data?.[0]?.totalPages || 1;
+  const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
 
   useEffect(() => {
     dispatch(getAllRequest());
@@ -1006,7 +1008,7 @@ const MatchesScreen = ({navigation}) => {
 
           <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
             <Image
-              source={images.profileDisplayImage}
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileLogoStyle}
             />
           </TouchableOpacity>

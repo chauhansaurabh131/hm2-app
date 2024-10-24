@@ -19,6 +19,7 @@ import {updateDetails} from '../../actions/homeActions';
 import * as text from 'formik';
 import {colors} from '../../utils/colors';
 import {changeStack, logout} from '../../actions/authActions';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 
 const CredentialsScreen = () => {
   const navigation = useNavigation();
@@ -45,14 +46,24 @@ const CredentialsScreen = () => {
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
 
+  const [topModalVisible, setTopModalVisible] = useState(false);
+
   const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user ===> ', user?.tokens?.access?.token);
+  const userImage = user?.user?.profilePic;
 
   const token = user?.tokens?.access?.token;
   const dispatch = useDispatch();
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
 
   useEffect(() => {
     if (user && user?.user?.email) {
@@ -550,11 +561,19 @@ const CredentialsScreen = () => {
             style={style.customerHeaderImage}
           />
 
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileImageStyle}
-          />
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.profileImageStyle}
+            />
+          </TouchableOpacity>
         </View>
+
+        <HomeTopSheetComponent
+          isVisible={topModalVisible}
+          onBackdropPress={toggleModal}
+          onBackButtonPress={toggleModal}
+        />
 
         <View style={style.headingTittleContainer}>
           <Image

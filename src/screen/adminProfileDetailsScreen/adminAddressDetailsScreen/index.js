@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   Text,
@@ -7,245 +8,135 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import {icons} from '../../../assets';
+import {addressDetails} from '../../../actions/homeActions';
+import {useDispatch, useSelector} from 'react-redux';
+import {style} from './style';
+import {colors} from '../../../utils/colors';
 
 const AdminAddressDetailsScreen = (...params) => {
   const userPersonalData = params[0];
+  const apiDispatch = useDispatch();
 
-  // console.log(
-  //   ' === var ===> ',
-  //   userPersonalData?.address?.originResidenceAddress,
-  // );
+  const {isAddressLoading} = useSelector(state => state.auth);
 
   const [residingAddress, setResidingAddress] = useState(
-    '01-02, Delhi Street, Delhi, India',
+    userPersonalData?.address?.currentResidenceAddress || 'N/A',
   );
-  const [currentCity, setCurrentCity] = useState('Delhi');
-  const [currentCountry, setCurrentCountry] = useState('India');
+  const [currentCity, setCurrentCity] = useState(
+    userPersonalData?.address?.currentCity || 'N/A',
+  );
+  const [currentCountry, setCurrentCountry] = useState(
+    userPersonalData?.address?.currentCountry || 'N/A',
+  );
+
+  // Combine residingAddress, currentCity, and currentCountry into permanentAddress
   const [permanentAddress, setPermanentAddress] = useState(
-    '01-02, Delhi Street, Delhi, India',
+    `${userPersonalData?.address?.currentResidenceAddress || 'N/A'}, ${
+      userPersonalData?.address?.currentCity || 'N/A'
+    }, ${userPersonalData?.address?.currentCountry || 'N/A'}`,
   );
+
+  // Update permanentAddress dynamically when any of the individual address parts change
+  useEffect(() => {
+    setPermanentAddress(
+      `${residingAddress}, ${currentCity}, ${currentCountry}`,
+    );
+  }, [residingAddress, currentCity, currentCountry]);
+
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {
+    apiDispatch(
+      addressDetails({
+        currentResidenceAddress: residingAddress,
+        currentCity: currentCity,
+        currentCountry: currentCountry,
+      }),
+    );
     setIsEditing(false);
-    // Save data to your backend or perform any other necessary action
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(60)}}>
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Current Residing Address
-          </Text>
+    <SafeAreaView style={style.container}>
+      <View style={style.bodyContainer}>
+        <View style={style.residencyContainer}>
+          <Text style={style.titleText}>Current Residing Address</Text>
           {isEditing ? (
             <TextInput
               value={residingAddress}
               onChangeText={setResidingAddress}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {residingAddress}
-            </Text>
+            <Text style={style.subTittleText}>{residingAddress}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Current City
-          </Text>
+        <View style={style.residencyContainer}>
+          <Text style={style.titleText}>Current City</Text>
           {isEditing ? (
             <TextInput
               value={currentCity}
               onChangeText={setCurrentCity}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {currentCity}
-            </Text>
+            <Text style={style.subTittleText}>{currentCity}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Current Residing Country
-          </Text>
+        <View style={style.residencyContainer}>
+          <Text style={style.titleText}>Current Residing Country</Text>
           {isEditing ? (
             <TextInput
               value={currentCountry}
               onChangeText={setCurrentCountry}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {currentCountry}
-            </Text>
+            <Text style={style.subTittleText}>{currentCountry}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Permanent Address
-          </Text>
+        <View style={style.residencyContainer}>
+          <Text style={style.titleText}>Permanent Address</Text>
           {isEditing ? (
             <TextInput
               value={permanentAddress}
               onChangeText={setPermanentAddress}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {permanentAddress}
-            </Text>
+            <Text style={style.subTittleText}>{permanentAddress}</Text>
           )}
         </View>
       </View>
+
       {isEditing ? (
-        <View style={{position: 'absolute', right: 0}}>
+        <View style={style.editButtonContainer}>
           <TouchableOpacity
             onPress={handleSave}
-            style={{
-              marginTop: hp(10),
-              borderRadius: 5,
-              backgroundColor: '#F0F9FF',
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={icons.save_icon}
-              style={{
-                width: 20,
-                height: 20,
-                resizeMode: 'contain',
-                tintColor: 'ree',
-              }}
-            />
+            disabled={isAddressLoading}
+            style={style.buttonContainer}>
+            {isAddressLoading ? (
+              <ActivityIndicator size="small" color={colors.blue} />
+            ) : (
+              <Image source={icons.save_icon} style={style.saveIcon} />
+            )}
           </TouchableOpacity>
         </View>
       ) : (
-        <View
-          style={{
-            position: 'absolute',
-            right: 0,
-          }}>
+        <View style={style.editButtonContainer}>
           <TouchableOpacity
             onPress={() => setIsEditing(true)}
-            style={{
-              marginTop: hp(10),
-              borderRadius: 5,
-              backgroundColor: '#F0F9FF',
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={icons.edit_icon}
-              style={{width: 25, height: 25, tintColor: colors.blue}}
-            />
+            disabled={isAddressLoading}
+            style={style.buttonContainer}>
+            {isAddressLoading ? (
+              <ActivityIndicator size="small" color={colors.blue} />
+            ) : (
+              <Image source={icons.edit_icon} style={style.editIcon} />
+            )}
           </TouchableOpacity>
         </View>
       )}

@@ -41,9 +41,13 @@ const phaseReducer = (state, action) => {
 };
 
 const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
+  // const isActive = index === activeIndex;
+  // const backgroundColor = isActive ? 'white' : '#F8F8F8';
+  // const tintColor = isActive ? colors.blue : 'black';
   const isActive = index === activeIndex;
-  const backgroundColor = isActive ? 'white' : '#F8F8F8';
-  const tintColor = isActive ? colors.blue : 'black';
+  const backgroundColor = isActive ? '#dff1f9' : '#F8F8F8'; // Blue background for active icon
+  const borderColor = isActive ? 'transparent' : 'transparent'; // Remove border for active icon
+  const tintColor = isActive ? colors.blue : 'black'; // Change tint color for active icon
 
   return (
     <TouchableOpacity
@@ -56,17 +60,17 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
           width: hp(48),
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 10,
+          borderRadius: 50,
           backgroundColor: backgroundColor,
           borderWidth: 2,
-          borderColor: isActive ? colors.blue : 'transparent',
+          borderColor: borderColor, // Apply the border color
         }}>
         <Image
           source={item.icon}
           style={{
             height: hp(16),
             width: hp(16),
-            tintColor: tintColor,
+            tintColor: tintColor, // Apply the tint color
           }}
           resizeMode={'contain'}
         />

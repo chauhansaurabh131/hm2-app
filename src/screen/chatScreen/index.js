@@ -27,20 +27,16 @@ const ChatScreen = ({navigation}) => {
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
-  const [userInput, setUserInput] = useState('');
+  const [userInput, setUserInput] = useState(''); // User input for search
   const [status, setStatus] = useState('Disconnected');
   const [socket, setSocket] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch(getAllFriends());
-  // }, [dispatch]);
-
   useFocusEffect(
     React.useCallback(() => {
-      // Fetch the friends list only once when the screen is focused
+      // Fetch the friends list when the screen is focused
       dispatch(getAllFriends());
     }, [dispatch]),
   );
@@ -58,10 +54,8 @@ const ChatScreen = ({navigation}) => {
     const socketIo = io('https://happymilan.tech', {
       path: '/api/socket.io',
       query: {token: accessToken},
-      // transports: ['websocket'], // Optional: specify transport
     });
 
-    // Update connection status
     socketIo.on('connect', () => {
       console.log('Connected to socket');
       socketIo.emit('userActive');
@@ -70,7 +64,7 @@ const ChatScreen = ({navigation}) => {
     socketIo.on('onlineUser', data => {
       console.log('Data from socket:', data);
     });
-    // socketIo.emit('userActive');
+
     socketIo.on('disconnect', () => {
       setStatus('Disconnected');
       console.log('Disconnected from socket');
@@ -79,7 +73,6 @@ const ChatScreen = ({navigation}) => {
 
     setSocket(socketIo);
 
-    // Cleanup on component unmount
     return () => {
       socketIo.disconnect();
       setSocket(null);
@@ -91,9 +84,15 @@ const ChatScreen = ({navigation}) => {
   };
 
   const openTopSheetModal = () => {
-    // Call toggleModal to show the top modal
     toggleModal();
   };
+
+  // Function to filter friends based on user input
+  const filteredFriends = friends.filter(friend => {
+    const fullName =
+      `${friend.friendList.firstName} ${friend.friendList.lastName}`.toLowerCase();
+    return fullName.includes(userInput.toLowerCase());
+  });
 
   const FilterData = ({item}) => {
     if (!item || !item.friendList) {
@@ -108,7 +107,6 @@ const ChatScreen = ({navigation}) => {
       : 'Offline';
 
     const handleItemPress = userData => {
-      // navigation.navigate('DemoPractiveCodeScreen', {
       navigation.navigate('ChatUserScreen', {
         userData,
       });
@@ -152,7 +150,6 @@ const ChatScreen = ({navigation}) => {
                 color: onlineStatusColor,
                 marginTop: 5,
               }}>
-              {/*{item.online}*/}
               {onlineStatusText}
             </Text>
           </View>
@@ -192,6 +189,7 @@ const ChatScreen = ({navigation}) => {
             )}
           </TouchableOpacity>
         </View>
+
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View
             style={{
@@ -204,14 +202,14 @@ const ChatScreen = ({navigation}) => {
               style={{
                 height: 50,
                 borderWidth: 1,
-                borderRadius: 10,
+                borderRadius: 25,
                 paddingLeft: 20,
                 borderColor: '#F0F0F0',
               }}
               placeholder="Search Member"
               placeholderTextColor="black"
               autoCorrect={false}
-              onChangeText={text => setUserInput(text)}
+              onChangeText={text => setUserInput(text)} // Update userInput on text change
             />
 
             <View
@@ -275,15 +273,56 @@ const ChatScreen = ({navigation}) => {
               );
             }}
           />
-        ) : myAllFriends?.data?.length === 0 ? (
-          <View style={{alignItems: 'center', marginTop: hp(20)}}>
-            <Text style={{color: colors.black, fontSize: fontSize(14)}}>
-              No friend
+        ) : filteredFriends.length === 0 && userInput ? (
+          <View
+            style={{
+              alignItems: 'center',
+              marginTop: hp(200),
+            }}>
+            <Image
+              source={icons.no_Profile_Found_img}
+              style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
+            />
+            <Text
+              style={{
+                marginTop: hp(14),
+                color: colors.black,
+                fontSize: fontSize(18),
+                lineHeight: hp(27),
+                fontFamily: fontFamily.poppins400,
+              }}>
+              No Profiles Found
+            </Text>
+          </View>
+        ) : filteredFriends.length === 0 && !userInput ? (
+          <View style={{alignItems: 'center', marginTop: hp(200)}}>
+            <Image
+              source={icons.no_message_icon}
+              style={{width: hp(48), height: hp(44), resizeMode: 'contain'}}
+            />
+            <Text
+              style={{
+                marginTop: hp(14),
+                color: colors.black,
+                fontSize: fontSize(18),
+                lineHeight: hp(27),
+                fontFamily: fontFamily.poppins400,
+              }}>
+              No messages
+            </Text>
+            <Text
+              style={{
+                fontSize: fontSize(14),
+                lineHeight: hp(21),
+                fontFamily: fontFamily.poppins400,
+                color: colors.gray,
+              }}>
+              New messages will appear here.
             </Text>
           </View>
         ) : (
           <FlatList
-            data={friends}
+            data={filteredFriends} // Use the filtered data
             renderItem={FilterData}
             keyExtractor={item =>
               item.friendList?._id || item.id || Math.random().toString()

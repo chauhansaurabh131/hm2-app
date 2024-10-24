@@ -22,20 +22,31 @@ import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import {changeStack, logout} from '../../actions/authActions';
 import {updateDetails} from '../../actions/homeActions';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectDurationModal, setSelectDurationModal] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState('');
+  const [topModalVisible, setTopModalVisible] = useState(false);
 
   const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
-  console.log(' === user ===> ', user?.tokens?.access?.token);
   const token = user?.tokens?.access?.token;
+
+  const userImage = user?.user?.profilePic;
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
 
   const getLabelFromValue = value => {
     const selectedItem = SELECT_DURATION.find(item => item.value === value);
@@ -138,11 +149,21 @@ const HideDeleteProfileScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileImageStyle}
-          />
+
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.profileImageStyle}
+            />
+          </TouchableOpacity>
         </View>
+
+        <HomeTopSheetComponent
+          isVisible={topModalVisible}
+          onBackdropPress={toggleModal}
+          onBackButtonPress={toggleModal}
+        />
+
         <View style={style.headingTittleContainer}>
           <Image
             source={icons.delete_Profile_icon}

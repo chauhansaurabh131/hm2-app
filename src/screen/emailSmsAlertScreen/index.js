@@ -6,10 +6,24 @@ import {useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import CheckBoxComponent from '../../components/checkBoxComponent ';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import {useSelector} from 'react-redux';
 
 const EmailSmsAlertScreen = () => {
   const navigation = useNavigation();
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [topModalVisible, setTopModalVisible] = useState(false);
+
+  const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
 
   const handleSelect = selectedItems => {
     setSelectedOptions(selectedItems);
@@ -41,11 +55,20 @@ const EmailSmsAlertScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileImageStyle}
-          />
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.profileImageStyle}
+            />
+          </TouchableOpacity>
         </View>
+
+        <HomeTopSheetComponent
+          isVisible={topModalVisible}
+          onBackdropPress={toggleModal}
+          onBackButtonPress={toggleModal}
+        />
+
         <View style={style.headingTittleContainer}>
           <Image
             source={icons.email_sms_icon}

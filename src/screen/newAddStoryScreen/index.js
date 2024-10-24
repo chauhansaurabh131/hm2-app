@@ -22,7 +22,7 @@ const NewAddStoryScreen = () => {
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
-  console.log(' === USER_ID ===> ', user?.user?.id, user?.user?.name);
+  // console.log(' === USER_ID ===> ', user?.user?.id, user?.user?.name);
 
   const [selectedImage, setSelectedImage] = useState(user?.user?.profilePic);
   const [statuses, setStatuses] = useState([]);

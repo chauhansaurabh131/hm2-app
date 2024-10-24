@@ -15,46 +15,106 @@ import {style} from './style';
 const AdminGeneralInformationScreen = (...params) => {
   const userPersonalData = params[0];
 
-  /*BIRTH DAY FORMAT*/
-  const birthDate = userPersonalData?.dateOfBirth;
-  const dateObj = new Date(birthDate);
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const year = dateObj.getFullYear();
-  const formattedDate = `${day}.${month}.${year}`;
+  // console.log(
+  //   ' === AdminGeneralInformationScreen ===> ',
+  //   userPersonalData?.religion,
+  // );
 
-  const [dateOfBirth, setDateOfBirth] = useState(formattedDate || '02.03.1986');
+  const date = new Date(userPersonalData.dateOfBirth);
+  const formattedDate = `${('0' + date.getDate()).slice(-2)}.${(
+    '0' +
+    (date.getMonth() + 1)
+  ).slice(-2)}.${date.getFullYear()}`;
 
-  const [birthTime, setBirthTime] = useState('10:01:20 AM');
+  // Extract hours and minutes from birthTime (which is in ISO format)
+  const birthTimeISO = new Date(userPersonalData?.birthTime);
+  let hours = birthTimeISO.getHours();
+  const minutes = String(birthTimeISO.getMinutes()).padStart(2, '0');
+
+  // Determine AM or PM suffix
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert 24-hour format to 12-hour format
+  hours = hours % 12 || 12; // Convert '0' to '12' for 12 AM/PM
+
+  // Format hours and minutes in HH:MM AM/PM format
+  const formattedBirthTime = `${hours}:${minutes} ${ampm}`;
+
+  // console.log(' === formattedBirthTime ===> ', formattedBirthTime);
+
+  const [dateOfBirth, setDateOfBirth] = useState(formattedDate || 'N/A');
+
+  const [birthTime, setBirthTime] = useState(formattedBirthTime || 'N/A');
 
   const religionData = userPersonalData?.religion;
-  const [religion, setReligion] = useState(religionData || 'Hindu');
+  const [religion, setReligion] = useState(religionData || 'N/A');
 
   const Caste = userPersonalData?.caste;
-  const [caste, setCaste] = useState(Caste || 'Patel, Kadva Patidar');
+  const [caste, setCaste] = useState(Caste || 'N/A');
 
   const CurrentCity = userPersonalData?.address?.currentCity;
-  const [currentCity, setCurrentCity] = useState(CurrentCity || 'New York');
+  const [currentCity, setCurrentCity] = useState(CurrentCity || 'N/A');
 
   const Country = userPersonalData?.address?.currentCountry;
-  const [country, setCountry] = useState(Country || 'United States of America');
+  const [country, setCountry] = useState(Country || 'N/A');
   const [isEditing, setIsEditing] = useState(false);
 
   const apiDispatch = useDispatch();
 
   const handleSave = () => {
-    apiDispatch(updateDetails({dateOfBirth: dateOfBirth}));
-    // apiDispatch(updateDetails({birthTime: birthTime}));
-    apiDispatch(updateDetails({religion: religion}));
-    apiDispatch(updateDetails({caste: caste}));
-    apiDispatch(addressDetails({currentCity: currentCity}));
-    apiDispatch(addressDetails({currentCountry: country}));
+    const [day, month, year] = dateOfBirth.split('.');
+    const isoFormattedDate = new Date(`${year}-${month}-${day}`).toISOString(); // Convert to ISO format
+
+    let timePart = birthTime.trim().split(' ')[0]; // Split time and ignore AM/PM for now
+    let ampm = birthTime.trim().split(' ')[1]; // Get the AM/PM part
+    let [hours, minutes] = timePart.split(':'); // Extract hours and minutes
+
+    // Defensive checks for undefined values
+    hours = hours ? hours.padStart(2, '0') : '00';
+    minutes = minutes ? minutes.padStart(2, '0') : '00';
+
+    // Convert 12-hour format to 24-hour format
+    if (ampm === 'PM' && hours !== '12') {
+      hours = String(Number(hours) + 12);
+    } else if (ampm === 'AM' && hours === '12') {
+      hours = '00';
+    }
+
+    const isoFormattedBirthTime = `1970-01-01T${hours}:${minutes}:00.000Z`; // Append time to a neutral date
+
+    apiDispatch(
+      updateDetails({
+        dateOfBirth: isoFormattedDate,
+        // birthTime: isoFormattedBirthTime,
+        religion: religion,
+        caste: caste,
+      }),
+    );
+
+    apiDispatch(
+      addressDetails({currentCity: currentCity, currentCountry: country}),
+    );
+
     setIsEditing(false);
-    // Save data to your backend or perform any other necessary action
   };
 
   return (
     <SafeAreaView style={style.container}>
+      {isEditing ? (
+        <View style={style.buttonContainer}>
+          <TouchableOpacity onPress={handleSave} style={style.buttonStyle}>
+            <Image source={icons.save_icon} style={style.saveIcon} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={style.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => setIsEditing(true)}
+            style={style.buttonStyle}>
+            <Image source={icons.edit_icon} style={style.editIcon} />
+          </TouchableOpacity>
+        </View>
+      )}
       <View style={style.bodyContainer}>
         <View style={style.tittleContainer}>
           <Text style={style.tittleTextStyle}>Date of Birth</Text>
@@ -142,22 +202,6 @@ const AdminGeneralInformationScreen = (...params) => {
 
         {/* Similar pattern for other fields */}
       </View>
-
-      {isEditing ? (
-        <View style={style.buttonContainer}>
-          <TouchableOpacity onPress={handleSave} style={style.buttonStyle}>
-            <Image source={icons.save_icon} style={style.saveIcon} />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={style.buttonContainer}>
-          <TouchableOpacity
-            onPress={() => setIsEditing(true)}
-            style={style.buttonStyle}>
-            <Image source={icons.edit_icon} style={style.editIcon} />
-          </TouchableOpacity>
-        </View>
-      )}
     </SafeAreaView>
   );
 };

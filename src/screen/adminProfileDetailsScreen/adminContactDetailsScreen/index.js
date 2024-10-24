@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   Text,
@@ -8,191 +9,118 @@ import {
   View,
 } from 'react-native';
 import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import {icons} from '../../../assets';
+import {style} from './style';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDetails} from '../../../actions/homeActions';
 
-const AdminContactDetailsScreen = () => {
-  const [mobileNumber, setMobileNumber] = useState('+91 90001 01021');
-  const [homeNumber, setHomeNumber] = useState('+91 90001 01021');
-  const [email, setEmail] = useState('riyashah@gmail.com');
+const AdminContactDetailsScreen = (...params) => {
+  const userPersonalData = params[0];
+  const apiDispatch = useDispatch();
+
+  const {isUpdatingProfile} = useSelector(state => state.auth);
+
+  console.log(' === var ===> ', isUpdatingProfile);
+  // console.log(' === AdminContactDetailsScreen ===> ', userPersonalData?.email);
+
+  const [mobileNumber, setMobileNumber] = useState(
+    userPersonalData?.mobileNumber || 'N/A',
+  );
+  const [homeNumber, setHomeNumber] = useState(
+    userPersonalData?.homeMobileNumber || 'N/A',
+  );
+  const [email, setEmail] = useState(userPersonalData?.email || 'N/A');
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {
+    apiDispatch(
+      updateDetails({
+        mobileNumber: mobileNumber,
+        homeMobileNumber: homeNumber,
+        email: email,
+      }),
+    );
     setIsEditing(false);
     // Save data to your backend or perform any other necessary action
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginTop: hp(60)}}>
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+    <SafeAreaView style={style.container}>
+      <View style={style.bodyContainer}>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Mobile Number</Text>
           {isEditing ? (
             <TextInput
               value={mobileNumber}
-              onChangeText={setMobileNumber}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
+              keyboardType={'phone-pad'}
+              maxLength={10}
+              onChangeText={text => {
+                const cleanedText = text.replace(/[^0-9]/g, ''); // Only allow numbers
+                setMobileNumber(cleanedText);
               }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {mobileNumber}
-            </Text>
+            <Text style={style.subTittleText}>{mobileNumber}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Home Mobile Number</Text>
           {isEditing ? (
             <TextInput
               value={homeNumber}
-              onChangeText={setHomeNumber}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
+              keyboardType={'phone-pad'}
+              maxLength={10}
+              onChangeText={text => {
+                const cleanedText = text.replace(/[^0-9]/g, ''); // Only allow numbers
+                setHomeNumber(cleanedText);
               }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {homeNumber}
-            </Text>
+            <Text style={style.subTittleText}>{homeNumber}</Text>
           )}
         </View>
 
-        <View style={{marginBottom: hp(15)}}>
-          <Text
-            style={{
-              fontSize: fontSize(14),
-              lineHeight: hp(21),
-              fontFamily: fontFamily.poppins500,
-              color: colors.black,
-            }}>
-            Date of Birth
-          </Text>
+        <View style={style.bodySubContainer}>
+          <Text style={style.tittleText}>Date of Birth</Text>
           {isEditing ? (
             <TextInput
               value={email}
               onChangeText={setEmail}
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-                borderWidth: 1,
-                borderColor: colors.gray,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 5,
-              }}
+              style={style.textInputContainer}
             />
           ) : (
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(18),
-                lineHeight: hp(28),
-                fontFamily: fontFamily.poppins600,
-                marginTop: hp(2),
-              }}>
-              {email}
-            </Text>
+            <Text style={style.subTittleText}>{email}</Text>
           )}
         </View>
       </View>
+
       {isEditing ? (
-        <View style={{position: 'absolute', right: 0}}>
+        <View style={style.buttonContainer}>
           <TouchableOpacity
+            disabled={isUpdatingProfile}
             onPress={handleSave}
-            style={{
-              marginTop: hp(10),
-              borderRadius: 5,
-              backgroundColor: '#F0F9FF',
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={icons.save_icon}
-              style={{
-                width: 20,
-                height: 20,
-                resizeMode: 'contain',
-                tintColor: 'ree',
-              }}
-            />
+            style={style.buttonBodyContainer}>
+            {isUpdatingProfile ? (
+              <ActivityIndicator size="small" color={colors.blue} />
+            ) : (
+              <Image source={icons.save_icon} style={style.saveIcon} />
+            )}
           </TouchableOpacity>
         </View>
       ) : (
-        <View
-          style={{
-            position: 'absolute',
-            right: 0,
-          }}>
+        <View style={style.buttonContainer}>
           <TouchableOpacity
+            disabled={isUpdatingProfile}
             onPress={() => setIsEditing(true)}
-            style={{
-              marginTop: hp(10),
-              borderRadius: 5,
-              backgroundColor: '#F0F9FF',
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={icons.edit_icon}
-              style={{width: 25, height: 25, tintColor: colors.blue}}
-            />
+            style={style.buttonBodyContainer}>
+            {isUpdatingProfile ? (
+              <ActivityIndicator size="small" color={colors.blue} />
+            ) : (
+              <Image source={icons.edit_icon} style={style.editIcon} />
+            )}
           </TouchableOpacity>
         </View>
       )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -13,9 +13,25 @@ import {icons, images} from '../../assets';
 import GradientText from '../../components/textGradientColor';
 import LinearGradient from 'react-native-linear-gradient';
 import CommonGradientButton from '../../components/commonGradientButton';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import {useSelector} from 'react-redux';
 
 const PlanScreen = () => {
+  const [topModalVisible, setTopModalVisible] = useState(false);
+
   const navigation = useNavigation();
+
+  const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainerView}>
@@ -24,11 +40,21 @@ const PlanScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileImageStyle}
-          />
+
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={style.profileImageStyle}
+            />
+          </TouchableOpacity>
         </View>
+
+        <HomeTopSheetComponent
+          isVisible={topModalVisible}
+          onBackdropPress={toggleModal}
+          onBackButtonPress={toggleModal}
+        />
+
         <View style={style.headingTittleContainer}>
           <Image
             source={icons.notification_icon}

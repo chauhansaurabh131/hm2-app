@@ -41,10 +41,7 @@ const formatTime = timestamp => {
 };
 
 const ChatUserScreen = ({route}) => {
-  // console.log(' === route ===> ', route);
   const {userData} = route.params;
-
-  // console.log(' === userData..... ===> ', userData?._id);
 
   const blockUserId = userData?.lastInitiatorUser;
   const blockReqId = userData?._id;
@@ -73,7 +70,7 @@ const ChatUserScreen = ({route}) => {
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
 
   const {user} = useSelector(state => state.auth);
-  const userImage = user?.user?.userProfilePic?.[0]?.url;
+  const userImage = userData?.userList?.profilePic;
 
   const accessToken = user?.tokens?.access?.token;
   const socketRef = useRef(null);
@@ -738,22 +735,9 @@ const ChatUserScreen = ({route}) => {
 
             <View>
               <ChatThreeDotComponent
-                // onViewProfilePress={() => {
-                //   // console.log(' === onViewProfilePress ===> ');
-                //   navigation.navigate('UserDetailsScreen');
-                // }}
                 onViewProfilePress={() => {
-                  // console.log(' === userData ===> ', userData);
                   navigation.navigate('UserDetailsScreen', {userData});
                 }}
-                // onBlockProfilePress={() => {
-                //   console.log(
-                //     ' === onBlockProfilePress ===> ',
-                //     userData?.userList?._id,
-                //     userData?.friendList?._id,
-                //   );
-                // }}
-
                 onBlockProfilePress={handleBlockProfilePress}
               />
             </View>

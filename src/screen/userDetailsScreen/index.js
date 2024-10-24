@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -15,11 +15,13 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import style from './style';
 import UsersProfileDetailsScreen from '../usersProfileDetailsScreen';
 import ImagePaginationComponent from '../../components/imagePaginationComponent';
-import {useRoute} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {accepted_Decline_Request} from '../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
+import NewAddStoryScreen from '../newAddStoryScreen';
+import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 
 const UserDetailScreen = ({navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -29,10 +31,14 @@ const UserDetailScreen = ({navigation}) => {
   const [SpamModalVisible, setSpamModalVisible] = useState(false); // State to control the modal visibility
   const [showWarning, setShowWarning] = useState(false); // State to control if we show the warning message
   const [submitted, setSubmitted] = useState(false); // State to track if the form is submitted
+  const [topModalVisible, setTopModalVisible] = useState(false);
 
   const bottomSheetRef = useRef(null);
   const unFrinedBottomSheetRef = useRef(null);
   const dispatch = useDispatch();
+
+  const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
 
   const route = useRoute();
   const {selectedBox} = route.params ?? {};
@@ -57,6 +63,21 @@ const UserDetailScreen = ({navigation}) => {
   // console.log(' === UserDetailScreen_userData ===> ', userData?.status);
 
   // console.log(' === matchesUserData ===> ', matchesUserData.age);
+
+  useFocusEffect(
+    useCallback(() => {
+      setTopModalVisible(false);
+    }, []),
+  );
+
+  const openTopSheetModal = () => {
+    toggleModal();
+  };
+
+  const toggleModal = () => {
+    setTopModalVisible(!topModalVisible);
+  };
+
   const onThreeDotPress = () => {
     console.log(' === onThreeDotPress ===> ');
 
@@ -275,14 +296,26 @@ const UserDetailScreen = ({navigation}) => {
           style={style.customHeaderLogo}
         />
 
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
           <Image
-            source={images.profileDisplayImage}
+            // source={images.profileDisplayImage}
+            source={userImage ? {uri: userImage} : images.empty_male_Image}
             style={style.profileLogoStyle}
           />
         </TouchableOpacity>
       </View>
-      <View style={style.userStoryContainer}>{/*<StoryComponent />*/}</View>
+
+      <View style={style.userStoryContainer}>
+        <NewAddStoryScreen />
+      </View>
+
+      {/*TOP SHEET*/}
+      <HomeTopSheetComponent
+        isVisible={topModalVisible}
+        onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}
+      />
+
       <ScrollView>
         <View>
           {/*<ImagePaginationComponent />*/}

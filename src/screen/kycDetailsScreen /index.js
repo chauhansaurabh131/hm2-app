@@ -19,62 +19,28 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RNBlobUtil from 'react-native-blob-util'; // Import RNBlobUtil
 import {useSelector} from 'react-redux';
 
-const KycDetailsScreen = () => {
+const KycDetailsScreen = ({route}) => {
+  const {kycData} = route.params; // Retrieve kycData from route params
   const refRBSheet = useRef();
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [selectedID, setSelectedID] = useState(''); // State for selected ID
   const [selectedImage, setSelectedImage] = useState(null); // State for selected image
   const [imageName, setImageName] = useState(''); // State for image file name
   const [isSubmitted, setIsSubmitted] = useState(false); // State to track if submission is done
-  const [kycData, setKycData] = useState(null); // State to hold KYC data
+  // const [kycData, setKycData] = useState(null); // State to hold KYC data
+
+  console.log('Received KYC Data:', kycData?.isDocUpload); // Use the KYC data in this screen
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
-  const userId = user?.user?.id;
-
-  // Function to fetch KYC details
-  const fetchKycDetails = async () => {
-    try {
-      const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/kyc/by-user/${userId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // Use your auth token here
-          },
-        },
-      );
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('KYC Details:', result);
-        setKycData(result?.data?.[0]); // Save KYC details to state (first entry)
-      } else {
-        console.error('Failed to fetch KYC details');
-        Toast.show({
-          type: 'error',
-          text1: 'Failed to Fetch KYC',
-          text2: 'Could not retrieve KYC details.',
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching KYC details:', error);
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'An error occurred while fetching KYC details.',
-      });
-    }
-  };
-
-  useEffect(() => {
-    // Fetch KYC details when the component mounts
-    fetchKycDetails();
-  }, []);
+  const userImage = user?.user?.profilePic;
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
+  };
+
+  const openTopSheetModal = () => {
+    toggleModal();
   };
 
   useFocusEffect(
@@ -127,11 +93,143 @@ const KycDetailsScreen = () => {
   };
 
   const handleSubmit = async () => {
-    // Your handleSubmit logic here
+    try {
+      // Log the selected ID type and image path when the form is submitted
+      console.log('Selected ID Type:', selectedID);
+      console.log('Selected Image Path:', selectedImage);
+
+      const imageName = selectedImage.split('/').pop(); // Extracts the filename from the URI
+      const fileExtension = imageName.split('.').pop().toLowerCase();
+      const contentType = getContentType(fileExtension);
+
+      console.log('Selected image name:', imageName);
+      console.log('File extension:', fileExtension);
+      console.log('Content-Type:', contentType);
+
+      const formData = new FormData();
+      formData.append('key', imageName);
+      formData.append('contentType', contentType);
+      formData.append('name', 'upload');
+
+      // Call your API to get the presigned URL
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/s3/uploadkycdoc',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // Use your auth token here
+          },
+          body: JSON.stringify({
+            key: imageName,
+            contentType: contentType,
+            name: 'upload',
+          }),
+        },
+      );
+
+      const result = await response.json();
+      console.log('API Response:', result);
+
+      const presignedUrl = result?.data?.url; // Get presigned URL for upload
+      console.log('Presigned URL:', presignedUrl);
+
+      const docUrl = result?.data?.docUrl;
+
+      console.log(' === docUrl ===> ', docUrl);
+
+      if (presignedUrl) {
+        // Upload the image using the presigned URL
+        const uploadResponse = await RNBlobUtil.fetch(
+          'PUT',
+          presignedUrl,
+          {
+            'Content-Type': contentType,
+            'x-amz-acl': 'public-read', // Set ACL for public read access
+          },
+          RNBlobUtil.wrap(selectedImage), // Correctly pass the image URI
+        );
+
+        if (uploadResponse.respInfo.status === 200) {
+          // Success case for image upload
+          console.log('Image uploaded successfully to S3');
+
+          // Now call the second API with kycDocName and kycDocImagePath
+          const kycResponse = await fetch(
+            'https://stag.mntech.website/api/v1/user/kyc/',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`, // Use your auth token here
+              },
+              body: JSON.stringify({
+                kycDocName: selectedID, // This will be the selected ID type (e.g., passport, driving-license)
+                kycDocImagePath: docUrl, // The URL of the uploaded document from S3
+                // isDocUpload: true,
+              }),
+            },
+          );
+
+          const kycResult = await kycResponse.json();
+          console.log('KYC API Response:', kycResult);
+
+          if (kycResponse.ok) {
+            Toast.show({
+              type: 'success',
+              text1: 'KYC Submission Successful',
+              text2: 'Your KYC document has been submitted successfully.',
+            });
+            setIsSubmitted(true);
+          } else {
+            Toast.show({
+              type: 'error',
+              text1: 'KYC Submission Failed',
+              text2: 'There was an issue submitting your KYC document.',
+            });
+          }
+        } else {
+          console.log('Failed to upload image to S3', uploadResponse.respInfo);
+          Toast.show({
+            type: 'error',
+            text1: 'Upload Failed',
+            text2: 'There was an issue uploading your document.',
+          });
+        }
+      } else {
+        console.error('Error: Presigned URL not found.');
+        Toast.show({
+          type: 'error',
+          text1: 'Upload Failed',
+          text2: 'Presigned URL could not be retrieved.',
+        });
+      }
+    } catch (error) {
+      console.error('Error during API call or upload:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Upload Error',
+        text2: 'Something went wrong during the upload process.',
+      });
+    }
+  };
+
+  const getContentType = fileExtension => {
+    switch (fileExtension) {
+      case 'mp4':
+        return 'video/mp4';
+      case 'jpeg':
+      case 'jpg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'application/octet-stream';
+      // return 'image/jpeg';
+    }
   };
 
   const navigation = useNavigation();
-
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainerView}>
@@ -140,13 +238,14 @@ const KycDetailsScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <TouchableOpacity onPress={toggleModal}>
+          <TouchableOpacity onPress={openTopSheetModal}>
             <Image
-              source={images.profileDisplayImage}
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
         <View style={style.headingTittleContainer}>
           <Image
             source={icons.notification_icon}
@@ -172,11 +271,36 @@ const KycDetailsScreen = () => {
       />
 
       <View style={style.submitFunctionContainer}>
-        {kycData?.isDocUpload ? (
+        {kycData?.isDocUpload || isSubmitted ? (
           <Text style={style.finalSubmitText}>
             Thank you for submitting documents. We will review and update you
             within 24 hours.
           </Text>
+        ) : selectedImage ? (
+          <View>
+            <Text style={style.uploadIdText}>Upload ID</Text>
+
+            <Text style={style.subSubmitTextTittle}>
+              Please submit a government issued-ID. Your ID will be{'\n'}deleted
+              once we verify your identity.
+            </Text>
+
+            <View style={style.selectedImageContainer}>
+              <Text style={style.selectedImageText}>{imageName}</Text>
+
+              <TouchableOpacity
+                onPress={handleRemoveImage}
+                style={style.cancelImageContainer}>
+                <Text style={style.cancelText}>X</Text>
+              </TouchableOpacity>
+            </View>
+
+            <CommonGradientButton
+              buttonName={'Submit'}
+              containerStyle={style.submitButton}
+              onPress={handleSubmit} // Submit the form when the button is clicked
+            />
+          </View>
         ) : (
           <>
             <Text style={style.uploadIdText}>Upload ID</Text>
@@ -239,24 +363,6 @@ const KycDetailsScreen = () => {
                 onPress={onSelectFilesPress}
               />
             </View>
-
-            {selectedImage && (
-              <View style={style.selectedImageContainer}>
-                <Text style={style.selectedImageText}>{imageName}</Text>
-
-                <TouchableOpacity
-                  onPress={handleRemoveImage}
-                  style={style.cancelImageContainer}>
-                  <Text style={style.cancelText}>X</Text>
-                </TouchableOpacity>
-
-                <CommonGradientButton
-                  buttonName={'Submit'}
-                  containerStyle={style.submitButton}
-                  onPress={handleSubmit} // Submit the form when the button is clicked
-                />
-              </View>
-            )}
           </>
         )}
       </View>

@@ -1,4 +1,5 @@
 import * as TYPES from './actionTypes';
+import {DATA_COUNTING_LIST, DATA_COUNTING_LIST_SUCCESS} from './actionTypes';
 
 // GET ALL USER
 export function userDatas(data) {
@@ -209,6 +210,22 @@ export const addShortListFailure = () => ({
 // export const userDis_LikeFailure = () => ({
 //   type: TYPES.USER_DIS_FAILED,
 // });
+
+export function dataCountingList(payload, callBack) {
+  return {
+    type: TYPES.DATA_COUNTING_LIST,
+    data: {payload, callBack},
+  };
+}
+
+export const dataCountingListSuccess = data => ({
+  type: TYPES.DATA_COUNTING_LIST_SUCCESS,
+  data,
+});
+
+export const dataCountingListFailure = () => ({
+  type: TYPES.DATA_COUNTING_LIST_FAILED,
+});
 
 //ADD DATING PARTNER REFERENCES
 export function datingPartnerReferences(payload, callBack) {

@@ -10,9 +10,15 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
-import {icons} from '../../assets'; // Ensure you have icons properly imported
+import {icons} from '../../assets';
+import {
+  accepted_Decline_Request,
+  getAllRequest,
+  sendRequest,
+} from '../../actions/homeActions';
+import {getAllFriends} from '../../actions/chatActions'; // Ensure you have icons properly imported
 
 const DemoCode = () => {
   const [data, setData] = useState([]);
@@ -21,9 +27,13 @@ const DemoCode = () => {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [isShortlistProcessing, setIsShortlistProcessing] = useState(null); // Track the current processing item
+  const [likedItems, setLikedItems] = useState({}); // To track liked items
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
+  const dispatch = useDispatch();
+
+  // console.log(' === accessToken ===> ', accessToken);
 
   // Function to fetch data from the API
   const fetchData = async (pageNumber = 1) => {
@@ -32,7 +42,6 @@ const DemoCode = () => {
     }
 
     try {
-      console.log('Fetching data for page:', pageNumber);
       const response = await fetch(
         `https://stag.mntech.website/api/v1/user/user/getUserByGender?page=${pageNumber}`,
         {
@@ -47,9 +56,17 @@ const DemoCode = () => {
       const newData = json?.data[0]?.paginatedResults || [];
 
       if (newData.length === 0) {
-        setHasMoreData(false);
+        setHasMoreData(false); // No more data to fetch
       } else {
-        setData(prevData => [...prevData, ...newData]);
+        setData(prevData => {
+          const mergedData = [...prevData];
+          newData.forEach(newItem => {
+            if (!mergedData.some(item => item._id === newItem._id)) {
+              mergedData.push(newItem); // Avoid duplicates
+            }
+          });
+          return mergedData; // Update with merged data
+        });
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -69,110 +86,203 @@ const DemoCode = () => {
       setIsFetchingMore(true);
       setPage(prevPage => {
         const nextPage = prevPage + 1;
-        fetchData(nextPage);
+        fetchData(nextPage); // Fetch more data when reaching the end
         return nextPage;
       });
     }
   };
 
-  // API call to shortlist a user
-  const addToShortlist = async shortlistId => {
+  const likeOrUnlikeUser = async (likedUserId, isAlreadyLiked, deleteId) => {
+    console.log(
+      ' === likedUserId, isAlreadyLiked,deleteId ===> ',
+      likedUserId,
+      isAlreadyLiked,
+      deleteId,
+    );
+
     try {
-      const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({shortlistId}),
+      const url = isAlreadyLiked
+        ? `https://stag.mntech.website/api/v1/user/like/update-like/${deleteId}`
+        : 'https://stag.mntech.website/api/v1/user/like/create-like';
+      const method = isAlreadyLiked ? 'PUT' : 'POST';
+      const body = JSON.stringify({
+        likedUserId,
+        isLike: !isAlreadyLiked,
+      });
+
+      console.log(`Calling ${isAlreadyLiked ? 'PUT' : 'POST'} API for like`);
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+        body,
+      });
 
       const result = await response.json();
+      console.log('Response:', result);
+
       if (response.ok) {
-        return true;
+        return !isAlreadyLiked; // Toggle the like state
       } else {
-        throw new Error(result.message || 'Error adding user to shortlist');
+        throw new Error(result.message || 'Error liking user');
       }
     } catch (error) {
-      console.error('Error adding to shortlist:', error.message);
-      Alert.alert('Error', 'Failed to add to shortlist. Please try again.');
-      return false;
+      console.error('Error liking/unliking user:', error.message);
+      // Alert.alert('Error', 'Failed to like/unlike user. Please try again.');
+      return null;
     }
   };
 
-  // API call to remove user from shortlist
-  const removeFromShortlist = async deleteId => {
-    try {
-      const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${deleteId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
+  const handleLikePress = async item => {
+    const deleteId = item?.userLikeDetails?._id;
+    const isAlreadyLiked = item?.userLikeDetails?.isLike || false;
 
-      const result = await response.json();
-      if (response.ok) {
-        return true;
-      } else {
-        throw new Error(result.message || 'Error removing user from shortlist');
-      }
-    } catch (error) {
-      console.error('Error removing from shortlist:', error.message);
-      Alert.alert(
-        'Error',
-        'Failed to remove from shortlist. Please try again.',
+    const success = await likeOrUnlikeUser(
+      item._id || item.id,
+      isAlreadyLiked,
+      deleteId,
+    );
+
+    if (success !== null) {
+      // After a successful API call, update the state to trigger a re-render
+      setData(prevData =>
+        prevData.map(user =>
+          user._id === item._id
+            ? {
+                ...user,
+                userLikeDetails: {
+                  ...user.userLikeDetails,
+                  isLike: success, // Toggle the like state in the UI
+                },
+              }
+            : user,
+        ),
       );
-      return false;
     }
   };
 
-  const handleShortlistPress = async item => {
-    const isShortlisted = !!item.userShortListDetails;
-    const shortlistId = item._id;
+  // SEND REQUEST FUNCTION
+  const onFriendRequestButtonPress = async item => {
+    console.log(' === onFriendRequestButtonPress ===> ', item?.friendsDetails);
 
-    setIsShortlistProcessing(shortlistId); // Set processing state for the current item
+    const requestId = item?.friendsDetails?._id;
 
-    if (isShortlisted) {
-      const success = await removeFromShortlist(item.userShortListDetails._id);
-      if (success) {
+    console.log(' === Friend Request ID ===> ', requestId);
+
+    // Check if the status is 'accepted'
+    if (item?.friendsDetails?.status === 'accepted') {
+      // If the status is 'accepted', remove the friend request
+      try {
+        await dispatch(
+          accepted_Decline_Request({
+            user: item?._id,
+            request: requestId, // Use the existing request ID
+            status: 'removed',
+          }),
+        );
+
+        // Update the UI after removing the friend request
         setData(prevData =>
-          prevData.map(user =>
-            user._id === item._id
+          prevData.map(userItem =>
+            userItem._id === item._id
               ? {
-                  ...user,
-                  userShortListDetails: null,
+                  ...userItem,
+                  friendsDetails: {
+                    ...userItem.friendsDetails,
+                    status: 'none', // Update status locally to reflect removal
+                  },
                 }
-              : user,
+              : userItem,
           ),
+        );
+      } catch (error) {
+        console.error('Error removing friend request:', error);
+        Alert.alert(
+          'Error',
+          'Failed to remove friend request. Please try again.',
+        );
+      }
+    } else if (item?.friendsDetails?.status === 'requested') {
+      // If the status is 'requested', reject the friend request
+      try {
+        await dispatch(
+          accepted_Decline_Request({
+            user: item?._id,
+            request: requestId, // Use the existing request ID
+            status: 'removed',
+          }),
+        );
+
+        // Update the UI after rejecting the request
+        setData(prevData =>
+          prevData.map(userItem =>
+            userItem._id === item._id
+              ? {
+                  ...userItem,
+                  friendsDetails: {
+                    ...userItem.friendsDetails,
+                    status: 'none', // Update status locally to reflect rejection
+                  },
+                }
+              : userItem,
+          ),
+        );
+      } catch (error) {
+        console.error('Error rejecting friend request:', error);
+        Alert.alert(
+          'Error',
+          'Failed to reject friend request. Please try again.',
         );
       }
     } else {
-      const success = await addToShortlist(shortlistId);
-      if (success) {
+      // Otherwise, send a new friend request
+      try {
+        const token = user?.tokens?.access?.token;
+
+        await dispatch(sendRequest({friend: item?._id, user: user.user.id}));
+
+        // Update the specific item in the data array to reflect the friend request status
         setData(prevData =>
-          prevData.map(user =>
-            user._id === item._id
+          prevData.map(userItem =>
+            userItem._id === item._id
               ? {
-                  ...user,
-                  userShortListDetails: {_id: shortlistId},
+                  ...userItem,
+                  friendsDetails: {
+                    ...userItem.friendsDetails,
+                    status: 'requested', // Update the status locally
+                  },
                 }
-              : user,
+              : userItem,
           ),
+        );
+      } catch (error) {
+        console.error('Error sending friend request:', error);
+        Alert.alert(
+          'Error',
+          'Failed to send friend request. Please try again.',
         );
       }
     }
-
-    setIsShortlistProcessing(null); // Reset processing state after the API call
   };
 
   const renderUserItem = ({item}) => {
+    console.log(' === renderUserItem ===> ', item);
     const defaultImage = require('../../assets/images/empty_Male_img.jpg');
+    const friendStatus = item?.friendsDetails?.status;
+
+    const likeIconSource = item?.userLikeDetails?.isLike
+      ? icons.new_user_like_icon // Show this if user liked the item
+      : icons.new_like_icon;
+
+    const friendIconSource =
+      friendStatus === 'accepted'
+        ? icons.new_user_send_icon // Request already accepted
+        : friendStatus === 'requested'
+        ? icons.new_user_send_icon // Request already sent, allow for rejection
+        : icons.new_send_icon; // No request sent, allow sending a request
 
     const shortlistIconSource = item.userShortListDetails
       ? icons.upgradeIcon
@@ -190,7 +300,6 @@ const DemoCode = () => {
 
           <TouchableOpacity
             style={{position: 'absolute', right: 20, top: 18}}
-            onPress={() => handleShortlistPress(item)}
             disabled={isProcessing}>
             {/* Disable button while processing */}
             <Image
@@ -203,7 +312,16 @@ const DemoCode = () => {
             />
           </TouchableOpacity>
         </View>
+
         <Text style={styles.userName}>{item.name}</Text>
+
+        {/* Like icon changes based on whether the user has been liked */}
+        <TouchableOpacity onPress={() => handleLikePress(item)}>
+          <Image
+            source={likeIconSource}
+            style={{width: 32, height: 20, marginTop: 10}}
+          />
+        </TouchableOpacity>
       </View>
     );
   };
