@@ -13,7 +13,7 @@ const style = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: hp(12),
+    // marginTop: hp(12),
   },
   headerLogoStyle: {
     width: wp(96),
@@ -28,10 +28,10 @@ const style = StyleSheet.create({
     marginRight: hp(10.5),
     resizeMode: 'stretch',
     right: -7,
-    marginTop: hp(2),
+    marginTop: hp(10),
   },
   headerTittleContainer: {
-    marginTop: hp(30),
+    // marginTop: hp(30),
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
@@ -89,6 +89,7 @@ const style = StyleSheet.create({
     fontSize: fontSize(8),
     lineHeight: hp(12),
     fontFamily: fontFamily.poppins500,
+    color: colors.black,
   },
   headingTittleStyle: {
     justifyContent: 'center',

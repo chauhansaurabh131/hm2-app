@@ -271,7 +271,11 @@ const MatchesInNewScreen = () => {
               <View style={{marginTop: hp(22), flexDirection: 'row'}}>
                 <Image
                   source={images.gradient_button_background_img}
-                  style={{width: wp(105), height: hp(24), resizeMode: 'cover'}}
+                  style={{
+                    width: wp(105),
+                    height: hp(24),
+                    resizeMode: 'contain',
+                  }}
                 />
                 <TouchableOpacity
                   activeOpacity={0.5}

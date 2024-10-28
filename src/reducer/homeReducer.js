@@ -16,8 +16,10 @@ const initialState = {
   paymentDetail: [],
   isGetPaymentDetailsLoading: false,
   isDataCountingLoader: false,
+  isDataStoriesLoader: false,
   // userLike: [],
   addShortListData: [],
+  storiesData: [],
   // removeShortListData: [],
   dataCount: [],
 };
@@ -144,6 +146,19 @@ export default (state = initialState, action) => {
       };
     case TYPES.DATA_COUNTING_LIST_FAILED:
       return {...state, isDataCountingLoader: false};
+
+    // GET SUCCESS STORIES DATA
+    case TYPES.GET_SUCCESS_STORIES:
+      return {...state, isDataStoriesLoader: true};
+
+    case TYPES.GET_SUCCESS_STORIES_SUCCESS:
+      return {
+        ...state,
+        storiesData: action.data,
+        isDataStoriesLoader: false,
+      };
+    case TYPES.GET_SUCCESS_STORIES_FAILED:
+      return {...state, isDataStoriesLoader: false};
 
     // // REMOVE SHORT LIST
     //

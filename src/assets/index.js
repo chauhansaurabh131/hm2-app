@@ -43,6 +43,7 @@ export const images = {
   chit_chat_img: require('./images/chit_chat_img.png'),
   adventurous_img: require('./images/adventurous_img.png'),
   gradient_button_background_img: require('./images/gradient_background_img.png'),
+  add_Stories_img: require('./images/add_stroies_image.png'),
 };
 
 export const icons = {

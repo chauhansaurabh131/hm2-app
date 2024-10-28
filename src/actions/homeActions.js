@@ -1,5 +1,9 @@
 import * as TYPES from './actionTypes';
-import {DATA_COUNTING_LIST, DATA_COUNTING_LIST_SUCCESS} from './actionTypes';
+import {
+  GET_SUCCESS_STORIES,
+  GET_SUCCESS_STORIES_FAILED,
+  GET_SUCCESS_STORIES_SUCCESS,
+} from './actionTypes';
 
 // GET ALL USER
 export function userDatas(data) {
@@ -225,6 +229,23 @@ export const dataCountingListSuccess = data => ({
 
 export const dataCountingListFailure = () => ({
   type: TYPES.DATA_COUNTING_LIST_FAILED,
+});
+
+//GET SUCCESS STORIES LIST
+export function getSuccessStories(payload, callBack) {
+  return {
+    type: TYPES.GET_SUCCESS_STORIES,
+    data: {payload, callBack},
+  };
+}
+
+export const getSuccessStoriesSuccess = data => ({
+  type: TYPES.GET_SUCCESS_STORIES_SUCCESS,
+  data,
+});
+
+export const getSuccessStoriesFAILED = () => ({
+  type: TYPES.GET_SUCCESS_STORIES_FAILED,
 });
 
 //ADD DATING PARTNER REFERENCES

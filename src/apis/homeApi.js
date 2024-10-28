@@ -57,6 +57,10 @@ const addDataCountingData = async data => {
   return get('/api/v1/user/user/getStatusCount', data, true);
 };
 
+const getSuccessStories = async data => {
+  return get('/api/v1/user/story/get-story', data, false);
+};
+
 // const removeAddShortList = async data => {
 //   return post('/api/v1/user/shortlist/create-shortlist', data, true);
 // };
@@ -87,6 +91,7 @@ export const home = {
   paymentDetail,
   addShortListsData,
   addDataCountingData,
+  getSuccessStories,
   datingPartnerReferencesApi,
   // removeAddShortList,
   // userLikes,

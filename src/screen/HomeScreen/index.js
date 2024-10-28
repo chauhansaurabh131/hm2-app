@@ -21,7 +21,7 @@ import FastImage from 'react-native-fast-image';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {userDatas} from '../../actions/homeActions';
+import {getSuccessStories, userDatas} from '../../actions/homeActions';
 import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
 import Toast from 'react-native-toast-message';
 import {colors} from '../../utils/colors';
@@ -98,6 +98,7 @@ const HomeScreen = ({route}) => {
 
   useEffect(() => {
     dispatch(userDatas());
+    dispatch(getSuccessStories());
   }, [dispatch]);
 
   const {userData} = useSelector(state => state.home);
@@ -560,11 +561,53 @@ const HomeScreen = ({route}) => {
             <Text style={style.premiumTextStyle}>Success Stories</Text>
           </View>
 
-          <SuccessStoryFlatListComponent
-            onStoryPagePress={() => {
-              navigation.navigate('SuccessStoryPageScreen');
-            }}
-          />
+          {/*<SuccessStoryFlatListComponent*/}
+          {/*  onStoryPagePress={() => {*/}
+          {/*    navigation.navigate('SuccessStoryPageScreen');*/}
+          {/*  }}*/}
+          {/*  onAddStoryPress={() => {*/}
+          {/*    navigation.navigate('SuccessStoryEditInformationScreen');*/}
+          {/*  }}*/}
+          {/*/>*/}
+
+          <SuccessStoryFlatListComponent />
+
+          <Text style={style.showMeAllTextStyle}>Show Me All</Text>
+
+          <View style={{marginTop: hp(30), marginBottom: hp(20)}}>
+            <View>
+              <Image
+                source={images.add_Stories_img}
+                style={{width: '100%', height: hp(160), borderRadius: 10}}
+              />
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('SuccessStoryEditInformationScreen');
+                }}
+                activeOpacity={0.7}
+                style={{
+                  position: 'absolute',
+                  width: hp(134),
+                  height: hp(40),
+                  borderRadius: 20,
+                  backgroundColor: colors.white,
+                  right: hp(30),
+                  bottom: hp(30),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.black,
+                    fontSize: fontSize(14),
+                    lineHeight: hp(18),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  Add Your Story
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
           {/*VERIFICATION MODAL OPEN */}
           <View style={style.verificationModalContainer}>

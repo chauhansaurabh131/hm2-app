@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
   SafeAreaView,
@@ -15,24 +16,19 @@ import {colors} from '../../utils/colors';
 import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatListComponent';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useNavigation} from '@react-navigation/native';
+import AppColorLogo from '../../components/appColorLogo';
+import {useSelector} from 'react-redux';
 
 const SuccessStoryPageScreen = ({route}) => {
+  const {story} = route.params;
+
   const [topModalVisible, setTopModalVisible] = useState(false);
   const navigation = useNavigation();
+  const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
 
-  // const {name} = route.params;
-  // const name = route.params?.name ?? 'Riya & Rohan';
-  const {name, selectedImages, description} = route.params ?? {};
-
-  console.log(' === name.... ===> ', name);
-  console.log(' === selectedImages..... ===> ', selectedImages);
-  console.log(' === selectedImages..... ===> ', description);
-
-  // const data = [
-  //   {id: '1', image: images.couple_One_Image},
-  //   {id: '2', image: images.couple_Two_Image},
-  //   {id: '3', image: images.couple_Three_Image},
-  // ];
+  const {images, title, content, marriageDate} = story;
+  const imageCount = images.length;
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -42,30 +38,15 @@ const SuccessStoryPageScreen = ({route}) => {
     toggleModal();
   };
 
-  const renderItem = ({item}) => (
-    <Image
-      source={item.image}
-      style={{
-        width: wp(110),
-        height: hp(150),
-        borderRadius: 10,
-        marginHorizontal: 4.5,
-      }}
-    />
-  );
-
   return (
     <SafeAreaView style={style.container}>
       <View style={style.containerBody}>
         <View style={style.headerContainer}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.headerLogoStyle}
-          />
+          <AppColorLogo />
 
           <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
             <Image
-              source={images.profileDisplayImage}
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileLogo}
             />
           </TouchableOpacity>
@@ -73,7 +54,7 @@ const SuccessStoryPageScreen = ({route}) => {
 
         <View style={style.headerTittleContainer}>
           <Text style={style.headerTittleTextStyle}>
-            Story of {name || 'Riya & Rohan'}
+            Story of {story?.title || 'Riya & Rohan'}
           </Text>
           <TouchableOpacity
             activeOpacity={0.6}
@@ -86,67 +67,34 @@ const SuccessStoryPageScreen = ({route}) => {
         </View>
       </View>
 
-      <View style={style.bodyContainer}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {/*<FlatList*/}
-          {/*  data={data}*/}
-          {/*  horizontal*/}
-          {/*  showsHorizontalScrollIndicator={false}*/}
-          {/*  keyExtractor={item => item.id}*/}
-          {/*  renderItem={renderItem}*/}
-          {/*/>*/}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between', // Keep space between only when there are 3 or more images
+            alignItems: 'center',
+            // marginBottom: 20,
+            marginHorizontal: 17,
+          }}>
+          {images.map((imageUrl, index) => (
+            <Image
+              key={index}
+              source={{uri: imageUrl}}
+              style={[
+                {
+                  height: 200, // Fixed height for the image
+                  borderRadius: 15, // Rounded corners
+                  // marginHorizontal: 5, // Space between images
+                  resizeMode: 'cover',
+                  backgroundColor: 'red',
+                },
+                {width: (Dimensions.get('window').width - 50) / imageCount}, // Adjust width based on image count
+              ]}
+            />
+          ))}
+        </View>
 
-          {/*<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>*/}
-          {/*  <Image*/}
-          {/*    source={images.couple_One_Image}*/}
-          {/*    style={{width: wp(115), height: hp(154)}}*/}
-          {/*  />*/}
-
-          {/*  <Image*/}
-          {/*    source={images.couple_Two_Image}*/}
-          {/*    style={{width: wp(115), height: hp(154)}}*/}
-          {/*  />*/}
-
-          {/*  <Image*/}
-          {/*    source={images.couple_Three_Image}*/}
-          {/*    style={{width: wp(115), height: hp(154)}}*/}
-          {/*  />*/}
-          {/*</View>*/}
-
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            {selectedImages && selectedImages.length >= 3 ? (
-              <>
-                <Image
-                  source={{uri: selectedImages[0]}}
-                  style={{width: wp(115), height: hp(170), borderRadius: 10}}
-                />
-                <Image
-                  source={{uri: selectedImages[1]}}
-                  style={{width: wp(115), height: hp(170), borderRadius: 10}}
-                />
-                <Image
-                  source={{uri: selectedImages[2]}}
-                  style={{width: wp(115), height: hp(170), borderRadius: 10}}
-                />
-              </>
-            ) : (
-              <>
-                <Image
-                  source={images.couple_Three_Image} // Provide a default image source
-                  style={{width: wp(115), height: hp(154), borderRadius: 10}}
-                />
-                <Image
-                  source={images.couple_Two_Image} // Provide a default image source
-                  style={{width: wp(115), height: hp(154), borderRadius: 10}}
-                />
-                <Image
-                  source={images.couple_One_Image} // Provide a default image source
-                  style={{width: wp(115), height: hp(154), borderRadius: 10}}
-                />
-              </>
-            )}
-          </View>
-
+        <View style={style.bodyContainer}>
           <View style={style.bodyHeadingTittleContainer}>
             <Text style={style.bodyTittleHeadingText}>Our Story</Text>
             <View style={style.bodyTittleHeadingContainer}>
@@ -162,7 +110,8 @@ const SuccessStoryPageScreen = ({route}) => {
           </View>
 
           <Text style={style.headingDescriptionTextStyle}>
-            `When the Tudor king fell for a young lady-in-waiting, Anne Boleyn,
+            {story?.content ||
+              `When the Tudor king fell for a young lady-in-waiting, Anne Boleyn,
             who possessed eyes "black and beautiful," he was long married to a
             Spanish princess. But Anne refused to be a royal mistress, and the
             king rocked the Western world to win his divorce and make Anne
@@ -174,22 +123,13 @@ const SuccessStoryPageScreen = ({route}) => {
             to know expressly your intention touching the love between us…having
             been more than a year wounded by the dart of love, and not yet sure
             whether I shall fail or find a place in your affection." (Their love
-            affair ended when he had her beheaded.)`
+            affair ended when he had her beheaded.)`}
           </Text>
-
-          {/*<Text style={style.headingDescriptionStyle}>*/}
-          {/*  complained the Spanish emissary. To comprehend the king's passion,*/}
-          {/*  one need only read his 16th century love letters, revealing his*/}
-          {/*  torment over how elusive she remained: "I beg to know expressly your*/}
-          {/*  intention touching the love between us…having been more than a year*/}
-          {/*  wounded by the dart of love, and not yet sure whether I shall fail*/}
-          {/*  or find a place in your affection." (Their love affair ended when he*/}
-          {/*  had her beheaded.)*/}
-          {/*</Text>*/}
 
           <View style={style.shareImageContainer}>
             <TouchableOpacity activeOpacity={0.6}>
               <Image source={icons.share_icon} style={style.shareIconStyle} />
+              <Text style={{color: 'black', fontSize: 10}}>Share</Text>
             </TouchableOpacity>
 
             <View style={style.spaceStyle} />
@@ -201,7 +141,7 @@ const SuccessStoryPageScreen = ({route}) => {
 
           {/*<Text style={style.userNameTextStyle}>Riya & Rohan</Text>*/}
           <Text style={style.userNameTextStyle}>
-            Story of {name || 'Riya & Rohan'}
+            Story of {story?.title || 'Riya & Rohan'}
           </Text>
 
           <Text style={style.userDateTextStyle}>Married on 19 Apr 2023</Text>
@@ -226,8 +166,8 @@ const SuccessStoryPageScreen = ({route}) => {
           />
 
           <View style={{height: 150}} />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

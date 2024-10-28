@@ -139,6 +139,10 @@ const NewLogInScreen = () => {
               </Text>
 
               <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  console.log(' === Goggle Logo ===> ');
+                }}
                 style={{
                   width: hp(44),
                   height: hp(44),
