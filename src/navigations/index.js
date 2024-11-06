@@ -69,6 +69,7 @@ import AddSetStoryImageComponent from '../components/addSetStoryImageComponent';
 import NewAddStoryScreen from '../screen/newAddStoryScreen';
 import ViewStatusScreen from '../screen/viewStatusScreen';
 import ViewUserStatusScreen from '../screen/viewUserStatusScreen';
+import UserUploadImageFullScreen from '../screen/userUploadImageFullScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -429,6 +430,10 @@ const MainNavigator = () => {
         />
         <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
         <Stack.Screen name={'Message'} component={Message} />
+        <Stack.Screen
+          name={'UserUploadImageFullScreen'}
+          component={UserUploadImageFullScreen}
+        />
       </Stack.Navigator>
     );
   };

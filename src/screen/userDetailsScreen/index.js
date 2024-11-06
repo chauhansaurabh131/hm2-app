@@ -45,9 +45,9 @@ const UserDetailScreen = ({navigation}) => {
 
   const {userData, matchesUserData} = route.params;
 
-  // console.log(' === userData... ===> ', userData?.status);
+  console.log(' === userData... ===> ', matchesUserData?.Designation);
 
-  console.log(' === matchesUserData ===> ', matchesUserData);
+  // console.log(' === matchesUserData ===> ', matchesUserData);
 
   const {isSendRequestLoading} = useSelector(state => state.home);
 
@@ -271,10 +271,11 @@ const UserDetailScreen = ({navigation}) => {
 
   const dateOfBirth = userData?.friendList?.dateOfBirth;
 
-  const age = calculateAge(dateOfBirth);
+  // const age = calculateAge(dateOfBirth);
+  const age = userData?.friendList?.age || matchesUserData?.age;
   const gender = userData?.friendList?.gender || matchesUserData?.gender;
   const heightInCm = userData?.friendList?.height || matchesUserData?.height;
-  const heightFormatted = convertHeightToFeetAndInches(heightInCm);
+  // const heightFormatted = convertHeightToFeetAndInches(heightInCm);
   const motherTongue = userData?.friendList?.motherTongue;
   const cast = userData?.friendList?.cast;
   const jobTitle = userData?.friendList?.userProfessional?.jobTitle;
@@ -282,6 +283,9 @@ const UserDetailScreen = ({navigation}) => {
   const workCountry = userData?.friendList?.userProfessional?.workCountry;
   const aboutMe = userData?.friendList?.writeBoutYourSelf;
   const matchPercentage = matchesUserData?.matchPercentage;
+  const Designation = matchesUserData?.Designation;
+
+  // matchesUserData?.age
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -325,7 +329,7 @@ const UserDetailScreen = ({navigation}) => {
             <View
               style={{
                 position: 'absolute',
-                bottom: 35,
+                bottom: 20,
                 width: '100%',
                 // backgroundColor: 'rgba(0,0,0,0.09)',
               }}>
@@ -340,66 +344,144 @@ const UserDetailScreen = ({navigation}) => {
               </View>
 
               <View style={style.userDetailsDescriptionContainer}>
-                <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                <Text style={style.userDetailsTextStyle}>{age} yrs, </Text>
+                <Text style={style.userDetailsTextStyle} />
                 <Text style={style.userDetailsTextStyle}>
-                  {/*{age || matchesUserData.age} ,*/}
-                </Text>
-                <Text style={style.userDetailsTextStyle}>
-                  {heightFormatted || matchesUserData?.height}
+                  {heightInCm || matchesUserData?.height}
                 </Text>
 
                 <View style={style.verticalLineStyle} />
 
                 <Text style={style.userDetailsTextStyle}>
-                  {motherTongue || matchesUserData?.motherTongue}
+                  {' '}
+                  {jobTitle || matchesUserData?.JobTittle}
                 </Text>
-                <Text style={style.userDetailsTextStyle}>
-                  {cast || matchesUserData?.cast}
-                </Text>
-                {/*<Text style={style.userDetailsTextStyle}>(2.1km)</Text>*/}
               </View>
 
               <View style={style.userDetailsDescriptionContainer}>
                 <Text style={style.userDetailsTextStyle}>
-                  {jobTitle || matchesUserData?.JobTittle}
-                </Text>
-
-                <View style={style.verticalLineStyle} />
-
-                <Text style={style.userDetailsTextStyle}>
-                  {workCity || matchesUserData?.workCity}
+                  {workCity || matchesUserData?.workCity},
                 </Text>
                 <Text style={style.userDetailsTextStyle}>
                   {workCountry || matchesUserData?.workCountry}
                 </Text>
-                {/*<Text style={style.userDetailsTextStyle}>States</Text>*/}
               </View>
 
               <View style={style.bottomImageContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('UserUploadImageFullScreen');
+                <View
+                  style={{
+                    // flexDirection: 'row',
+                    // flex: 1,
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  <Image source={icons.image_icon} style={style.imageIcon} />
-                </TouchableOpacity>
+                  <Image
+                    source={images.gradient_button_background_img}
+                    style={{
+                      width: wp(105),
+                      height: hp(40),
+                      resizeMode: 'contain',
+                    }}
+                  />
 
-                <TouchableOpacity>
-                  <Image source={icons.video_icon} style={style.videoIcon} />
-                </TouchableOpacity>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      flexDirection: 'row',
+                    }}>
+                    <Image
+                      source={icons.couple_icon}
+                      style={{
+                        width: hp(16),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        tintColor: 'white',
+                        marginRight: 8,
+                      }}
+                    />
 
-                <TouchableOpacity style={style.startIconContainer}>
-                  <Image source={icons.starIcon} style={style.starIcon} />
-                </TouchableOpacity>
+                    <Text style={style.matchesText}>
+                      {matchPercentage}% Match
+                    </Text>
+                  </View>
+                </View>
 
-                <LinearGradient
-                  colors={['#0F52BA', '#9413D0']}
-                  start={{x: 0, y: 1}}
-                  end={{x: 1, y: 0}}
-                  style={style.matchesContainer}>
-                  <Text style={style.matchesText}>
-                    {matchPercentage}% Match
-                  </Text>
-                </LinearGradient>
+                <View
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    flexDirection: 'row',
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      width: hp(60),
+                      height: hp(30),
+                      borderRadius: 15,
+                      backgroundColor: '#282727',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginRight: hp(12),
+                    }}>
+                    <Image
+                      source={icons.simple_camera_icon}
+                      style={{
+                        tintColor: colors.white,
+                        width: hp(16),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        marginRight: hp(5),
+                      }}
+                    />
+                    <Text style={{color: colors.white}}>13</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      borderRadius: 50,
+                      backgroundColor: '#282727',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginRight: hp(12),
+                    }}>
+                    <Image
+                      source={icons.starIcon}
+                      style={{
+                        tintColor: colors.white,
+                        width: hp(15),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        // marginRight: hp(5),
+                      }}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      borderRadius: 50,
+                      backgroundColor: '#282727',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Image
+                      source={icons.three_dots_icon}
+                      style={{
+                        tintColor: colors.white,
+                        width: hp(15),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        // marginRight: hp(5),
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
 
                 {/*<Text>{matchPercentage}% Match</Text>*/}
               </View>

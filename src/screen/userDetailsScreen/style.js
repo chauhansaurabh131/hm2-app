@@ -82,7 +82,9 @@ const style = StyleSheet.create({
   },
   bottomImageContainer: {
     flexDirection: 'row',
-    marginTop: hp(22),
+    marginTop: hp(10),
+    // backgroundColor: 'red',
+    alignItems: 'center',
   },
   userDetailsDescriptionContainer: {
     flexDirection: 'row',
@@ -97,7 +99,7 @@ const style = StyleSheet.create({
   verticalLineStyle: {
     width: hp(1),
     height: '100%',
-    backgroundColor: colors.white,
+    backgroundColor: colors.gray,
     marginHorizontal: wp(5),
   },
   imageBottomContainer: {
@@ -174,10 +176,10 @@ const style = StyleSheet.create({
     resizeMode: 'contain',
   },
   matchesText: {
-    textAlign: 'center',
+    // textAlign: 'center',
     fontSize: fontSize(10),
     lineHeight: hp(15),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins600,
     color: colors.white,
   },
   matchesContainer: {

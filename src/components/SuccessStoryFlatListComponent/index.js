@@ -38,7 +38,7 @@ const SuccessStoryFlatListComponent = () => {
     return (
       <View style={styles.cardContainer}>
         <TouchableOpacity
-          activeOpacity={0.7}
+          activeOpacity={0.3}
           onPress={() => {
             navigation.navigate('SuccessStoryPageScreen', {story: item});
             // navigation.navigate('Abc', {story: item});
@@ -53,15 +53,15 @@ const SuccessStoryFlatListComponent = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginTop: hp(14),
-                marginBottom: hp(14),
+                // marginBottom: hp(14),
               }}>
               <Text style={styles.readMoreText}>Read Story</Text>
 
               <Image
                 source={icons.back_arrow_icon}
                 style={{
-                  width: hp(14),
-                  height: hp(14),
+                  width: hp(12),
+                  height: hp(12),
                   transform: [{rotate: '180deg'}],
                   tintColor: '#7D7D7D',
                 }}
@@ -116,22 +116,26 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: hp(143), // Adjust width of the card
-    borderRadius: 6,
+    borderRadius: 10,
     backgroundColor: '#fff',
     marginRight: 15, // Spacing between cards
     marginLeft: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2, // Adds shadow/elevation for Android
-    // alignItems: 'center',
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 4,
+    // elevation: 2, // Adds shadow/elevation for Android
+    marginTop: 5,
+    height: hp(202),
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
   },
   storyImage: {
     width: '100%',
-    height: hp(150), // Adjust height of the image
-    borderRadius: 6,
+    height: hp(136), // Adjust height of the image
+    borderRadius: 10,
     marginBottom: 10,
+    resizeMode: 'stretch',
   },
   storyTitle: {
     fontSize: fontSize(12),

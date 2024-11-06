@@ -15,7 +15,7 @@ import {
   sendRequest,
 } from '../../actions/homeActions';
 import {icons, images} from '../../assets';
-import {fontSize, hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
 const PremiumMatchesComponent = ({isOnline}) => {
@@ -389,6 +389,31 @@ const PremiumMatchesComponent = ({isOnline}) => {
   const renderUserItem = ({item}) => {
     // console.log(' === send  ===> ', item?.friendsDetails);
 
+    console.log(' === item______ ===> ', item.address.currentCity);
+
+    const firstName = item?.firstName
+      ? item.firstName.charAt(0).toUpperCase() +
+        item.firstName.slice(1).toLowerCase()
+      : '';
+
+    const lastName = item?.lastName
+      ? item.lastName.charAt(0).toUpperCase() +
+        item.lastName.slice(1).toLowerCase()
+      : '';
+
+    const currentCity = item.address.currentCity
+      ? item.address.currentCity.charAt(0).toUpperCase() +
+        item.address.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const currentCountry = item.address.currentCountry
+      ? item.address.currentCountry.charAt(0).toUpperCase() +
+        item.address.currentCountry.slice(1).toLowerCase()
+      : '';
+
+    // const currentCity = item.address ? item.address.currentCity : '';
+    // const currentCountry = item.address ? item.address.currentCountry : '';
+
     const likeIconSource = item?.userLikeDetails?.isLike
       ? icons.new_user_like_icon // Show this if user liked the item
       : icons.new_like_icon;
@@ -397,8 +422,6 @@ const PremiumMatchesComponent = ({isOnline}) => {
       ? icons.new_user_addStar_icon // If already shortlisted, show upgrade icon
       : icons.new_star_icon; // If not shortlisted, show star icon
 
-    const currentCity = item.address ? item.address.currentCity : '';
-    const currentCountry = item.address ? item.address.currentCountry : '';
     const age = calculateAge(item.dateOfBirth);
 
     // Extract the friend status
@@ -416,13 +439,15 @@ const PremiumMatchesComponent = ({isOnline}) => {
       <View style={styles.itemContainer}>
         <View
           style={{
-            height: hp(213),
-            borderRadius: 5,
+            height: hp(225),
+            borderRadius: 10,
             backgroundColor: '#FFFFFF',
-            shadowColor: '#000',
-            shadowOpacity: 0.5,
-            shadowRadius: 6,
-            elevation: 2,
+            // shadowColor: '#EFEFEF',
+            borderWidth: 1,
+            borderColor: '#EFEFEF',
+            // shadowOpacity: 0.5,
+            // shadowRadius: 6,
+            // elevation: 2,
           }}>
           <View>
             <Image
@@ -454,13 +479,13 @@ const PremiumMatchesComponent = ({isOnline}) => {
 
           <View style={{alignItems: 'center'}}>
             <Text style={styles.name}>
-              {item.firstName} {item.lastName}
+              {firstName} {lastName}
             </Text>
             <View style={styles.nameContainer}>
               <Text style={styles.nameDetailTextStyle}>{age || 'N/A'}</Text>
               <Text style={styles.nameDetailTextStyle}> yrs, </Text>
               <Text style={styles.nameDetailTextStyle}>
-                {item.state || 'N/A'}
+                {item?.height || 'N/A'}
               </Text>
             </View>
             <View style={styles.nameContainer}>
@@ -567,28 +592,30 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   name: {
-    fontSize: fontSize(10),
+    fontSize: fontSize(12),
     lineHeight: hp(15),
-    fontWeight: '700',
+    fontFamily: fontFamily.poppins700,
     color: colors.black,
   },
   nameContainer: {
     flexDirection: 'row',
   },
   nameDetailTextStyle: {
-    fontSize: fontSize(8),
+    fontSize: fontSize(9),
     lineHeight: hp(12),
     color: colors.black,
+    fontFamily: fontFamily.poppins400,
+    top: 5,
   },
   shareImageContainer: {
     flexDirection: 'row',
-    marginTop: hp(5),
+    marginTop: hp(12),
   },
   shareImageContainerStyle: {
     marginHorizontal: 4,
   },
   shareImageStyle: {
-    width: hp(32),
+    width: hp(38),
     height: hp(20),
     resizeMode: 'contain',
   },

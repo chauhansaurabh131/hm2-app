@@ -1,22 +1,8 @@
-// import React from 'react';
-// import {SafeAreaView, Text} from 'react-native';
-//
-// const MatchesInNewScreen = () => {
-//   return (
-//     <SafeAreaView>
-//       <Text>NEw</Text>
-//     </SafeAreaView>
-//   );
-// };
-//
-// export default MatchesInNewScreen;
-
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
   FlatList,
-  ActivityIndicator,
   View,
   Image,
   Alert,
@@ -31,6 +17,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import {useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import {colors} from '../../../utils/colors';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -43,6 +31,8 @@ const MatchesInNewScreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [step, setStep] = useState(1);
+  const sheetRef = useRef(null);
+  const [selectedFirstName, setSelectedFirstName] = useState('');
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
@@ -125,17 +115,38 @@ const MatchesInNewScreen = () => {
   };
 
   const renderUserItem = ({item}) => {
+    // console.log(' === item_____ ===> ', item?.userProfilePic);
+
     const userAllImage = Array.isArray(item?.userProfilePic)
       ? item.userProfilePic.map(pic => pic.url)
       : [];
 
     const profileImage = item.profilePic;
     const birthTime = item.birthTime;
-    const currentCity = item.address?.currentCity;
     const currentCountry = item.address?.currentCountry;
-    const JobTittle = item.userProfessional?.jobTitle;
-    const workCity = item.userProfessional?.workCity;
-    const workCountry = item.userProfessional?.workCountry;
+
+    const firstName = item.firstName
+      ? item.firstName.charAt(0).toUpperCase() +
+        item.firstName.slice(1).toLowerCase()
+      : '';
+
+    const JobTittle = item.userProfessional?.jobTitle
+      ? item.userProfessional?.jobTitle.charAt(0).toUpperCase() +
+        item.userProfessional?.jobTitle.slice(1).toLowerCase()
+      : '';
+
+    const currentCity = item.address?.currentCity
+      ? item.address?.currentCity.charAt(0).toUpperCase() +
+        item.address?.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const workCountry = item.userProfessional?.workCountry
+      ? item.userProfessional?.workCountry.charAt(0).toUpperCase() +
+        item.userProfessional?.workCountry.slice(1).toLowerCase()
+      : '';
+    const imageCount = Array.isArray(item?.userProfilePic)
+      ? item.userProfilePic.length
+      : 0;
 
     const calculateAge = dateOfBirth => {
       const birthDate = new Date(dateOfBirth);
@@ -203,6 +214,24 @@ const MatchesInNewScreen = () => {
       navigation.navigate('UserDetailsScreen', {matchesUserData});
     };
 
+    const userAllImageShare = () => {
+      const allImages = {
+        userAllImage,
+      };
+      // console.log(' === userAllImage ===> ', userAllImage);
+      navigation.navigate('UserUploadImageFullScreen', {allImages});
+    };
+
+    const onThreeDotPress = () => {
+      // const userDetailsThreeDot = {
+      //   firstName: item?.firstName,
+      // };
+      setSelectedFirstName(firstName);
+
+      sheetRef.current.open();
+      // console.log(' === onThreeDotPress ===> ', userDetailsThreeDot);
+    };
+
     return (
       <View style={{marginHorizontal: 17}}>
         <TouchableOpacity activeOpacity={1}>
@@ -225,55 +254,56 @@ const MatchesInNewScreen = () => {
                 <Text style={style.bodyTextStyle}>Online</Text>
               </View>
 
-              <TouchableOpacity
-                // onPress={() => {
-                //   // navigation.navigate('UserDetailsScreen');
-                //
-                // }}
-                onPress={handlePress}>
-                {/*<Text style={style.userNameTextStyle}>{item.name}</Text>*/}
+              <TouchableOpacity onPress={handlePress}>
                 <Text style={style.userNameTextStyle}>
-                  {item.firstName || item.name} {item.lastName || ' '}
+                  {firstName || item.name} {item.lastName || ' '}
                 </Text>
 
                 <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{item.gender}</Text>
+                  {/*<Text style={style.userDetailsTextStyle}>{item.gender}</Text>*/}
                   <Text style={style.userDetailsTextStyle}>
-                    {age || 'N/A'},
+                    {age || 'N/A'} yrs,
                   </Text>
                   <Text style={style.userDetailsTextStyle}>{item.height}</Text>
 
                   <View style={style.verticalLineStyle} />
 
                   <Text style={style.userDetailsTextStyle}>
-                    {currentCity || ' N/A'}
+                    {JobTittle || 'N/A'}
                   </Text>
-                  <Text style={style.userDetailsTextStyle}>{item.cast}</Text>
                 </View>
 
                 <View style={style.userDetailsDescriptionContainer}>
                   <Text style={style.userDetailsTextStyle}>
-                    {JobTittle || 'N/A'}
+                    {currentCity || ' N/A'},
                   </Text>
 
-                  <View style={style.verticalLineStyle} />
+                  {/*<View style={style.verticalLineStyle} />*/}
 
-                  <Text style={style.userDetailsTextStyle}> {'N/A'}</Text>
+                  {/*<Text style={style.userDetailsTextStyle}> {'N/A'}</Text>*/}
+                  {/*<Text style={style.userDetailsTextStyle}>*/}
+                  {/*  {workCity || 'N/A'}*/}
+                  {/*</Text>*/}
                   <Text style={style.userDetailsTextStyle}>
-                    {workCity || 'N/A'}
-                  </Text>
-                  <Text style={style.userDetailsTextStyle}>
+                    {' '}
                     {workCountry || 'N/A'}
                   </Text>
                 </View>
               </TouchableOpacity>
 
-              <View style={{marginTop: hp(22), flexDirection: 'row'}}>
+              <View
+                style={{
+                  marginTop: hp(22),
+                  flexDirection: 'row',
+                  // backgroundColor: 'red',
+                  alignItems: 'center',
+                  // flex: 1,
+                }}>
                 <Image
                   source={images.gradient_button_background_img}
                   style={{
                     width: wp(105),
-                    height: hp(24),
+                    height: hp(40),
                     resizeMode: 'contain',
                   }}
                 />
@@ -283,7 +313,7 @@ const MatchesInNewScreen = () => {
                   style={{
                     position: 'absolute',
                     left: 10,
-                    top: 5,
+                    top: 12,
                     flexDirection: 'row',
                     justifyContent: 'center',
                   }}>
@@ -314,30 +344,72 @@ const MatchesInNewScreen = () => {
                   style={{
                     flexDirection: 'row',
                     position: 'absolute',
-                    right: 50,
-                    alignItems: 'center',
-                    top: 1,
+                    right: 35,
+                    top: 5,
                   }}>
                   <TouchableOpacity
+                    style={{
+                      width: hp(60),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginHorizontal: 5,
+                    }}
                     activeOpacity={0.5}
-                    onPress={() => {
-                      navigation.navigate('UserUploadImageFullScreen');
-                    }}>
+                    // onPress={() => {
+                    //   navigation.navigate('UserUploadImageFullScreen');
+                    // }}
+                    onPress={userAllImageShare}>
                     <Image
                       source={icons.image_icon}
                       style={{
                         width: 16,
                         height: 16,
                         resizeMode: 'contain',
-                        marginRight: wp(14),
+                        marginRight: wp(10),
                       }}
                     />
-                  </TouchableOpacity>
 
-                  <TouchableOpacity activeOpacity={0.5}>
+                    <Text style={{color: colors.white}}>{imageCount}</Text>
+                  </TouchableOpacity>
+                  {/*</View>*/}
+
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginHorizontal: 5,
+                    }}>
                     <Image
                       source={icons.starIcon}
                       style={{width: 20, height: 16, resizeMode: 'contain'}}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={onThreeDotPress}
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginHorizontal: 5,
+                    }}>
+                    <Image
+                      source={icons.three_dots_icon}
+                      style={{width: 4, height: 14, tintColor: colors.white}}
                     />
                   </TouchableOpacity>
                 </View>
@@ -727,6 +799,77 @@ const MatchesInNewScreen = () => {
         </View>
         {/*</TouchableWithoutFeedback>*/}
       </Modal>
+
+      {/* Bottom Sheet */}
+      <RBSheet
+        ref={sheetRef}
+        height={300} // Height of the bottom sheet
+        // openDuration={250} // Duration of the opening animation
+        closeOnDragDown={true} // Allow closing the sheet by dragging it down
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {/* Content inside the bottom sheet */}
+        <View style={{flex: 1}}>
+          <Text style={{fontSize: 18}}>First Name: {selectedFirstName}</Text>
+
+          <View style={{marginHorizontal: 30}}>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={icons.share_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.black,
+                }}>
+                Share Profile
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.copy_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.black,
+                }}>
+                Copy URL
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </RBSheet>
     </SafeAreaView>
   );
 };

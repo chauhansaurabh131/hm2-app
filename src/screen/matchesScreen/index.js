@@ -121,8 +121,8 @@ const MatchesScreen = ({navigation}) => {
     {id: 'accepted', label: 'Accepted'},
     {id: 'receive', label: 'Received'},
     {id: 'saved', label: 'Saved'},
-    {id: 'declined', label: 'Declined'},
     {id: 'sent', label: 'Sent'},
+    {id: 'declined', label: 'Declined'},
     {id: 'deleted', label: 'Deleted'},
     {id: 'blocked', label: 'Blocked'},
     {id: 'Demo', label: 'Demo'},
@@ -183,25 +183,34 @@ const MatchesScreen = ({navigation}) => {
   };
   // USER REQUEST LIST RENDER ITEM //
   const renderUserRequestItem = ({item}) => {
-    const {user, id, _id} = item; // Destructure `user` and `id` from `item`
+    console.log(' === renderUserRequestItem ===> ', item);
+
+    // Ensure 'user' and its properties are defined before destructuring
+    const user = item?.user || {};
+    const {id, _id} = item; // Destructure `id` and `_id` from `item`
+
+    // Destructure with default values to prevent undefined or null errors
     const {
-      firstName,
-      lastName,
-      profilePic,
-      address,
-      gender,
-      dateOfBirth,
-      userProfessional,
-      motherTongue,
-      cast,
+      firstName = 'N/A',
+      lastName = 'N/A',
+      profilePic = null,
+      address = {},
+      gender = 'N/A',
+      dateOfBirth = null,
+      userProfessional = {},
+      motherTongue = 'N/A',
+      cast = 'N/A',
     } = user;
 
-    const userId = item.friend.address.userId;
+    const userId = item?.friend?.address?.userId;
 
-    const jobTitle = item.user?.userProfessional?.jobTitle;
-    const workCountry = item.user?.userProfessional?.workCountry;
+    const jobTitle = userProfessional?.jobTitle || 'N/A';
+    const workCountry = userProfessional?.workCountry || 'N/A';
 
     const calculateAge = dob => {
+      if (!dob) {
+        return 'N/A';
+      } // Handle missing date of birth
       const birthDate = new Date(dob);
       const difference = Date.now() - birthDate.getTime();
       const ageDate = new Date(difference);
@@ -209,8 +218,7 @@ const MatchesScreen = ({navigation}) => {
     };
 
     const age = calculateAge(dateOfBirth);
-
-    const height = user.height || 'N/A';
+    const height = user?.height || 'N/A';
 
     return (
       <View style={style.renderContainer}>
@@ -237,7 +245,7 @@ const MatchesScreen = ({navigation}) => {
                   // navigation.navigate('UserDetailsScreen');
                 }}>
                 <Text style={style.userNameTextStyle}>
-                  {firstName || 'NAN'} {lastName || 'NAN'}
+                  {firstName} {lastName}
                 </Text>
 
                 <View style={style.userDetailsDescriptionContainer}>
@@ -252,9 +260,7 @@ const MatchesScreen = ({navigation}) => {
                 </View>
 
                 <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>
-                    {jobTitle || 'N/A'}
-                  </Text>
+                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
 
                   <View style={style.verticalLineStyle} />
 
@@ -280,13 +286,11 @@ const MatchesScreen = ({navigation}) => {
               </View>
 
               <View style={style.renderBottomButtonContainer}>
-                {/*{userActions[userId] === 'declined' ? (*/}
                 {requestStatus === 'declined' ? (
                   <TouchableOpacity style={style.requestDeclineContainer}>
                     <Text style={style.requestTextStyle}>Request Decline</Text>
                   </TouchableOpacity>
-                ) : // ) : userActions[userId] === 'accepted' ? (
-                requestStatus === 'accepted' ? (
+                ) : requestStatus === 'accepted' ? (
                   <TouchableOpacity style={style.acceptedButtonContainer}>
                     <Text style={style.acceptedTextStyle}>
                       Request Accepted
@@ -436,21 +440,133 @@ const MatchesScreen = ({navigation}) => {
   };
 
   // TOP LIST DATA SHOW //
-  const renderTabItem = ({item}) => (
-    <TouchableOpacity onPress={() => handleTabPress(item.id)}>
-      <View
-        style={[
-          style.statusBarContainerStyle,
-          {backgroundColor: selectedTab === item.id ? '#F0F9FF' : colors.white},
-        ]}>
-        <Image
-          source={images.user_one_Image}
-          style={style.statusBarIconStyle}
-        />
-        <Text style={style.statusBarTittleTextStyle}>{item.label}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderTabItem = ({item}) => {
+    // Map each tab to a different image
+    const getImageForTab = id => {
+      switch (id) {
+        case 'new':
+          return icons.matches_new_icon; // Replace with your actual image reference for "New"
+        case 'accepted':
+          return icons.matches_accp_icon; // Replace with your actual image reference for "Accepted"
+        case 'receive':
+          return icons.matches_received_icon; // Replace with your actual image reference for "Received"
+        case 'saved':
+          return icons.starIcon; // Replace with your actual image reference for "Saved"
+        case 'sent':
+          return icons.matches_sent_icon; // Replace with your actual image reference for "Sent"
+        case 'declined':
+          return icons.matched_declined_icon; // Replace with your actual image reference for "Declined"
+        case 'deleted':
+          return icons.delete_Profile_icon; // Replace with your actual image reference for "Deleted"
+        case 'blocked':
+          return icons.block_icon; // Replace with your actual image reference for "Blocked"
+        case 'Demo':
+          return images.user_Two_Image; // Replace with your actual image reference for "Demo"
+        default:
+          return images.user_Three_Image; // Fallback image if none matches
+      }
+    };
+
+    const getImageStyleForTab = id => {
+      switch (id) {
+        case 'new':
+          return {
+            width: hp(14),
+            height: hp(14),
+            marginRight: 15,
+            resizeMode: 'contain',
+          };
+        case 'accepted':
+          return {
+            width: hp(14),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'receive':
+          return {
+            width: hp(17),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'saved':
+          return {
+            width: hp(14.73),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+            top: -2,
+          };
+        case 'sent':
+          return {
+            width: hp(15.42),
+            height: hp(13),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'declined':
+          return {
+            width: hp(14),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'deleted':
+          return {
+            width: hp(19.21),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'blocked':
+          return {
+            width: hp(14),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'Demo':
+          return {width: 27, height: 27};
+        default:
+          return {width: 24, height: 24};
+      }
+    };
+
+    const imageSource = getImageForTab(item.id);
+    const imageStyle = getImageStyleForTab(item.id);
+
+    return (
+      <TouchableOpacity onPress={() => handleTabPress(item.id)}>
+        <LinearGradient
+          colors={
+            selectedTab === item.id
+              ? ['#0F52BA', '#8225AF'] // Gradient when selected
+              : [colors.white, colors.white] // Default white background when not selected
+          }
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0.7}}
+          style={style.statusBarContainerStyle}>
+          <Image
+            source={imageSource} // Dynamically use the image based on the tab's id
+            style={[
+              imageStyle,
+              {
+                tintColor: selectedTab === item.id ? colors.white : '#5F6368',
+              }, // Apply dynamic tintColor
+            ]}
+          />
+          <Text
+            style={[
+              style.statusBarTittleTextStyle,
+              {color: selectedTab === item.id ? colors.white : colors.black}, // Conditional text color
+            ]}>
+            {item.label}
+          </Text>
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  };
 
   // USER NEW RENDER LIST //
   const renderUserItem = ({item}) => {

@@ -12,7 +12,20 @@
           "package_name": "com.happymilan2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "478268963840-pgiog77bere529u2vvi79evvfdtd9fsr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.happymilan2",
+            "certificate_hash": "04ca50d1df1a0b8143511a383f2d1f7a78d2bdcd"
+          }
+        },
+        {
+          "client_id": "478268963840-84lqu6pk2orpq80m3s9m9lgfv36e6anv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDQgO8UK9AFBUiwCSago1V_tSrlefBzZQk"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478268963840-84lqu6pk2orpq80m3s9m9lgfv36e6anv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478268963840-7p1r8a6dcufm52in0prcfpq2h03nqsle.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.HappyMilan2"
+              }
+            }
+          ]
         }
       }
     }

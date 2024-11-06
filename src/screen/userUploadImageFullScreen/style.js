@@ -19,10 +19,31 @@ const style = StyleSheet.create({
     marginRight: wp(3),
     resizeMode: 'stretch',
   },
-  userStoryContainer: {
-    marginTop: hp(15),
-    height: hp(60),
-    // marginHorizontal: wp(17),
+  headerBody: {
+    marginHorizontal: wp(17),
+  },
+  headerImageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: hp(14),
+    marginBottom: hp(20),
+  },
+  cancelButton: {
+    width: hp(44),
+    height: hp(44),
+    backgroundColor: '#28272780',
+    borderRadius: 50,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    bottom: 30,
+    alignSelf: 'center',
+  },
+  cancelIcon: {
+    width: hp(14),
+    height: hp(14),
+    resizeMode: 'contain',
+    tintColor: colors.white,
   },
 });
 

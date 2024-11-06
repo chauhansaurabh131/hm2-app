@@ -156,6 +156,11 @@ export const icons = {
   add_story_icon: require('./icons/add_story_icon.png'),
   check_gradient_box_icon: require('./icons/check_gradient_box.png'),
   no_message_icon: require('./icons/no_message_icon.png'),
+  matches_new_icon: require('./icons/matches_new_icon.png'),
+  matches_accp_icon: require('./icons/matches_accp_icon.png'),
+  matches_received_icon: require('./icons/matches_received_icon.png'),
+  matches_sent_icon: require('./icons/matches_sent_icon.png'),
+  matched_declined_icon: require('./icons/matches_Declined_icon.png'),
 };
 
 export const gif = {

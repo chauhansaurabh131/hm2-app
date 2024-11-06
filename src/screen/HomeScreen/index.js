@@ -31,6 +31,9 @@ import NewAddStoryScreen from '../newAddStoryScreen';
 import {RequestUserPermission} from '../../service/pushNotification';
 
 const HomeScreen = ({route}) => {
+  const [showMeAll, setShowMeAll] = useState(false);
+  const [showMeAllNewMatches, setShowMeAllNewMatches] = useState(false);
+  const [showMeAllStories, setShowMeAllStories] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
@@ -102,10 +105,6 @@ const HomeScreen = ({route}) => {
   }, [dispatch]);
 
   const {userData} = useSelector(state => state.home);
-
-  // {userData?.data?.length}
-
-  // console.log(' === 1111 ===> ', userData?.data[0]?.totalDocs);
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
@@ -226,10 +225,6 @@ const HomeScreen = ({route}) => {
     }
   };
 
-  const closeWelcomeModal = () => {
-    setShowModal(false);
-  };
-
   const toggleModal = () => {
     // console.log(' === toggleModal ===> ', topModalVisible);
     setTopModalVisible(!topModalVisible);
@@ -253,6 +248,29 @@ const HomeScreen = ({route}) => {
 
   const completeOpenModal = selectedBox => {
     setCompleteModalModalVisible(true);
+  };
+
+  const onPremiumMatchesAllOnPress = () => {
+    setShowMeAll(true);
+  };
+  const onPremiumMatchesAllnotPress = () => {
+    setShowMeAll(false);
+    console.log(' === onPremiumMatchesAllnotPress ===> ');
+  };
+
+  const onNewMatchesAllOnPress = () => {
+    setShowMeAllNewMatches(true);
+  };
+  const onNewMatchesAllNotPress = () => {
+    setShowMeAllNewMatches(false);
+    navigation.navigate('Matches');
+  };
+
+  const onStoriesAllOnPress = () => {
+    setShowMeAllStories(true);
+  };
+  const onStoriesAllNotPress = () => {
+    setShowMeAllStories(false);
   };
 
   return (
@@ -445,8 +463,10 @@ const HomeScreen = ({route}) => {
             </View>
           </View>
         </Modal>
+      </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{marginHorizontal: 17}}>
           <View style={style.cardContainer}>
             <LinearGradient
               colors={['#0D4EB3', '#9413D0']}
@@ -501,14 +521,16 @@ const HomeScreen = ({route}) => {
               </View>
             </LinearGradient>
           </View>
+        </View>
 
-          {/*TOP SHEET*/}
-          <HomeTopSheetComponent
-            isVisible={topModalVisible}
-            onBackdropPress={toggleModal}
-            onBackButtonPress={toggleModal}
-          />
+        {/*TOP SHEET*/}
+        <HomeTopSheetComponent
+          isVisible={topModalVisible}
+          onBackdropPress={toggleModal}
+          onBackButtonPress={toggleModal}
+        />
 
+        <View style={{marginHorizontal: 17}}>
           <View style={style.premiumTextContainer}>
             <Text style={style.premiumTextStyle}>Premium Matches</Text>
             <Text style={style.premiumTextsStyle}>110</Text>
@@ -523,20 +545,27 @@ const HomeScreen = ({route}) => {
               }}
             />
           </View>
+        </View>
 
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              if (selectedBox === 'marriage') {
-                navigation.navigate('Matches');
-              } else if (selectedBox === 'dating') {
-                navigation.navigate('Explore');
-              }
-            }}>
-            <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={{
+            // backgroundColor: 'orange',
+            height: hp(45),
+            justifyContent: 'center',
+            backgroundColor: showMeAll ? '#F9FBFF' : 'white',
+          }}
+          // onPress={onPremiumMatchesAllOnPress}
+          onPressIn={onPremiumMatchesAllOnPress} // Trigger when button is pressed
+          onPressOut={onPremiumMatchesAllnotPress} // Trigger when button is released
+        >
+          <Text style={style.showMeAllTextStyle}>Show Me All</Text>
+        </TouchableOpacity>
 
-          <View style={style.premiumTextContainer}>
+        <View style={{width: '100%', height: 10, backgroundColor: '#F8F8F8'}} />
+
+        <View style={{marginHorizontal: 17}}>
+          <View style={[style.premiumTextContainer, {marginTop: 22}]}>
             <Text style={style.premiumTextStyle}>New Matches</Text>
             <Text style={style.premiumTextsStyle}>
               {/*{userData?.data[0]?.totalDocs}*/}
@@ -548,116 +577,134 @@ const HomeScreen = ({route}) => {
           ) : (
             <Text>Fill form</Text>
           )}
+        </View>
 
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              navigation.navigate('Matches');
-            }}>
-            <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: hp(45),
+            justifyContent: 'center',
+            // backgroundColor: 'orange',
+            backgroundColor: showMeAllNewMatches ? '#F9FBFF' : 'white',
+          }}
+          activeOpacity={0.7}
+          onPressIn={onNewMatchesAllOnPress} // Trigger when button is pressed
+          onPressOut={onNewMatchesAllNotPress}>
+          <Text style={style.showMeAllTextStyle}>Show Me All</Text>
+        </TouchableOpacity>
 
-          <View style={style.premiumTextContainer}>
+        <View style={{width: '100%', height: 10, backgroundColor: '#F8F8F8'}} />
+
+        <View style={{marginHorizontal: 17}}>
+          <View style={[style.premiumTextContainer, {marginTop: 22}]}>
             <Text style={style.premiumTextStyle}>Success Stories</Text>
           </View>
 
-          {/*<SuccessStoryFlatListComponent*/}
-          {/*  onStoryPagePress={() => {*/}
-          {/*    navigation.navigate('SuccessStoryPageScreen');*/}
-          {/*  }}*/}
-          {/*  onAddStoryPress={() => {*/}
-          {/*    navigation.navigate('SuccessStoryEditInformationScreen');*/}
-          {/*  }}*/}
-          {/*/>*/}
-
           <SuccessStoryFlatListComponent />
+        </View>
 
+        <TouchableOpacity
+          style={{
+            height: hp(45),
+            justifyContent: 'center',
+            // backgroundColor: 'orange',
+            marginTop: 5,
+            backgroundColor: showMeAllStories ? '#F9FBFF' : 'white',
+          }}
+          onPressIn={onStoriesAllOnPress} // Trigger when button is pressed
+          onPressOut={onStoriesAllNotPress} // Trigger when button is released
+        >
           <Text style={style.showMeAllTextStyle}>Show Me All</Text>
+        </TouchableOpacity>
 
-          <View style={{marginTop: hp(30), marginBottom: hp(20)}}>
-            <View>
-              <Image
-                source={images.add_Stories_img}
-                style={{width: '100%', height: hp(160), borderRadius: 10}}
-              />
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('SuccessStoryEditInformationScreen');
-                }}
-                activeOpacity={0.7}
+        <View
+          style={{
+            marginTop: hp(22),
+            // marginBottom: hp(20),
+            marginHorizontal: 17,
+          }}>
+          <View>
+            <Image
+              source={images.add_Stories_img}
+              style={{width: '100%', height: hp(160), borderRadius: 10}}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('SuccessStoryEditInformationScreen');
+              }}
+              activeOpacity={0.7}
+              style={{
+                position: 'absolute',
+                width: hp(134),
+                height: hp(40),
+                borderRadius: 20,
+                backgroundColor: colors.white,
+                right: hp(30),
+                bottom: hp(30),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
                 style={{
-                  position: 'absolute',
-                  width: hp(134),
-                  height: hp(40),
-                  borderRadius: 20,
-                  backgroundColor: colors.white,
-                  right: hp(30),
-                  bottom: hp(30),
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  color: colors.black,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(18),
+                  fontFamily: fontFamily.poppins500,
                 }}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(18),
-                    fontFamily: fontFamily.poppins500,
-                  }}>
-                  Add Your Story
-                </Text>
-              </TouchableOpacity>
-            </View>
+                Add Your Story
+              </Text>
+            </TouchableOpacity>
           </View>
+        </View>
 
-          {/*VERIFICATION MODAL OPEN */}
-          <View style={style.verificationModalContainer}>
-            <Modal
-              visible={isCompleteModalVisible}
-              animationType="none"
-              transparent={true}>
-              <View style={style.verificationModalContainerStyle}>
-                <View style={style.verificationModalBodyStyle}>
-                  <Text style={style.verificationModalHeadingStyle}>
-                    Please complete your profile
+        {/*VERIFICATION MODAL OPEN */}
+        <View style={style.verificationModalContainer}>
+          <Modal
+            visible={isCompleteModalVisible}
+            animationType="none"
+            transparent={true}>
+            <View style={style.verificationModalContainerStyle}>
+              <View style={style.verificationModalBodyStyle}>
+                <Text style={style.verificationModalHeadingStyle}>
+                  Please complete your profile
+                </Text>
+
+                <FastImage
+                  source={gif.register_modal}
+                  style={{height: 180, width: 180, marginTop: 20}}
+                  resizeMode={'contain'}
+                />
+
+                <View style={style.verificationDescriptionStyle}>
+                  <Text style={style.verificationDescriptionText}>
+                    A comprehensive profile enables us to provide
                   </Text>
 
-                  <FastImage
-                    source={gif.register_modal}
-                    style={{height: 180, width: 180, marginTop: 20}}
-                    resizeMode={'contain'}
+                  <Text style={style.verificationDescriptionText}>
+                    recise match recommendations, ensuring
+                  </Text>
+
+                  <Text style={style.verificationDescriptionText}>
+                    that we deliver tailored results to you.
+                  </Text>
+
+                  <CommonGradientButton
+                    buttonName={'Let’s do it'}
+                    containerStyle={{
+                      width: wp(270),
+                      height: hp(50),
+                      marginTop: hp(20),
+                    }}
+                    onPress={verificationModalToggle}
                   />
-
-                  <View style={style.verificationDescriptionStyle}>
-                    <Text style={style.verificationDescriptionText}>
-                      A comprehensive profile enables us to provide
-                    </Text>
-
-                    <Text style={style.verificationDescriptionText}>
-                      recise match recommendations, ensuring
-                    </Text>
-
-                    <Text style={style.verificationDescriptionText}>
-                      that we deliver tailored results to you.
-                    </Text>
-
-                    <CommonGradientButton
-                      buttonName={'Let’s do it'}
-                      containerStyle={{
-                        width: wp(270),
-                        height: hp(50),
-                        marginTop: hp(20),
-                      }}
-                      onPress={verificationModalToggle}
-                    />
-                  </View>
                 </View>
               </View>
-            </Modal>
-          </View>
+            </View>
+          </Modal>
+        </View>
 
-          <View style={{height: isIOS ? hp(150) : hp(120)}} />
-        </ScrollView>
-      </View>
+        <View style={{height: isIOS ? hp(20) : hp(20)}} />
+      </ScrollView>
+      {/*</View>*/}
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );

@@ -72,22 +72,21 @@ const style = StyleSheet.create({
   },
   credentialTittleText: {
     color: colors.black,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
     fontFamily: fontFamily.poppins500,
   },
   credentialDescriptionTextStyle: {
     color: colors.black,
     marginTop: hp(9),
-    fontSize: fontSize(9),
-    lineHeight: hp(15),
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
     fontFamily: fontFamily.poppins400,
     marginRight: 17,
   },
 
   descriptionBodyUnderlineStyle: {
     width: '100%',
-    height: 1,
     borderWidth: 1,
     borderColor: '#F2F2F2',
     marginTop: hp(15),

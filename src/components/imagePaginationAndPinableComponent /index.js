@@ -7,57 +7,24 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {images} from '../../assets';
-import {ReactNativeZoomableView} from '@openspacelabs/react-native-zoomable-view';
-import {hp, isIOS} from '../../utils/helpers';
 import Pinchable from 'react-native-pinchable';
+import FastImage from 'react-native-fast-image';
 
 const {width} = Dimensions.get('window');
 
-const DemoPractiveCodeScreen = () => {
-  const Pictures = [
-    {
-      id: '1',
-      pic: images.user_one_Image,
-    },
-    {
-      id: '2',
-      pic: images.user_Two_Image,
-    },
-    {
-      id: '3',
-      pic: images.demo_Six_Image,
-    },
-    {
-      id: '4',
-      pic: images.demo_Seven_Image,
-    },
-    {
-      id: '5',
-      pic: images.demo_Three_Image,
-    },
-  ];
-
+const ImagePaginationAndPinableComponent = ({images}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const flatListRef = useRef(null);
 
   const renderItem = ({item}) => (
     <View style={{flex: 1}}>
-      {/*<ReactNativeZoomableView*/}
-      {/*  maxZoom={2}*/}
-      {/*  minZoom={1}*/}
-      {/*  zoomStep={0.5}*/}
-      {/*  initialZoom={1}*/}
-      {/*  bindToBorders={true}*/}
-      {/*  captureEvent={true}>*/}
       <Pinchable>
-        <Image
-          source={item.pic}
-          style={{width: width, height: isIOS ? hp(550) : hp(600)}}
+        <FastImage
+          source={{uri: item}} // Display the image from the URI
+          style={{width: width, height: '100%'}}
           resizeMode="stretch"
         />
       </Pinchable>
-      {/*</ReactNativeZoomableView>*/}
     </View>
   );
 
@@ -76,15 +43,12 @@ const DemoPractiveCodeScreen = () => {
   }).current;
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-      }}>
+    <SafeAreaView style={{flex: 1}}>
       <FlatList
         ref={flatListRef}
-        data={Pictures}
+        data={images} // Pass the images prop here
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index.toString()}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -94,7 +58,7 @@ const DemoPractiveCodeScreen = () => {
         scrollEventThrottle={16}
       />
       <View style={styles.pagination}>
-        {Pictures.map((_, index) => (
+        {images.map((_, index) => (
           <View
             key={index}
             style={[
@@ -121,7 +85,6 @@ const styles = StyleSheet.create({
     width: 48.53,
     height: 3,
     borderRadius: 4,
-    // backgroundColor: '#888',
     backgroundColor: 'grey',
     marginHorizontal: 5,
   },
@@ -129,4 +92,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 });
-export default DemoPractiveCodeScreen;
+
+export default ImagePaginationAndPinableComponent;

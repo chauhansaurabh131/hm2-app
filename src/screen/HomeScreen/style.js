@@ -125,11 +125,11 @@ const style = StyleSheet.create({
   },
   cardButtonContainer: {
     position: 'absolute',
-    bottom: 8,
+    bottom: 15,
   },
   cardButtonBodyStyle: {
     height: hp(40),
-    width: wp(118),
+    width: wp(124),
     borderRadius: hp(20),
     backgroundColor: colors.white,
     justifyContent: 'center',
@@ -137,13 +137,13 @@ const style = StyleSheet.create({
   cardButtonTextContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: wp(22),
+    marginHorizontal: wp(18),
   },
   cardButtonTextStyle: {
     fontSize: fontSize(12),
     lineHeight: hp(18),
-    fontWeight: '500',
     color: colors.black,
+    fontFamily: fontFamily.poppins600,
   },
   cardButtonImageStyle: {
     width: hp(18.88),
@@ -154,12 +154,13 @@ const style = StyleSheet.create({
     // marginLeft: wp(30),
     flexDirection: 'row',
     marginTop: hp(34),
+    // backgroundColor: 'red',
   },
   premiumTextStyle: {
     color: colors.black,
-    fontSize: fontSize(14),
+    fontSize: fontSize(16),
     lineHeight: hp(21),
-    fontWeight: '600',
+    fontFamily: fontFamily.poppins600,
     marginRight: hp(3),
   },
   premiumTextsStyle: {
@@ -175,10 +176,10 @@ const style = StyleSheet.create({
   showMeAllTextStyle: {
     color: colors.black,
     textAlign: 'center',
-    marginTop: hp(24),
     fontSize: fontSize(14),
     lineHeight: hp(16),
-    fontWeight: '400',
+    fontWeight: fontFamily.poppins500,
+    justifyContent: 'center',
   },
 
   // VERIFICATION MODAL CSS

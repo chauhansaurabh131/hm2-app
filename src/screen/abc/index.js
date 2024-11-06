@@ -1,123 +1,70 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   SafeAreaView,
   Text,
-  Image,
+  TouchableOpacity,
   View,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
-// Function to convert "DD/MM/YYYY" format to "DD MMM YYYY"
-const formatDate = dateString => {
-  if (!dateString) {
-    return '';
-  } // Check if dateString exists and is valid
-
-  const [day, month, year] = dateString.split('/'); // Split the date string
-  const date = new Date(`${year}-${month}-${day}`); // Create a Date object
-
-  const dayPart = new Intl.DateTimeFormat('en-US', {day: 'numeric'}).format(
-    date,
-  );
-  const monthPart = new Intl.DateTimeFormat('en-US', {month: 'short'}).format(
-    date,
-  );
-  const yearPart = new Intl.DateTimeFormat('en-US', {year: 'numeric'}).format(
-    date,
-  );
-
-  return `${dayPart} ${monthPart} ${yearPart}`; // Return the date in "DD MMM YYYY" format
-};
-
-const Abc = ({route}) => {
-  const {story} = route.params; // Extract the story data from the route
-
-  console.log(' === story ===> ', story);
-
-  // Ensure story object exists and has the necessary properties
-  // if (
-  //   !story ||
-  //   !story.images ||
-  //   !story.title ||
-  //   !story.content ||
-  //   !story.marriageDate
-  // ) {
-  //   return (
-  //     <SafeAreaView style={styles.container}>
-  //       <Text>Story data is incomplete.</Text>
-  //     </SafeAreaView>
-  //   );
-  // }
-
-  const {images, title, content, marriageDate} = story;
-
-  console.log(' === formatted marriageDate ===> ', formatDate(marriageDate));
-
-  // Get the total number of images to determine the width dynamically
-  const imageCount = images.length;
+const Abc = () => {
+  const sheetRef = useRef(null);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.imageRow}>
-        {images.map((imageUrl, index) => (
-          <Image
-            key={index}
-            source={{uri: imageUrl}}
-            style={[
-              styles.storyImage,
-              {width: (Dimensions.get('window').width - 40) / imageCount}, // Adjust width based on image count
-            ]}
-          />
-        ))}
-      </View>
+      <TouchableOpacity
+        onPress={() => sheetRef.current.open()} // Open the bottom sheet on click
+        style={styles.button}>
+        <Text style={styles.buttonText}>Open</Text>
+      </TouchableOpacity>
 
-      {/* Story Title */}
-      <Text style={styles.title}>{title}</Text>
-
-      {/* Story Content */}
-      <Text style={styles.content}>{content}</Text>
-
-      {/* Formatted Marriage Date */}
-      <Text style={styles.date}>{formatDate(marriageDate) || 'N/A'}</Text>
+      {/* Bottom Sheet */}
+      <RBSheet
+        ref={sheetRef}
+        height={300} // Height of the bottom sheet
+        // openDuration={250} // Duration of the opening animation
+        closeOnDragDown={true} // Allow closing the sheet by dragging it down
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {/* Content inside the bottom sheet */}
+        <View style={styles.bottomSheetContent}>
+          <Text style={styles.bottomSheetText}>
+            This is the bottom sheet content!
+          </Text>
+        </View>
+      </RBSheet>
     </SafeAreaView>
   );
 };
 
-// Styles
+// Styles for the component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
-    backgroundColor: '#fff',
-  },
-  imageRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // Keep space between only when there are 3 or more images
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
   },
-  storyImage: {
-    height: 200, // Fixed height for the image
-    borderRadius: 15, // Rounded corners
-    marginHorizontal: 5, // Space between images
-    resizeMode: 'cover',
+  button: {
+    padding: 10,
+    backgroundColor: '#3498db',
+    borderRadius: 5,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
-    color: '#333',
-  },
-  content: {
+  buttonText: {
+    color: '#fff',
     fontSize: 16,
-    color: '#666',
   },
-  date: {
-    fontSize: 16,
-    color: '#555',
-    marginTop: 10,
+  bottomSheetContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomSheetText: {
+    fontSize: 18,
   },
 });
 

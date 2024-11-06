@@ -138,15 +138,17 @@ const AccountsScreen = ({navigation}) => {
               <View style={style.credentialTittleContainer}>
                 <Text style={style.credentialTittleText}>Login Details</Text>
                 <Text style={style.credentialDescriptionTextStyle}>
-                  This menu lets users update and manage authentication{'\n'}
+                  This menu lets users update and manage{'\n'}authentication
                   info for secure access
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
+        </View>
 
-          <View style={style.descriptionBodyUnderlineStyle} />
+        <View style={style.descriptionBodyUnderlineStyle} />
 
+        <View style={{marginHorizontal: 17}}>
           <TouchableOpacity
             activeOpacity={0.5}
             style={{marginTop: hp(16)}}
@@ -168,15 +170,17 @@ const AccountsScreen = ({navigation}) => {
               <View style={style.credentialTittleContainer}>
                 <Text style={style.credentialTittleText}>Profile Setting</Text>
                 <Text style={style.credentialDescriptionTextStyle}>
-                  This menu enables users to conceal or delete their{'\n'}
+                  This menu enables users to conceal or{'\n'}delete their
                   profile from public visibility
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
+        </View>
 
-          <View style={style.descriptionBodyUnderlineStyle} />
+        <View style={style.descriptionBodyUnderlineStyle} />
 
+        <View style={{marginHorizontal: 17}}>
           <TouchableOpacity
             activeOpacity={0.5}
             style={{marginTop: hp(16)}}
@@ -198,15 +202,17 @@ const AccountsScreen = ({navigation}) => {
               <View style={style.credentialTittleContainer}>
                 <Text style={style.credentialTittleText}>Privacy Setting</Text>
                 <Text style={style.credentialDescriptionTextStyle}>
-                  This menu enables users to conceal or delete their{'\n'}
+                  This menu enables users to conceal or{'\n'}delete their
                   profile from public visibility
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
+        </View>
 
-          <View style={style.descriptionBodyUnderlineStyle} />
+        <View style={style.descriptionBodyUnderlineStyle} />
 
+        <View style={{marginHorizontal: 17}}>
           <TouchableOpacity
             activeOpacity={0.5}
             style={{marginTop: hp(16)}}
@@ -228,15 +234,17 @@ const AccountsScreen = ({navigation}) => {
               <View style={style.credentialTittleContainer}>
                 <Text style={style.credentialTittleText}>Notification</Text>
                 <Text style={style.credentialDescriptionTextStyle}>
-                  This menu enables users to conceal or delete their{'\n'}
+                  This menu enables users to conceal or{'\n'}delete their
                   profile from public visibility
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
+        </View>
 
-          <View style={style.descriptionBodyUnderlineStyle} />
+        <View style={style.descriptionBodyUnderlineStyle} />
 
+        <View style={{marginHorizontal: 17}}>
           <TouchableOpacity
             activeOpacity={0.5}
             style={{marginTop: hp(16)}}
@@ -258,15 +266,17 @@ const AccountsScreen = ({navigation}) => {
               <View style={style.credentialTittleContainer}>
                 <Text style={style.credentialTittleText}>Plan</Text>
                 <Text style={style.credentialDescriptionTextStyle}>
-                  In this menu, you'll see the plan you've purchased and{'\n'}
+                  In this menu, you'll see the plan you've purchased{'\n'}and
                   the payment method used for the purchase.
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
+        </View>
 
-          <View style={style.descriptionBodyUnderlineStyle} />
+        <View style={style.descriptionBodyUnderlineStyle} />
 
+        <View style={{marginHorizontal: 17}}>
           <TouchableOpacity
             activeOpacity={0.5}
             style={{marginTop: hp(16)}}
@@ -288,16 +298,17 @@ const AccountsScreen = ({navigation}) => {
               <View style={style.credentialTittleContainer}>
                 <Text style={style.credentialTittleText}>KYC Details</Text>
                 <Text style={style.credentialDescriptionTextStyle}>
-                  In this menu, you'll see the plan you've purchased and{'\n'}
+                  In this menu, you'll see the plan you've purchased{'\n'}and
                   the payment method used for the purchase.
                 </Text>
               </View>
             </View>
           </TouchableOpacity>
-          <View style={style.descriptionBodyUnderlineStyle} />
-
-          <View style={{height: 50}} />
         </View>
+        <View style={style.descriptionBodyUnderlineStyle} />
+
+        <View style={{height: 50}} />
+        {/*</View>*/}
       </ScrollView>
     </SafeAreaView>
   );
