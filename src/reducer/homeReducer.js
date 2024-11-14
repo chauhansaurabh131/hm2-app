@@ -22,6 +22,10 @@ const initialState = {
   storiesData: [],
   // removeShortListData: [],
   dataCount: [],
+  isLikeLoader: false,
+  isDisLikeLoader: false,
+  shortListData: [],
+  sendRequestData: [],
 };
 export default (state = initialState, action) => {
   // console.log(' === Reducer_action.data ===> ', action.data);
@@ -34,8 +38,15 @@ export default (state = initialState, action) => {
       return {
         ...state,
         userData: action.data,
+
         isUserDataLoading: false,
       };
+
+    // return {
+    //   ...state,
+    //   user: {...state.user, user: action.data?.userData},
+    //   isUpdatingProfile: false,
+    // };
 
     case TYPES.GET_USER_DATA_FAILED:
       return {...state, isUserDataLoading: false};
@@ -160,6 +171,58 @@ export default (state = initialState, action) => {
     case TYPES.GET_SUCCESS_STORIES_FAILED:
       return {...state, isDataStoriesLoader: false};
 
+    // GET SHORTLIST  DATA
+    case TYPES.GET_ALL_SHORTLIST:
+      return {...state, isDataStoriesLoader: true};
+
+    case TYPES.GET_ALL_SHORTLIST_SUCCESS:
+      return {
+        ...state,
+        shortListData: action.data,
+        isDataStoriesLoader: false,
+      };
+    case TYPES.GET_ALL_SHORTLIST_FAILED:
+      return {...state, isDataStoriesLoader: false};
+
+    //GET ALL SEND REQUESTED
+    case TYPES.GET_ALL_REQUEST_SEND:
+      return {...state, isDataStoriesLoader: true};
+
+    case TYPES.GET_ALL_REQUEST_SEND_SUCCESS:
+      return {
+        ...state,
+        sendRequestData: action.data,
+        isDataStoriesLoader: false,
+      };
+    case TYPES.GET_ALL_REQUEST_SEND_FAILED:
+      return {...state, isDataStoriesLoader: false};
+
+    // USER LIKE
+    case TYPES.USER_LIKE:
+      return {...state, isLikeLoader: true};
+
+    case TYPES.USER_LIKE_SUCCESS:
+      return {
+        ...state,
+        userLike: action.data,
+        isLikeLoader: false,
+      };
+    case TYPES.USER_LIKE_FAILED:
+      return {...state, isLikeLoader: false};
+
+    // USER DIS_LIKE
+    case TYPES.USER_DIS_LIKE:
+      return {...state, isDisLikeLoader: true};
+
+    case TYPES.USER_DIS_SUCCESS:
+      return {
+        ...state,
+        userLike: action.data,
+        isDisLikeLoader: false,
+      };
+    case TYPES.USER_DIS_FAILED:
+      return {...state, isDisLikeLoader: false};
+
     // // REMOVE SHORT LIST
     //
     // case TYPES.REMOVE_SHORT_LIST:
@@ -172,33 +235,6 @@ export default (state = initialState, action) => {
     //     isGetPaymentDetailsLoading: false,
     //   };
     // case TYPES.REMOVE_SHORT_LIST_FAILED:
-    //   return {...state, isGetPaymentDetailsLoading: false};
-
-    // USER LIKE
-    // case TYPES.USER_LIKE:
-    //   return {...state, isGetPaymentDetailsLoading: true};
-    //
-    // case TYPES.USER_LIKE_SUCCESS:
-    //   return {
-    //     ...state,
-    //     userLike: action.data,
-    //     isGetPaymentDetailsLoading: false,
-    //   };
-    // case TYPES.USER_LIKE_FAILED:
-    //   return {...state, isGetPaymentDetailsLoading: false};
-
-    // USER DIS_LIKE
-
-    // case TYPES.USER_DIS_LIKE:
-    //   return {...state, isGetPaymentDetailsLoading: true};
-    //
-    // case TYPES.USER_DIS_SUCCESS:
-    //   return {
-    //     ...state,
-    //     userLike: action.data,
-    //     isGetPaymentDetailsLoading: false,
-    //   };
-    // case TYPES.USER_DIS_FAILED:
     //   return {...state, isGetPaymentDetailsLoading: false};
 
     default:

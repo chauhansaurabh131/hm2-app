@@ -130,6 +130,11 @@ const MatchesInNewScreen = () => {
         item.firstName.slice(1).toLowerCase()
       : '';
 
+    const lastName = item.lastName
+      ? item.lastName.charAt(0).toUpperCase() +
+        item.lastName.slice(1).toLowerCase()
+      : '';
+
     const JobTittle = item.userProfessional?.jobTitle
       ? item.userProfessional?.jobTitle.charAt(0).toUpperCase() +
         item.userProfessional?.jobTitle.slice(1).toLowerCase()
@@ -169,6 +174,7 @@ const MatchesInNewScreen = () => {
     const age = calculateAge(item.dateOfBirth);
 
     const handlePress = () => {
+      console.log(' === item........... ===> ', item);
       const matchesUserData = {
         userAllImage,
         profileImage,
@@ -206,6 +212,7 @@ const MatchesInNewScreen = () => {
         workCountry: item?.userProfessional?.workCountry,
         hobbies: item?.hobbies,
         matchPercentage: item?.matchPercentage,
+        userLikeDetails: item?.userLikeDetails,
       };
 
       // console.log('User Data:', matchesUserData);
@@ -256,10 +263,14 @@ const MatchesInNewScreen = () => {
 
               <TouchableOpacity onPress={handlePress}>
                 <Text style={style.userNameTextStyle}>
-                  {firstName || item.name} {item.lastName || ' '}
+                  {firstName || item.name} {lastName || ' '}
                 </Text>
 
-                <View style={style.userDetailsDescriptionContainer}>
+                <View
+                  style={[
+                    style.userDetailsDescriptionContainer,
+                    {marginTop: 3},
+                  ]}>
                   {/*<Text style={style.userDetailsTextStyle}>{item.gender}</Text>*/}
                   <Text style={style.userDetailsTextStyle}>
                     {age || 'N/A'} yrs,
@@ -293,7 +304,7 @@ const MatchesInNewScreen = () => {
 
               <View
                 style={{
-                  marginTop: hp(22),
+                  marginTop: hp(15),
                   flexDirection: 'row',
                   // backgroundColor: 'red',
                   alignItems: 'center',
@@ -302,9 +313,14 @@ const MatchesInNewScreen = () => {
                 <Image
                   source={images.gradient_button_background_img}
                   style={{
+                    // width: wp(105),
+                    // height: hp(30),
+                    // resizeMode: 'stretch',
                     width: wp(105),
-                    height: hp(40),
-                    resizeMode: 'contain',
+                    height: hp(30),
+                    resizeMode: 'stretch',
+                    borderRadius: 50, // Adjust the radius as needed
+                    overflow: 'hidden', // Ensure rounded corners clip the image
                   }}
                 />
                 <TouchableOpacity
@@ -313,9 +329,10 @@ const MatchesInNewScreen = () => {
                   style={{
                     position: 'absolute',
                     left: 10,
-                    top: 12,
+                    // top: 12,
                     flexDirection: 'row',
                     justifyContent: 'center',
+                    // borderRadius: 10,
                   }}>
                   <Image
                     source={icons.couple_icon}
@@ -345,7 +362,7 @@ const MatchesInNewScreen = () => {
                     flexDirection: 'row',
                     position: 'absolute',
                     right: 35,
-                    top: 5,
+                    // top: 5,
                   }}>
                   <TouchableOpacity
                     style={{
@@ -364,7 +381,7 @@ const MatchesInNewScreen = () => {
                     // }}
                     onPress={userAllImageShare}>
                     <Image
-                      source={icons.image_icon}
+                      source={icons.new_camera_icon}
                       style={{
                         width: 16,
                         height: 16,
@@ -391,7 +408,12 @@ const MatchesInNewScreen = () => {
                     }}>
                     <Image
                       source={icons.starIcon}
-                      style={{width: 20, height: 16, resizeMode: 'contain'}}
+                      style={{
+                        width: hp(20),
+                        height: hp(16),
+                        resizeMode: 'contain',
+                        tintColor: colors.white,
+                      }}
                     />
                   </TouchableOpacity>
 
@@ -408,7 +430,7 @@ const MatchesInNewScreen = () => {
                       marginHorizontal: 5,
                     }}>
                     <Image
-                      source={icons.three_dots_icon}
+                      source={icons.new_three_dot}
                       style={{width: 4, height: 14, tintColor: colors.white}}
                     />
                   </TouchableOpacity>

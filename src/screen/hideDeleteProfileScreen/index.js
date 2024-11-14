@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Alert,
   Image,
@@ -23,6 +23,7 @@ import axios from 'axios';
 import {changeStack, logout} from '../../actions/authActions';
 import {updateDetails} from '../../actions/homeActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
@@ -30,6 +31,11 @@ const HideDeleteProfileScreen = () => {
   const [selectDurationModal, setSelectDurationModal] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState('');
   const [topModalVisible, setTopModalVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null); // Start as null to track no selection
+  const [selectedDelete, setSelectedDelete] = useState(null);
+
+  const bottomSheetRef = useRef(null);
+  const deleteBottomSheetRef = useRef(null);
 
   const apiDispatch = useDispatch();
 
@@ -39,6 +45,16 @@ const HideDeleteProfileScreen = () => {
   const token = user?.tokens?.access?.token;
 
   const userImage = user?.user?.profilePic;
+
+  const handleOptionSelect = option => {
+    setSelectedOption(option); // Update selected option
+    bottomSheetRef.current.close(); // Close the bottom sheet
+  };
+
+  const handleDeleteOptionSelect = option => {
+    setSelectedDelete(option); // Update selected option
+    deleteBottomSheetRef.current.close(); // Close the bottom sheet
+  };
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -165,11 +181,11 @@ const HideDeleteProfileScreen = () => {
         />
 
         <View style={style.headingTittleContainer}>
-          <Image
-            source={icons.delete_Profile_icon}
-            style={style.headingCredentialsImageStyle}
-          />
-          <Text style={style.headingCredentialsText}>Hide/Delete Profile</Text>
+          {/*<Image*/}
+          {/*  source={icons.delete_Profile_icon}*/}
+          {/*  style={style.headingCredentialsImageStyle}*/}
+          {/*/>*/}
+          <Text style={style.headingCredentialsText}>Profile Setting</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>
@@ -189,42 +205,180 @@ const HideDeleteProfileScreen = () => {
 
           <View style={style.tittleDescriptionTextContainer}>
             <Text style={style.tittleDescriptionTextStyle}>
-              Taking this action makes your profile
+              Taking this action makes your profile temporarily
             </Text>
             <Text style={style.tittleDescriptionTextStyle}>
-              temporarily invisible. Invites or chats are
+              invisible. Invites or chats are inaccessible
             </Text>
-            <Text style={style.tittleDescriptionTextStyle}>inaccessible</Text>
+            {/*<Text style={style.tittleDescriptionTextStyle}>inaccessible</Text>*/}
           </View>
 
-          <DropDownTextInputComponent
-            data={SELECT_DURATION}
-            placeholder={'Select Duration'}
-            searchPlaceholder={'Search Select Duration'}
-            height={55}
-            placeholderStyle={{color: colors.black, marginLeft: 15}}
-            onChange={handleDurationChange}
-          />
+          {/*<DropDownTextInputComponent*/}
+          {/*  data={SELECT_DURATION}*/}
+          {/*  placeholder={'Select Duration'}*/}
+          {/*  searchPlaceholder={'Search Select Duration'}*/}
+          {/*  height={55}*/}
+          {/*  placeholderStyle={{color: colors.black, marginLeft: 15}}*/}
+          {/*  onChange={handleDurationChange}*/}
+          {/*/>*/}
 
-          <View style={{flex: 1, alignItems: 'flex-end'}}>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={{
+                marginTop: 10,
+                width: '100%',
+                height: 50,
+                borderColor: '#E5E5E5',
+                borderWidth: 1,
+                borderRadius: 50,
+                paddingLeft: 20,
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onPress={() => bottomSheetRef.current.open()} // Open the bottom sheet
+            >
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.black,
+                }}>
+                {selectedOption || 'Select Duration'}
+              </Text>
+              <Image
+                source={icons.drooDownLogo}
+                style={{
+                  width: 14,
+                  height: 8,
+                  marginRight: 21,
+                  tintColor: colors.black,
+                  resizeMode: 'contain',
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <RBSheet
+            ref={bottomSheetRef}
+            height={300}
+            openDuration={250}
+            customStyles={{
+              draggableIcon: {
+                backgroundColor: '#ffffff',
+              },
+              container: {
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+              },
+            }}>
+            <View>
+              <Text
+                style={{
+                  marginTop: hp(23),
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.black,
+                  marginBottom: hp(21),
+                  marginHorizontal: 30,
+                }}>
+                Select Duration
+              </Text>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 0.7,
+                  backgroundColor: '#E7E7E7',
+                }}
+              />
+
+              <View style={{marginHorizontal: 30}}>
+                <TouchableOpacity
+                  // style={{marginTop: 10}}
+                  onPress={() => handleOptionSelect('1 Month')}>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      lineHeight: hp(24),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                      marginTop: 24,
+                    }}>
+                    1 Month{' '}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => handleOptionSelect('3 Month')}>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      lineHeight: hp(24),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                      marginTop: 24,
+                    }}>
+                    3 Month
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => handleOptionSelect('6 Month')}>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      lineHeight: hp(24),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                      marginTop: 24,
+                    }}>
+                    6 Month
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleOptionSelect('Till I activate')}>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      lineHeight: hp(24),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                      marginTop: 24,
+                    }}>
+                    Till I activate
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </RBSheet>
+
+          {/*<View style={{flex: 1, alignItems: 'flex-end'}}>*/}
+          <View style={{flex: 1}}>
             <CommonGradientButton
               onPress={selectSetDurationModalOPen}
               buttonName={'Hide'}
+              disabled={!selectedOption}
               containerStyle={{
-                width: wp(107),
+                width: '100%',
                 height: hp(50),
                 marginTop: hp(15),
               }}
             />
           </View>
+        </View>
 
-          <View style={style.descriptionBodyUnderlineStyleDropdown} />
+        <View style={style.descriptionBodyUnderlineStyleDropdown} />
 
-          <View style={{marginTop: hp(19)}}>
+        <View style={{marginHorizontal: 17}}>
+          <View style={{marginTop: hp(22)}}>
             <Text style={style.bodyTittleTextStyle}>Delete Your Profile</Text>
 
             <Text
-              style={[style.tittleDescriptionTextStyle, {marginTop: hp(9)}]}>
+              style={[style.tittleDescriptionTextStyle, {marginTop: hp(19)}]}>
               You'll lose all profile details, Match interactions,
             </Text>
             <Text
@@ -235,16 +389,160 @@ const HideDeleteProfileScreen = () => {
               and paid memberships permanently.
             </Text>
 
-            <DropDownTextInputComponent
-              data={SELECT_REASON}
-              placeholder={'Select Reason'}
-              searchPlaceholder={'Search Select Reason'}
-              height={55}
-              placeholderStyle={{
-                color: colors.black,
-                marginLeft: hp(15),
-              }}
-            />
+            {/*<DropDownTextInputComponent*/}
+            {/*  data={SELECT_REASON}*/}
+            {/*  placeholder={'Select Reason'}*/}
+            {/*  searchPlaceholder={'Search Select Reason'}*/}
+            {/*  height={55}*/}
+            {/*  placeholderStyle={{*/}
+            {/*    color: colors.black,*/}
+            {/*    marginLeft: hp(15),*/}
+            {/*  }}*/}
+            {/*/>*/}
+
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={{
+                  marginTop: 10,
+                  width: '100%',
+                  height: 50,
+                  borderColor: '#E5E5E5',
+                  borderWidth: 1,
+                  borderRadius: 50,
+                  paddingLeft: 20,
+                  flex: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+                onPress={() => deleteBottomSheetRef.current.open()} // Open the bottom sheet
+              >
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  {selectedDelete || 'Select Reason'}
+                </Text>
+                {/* Display selected option or "Open" */}
+                <Image
+                  source={icons.drooDownLogo}
+                  style={{
+                    width: 13,
+                    height: 10,
+                    marginRight: 21,
+                    tintColor: colors.black,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <RBSheet
+              ref={deleteBottomSheetRef}
+              height={300}
+              openDuration={250}
+              customStyles={{
+                draggableIcon: {
+                  backgroundColor: '#ffffff',
+                },
+                container: {
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                },
+              }}>
+              <View>
+                <Text
+                  style={{
+                    marginTop: hp(23),
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                    marginBottom: hp(21),
+                    marginHorizontal: 30,
+                  }}>
+                  Select the reason
+                </Text>
+
+                <View
+                  style={{
+                    width: '100%',
+                    height: 0.7,
+                    backgroundColor: '#E7E7E7',
+                  }}
+                />
+
+                <View style={{marginHorizontal: 30}}>
+                  <TouchableOpacity
+                    // style={{marginTop: 10}}
+                    onPress={() =>
+                      handleDeleteOptionSelect(' Found my match on HappyMilan')
+                    }>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                        marginTop: 24,
+                      }}>
+                      Found my match on HappyMilan
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleDeleteOptionSelect(
+                        'Found my match through other sources',
+                      )
+                    }>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                        marginTop: 24,
+                      }}>
+                      Found my match through other sources
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleDeleteOptionSelect('I changed my decision')
+                    }>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                        marginTop: 24,
+                      }}>
+                      I changed my decision
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleDeleteOptionSelect('I will do later')}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                        marginTop: 24,
+                      }}>
+                      I will do later
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </RBSheet>
 
             <TouchableOpacity
               onPress={handleDeleteButtonPress}
@@ -255,7 +553,7 @@ const HideDeleteProfileScreen = () => {
                 start={{x: 0, y: 0}}
                 end={{x: 0.9, y: 0.7}}
                 style={{
-                  width: wp(107),
+                  width: '100%',
                   height: hp(50),
                   borderRadius: 50,
                   justifyContent: 'center',

@@ -18,7 +18,7 @@ import ImagePaginationComponent from '../../components/imagePaginationComponent'
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {accepted_Decline_Request} from '../../actions/homeActions';
+import {accepted_Decline_Request, userLike} from '../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
 import NewAddStoryScreen from '../newAddStoryScreen';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
@@ -45,7 +45,7 @@ const UserDetailScreen = ({navigation}) => {
 
   const {userData, matchesUserData} = route.params;
 
-  console.log(' === userData... ===> ', matchesUserData?.Designation);
+  console.log(' === userData... ===> ', matchesUserData?.userLikeDetails);
 
   // console.log(' === matchesUserData ===> ', matchesUserData);
 
@@ -227,6 +227,17 @@ const UserDetailScreen = ({navigation}) => {
     userData?.friendList?.userProfilePic.map(pic => pic.url) ||
     matchesUserData?.userAllImage;
 
+  const profileImage = matchesUserData?.profileImage;
+
+  const imageCount = Array.isArray(matchesUserData?.userAllImage)
+    ? matchesUserData?.userAllImage.length
+    : 0;
+
+  const userAllImageShare = () => {
+    const allImages = matchesUserData?.userAllImage;
+    navigation.navigate('UserUploadImageFullScreen', {allImages});
+  };
+
   // const imageUrls = matchesUserData?.userAllImage || [];
 
   const convertHeightToFeetAndInches = heightInCm => {
@@ -284,6 +295,8 @@ const UserDetailScreen = ({navigation}) => {
   const aboutMe = userData?.friendList?.writeBoutYourSelf;
   const matchPercentage = matchesUserData?.matchPercentage;
   const Designation = matchesUserData?.Designation;
+  const like = matchesUserData?.userLikeDetails;
+  console.log(' === like ===> ', like);
 
   // matchesUserData?.age
 
@@ -291,6 +304,34 @@ const UserDetailScreen = ({navigation}) => {
     setShowFullDescription(!showFullDescription);
     setImageRotation(showFullDescription ? '90deg' : '-90deg');
   };
+
+  const onLikePress = item => {
+    console.log(' === onLikePress ===> ', item?._id);
+    // dispatch(
+    //   userLike({
+    //     likedUserId: item?._id,
+    //     isLike: true,
+    //   }),
+    // );
+  };
+
+  const handleLikePress = () => {
+    if (matchesUserData?.userLikeDetails?.isLike) {
+      // If already liked, log the message
+      console.log(
+        'new_user_like_icon press',
+        matchesUserData?.userLikeDetails?.isLike,
+      );
+      // onDisLikePress(item);
+    } else {
+      // If not liked, call the onLikePress function
+      onLikePress(matchesUserData);
+    }
+  };
+
+  // const handleLikePress = () => {
+  //   console.log(' === var ===> ', matchesUserData?.userLikeDetails?.isLike);
+  // };
 
   return (
     <SafeAreaView style={style.container}>
@@ -322,9 +363,24 @@ const UserDetailScreen = ({navigation}) => {
 
       <ScrollView>
         <View>
-          {/*<ImagePaginationComponent />*/}
+          {/*<ImagePaginationComponent imageUrls={imageUrls} />*/}
+          <Image
+            source={
+              profileImage ? {uri: profileImage} : images.empty_male_Image
+            }
+            style={{width: '100%', height: hp(449), resizeMode: 'cover'}}
+          />
 
-          <ImagePaginationComponent imageUrls={imageUrls} />
+          <LinearGradient
+            colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 150,
+            }}
+          />
           <View style={style.UserDetailsContainer}>
             <View
               style={{
@@ -333,17 +389,19 @@ const UserDetailScreen = ({navigation}) => {
                 width: '100%',
                 // backgroundColor: 'rgba(0,0,0,0.09)',
               }}>
-              {/*<View style={style.onlineBodyStyle}>*/}
-              {/*  <Text style={style.bodyTextStyle}>Online</Text>*/}
-              {/*</View>*/}
-              <View style={{flexDirection: 'row'}}>
+              <View style={style.onlineBodyStyle}>
+                <Text style={style.bodyTextStyle}>Online</Text>
+              </View>
+
+              <View style={{flexDirection: 'row', marginTop: 3}}>
                 <Text style={style.userNameTextStyle}>
                   {Name} {LastName}
                 </Text>
-                <View style={style.onlineBodyStyle} />
+                {/*<View style={style.onlineBodyStyle} />*/}
               </View>
 
-              <View style={style.userDetailsDescriptionContainer}>
+              <View
+                style={[style.userDetailsDescriptionContainer, {marginTop: 3}]}>
                 <Text style={style.userDetailsTextStyle}>{age} yrs, </Text>
                 <Text style={style.userDetailsTextStyle} />
                 <Text style={style.userDetailsTextStyle}>
@@ -380,8 +438,8 @@ const UserDetailScreen = ({navigation}) => {
                     source={images.gradient_button_background_img}
                     style={{
                       width: wp(105),
-                      height: hp(40),
-                      resizeMode: 'contain',
+                      height: hp(30),
+                      resizeMode: 'stretch',
                     }}
                   />
 
@@ -414,6 +472,8 @@ const UserDetailScreen = ({navigation}) => {
                     flexDirection: 'row',
                   }}>
                   <TouchableOpacity
+                    onPress={userAllImageShare}
+                    activeOpacity={0.5}
                     style={{
                       width: hp(60),
                       height: hp(30),
@@ -434,7 +494,7 @@ const UserDetailScreen = ({navigation}) => {
                         marginRight: hp(5),
                       }}
                     />
-                    <Text style={{color: colors.white}}>13</Text>
+                    <Text style={{color: colors.white}}>{imageCount}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -461,6 +521,7 @@ const UserDetailScreen = ({navigation}) => {
                   </TouchableOpacity>
 
                   <TouchableOpacity
+                    onPress={onThreeDotPress}
                     style={{
                       width: hp(30),
                       height: hp(30),
@@ -471,10 +532,10 @@ const UserDetailScreen = ({navigation}) => {
                       flexDirection: 'row',
                     }}>
                     <Image
-                      source={icons.three_dots_icon}
+                      source={icons.new_three_dot}
                       style={{
                         tintColor: colors.white,
-                        width: hp(15),
+                        width: hp(4),
                         height: hp(14),
                         resizeMode: 'contain',
                         // marginRight: hp(5),
@@ -502,22 +563,42 @@ const UserDetailScreen = ({navigation}) => {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity activeOpacity={0.5}>
-                <Image source={icons.new_like_icon} style={style.shareIcon} />
+              <TouchableOpacity activeOpacity={0.5} onPress={handleLikePress}>
+                {/*<Image source={icons.new_like_icon} style={style.shareIcon} />*/}
+                <Image
+                  source={
+                    like?.isLike
+                      ? icons.new_user_like_icon
+                      : icons.new_like_icon
+                  }
+                  style={style.shareIcon}
+                />
               </TouchableOpacity>
             </View>
           )}
+        </View>
 
+        <View
+          style={{
+            width: '100',
+            height: hp(4),
+            backgroundColor: '#F8F8F8',
+            marginTop: 10,
+            marginBottom: 20,
+          }}
+        />
+
+        <View style={{marginHorizontal: 17}}>
           <View style={style.aboutTextContainer}>
             <Text style={style.descriptionTittleText}>About Me</Text>
 
-            <TouchableOpacity onPress={onThreeDotPress}>
-              {/*<TouchableOpacity onPress={openBottomSheet}>*/}
-              <Image
-                source={icons.three_dots_icon}
-                style={style.threeDotIcon}
-              />
-            </TouchableOpacity>
+            {/*<TouchableOpacity onPress={onThreeDotPress}>*/}
+            {/*  /!*<TouchableOpacity onPress={openBottomSheet}>*!/*/}
+            {/*  <Image*/}
+            {/*    source={icons.three_dots_icon}*/}
+            {/*    style={style.threeDotIcon}*/}
+            {/*  />*/}
+            {/*</TouchableOpacity>*/}
           </View>
 
           {/*BOTTOM SHEET*/}
@@ -595,7 +676,7 @@ const UserDetailScreen = ({navigation}) => {
 
           <RBSheet
             ref={unFrinedBottomSheetRef}
-            height={300}
+            height={130}
             closeOnPressMask={true} // Allows closing when clicking outside the bottom sheet
             customStyles={{
               container: {
@@ -635,12 +716,12 @@ const UserDetailScreen = ({navigation}) => {
               {/*  <Text style={style.bottomSheetTextStyle}>Report Profile</Text>*/}
               {/*</TouchableOpacity>*/}
 
-              {/*<TouchableOpacity*/}
-              {/*  onPress={closeBottomSheet}*/}
-              {/*  style={style.bottomSheetImageTextSpace}>*/}
-              {/*  <Image source={icons.copy_icon} style={style.sendMessageIcon} />*/}
-              {/*  <Text style={style.bottomSheetTextStyle}>Copy URL</Text>*/}
-              {/*</TouchableOpacity>*/}
+              <TouchableOpacity
+                onPress={unFriendcloseBottomSheet}
+                style={style.bottomSheetImageTextSpace}>
+                <Image source={icons.copy_icon} style={style.sendMessageIcon} />
+                <Text style={style.bottomSheetTextStyle}>Copy URL</Text>
+              </TouchableOpacity>
 
               {/*<TouchableOpacity*/}
               {/*  // onPress={closeBottomSheet}*/}

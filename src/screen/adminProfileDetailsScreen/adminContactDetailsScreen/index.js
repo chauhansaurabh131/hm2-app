@@ -20,7 +20,7 @@ const AdminContactDetailsScreen = (...params) => {
 
   const {isUpdatingProfile} = useSelector(state => state.auth);
 
-  console.log(' === var ===> ', isUpdatingProfile);
+  // console.log(' === var ===> ', isUpdatingProfile);
   // console.log(' === AdminContactDetailsScreen ===> ', userPersonalData?.email);
 
   const [mobileNumber, setMobileNumber] = useState(

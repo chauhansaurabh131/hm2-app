@@ -28,7 +28,7 @@ const CommonGradientButton = ({
         <LinearGradient
           colors={['#0D4EB3', '#9413D0']}
           start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
+          end={{x: 1, y: 1.5}}
           style={[
             {
               width: wp(320),

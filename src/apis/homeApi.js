@@ -61,20 +61,32 @@ const getSuccessStories = async data => {
   return get('/api/v1/user/story/get-story', data, false);
 };
 
-// const removeAddShortList = async data => {
-//   return post('/api/v1/user/shortlist/create-shortlist', data, true);
-// };
+const getAllShortListData = async data => {
+  return get('/api/v1/user/shortlist/get-short-list', data, true);
+};
 
-// const userLikes = async data => {
-//   return post('/api/v1/user/like/create-like', data, true);
-// };
-//
-// const user_Dis_Like = async data => {
-//   return post('/api/v1/user/like/create-like', data, true);
-// };
+const getAllSendRequested = async data => {
+  return get('/api/v1/user/friend/get-request-sent', data, true);
+};
+
+const deletePicture = async ({userId, profileImageUrl, name}) => {
+  return post(
+    `/api/v1/user/user/delete-profile-image/${userId}`,
+    {profileImageUrl, name},
+    true,
+  );
+};
+
+const isLikeDetails = async data => {
+  return post('/api/v1/user/like/create-like', data, true);
+};
+
+const isDisLikeDetails = async data => {
+  return post(`api/v1/user/like/update-like/${data}`, {}, true);
+};
 
 const datingPartnerReferencesApi = async data => {
-  return post('/api/v1/user/dating-partner/', data, true);
+  return put('/api/v1/user/dating-partner/', data, true);
 };
 
 export const home = {
@@ -92,6 +104,11 @@ export const home = {
   addShortListsData,
   addDataCountingData,
   getSuccessStories,
+  getAllShortListData,
+  getAllSendRequested,
+  deletePicture,
+  isLikeDetails,
+  isDisLikeDetails,
   datingPartnerReferencesApi,
   // removeAddShortList,
   // userLikes,

@@ -28,15 +28,16 @@ const style = StyleSheet.create({
   },
   headerTittleStyle: {
     marginTop: hp(31),
+    fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
     color: colors.black,
     // backgroundColor: 'grey',
   },
   underLineHeaderStyle: {
     width: '100%',
-    height: 1,
-    borderWidth: 1,
+    // height: 1,
+    borderWidth: 0.7,
     borderColor: '#F2F2F2',
     // borderColor: 'red',
     marginTop: hp(12),
@@ -45,6 +46,8 @@ const style = StyleSheet.create({
     flex: 1,
     marginHorizontal: wp(17),
     marginTop: hp(19),
+    marginBottom: 15,
+    // backgroundColor: 'red',
 
     // backgroundColor: 'gray',
   },
@@ -60,7 +63,7 @@ const style = StyleSheet.create({
     top: 4,
   },
   credentialTittleContainer: {
-    marginLeft: hp(20),
+    marginLeft: hp(10),
   },
   sideArrowImageStyle: {
     position: 'absolute',
@@ -87,9 +90,9 @@ const style = StyleSheet.create({
 
   descriptionBodyUnderlineStyle: {
     width: '100%',
-    borderWidth: 1,
+    borderWidth: 0.7,
     borderColor: '#F2F2F2',
-    marginTop: hp(15),
+    // marginTop: hp(15),
   },
   deleteProfileIconStyle: {
     width: hp(21.2),

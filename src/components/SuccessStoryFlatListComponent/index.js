@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getSuccessStories} from '../../actions/homeActions';
@@ -45,7 +46,13 @@ const SuccessStoryFlatListComponent = () => {
           }}>
           <Image source={{uri: item?.images[0]}} style={styles.storyImage} />
           <View style={{marginHorizontal: 14}}>
-            <Text style={styles.storyTitle}>{item?.title}</Text>
+            {/*<Text style={styles.storyTitle}>{item?.title}</Text>*/}
+
+            <Text style={styles.storyTitle}>
+              {item?.title?.length > 20
+                ? `${item.title.substring(0, 15)}...`
+                : item.title}
+            </Text>
 
             <View
               style={{
@@ -125,7 +132,7 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 2, // Adds shadow/elevation for Android
-    marginTop: 5,
+    marginTop: 18,
     height: hp(202),
     borderWidth: 1,
     borderColor: '#EFEFEF',
@@ -135,7 +142,7 @@ const styles = StyleSheet.create({
     height: hp(136), // Adjust height of the image
     borderRadius: 10,
     marginBottom: 10,
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
   },
   storyTitle: {
     fontSize: fontSize(12),

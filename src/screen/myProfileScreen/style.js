@@ -50,20 +50,20 @@ const style = StyleSheet.create({
     width: wp(34.8),
     height: hp(12),
     borderRadius: 5,
-    backgroundColor: '#24FF00',
+    backgroundColor: '##24FF00A8',
     justifyContent: 'center',
     marginRight: wp(18.16),
   },
   bodyTextStyle: {
     color: colors.black,
-    fontSize: fontSize(8),
+    fontSize: fontSize(10),
     lineHeight: hp(12),
     textAlign: 'center',
   },
   userNameTextStyle: {
     color: colors.white,
-    fontSize: fontSize(20),
-    lineHeight: hp(30),
+    fontSize: fontSize(24),
+    lineHeight: hp(26),
     fontFamily: fontFamily.poppins700,
   },
   userDetailsDescriptionContainer: {
@@ -71,20 +71,21 @@ const style = StyleSheet.create({
   },
   userDetailsTextStyle: {
     color: colors.white,
-    fontSize: fontSize(10),
-    lineHeight: hp(14),
+    fontSize: fontSize(11),
+    lineHeight: hp(16),
     fontFamily: fontFamily.poppins400,
     marginRight: wp(2),
   },
   verticalLineStyle: {
     width: hp(1),
-    height: '100%',
-    backgroundColor: colors.white,
+    // height: '80%',
+    backgroundColor: colors.gray,
     marginHorizontal: wp(5),
   },
   bottomImageContainer: {
     flexDirection: 'row',
-    marginTop: hp(22),
+    marginTop: hp(15),
+    justifyContent: 'space-between',
   },
 
   profileLikeDislikeContainer: {
@@ -134,14 +135,17 @@ const style = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
   },
   bodyContainerStyle: {
-    marginHorizontal: wp(18),
+    // marginHorizontal: wp(18),
+    // backgroundColor: 'red',
   },
 
   underLineStyle: {
     width: '100%',
-    borderWidth: 0.5,
-    borderColor: '#E2E2E2',
+    // borderWidth: 0.5,
+    // borderColor: '#E2E2E2',
     marginTop: hp(16),
+    height: 4,
+    backgroundColor: '#E2E2E2',
   },
 
   bodyContainer: {

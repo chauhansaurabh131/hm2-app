@@ -27,6 +27,7 @@ const NewLogInScreen = () => {
   const {loading} = useSelector(state => state.auth);
 
   const onPressLogin = () => {
+    Keyboard.dismiss();
     dispatch(login({email, password}, () => dispatch(changeStack())));
   };
   return (

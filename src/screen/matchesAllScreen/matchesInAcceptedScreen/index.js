@@ -88,10 +88,16 @@ const MatchesInAcceptedScreen = () => {
   };
 
   const renderAccptedUserItem = ({item}) => {
-    console.log(
-      ' === friendList ===> ',
-      item.friendList?.userProfessional?.jobTitle,
-    );
+    // console.log(
+    //   ' === friendList ===> ',
+    //   item.friendList?.userProfessional?.jobTitle,
+    // );
+
+    // console.log(' === var ===> ', item.friendList);
+
+    const userAllImage = Array.isArray(item.friendList?.userProfilePic)
+      ? item.friendList?.userProfilePic.map(pic => pic.url)
+      : [];
 
     const calculateAge = dob => {
       const birthDate = new Date(dob);
@@ -102,8 +108,8 @@ const MatchesInAcceptedScreen = () => {
 
     const profileImage = item?.friendList?.profilePic;
     const name = item?.friendList?.name;
-    const firstName = item?.friendList?.firstName;
-    const lastName = item?.friendList?.lastName;
+    // const firstName = item?.friendList?.firstName;
+    // const lastName = item?.friendList?.lastName;
     const gender = item?.friendList?.gender;
     const age = calculateAge(item.friendList?.dateOfBirth);
     const height = item.friendList?.height;
@@ -113,8 +119,42 @@ const MatchesInAcceptedScreen = () => {
     const workCountry = item.friendList?.userProfessional?.workCountry;
     const userState = item.friendList?.userProfessional?.state;
     const workCity = item.friendList?.userProfessional?.workCity;
+    // const currentCity = item.friendList?.address?.currentCity;
+    // const currentCountry = item.friendList?.address?.currentCountry;
+
+    const firstName = item?.friendList?.firstName
+      ? item?.friendList?.firstName.charAt(0).toUpperCase() +
+        item?.friendList?.firstName.slice(1).toLowerCase()
+      : '';
+
+    const lastName = item?.friendList?.lastName
+      ? item?.friendList?.lastName.charAt(0).toUpperCase() +
+        item?.friendList?.lastName.slice(1).toLowerCase()
+      : '';
+
+    const currentCity = item.friendList?.address?.currentCity
+      ? item.friendList?.address?.currentCity.charAt(0).toUpperCase() +
+        item.friendList?.address?.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const currentCountry = item.friendList?.address?.currentCountry
+      ? item.friendList?.address?.currentCountry.charAt(0).toUpperCase() +
+        item.friendList?.address?.currentCountry.slice(1).toLowerCase()
+      : '';
 
     // console.log(' === name ===> ', lastName);
+
+    const imageCount = Array.isArray(item.friendList?.userProfilePic)
+      ? item.friendList?.userProfilePic.length
+      : 0;
+
+    const userAllImageShare = () => {
+      const allImages = {
+        userAllImage,
+      };
+      // console.log(' === userAllImage ===> ', userAllImage);
+      navigation.navigate('UserUploadImageFullScreen', {allImages});
+    };
 
     return (
       <View style={{marginHorizontal: 17}}>
@@ -145,61 +185,151 @@ const MatchesInAcceptedScreen = () => {
                 {firstName} {lastName || name}
               </Text>
 
-              <View style={styles.userDetailsDescriptionContainer}>
-                <Text style={styles.userDetailsTextStyle}>{gender}</Text>
-                <Text style={styles.userDetailsTextStyle}>{age},</Text>
+              <View
+                style={[
+                  styles.userDetailsDescriptionContainer,
+                  {marginTop: 3},
+                ]}>
+                <Text style={styles.userDetailsTextStyle}>{age} yrs,</Text>
                 <Text style={styles.userDetailsTextStyle}>{height}</Text>
 
                 <View style={styles.verticalLineStyle} />
 
                 <Text style={styles.userDetailsTextStyle}>
-                  {motherTongue || 'N/A'}
+                  {jobTitle || 'N/A'}
                 </Text>
-                <Text style={styles.userDetailsTextStyle}>{cast || 'N/A'}</Text>
               </View>
 
               <View style={styles.userDetailsDescriptionContainer}>
-                <Text style={styles.userDetailsTextStyle}>{jobTitle}</Text>
-                <View style={styles.verticalLineStyle} />
-                <Text style={styles.userDetailsTextStyle}>{workCountry}</Text>
+                <Text style={styles.userDetailsTextStyle}>{currentCity}, </Text>
+
                 <Text style={styles.userDetailsTextStyle}>
-                  {userState || 'N/A'}
-                </Text>
-                <Text style={styles.userDetailsTextStyle}>
-                  {workCity || 'N/A'}
+                  {currentCountry}
                 </Text>
               </View>
 
-              <View style={{marginTop: hp(22), flexDirection: 'row'}}>
+              <View
+                style={{
+                  marginTop: hp(15),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={images.gradient_button_background_img}
+                  style={{
+                    width: wp(105),
+                    height: hp(30),
+                    resizeMode: 'stretch',
+                    borderRadius: 50, // Adjust the radius as needed
+                    overflow: 'hidden', // Ensure rounded corners clip the image
+                  }}
+                />
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  // onPress={openModal}
+                  style={{
+                    position: 'absolute',
+                    left: 10,
+                    // top: 12,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.couple_icon}
+                    style={{
+                      width: hp(16),
+                      height: hp(14),
+                      resizeMode: 'contain',
+                      tintColor: 'white',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: 'white',
+                      marginLeft: 9,
+                      fontSize: fontSize(10),
+                      lineHeight: hp(15),
+                      fontFamily: fontFamily.poppins600,
+                      top: 1,
+                    }}>
+                    {/*85% Match*/}
+                    {item?.matchPercentage}% Match
+                  </Text>
+                </TouchableOpacity>
+
                 <View
-                  style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-                  <TouchableOpacity activeOpacity={0.5}>
+                  style={{
+                    flexDirection: 'row',
+                    position: 'absolute',
+                    right: 35,
+                    // top: 5,
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      width: hp(60),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginHorizontal: 5,
+                    }}
+                    activeOpacity={0.5}
+                    onPress={userAllImageShare}>
                     <Image
-                      source={icons.image_icon}
+                      source={icons.new_camera_icon}
                       style={{
                         width: 16,
                         height: 16,
                         resizeMode: 'contain',
-                        marginRight: wp(14),
+                        marginRight: wp(10),
                       }}
                     />
-                  </TouchableOpacity>
 
-                  <TouchableOpacity activeOpacity={0.5}>
-                    <Image
-                      source={icons.video_icon}
-                      style={{width: 20, height: 16, resizeMode: 'contain'}}
-                    />
+                    <Text style={{color: colors.white}}>{imageCount}</Text>
                   </TouchableOpacity>
+                  {/*</View>*/}
 
-                  <TouchableOpacity style={{position: 'absolute', right: 40}}>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginHorizontal: 5,
+                    }}>
                     <Image
                       source={icons.starIcon}
                       style={{
-                        width: hp(22),
-                        height: hp(20),
+                        width: hp(20),
+                        height: hp(16),
                         resizeMode: 'contain',
+                        tintColor: colors.white,
                       }}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    // onPress={onThreeDotPress}
+
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginHorizontal: 5,
+                    }}>
+                    <Image
+                      source={icons.new_three_dot}
+                      style={{width: 4, height: 14, tintColor: colors.white}}
                     />
                   </TouchableOpacity>
                 </View>
@@ -349,7 +479,7 @@ const styles = StyleSheet.create({
   userImageStyle: {
     width: '100%',
     height: hp(449),
-    borderRadius: 10,
+    borderRadius: 18,
     marginBottom: hp(13),
   },
   gradient: {
@@ -357,10 +487,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderRadius: 10,
+    // borderRadius: 18,
     width: '100%',
     height: '40%',
     marginBottom: hp(13),
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
   },
   UserDetailsContainer: {
     position: 'absolute',
@@ -374,23 +506,25 @@ const styles = StyleSheet.create({
     width: wp(34.8),
     height: hp(12),
     borderRadius: 5,
-    backgroundColor: '#24FF00',
+    backgroundColor: '#24FF00A8',
     justifyContent: 'center',
   },
   bodyTextStyle: {
     color: colors.black,
-    fontSize: fontSize(8),
+    fontSize: fontSize(9),
     lineHeight: hp(12),
     textAlign: 'center',
   },
   userNameTextStyle: {
     color: colors.white,
-    fontSize: fontSize(20),
-    lineHeight: hp(30),
+    fontSize: fontSize(24),
+    lineHeight: hp(36),
     fontFamily: fontFamily.poppins700,
+    marginTop: 5,
   },
   userDetailsDescriptionContainer: {
     flexDirection: 'row',
+    marginTop: hp(1),
   },
   userDetailsTextStyle: {
     color: colors.white,
@@ -400,9 +534,9 @@ const styles = StyleSheet.create({
     marginRight: wp(2),
   },
   verticalLineStyle: {
-    width: hp(1),
+    width: hp(0.5),
     height: '100%',
-    backgroundColor: colors.white,
+    backgroundColor: colors.gray,
     marginHorizontal: wp(5),
   },
 });

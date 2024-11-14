@@ -32,7 +32,7 @@ export default (state = initialState, action) => {
       return {...state, loading: false};
 
     case TYPES.CHANGE_STACK:
-      console.log(' === var ===> ', action.data);
+      // console.log(' === var ===> ', action.data);
       return {
         ...state,
         isLoggedIn: !state.isLoggedIn,
@@ -123,19 +123,39 @@ export default (state = initialState, action) => {
       return {...state, isSendRequestLoading: true};
 
     case TYPES.ADD_PROFILE_PICTURE_SUCCESS:
-      // console.log(
-      //   ' === SET_USER_ADDRESS_SUCCESS ===> ',
-      //   JSON.stringify(action.data?.data?.data?.userData, null, 2),
-      // );
       return {
         ...state,
         user: {
           ...state.user,
           user: action.data?.data?.data?.userData,
-          // ...action.data?.userData,
         },
       };
     case TYPES.ADD_PROFILE_PICTURE_FAILED:
+      return {...state, isSendRequestLoading: false};
+
+    //DELETE PICTURE
+    case TYPES.DELETE_IMAGE:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.DELETE_IMAGE_SUCCESS:
+      console.log(
+        ' === SET_USER_ADDRESS_SUCCESS ===> ',
+        JSON.stringify(action.data.data?.userProfilePic, null, 2),
+      );
+
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          user: {
+            ...state.user.user,
+            userProfilePic: action.data.data?.userProfilePic,
+          },
+        },
+        isSendRequestLoading: false,
+      };
+
+    case TYPES.DELETE_IMAGE_FAILED:
       return {...state, isSendRequestLoading: false};
 
     //ADD PARTNER REFERENCES
@@ -154,11 +174,6 @@ export default (state = initialState, action) => {
           2,
         ),
       );
-      // return {
-      //   ...state,
-      //   user: {...state.user.user, userPartner: action.data.data},
-      //   isUpdatingProfile: false,
-      // };
 
       return {
         ...state,

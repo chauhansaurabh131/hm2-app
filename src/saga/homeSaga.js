@@ -4,11 +4,6 @@ import * as homeActions from '../actions/homeActions';
 import * as TYPES from '../actions/actionTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
-import {GET_SUCCESS_STORIES} from '../actions/actionTypes';
-import {
-  getSuccessStoriesFAILED,
-  getSuccessStoriesSuccess,
-} from '../actions/homeActions';
 
 function* getUserData(action) {
   try {
@@ -213,32 +208,59 @@ function* successStories(action) {
   }
 }
 
-// function* removeShortLists(action) {
-//   try {
-//     const response = yield call(home.addShortListsData, action.data);
-//     yield put(homeActions.removeShortListSuccess(response.data));
-//   } catch (error) {
-//     yield put(homeActions.removeShortListFailure());
-//   }
-// }
+function* shortListData(action) {
+  try {
+    const response = yield call(home.getAllShortListData, action.data);
+    yield put(homeActions.getAllShortlistSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.getAllShortlistFailure());
+  }
+}
 
-// function* userLikes(action) {
-//   try {
-//     const response = yield call(home.userLikes, action.data);
-//     yield put(homeActions.userLikeSuccess(response.data));
-//   } catch (error) {
-//     yield put(homeActions.userLikeFailure());
-//   }
-// }
-//
-// function* user_Dis_Likes(action) {
-//   try {
-//     const response = yield call(home.userLikes, action.data);
-//     yield put(homeActions.userLikeSuccess(response.data));
-//   } catch (error) {
-//     yield put(homeActions.userLikeFailure());
-//   }
-// }
+function* allSendRequest(action) {
+  try {
+    const response = yield call(home.getAllSendRequested, action.data);
+    yield put(homeActions.getAllSendRequestSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.getAllSendRequestFailure());
+  }
+}
+
+function* deletePicture(action) {
+  try {
+    // console.log(' === action.data ===> ', action?.data?.payload);
+
+    const {userId, profileImageUrl, name} = action.data.payload;
+    // console.log(' === Deleting Image ===> ', {userId, profileImageUrl, name});
+    const response = yield call(home.deletePicture, {
+      userId,
+      profileImageUrl,
+      name,
+    });
+    yield put(homeActions.deleteImageSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.deleteImageFAILED());
+  }
+}
+
+function* isLikeData(action) {
+  try {
+    const response = yield call(home.isLikeDetails, action.data);
+    yield put(homeActions.userLikeSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.userLikeFailure());
+  }
+}
+
+function* isDisLikeData(action) {
+  try {
+    console.log(' === action ===> ', action.data?.data);
+    const response = yield call(home.isLikeDetails, action.data?.data);
+    yield put(homeActions.userDis_LikeSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.userDis_LikeFailure());
+  }
+}
 
 function* AddDatingPartnerReferences(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);
@@ -276,7 +298,12 @@ function* homeSaga() {
   yield all([takeLatest(TYPES.GET_ALL_PAYMENT_DETAILS, getPaymentDetail)]);
   yield all([takeLatest(TYPES.ADD_SHORT_LIST, addShortLists)]);
   yield all([takeLatest(TYPES.DATA_COUNTING_LIST, dataCountLists)]);
+  yield all([takeLatest(TYPES.USER_LIKE, isLikeData)]);
+  yield all([takeLatest(TYPES.USER_DIS_LIKE, isDisLikeData)]);
   yield all([takeLatest(TYPES.GET_SUCCESS_STORIES, successStories)]);
+  yield all([takeLatest(TYPES.GET_ALL_SHORTLIST, shortListData)]);
+  yield all([takeLatest(TYPES.GET_ALL_REQUEST_SEND, allSendRequest)]);
+  yield all([takeLatest(TYPES.DELETE_IMAGE, deletePicture)]);
   yield all([
     takeLatest(
       TYPES.DATING_PARTNER_PREFERENCES_DETAILS,

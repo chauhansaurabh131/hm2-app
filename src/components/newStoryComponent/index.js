@@ -19,7 +19,7 @@ const NewStoryComponent = () => {
   const {user} = useSelector(state => state.auth);
   const navigation = useNavigation(); // Get the navigation object
 
-  console.log(' === var ===> ', user);
+  // console.log(' === var ===> ', user);
 
   const userImage = user?.user?.profilePic;
 

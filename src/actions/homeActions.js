@@ -1,9 +1,4 @@
 import * as TYPES from './actionTypes';
-import {
-  GET_SUCCESS_STORIES,
-  GET_SUCCESS_STORIES_FAILED,
-  GET_SUCCESS_STORIES_SUCCESS,
-} from './actionTypes';
 
 // GET ALL USER
 export function userDatas(data) {
@@ -172,6 +167,32 @@ export const addShortListFailure = () => ({
   type: TYPES.ADD_SHORT_LIST_FAILED,
 });
 
+// USER LIKE
+export function userLike(data) {
+  return {type: TYPES.USER_LIKE, data};
+}
+
+export function userLikeSuccess(data) {
+  return {type: TYPES.USER_LIKE_SUCCESS, data};
+}
+
+export const userLikeFailure = () => ({
+  type: TYPES.USER_LIKE_FAILED,
+});
+
+// USER DIS_LIKE
+export function userDis_Like(data) {
+  return {type: TYPES.USER_DIS_LIKE, data};
+}
+
+export function userDis_LikeSuccess(data) {
+  return {type: TYPES.USER_DIS_SUCCESS, data};
+}
+
+export const userDis_LikeFailure = () => ({
+  type: TYPES.USER_DIS_FAILED,
+});
+
 // // REMOVE SHORT LIST DATA
 // export function removeShortList(data) {
 //   console.log(' === addShortList.... ===> ', data);
@@ -186,34 +207,39 @@ export const addShortListFailure = () => ({
 //   type: TYPES.REMOVE_SHORT_LIST_FAILED,
 // });
 
-// USER LIKE
-// export function userLike(data) {
-//   console.log(' === data ===> ', data);
-//   return {type: TYPES.USER_LIKE, data};
-// }
-//
-// export function userLikeSuccess(data) {
-//   return {type: TYPES.USER_LIKE_SUCCESS, data};
-// }
-//
-// export const userLikeFailure = () => ({
-//   type: TYPES.USER_LIKE_FAILED,
-// });
-//
-// // USER DIS_LIKE
-//
-// export function userDis_Like(data) {
-//   console.log(' === data ===> ', data);
-//   return {type: TYPES.USER_DIS_LIKE, data};
-// }
-//
-// export function userDis_LikeSuccess(data) {
-//   return {type: TYPES.USER_DIS_SUCCESS, data};
-// }
-//
-// export const userDis_LikeFailure = () => ({
-//   type: TYPES.USER_DIS_FAILED,
-// });
+// ALL SHORTLIST DATA
+export function getAllShortlist(payload, callBack) {
+  return {
+    type: TYPES.GET_ALL_SHORTLIST,
+    data: {payload, callBack},
+  };
+}
+
+export const getAllShortlistSuccess = data => ({
+  type: TYPES.GET_ALL_SHORTLIST_SUCCESS,
+  data,
+});
+
+export const getAllShortlistFailure = () => ({
+  type: TYPES.GET_ALL_SHORTLIST_FAILED,
+});
+
+// GET ALL REQUEST SEND DATA
+export function getAllSendRequest(payload, callBack) {
+  return {
+    type: TYPES.GET_ALL_REQUEST_SEND,
+    data: {payload, callBack},
+  };
+}
+
+export const getAllSendRequestSuccess = data => ({
+  type: TYPES.GET_ALL_REQUEST_SEND_SUCCESS,
+  data,
+});
+
+export const getAllSendRequestFailure = () => ({
+  type: TYPES.GET_ALL_REQUEST_SEND_FAILED,
+});
 
 export function dataCountingList(payload, callBack) {
   return {
@@ -246,6 +272,24 @@ export const getSuccessStoriesSuccess = data => ({
 
 export const getSuccessStoriesFAILED = () => ({
   type: TYPES.GET_SUCCESS_STORIES_FAILED,
+});
+
+// DELETE IMAGE
+
+export function deleteImage(payload, callBack) {
+  return {
+    type: TYPES.DELETE_IMAGE,
+    data: {payload, callBack},
+  };
+}
+
+export const deleteImageSuccess = data => ({
+  type: TYPES.DELETE_IMAGE_SUCCESS,
+  data,
+});
+
+export const deleteImageFAILED = () => ({
+  type: TYPES.DELETE_IMAGE_FAILED,
 });
 
 //ADD DATING PARTNER REFERENCES

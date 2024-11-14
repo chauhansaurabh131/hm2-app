@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TouchableHighlight,
 } from 'react-native';
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,10 +30,10 @@ import io from 'socket.io-client';
 
 import NewAddStoryScreen from '../newAddStoryScreen';
 import {RequestUserPermission} from '../../service/pushNotification';
+import NewPremiumMatchesComponent from '../../components/newPremiumMatchesComponent';
 
 const HomeScreen = ({route}) => {
   const [showMeAll, setShowMeAll] = useState(false);
-  const [showMeAllNewMatches, setShowMeAllNewMatches] = useState(false);
   const [showMeAllStories, setShowMeAllStories] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -256,14 +257,6 @@ const HomeScreen = ({route}) => {
   const onPremiumMatchesAllnotPress = () => {
     setShowMeAll(false);
     console.log(' === onPremiumMatchesAllnotPress ===> ');
-  };
-
-  const onNewMatchesAllOnPress = () => {
-    setShowMeAllNewMatches(true);
-  };
-  const onNewMatchesAllNotPress = () => {
-    setShowMeAllNewMatches(false);
-    navigation.navigate('Matches');
   };
 
   const onStoriesAllOnPress = () => {
@@ -538,12 +531,13 @@ const HomeScreen = ({route}) => {
 
           {/*PREMIUM MATCHES COMPONENT*/}
           <View style={style.PremiumMatchesTextContainer}>
-            <PremiumMatchesFlatlistComponent
-              data={NEW_MATCHES}
-              shareButtonPress={() => {
-                completeOpenModal(selectedBox);
-              }}
-            />
+            {/*<PremiumMatchesFlatlistComponent*/}
+            {/*  data={NEW_MATCHES}*/}
+            {/*  shareButtonPress={() => {*/}
+            {/*    completeOpenModal(selectedBox);*/}
+            {/*  }}*/}
+            {/*/>*/}
+            <NewPremiumMatchesComponent />
           </View>
         </View>
 
@@ -562,10 +556,10 @@ const HomeScreen = ({route}) => {
           <Text style={style.showMeAllTextStyle}>Show Me All</Text>
         </TouchableOpacity>
 
-        <View style={{width: '100%', height: 10, backgroundColor: '#F8F8F8'}} />
+        <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
         <View style={{marginHorizontal: 17}}>
-          <View style={[style.premiumTextContainer, {marginTop: 22}]}>
+          <View style={[style.premiumTextContainer, {marginTop: 28}]}>
             <Text style={style.premiumTextStyle}>New Matches</Text>
             <Text style={style.premiumTextsStyle}>
               {/*{userData?.data[0]?.totalDocs}*/}
@@ -579,23 +573,24 @@ const HomeScreen = ({route}) => {
           )}
         </View>
 
-        <TouchableOpacity
+        <TouchableHighlight
+          activeOpacity={0.3}
           style={{
-            height: hp(45),
             justifyContent: 'center',
-            // backgroundColor: 'orange',
-            backgroundColor: showMeAllNewMatches ? '#F9FBFF' : 'white',
+            // padding: 10,
+            height: hp(45),
           }}
-          activeOpacity={0.7}
-          onPressIn={onNewMatchesAllOnPress} // Trigger when button is pressed
-          onPressOut={onNewMatchesAllNotPress}>
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('Matches');
+          }}>
           <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-        </TouchableOpacity>
+        </TouchableHighlight>
 
-        <View style={{width: '100%', height: 10, backgroundColor: '#F8F8F8'}} />
+        <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
         <View style={{marginHorizontal: 17}}>
-          <View style={[style.premiumTextContainer, {marginTop: 22}]}>
+          <View style={[style.premiumTextContainer, {marginTop: 28}]}>
             <Text style={style.premiumTextStyle}>Success Stories</Text>
           </View>
 

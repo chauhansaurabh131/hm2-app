@@ -170,7 +170,7 @@ const style = StyleSheet.create({
     fontWeight: '600',
   },
   PremiumMatchesTextContainer: {
-    // marginTop: hp(24),
+    marginTop: hp(10),
     // marginLeft: wp(16),
   },
   showMeAllTextStyle: {

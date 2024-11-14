@@ -121,14 +121,17 @@ const UsersProfileDetailsScreen = ({userData}) => {
       </Text>
 
       <View style={{alignSelf: 'center', height: hp(1), marginTop: hp(15)}}>
-        <Progress.Bar
-          progress={(activeIndex + 1) / UserDetailsProfile.length}
-          width={(Dimensions.get('window').width / 100) * 91}
-          color={'#17C270'}
-          borderWidth={0.5}
-          borderColor={colors.gray}
-        />
+        {/*<Progress.Bar*/}
+        {/*  progress={(activeIndex + 1) / UserDetailsProfile.length}*/}
+        {/*  width={(Dimensions.get('window').width / 100) * 91}*/}
+        {/*  color={'#17C270'}*/}
+        {/*  borderWidth={0.5}*/}
+        {/*  borderColor={colors.gray}*/}
+        {/*/>*/}
+
+        {/*<Text>svksnvkl</Text>*/}
       </View>
+      <View style={{width: '100%', borderWidth: 0.7, borderColor: '#E8E8E8'}} />
 
       <RenderComp />
       {/*{UserDetailsProfile[activeIndex].component({name: 1})}*/}

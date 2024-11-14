@@ -8,6 +8,7 @@ import {colors} from '../../utils/colors';
 import CheckBoxComponent from '../../components/checkBoxComponent ';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
+import ProfileCheckboxGroup from '../../components/profileCheckBox';
 
 const EmailSmsAlertScreen = () => {
   const navigation = useNavigation();
@@ -36,7 +37,7 @@ const EmailSmsAlertScreen = () => {
   const Permission = [
     {
       id: 1,
-      label: 'Send me Broader Matches if there are no new Preferred Matches',
+      label: 'Send me Broader Matches if there are no new\nPreferred Matches',
     },
   ];
 
@@ -70,10 +71,10 @@ const EmailSmsAlertScreen = () => {
         />
 
         <View style={style.headingTittleContainer}>
-          <Image
-            source={icons.email_sms_icon}
-            style={style.headingCredentialsImageStyle}
-          />
+          {/*<Image*/}
+          {/*  source={icons.email_sms_icon}*/}
+          {/*  style={style.headingCredentialsImageStyle}*/}
+          {/*/>*/}
           <Text style={style.headingCredentialsText}>
             Email/SMS Alert Setting
           </Text>
@@ -94,13 +95,15 @@ const EmailSmsAlertScreen = () => {
         <Text style={style.bodyTittleTextStyle}>My Alerts Manager</Text>
 
         <Text style={style.bodySubTittleTextStyle}>
-          Manage your subscriptions to HappyMilan.com alerts on email
+          Manage your subscriptions to HappyMilan.com alerts on
         </Text>
-        <Text style={style.bodySubTittleTextStyle}>listed below.</Text>
+        <Text style={style.bodySubTittleTextStyle}>email listed below.</Text>
+      </View>
 
-        <View style={style.underLineHeaderStyle} />
+      <View style={[style.underLineHeaderStyle, {marginTop: 20}]} />
 
-        <Text style={[style.bodyTittleTextStyle, {marginTop: hp(14)}]}>
+      <View style={{marginHorizontal: 17}}>
+        <Text style={[style.bodyTittleTextStyle, {marginTop: hp(16)}]}>
           Match Mail & Photo Match Mail
         </Text>
 
@@ -109,20 +112,31 @@ const EmailSmsAlertScreen = () => {
             options={Permission}
             onSelect={handlePermission}
             defaultSelectedId={1}
+            stateCheckedBox={{top: -8}}
           />
         </View>
+      </View>
 
-        <View style={style.underLineHeaderStyle} />
+      <View style={style.underLineHeaderStyle} />
 
-        <Text style={[style.bodyTittleTextStyle, {marginTop: hp(14)}]}>
+      <View style={{marginHorizontal: 17}}>
+        <Text style={[style.bodyTittleTextStyle, {marginTop: hp(16)}]}>
           Email
         </Text>
 
-        <View style={{marginTop: 15}}>
-          <CheckBoxComponent
-            options={privacyOptions}
-            onSelect={handleSelect}
-            defaultSelectedId={1}
+        <View style={{marginTop: 4}}>
+          {/*<CheckBoxComponent*/}
+          {/*  options={privacyOptions}*/}
+          {/*  onSelect={handleSelect}*/}
+          {/*  defaultSelectedId={1}*/}
+          {/*/>*/}
+
+          <ProfileCheckboxGroup
+            data={privacyOptions}
+            selectedId={1}
+            layout="horizontal" // Specify layout as "horizontal"
+            // containerRow={{marginTop: 10}}
+            containerLabel={{color: 'orange'}}
           />
         </View>
       </View>

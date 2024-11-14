@@ -27,10 +27,24 @@ const PrivacyScreen = () => {
     toggleModal();
   };
 
+  const capitalizeFirstLetter = str =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
+
   const Display_Name = [
-    {id: 1, label: `${user?.user.firstName} ${user?.user.lastName}`},
-    {id: 2, label: user?.user.firstName},
-    {id: 3, label: `Profile ID: ${user?.user.userUniqueId}`},
+    {
+      id: 1,
+      label: `${capitalizeFirstLetter(
+        user?.user.firstName,
+      )} ${capitalizeFirstLetter(user?.user.lastName)}`,
+    },
+    {
+      id: 2,
+      label: capitalizeFirstLetter(user?.user.firstName),
+    },
+    {
+      id: 3,
+      label: `Profile ID: ${user?.user.userUniqueId}`,
+    },
   ];
 
   const handleCheckboxChange = label => {
@@ -84,10 +98,10 @@ const PrivacyScreen = () => {
         />
 
         <View style={style.headingTittleContainer}>
-          <Image
-            source={icons.privacy_setting_icon}
-            style={style.headingCredentialsImageStyle}
-          />
+          {/*<Image*/}
+          {/*  source={icons.privacy_setting_icon}*/}
+          {/*  style={style.headingCredentialsImageStyle}*/}
+          {/*/>*/}
           <Text style={style.headingCredentialsText}>Privacy setting</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
@@ -112,17 +126,26 @@ const PrivacyScreen = () => {
             onChange={handleCheckboxChange}
           />
         </View>
+      </View>
 
-        <View style={style.descriptionBodyUnderlineStyle} />
+      <View style={style.descriptionBodyUnderlineStyle} />
 
+      <View style={{marginHorizontal: 17}}>
         <Text style={[style.bodyTittleTextStyle, {marginTop: 27}]}>
           Select Profile Privacy Option
         </Text>
 
-        <View style={{marginTop: hp(22)}}>
+        <View style={{marginTop: hp(10)}}>
+          {/*<ProfileCheckboxGroup*/}
+          {/*  data={Profile_Privacy}*/}
+          {/*  selectedId={1}*/}
+          {/*  containerRow={{marginTop: 10}}*/}
+          {/*/>*/}
+
           <ProfileCheckboxGroup
             data={Profile_Privacy}
             selectedId={1}
+            layout="vertical" // Specify layout as "vertical"
             containerRow={{marginTop: 10}}
           />
         </View>

@@ -84,12 +84,12 @@ const style = StyleSheet.create({
     width: wp(34.8),
     height: hp(12),
     borderRadius: 5,
-    backgroundColor: '#24FF00',
+    backgroundColor: '#24FF00A8',
     justifyContent: 'center',
   },
   bodyTextStyle: {
     color: colors.black,
-    fontSize: fontSize(8),
+    fontSize: fontSize(9),
     lineHeight: hp(12),
     textAlign: 'center',
   },
@@ -109,7 +109,6 @@ const style = StyleSheet.create({
   },
   verticalLineStyle: {
     width: hp(1),
-    height: '90%',
     backgroundColor: colors.gray,
     marginHorizontal: wp(10),
   },

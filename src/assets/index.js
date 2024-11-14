@@ -161,6 +161,10 @@ export const icons = {
   matches_received_icon: require('./icons/matches_received_icon.png'),
   matches_sent_icon: require('./icons/matches_sent_icon.png'),
   matched_declined_icon: require('./icons/matches_Declined_icon.png'),
+  new_camera_icon: require('./icons/new_camera_icon.png'),
+  new_three_dot: require('./icons/new_three_dot.png'),
+  received_accept_icon: require('./icons/received_accpected_icon.png'),
+  received_declined_icon: require('./icons/received_declined_icon.png'),
 };
 
 export const gif = {

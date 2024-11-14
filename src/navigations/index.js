@@ -70,6 +70,8 @@ import NewAddStoryScreen from '../screen/newAddStoryScreen';
 import ViewStatusScreen from '../screen/viewStatusScreen';
 import ViewUserStatusScreen from '../screen/viewUserStatusScreen';
 import UserUploadImageFullScreen from '../screen/userUploadImageFullScreen';
+import UserProfileUploadImageFullScreen from '../screen/userProfileUploadImageFullScreen';
+import UserEditProfileScreen from '../screen/userEditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -433,6 +435,14 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'UserUploadImageFullScreen'}
           component={UserUploadImageFullScreen}
+        />
+        <Stack.Screen
+          name={'UserProfileUploadImageFullScreen'}
+          component={UserProfileUploadImageFullScreen}
+        />
+        <Stack.Screen
+          name={'UserEditProfileScreen'}
+          component={UserEditProfileScreen}
         />
       </Stack.Navigator>
     );

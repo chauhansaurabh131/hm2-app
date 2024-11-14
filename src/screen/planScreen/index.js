@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import CommonGradientButton from '../../components/commonGradientButton';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
 
 const PlanScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -56,10 +57,10 @@ const PlanScreen = () => {
         />
 
         <View style={style.headingTittleContainer}>
-          <Image
-            source={icons.notification_icon}
-            style={style.headingCredentialsImageStyle}
-          />
+          {/*<Image*/}
+          {/*  source={icons.notification_icon}*/}
+          {/*  style={style.headingCredentialsImageStyle}*/}
+          {/*/>*/}
           <Text style={style.headingCredentialsText}>Plan</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
@@ -192,6 +193,11 @@ const PlanScreen = () => {
               // onPress={onHideProfilePress}
               buttonName={'Auto Renew'}
               containerStyle={style.autoRenewButton}
+              buttonTextStyle={{
+                fontSize: fontSize(14),
+                lineHeight: hp(21),
+                fontFamily: fontFamily.poppins400,
+              }}
             />
           </View>
         </View>

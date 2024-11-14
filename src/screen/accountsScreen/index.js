@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   ScrollView,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -116,195 +117,252 @@ const AccountsScreen = ({navigation}) => {
 
       {/*BODY*/}
 
-      <ScrollView>
-        <View style={style.bodyDescriptionStyle}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={() => {
-              navigation.navigate('CredentialsScreen');
-            }}>
-            <View style={style.bodyDescription}>
-              <View style={{width: 25}}>
-                <Image
-                  source={icons.logLogo}
-                  style={style.credentialsIconStyle}
-                />
-              </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('CredentialsScreen');
+          }}>
+          <View style={style.bodyDescriptionStyle}>
+            <View
+            // activeOpacity={0.5}
+            // onPress={() => {
+            //   navigation.navigate('CredentialsScreen');
+            // }}
+            >
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.logLogo}
+                    style={style.credentialsIconStyle}
+                  />
+                </View>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={style.sideArrowImageStyle}
-              />
-              <View style={style.credentialTittleContainer}>
-                <Text style={style.credentialTittleText}>Login Details</Text>
-                <Text style={style.credentialDescriptionTextStyle}>
-                  This menu lets users update and manage{'\n'}authentication
-                  info for secure access
-                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>Login Details</Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    This menu lets users update and manage{'\n'}authentication
+                    info for secure access
+                  </Text>
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableHighlight>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <View style={{marginHorizontal: 17}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={{marginTop: hp(16)}}
-            onPress={() => {
-              navigation.navigate('HideDeleteProfileScreen');
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('HideDeleteProfileScreen');
+          }}>
+          <View
+            style={{
+              marginHorizontal: 17,
+              // backgroundColor: 'red',
+              marginBottom: 15,
             }}>
-            <View style={style.bodyDescription}>
-              <View style={{width: 25}}>
-                <Image
-                  source={icons.settingIcon}
-                  style={style.deleteProfileIconStyle}
-                />
-              </View>
+            <View
+              // activeOpacity={0.9}
+              style={{marginTop: hp(16)}}
+              // onPress={() => {
+              //   navigation.navigate('HideDeleteProfileScreen');
+              // }}
+            >
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.settingIcon}
+                    style={style.deleteProfileIconStyle}
+                  />
+                </View>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={style.sideArrowImageStyle}
-              />
-              <View style={style.credentialTittleContainer}>
-                <Text style={style.credentialTittleText}>Profile Setting</Text>
-                <Text style={style.credentialDescriptionTextStyle}>
-                  This menu enables users to conceal or{'\n'}delete their
-                  profile from public visibility
-                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>
+                    Profile Setting
+                  </Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    This menu enables users to conceal or{'\n'}delete their
+                    profile from public visibility
+                  </Text>
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableHighlight>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <View style={{marginHorizontal: 17}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={{marginTop: hp(16)}}
-            onPress={() => {
-              navigation.navigate('PrivacyScreen');
-            }}>
-            <View style={style.bodyDescription}>
-              <View style={{width: 25}}>
-                <Image
-                  source={icons.privacy_setting_icon}
-                  style={style.privacyIconStyle}
-                />
-              </View>
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('PrivacyScreen');
+          }}>
+          <View style={{marginHorizontal: 17, marginBottom: 15}}>
+            <View
+              // activeOpacity={0.5}
+              style={{marginTop: hp(16)}}
+              // onPress={() => {
+              //   navigation.navigate('PrivacyScreen');
+              // }}
+            >
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.privacy_setting_icon}
+                    style={style.privacyIconStyle}
+                  />
+                </View>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={style.sideArrowImageStyle}
-              />
-              <View style={style.credentialTittleContainer}>
-                <Text style={style.credentialTittleText}>Privacy Setting</Text>
-                <Text style={style.credentialDescriptionTextStyle}>
-                  This menu enables users to conceal or{'\n'}delete their
-                  profile from public visibility
-                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>
+                    Privacy Setting
+                  </Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    This menu enables users to conceal or{'\n'}delete their
+                    profile from public visibility
+                  </Text>
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableHighlight>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <View style={{marginHorizontal: 17}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={{marginTop: hp(16)}}
-            onPress={() => {
-              navigation.navigate('EmailSmsAlertScreen');
-            }}>
-            <View style={style.bodyDescription}>
-              <View style={{width: 25}}>
-                <Image
-                  source={icons.notification_icon}
-                  style={style.emailSmsIconStyle}
-                />
-              </View>
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('EmailSmsAlertScreen');
+          }}>
+          <View style={{marginHorizontal: 17, marginBottom: 15}}>
+            <View
+              // activeOpacity={0.5}
+              style={{marginTop: hp(16)}}
+              // onPress={() => {
+              //   navigation.navigate('EmailSmsAlertScreen');
+              // }}
+            >
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.notification_icon}
+                    style={style.emailSmsIconStyle}
+                  />
+                </View>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={style.sideArrowImageStyle}
-              />
-              <View style={style.credentialTittleContainer}>
-                <Text style={style.credentialTittleText}>Notification</Text>
-                <Text style={style.credentialDescriptionTextStyle}>
-                  This menu enables users to conceal or{'\n'}delete their
-                  profile from public visibility
-                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>Notification</Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    This menu enables users to conceal or{'\n'}delete their
+                    profile from public visibility
+                  </Text>
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableHighlight>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <View style={{marginHorizontal: 17}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={{marginTop: hp(16)}}
-            onPress={() => {
-              navigation.navigate('PlanScreen');
-            }}>
-            <View style={style.bodyDescription}>
-              <View style={{width: 25}}>
-                <Image
-                  source={icons.plan_icon}
-                  style={style.emailSmsIconStyle}
-                />
-              </View>
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('PlanScreen');
+          }}>
+          <View style={{marginHorizontal: 17, marginBottom: 15}}>
+            <View
+              // activeOpacity={0.5}
+              style={{marginTop: hp(16)}}
+              // onPress={() => {
+              //   navigation.navigate('PlanScreen');
+              // }}
+            >
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.plan_icon}
+                    style={style.emailSmsIconStyle}
+                  />
+                </View>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={style.sideArrowImageStyle}
-              />
-              <View style={style.credentialTittleContainer}>
-                <Text style={style.credentialTittleText}>Plan</Text>
-                <Text style={style.credentialDescriptionTextStyle}>
-                  In this menu, you'll see the plan you've purchased{'\n'}and
-                  the payment method used for the purchase.
-                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>Plan</Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    In this menu, you'll see the plan you've purchased{'\n'}and
+                    the payment method used for the purchase.
+                  </Text>
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableHighlight>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <View style={{marginHorizontal: 17}}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={{marginTop: hp(16)}}
-            onPress={() => {
-              navigation.navigate('KycDetailsScreen', {kycData});
-            }}>
-            <View style={style.bodyDescription}>
-              <View style={{width: 25}}>
-                <Image
-                  source={icons.kyc_icon}
-                  style={style.emailSmsIconStyle}
-                />
-              </View>
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('KycDetailsScreen', {kycData});
+          }}>
+          <View style={{marginHorizontal: 17, marginBottom: 15}}>
+            <View
+              // activeOpacity={0.5}
+              style={{marginTop: hp(16)}}
+              // onPress={() => {
+              //   navigation.navigate('KycDetailsScreen', {kycData});
+              // }}
+            >
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.kyc_icon}
+                    style={style.emailSmsIconStyle}
+                  />
+                </View>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={style.sideArrowImageStyle}
-              />
-              <View style={style.credentialTittleContainer}>
-                <Text style={style.credentialTittleText}>KYC Details</Text>
-                <Text style={style.credentialDescriptionTextStyle}>
-                  In this menu, you'll see the plan you've purchased{'\n'}and
-                  the payment method used for the purchase.
-                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>KYC Details</Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    In this menu, you'll see the plan you've purchased{'\n'}and
+                    the payment method used for the purchase.
+                  </Text>
+                </View>
               </View>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableHighlight>
         <View style={style.descriptionBodyUnderlineStyle} />
 
         <View style={{height: 50}} />

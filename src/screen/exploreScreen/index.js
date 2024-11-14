@@ -189,7 +189,7 @@ const ExploreScreen = () => {
             <View style={style.bottomImageContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  console.log(' === var ===> ', '.....');
+                  // console.log(' === var ===> ', '.....');
                   navigation.navigate('UserUploadImageFullScreen');
                 }}>
                 <Image

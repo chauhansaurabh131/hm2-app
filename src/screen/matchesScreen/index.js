@@ -30,6 +30,8 @@ import DemoNewPagination from '../../components/demoNewPagination';
 import MatchesInNewScreen from '../matchesAllScreen/matchesInNewScreen';
 import MatchesInAcceptedScreen from '../matchesAllScreen/matchesInAcceptedScreen';
 import MatchesInBlockedScreen from '../matchesAllScreen/matchesInBlockedScreen';
+import MatchesInSavedScreen from '../matchesAllScreen/matchesInSavedScreen';
+import MatchesInSentScreen from '../matchesAllScreen/matchesInSentScreen';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -123,9 +125,8 @@ const MatchesScreen = ({navigation}) => {
     {id: 'saved', label: 'Saved'},
     {id: 'sent', label: 'Sent'},
     {id: 'declined', label: 'Declined'},
-    {id: 'deleted', label: 'Deleted'},
+    // {id: 'deleted', label: 'Deleted'},
     {id: 'blocked', label: 'Blocked'},
-    {id: 'Demo', label: 'Demo'},
   ];
 
   const openModal = () => {
@@ -183,7 +184,7 @@ const MatchesScreen = ({navigation}) => {
   };
   // USER REQUEST LIST RENDER ITEM //
   const renderUserRequestItem = ({item}) => {
-    console.log(' === renderUserRequestItem ===> ', item);
+    // console.log(' === renderUserRequestItem ===> ', item);
 
     // Ensure 'user' and its properties are defined before destructuring
     const user = item?.user || {};
@@ -201,6 +202,42 @@ const MatchesScreen = ({navigation}) => {
       motherTongue = 'N/A',
       cast = 'N/A',
     } = user;
+
+    console.log(' === userProfessional ===> ', user?.userProfilePic);
+
+    const userAllImage = Array.isArray(user?.userProfilePic)
+      ? user?.userProfilePic.map(pic => pic.url)
+      : [];
+
+    const userAllImageShare = () => {
+      const allImages = {
+        userAllImage,
+      };
+      // console.log(' === userAllImage ===> ', userAllImage);
+      navigation.navigate('UserUploadImageFullScreen', {allImages});
+    };
+
+    const imageCount = Array.isArray(user?.userProfilePic)
+      ? user?.userProfilePic.length
+      : 0;
+
+    const firstNames = firstName
+      ? firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()
+      : '';
+
+    const lastNames = lastName
+      ? lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase()
+      : '';
+
+    const CurrentCity = user?.address?.currentCity
+      ? user?.address?.currentCity.charAt(0).toUpperCase() +
+        user?.address?.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const currentCountry = user?.address?.currentCountry
+      ? user?.address?.currentCountry.charAt(0).toUpperCase() +
+        user?.address?.currentCountry.slice(1).toLowerCase()
+      : '';
 
     const userId = item?.friend?.address?.userId;
 
@@ -221,135 +258,351 @@ const MatchesScreen = ({navigation}) => {
     const height = user?.height || 'N/A';
 
     return (
-      <View style={style.renderContainer}>
-        <TouchableOpacity activeOpacity={1}>
-          <View>
-            <Image
-              source={profilePic ? {uri: profilePic} : images.empty_male_Image}
-              style={style.userImageStyle}
-              resizeMode={'cover'}
-            />
+      <View>
+        <View style={style.renderContainer}>
+          <TouchableOpacity activeOpacity={1}>
+            <View>
+              <Image
+                source={
+                  profilePic ? {uri: profilePic} : images.empty_male_Image
+                }
+                style={style.userImageStyle}
+                resizeMode={'cover'}
+              />
 
-            <LinearGradient
-              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-              style={style.gradient}
-            />
+              <LinearGradient
+                colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+                style={style.gradient}
+              />
 
-            <View style={style.UserDetailsContainer}>
-              <View style={style.onlineBodyStyle}>
-                <Text style={style.bodyTextStyle}>Online</Text>
-              </View>
-
-              <TouchableOpacity
-                onPress={() => {
-                  // navigation.navigate('UserDetailsScreen');
-                }}>
-                <Text style={style.userNameTextStyle}>
-                  {firstName} {lastName}
-                </Text>
-
-                <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
-                  <Text style={style.userDetailsTextStyle}>{age},</Text>
-                  <Text style={style.userDetailsTextStyle}>{height}</Text>
-
-                  <View style={style.verticalLineStyle} />
-
-                  <Text style={style.userDetailsTextStyle}>{motherTongue}</Text>
-                  <Text style={style.userDetailsTextStyle}>{cast}</Text>
+              <View style={style.UserDetailsContainer}>
+                <View style={style.onlineBodyStyle}>
+                  <Text style={style.bodyTextStyle}>Online</Text>
                 </View>
 
-                <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    // navigation.navigate('UserDetailsScreen');
+                  }}>
+                  <Text style={style.userNameTextStyle}>
+                    {firstNames} {lastNames}
+                  </Text>
 
-                  <View style={style.verticalLineStyle} />
+                  <View
+                    style={[
+                      style.userDetailsDescriptionContainer,
+                      {marginTop: 3},
+                    ]}>
+                    {/*<Text style={style.userDetailsTextStyle}>{gender}</Text>*/}
+                    <Text style={style.userDetailsTextStyle}>{age} yrs,</Text>
+                    <Text style={style.userDetailsTextStyle}>{height}</Text>
 
-                  <Text style={style.userDetailsTextStyle}>{workCountry}</Text>
-                </View>
-              </TouchableOpacity>
+                    <View style={style.verticalLineStyle} />
 
-              <View style={style.RenderBottomImageContainer}>
-                <TouchableOpacity>
-                  <Image source={icons.image_icon} style={style.imageStyle} />
+                    <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
+                  </View>
+
+                  <View style={style.userDetailsDescriptionContainer}>
+                    <Text style={style.userDetailsTextStyle}>
+                      {CurrentCity},
+                    </Text>
+
+                    <Text style={style.userDetailsTextStyle}>
+                      {' '}
+                      {currentCountry}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Image source={icons.video_icon} style={style.videoStyle} />
-                </TouchableOpacity>
+                {/*<View style={style.RenderBottomImageContainer}>*/}
+                {/*  <TouchableOpacity>*/}
+                {/*    <Image source={icons.image_icon} style={style.imageStyle} />*/}
+                {/*  </TouchableOpacity>*/}
 
-                <TouchableOpacity style={style.starImageContainer}>
+                {/*  <TouchableOpacity>*/}
+                {/*    <Image source={icons.video_icon} style={style.videoStyle} />*/}
+                {/*  </TouchableOpacity>*/}
+
+                {/*  <TouchableOpacity style={style.starImageContainer}>*/}
+                {/*    <Image*/}
+                {/*      source={icons.starIcon}*/}
+                {/*      style={style.startImageStyle}*/}
+                {/*    />*/}
+                {/*  </TouchableOpacity>*/}
+                {/*</View>*/}
+
+                <View
+                  style={{
+                    marginTop: hp(15),
+                    flexDirection: 'row',
+                    // backgroundColor: 'red',
+                    alignItems: 'center',
+                    // flex: 1,
+                  }}>
                   <Image
-                    source={icons.starIcon}
-                    style={style.startImageStyle}
+                    source={images.gradient_button_background_img}
+                    style={{
+                      width: wp(105),
+                      height: hp(30),
+                      resizeMode: 'stretch',
+                      borderRadius: 50, // Adjust the radius as needed
+                      overflow: 'hidden', // Ensure rounded corners clip the image
+                    }}
                   />
-                </TouchableOpacity>
-              </View>
-
-              <View style={style.renderBottomButtonContainer}>
-                {requestStatus === 'declined' ? (
-                  <TouchableOpacity style={style.requestDeclineContainer}>
-                    <Text style={style.requestTextStyle}>Request Decline</Text>
-                  </TouchableOpacity>
-                ) : requestStatus === 'accepted' ? (
-                  <TouchableOpacity style={style.acceptedButtonContainer}>
-                    <Text style={style.acceptedTextStyle}>
-                      Request Accepted
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={openModal}
+                    style={{
+                      position: 'absolute',
+                      left: 10,
+                      // top: 12,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      source={icons.couple_icon}
+                      style={{
+                        width: hp(16),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        tintColor: 'white',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: 9,
+                        fontSize: fontSize(10),
+                        lineHeight: hp(15),
+                        fontFamily: fontFamily.poppins600,
+                        top: 1,
+                      }}>
+                      {/*85% Match*/}
+                      {item?.matchPercentage}% Match
                     </Text>
                   </TouchableOpacity>
-                ) : (
-                  <>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      position: 'absolute',
+                      right: 35,
+                      // top: 5,
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        width: hp(60),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 15,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}
+                      activeOpacity={0.5}
+                      // onPress={() => {
+                      //   navigation.navigate('UserUploadImageFullScreen');
+                      // }}
+                      onPress={userAllImageShare}>
+                      <Image
+                        source={icons.new_camera_icon}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          resizeMode: 'contain',
+                          marginRight: wp(10),
+                        }}
+                      />
+
+                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                    </TouchableOpacity>
+                    {/*</View>*/}
+
                     <TouchableOpacity
                       activeOpacity={0.5}
                       style={{
-                        width: wp(142),
-                        height: hp(40),
-                        borderRadius: hp(20),
-                        backgroundColor: colors.white,
+                        width: hp(30),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 50,
                         justifyContent: 'center',
-                      }}
-                      onPress={() => handleDecline(id || _id, userId)}>
-                      <Text style={style.declineTextStyle}>Decline</Text>
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}>
+                      <Image
+                        source={icons.starIcon}
+                        style={{
+                          width: hp(20),
+                          height: hp(16),
+                          resizeMode: 'contain',
+                          tintColor: colors.white,
+                        }}
+                      />
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      activeOpacity={0.5}
-                      onPress={() => handleAccept(id || _id, userId)}>
-                      <LinearGradient
-                        colors={['#0D4EB3', '#9413D0']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 1.5}}
-                        style={style.acceptButtonGradient}>
-                        <Text style={style.acceptTextStyle}>Accept</Text>
-                      </LinearGradient>
+                      // onPress={onThreeDotPress}
+                      style={{
+                        width: hp(30),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}>
+                      <Image
+                        source={icons.new_three_dot}
+                        style={{width: 4, height: 14, tintColor: colors.white}}
+                      />
                     </TouchableOpacity>
-                  </>
-                )}
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginTop: 15,
+          }}>
+          {requestStatus === 'declined' ? (
+            <View style={{flexDirection: 'row'}}>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                  marginRight: 15,
+                }}>
+                Declined Request
+              </Text>
+              <Image
+                source={icons.matched_declined_icon}
+                tintColor={'#BE6D6B'}
+                style={{width: hp(22), height: hp(22), resizeMode: 'contain'}}
+              />
+            </View>
+          ) : requestStatus === 'accepted' ? (
+            <View style={{flexDirection: 'row'}}>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                  marginRight: 15,
+                }}>
+                Accepted Request
+              </Text>
+              <Image
+                source={icons.matches_accp_icon}
+                tintColor={'#17C270'}
+                style={{width: hp(22), height: hp(22), resizeMode: 'contain'}}
+              />
+            </View>
+          ) : (
+            <>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                }}>
+                Want to accept?
+              </Text>
+
+              <TouchableOpacity onPress={() => handleAccept(id || _id, userId)}>
+                <Image
+                  source={icons.received_accept_icon}
+                  style={{
+                    width: hp(63),
+                    height: hp(40),
+                    resizeMode: 'contain',
+                    marginRight: 15,
+                    marginLeft: 18,
+                  }}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => handleDecline(id || _id, userId)}>
+                <Image
+                  source={icons.received_declined_icon}
+                  style={{width: hp(63), height: hp(40), resizeMode: 'contain'}}
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            borderColor: '#E8E8E8',
+            borderWidth: 0.7,
+            marginTop: 23,
+            marginBottom: 23,
+          }}
+        />
       </View>
     );
   };
 
   const renderUserDeclineItem = ({item}) => {
-    const {user, id} = item;
+    // console.log(
+    //   ' === renderUserDeclineItem ===> ',
+    //   item.friend?.userProfilePic,
+    // );
+    const {friend, id} = item || {};
     const {
-      firstName,
-      lastName,
+      firstName = 'N/A',
+      lastName = 'N/A',
       profilePic,
-      address,
-      gender,
       dateOfBirth,
-      userProfessional,
-      motherTongue,
-      cast,
-    } = user;
+    } = friend || {};
 
-    const jobTitle = item.user?.userProfessional?.jobTitle;
-    const workCountry = item.user?.userProfessional?.workCountry;
+    const firstNames = firstName
+      ? firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase()
+      : '';
+
+    const lastNames = lastName
+      ? lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase()
+      : '';
+
+    const jobTitle = item.friend?.userProfessional?.jobTitle
+      ? item.friend?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
+        item.friend?.userProfessional?.jobTitle.slice(1).toLowerCase()
+      : '';
+
+    const companyName = item.friend?.userProfessional?.companyName
+      ? item.friend?.userProfessional?.companyName.charAt(0).toUpperCase() +
+        item.friend?.userProfessional?.companyName.slice(1).toLowerCase()
+      : '';
+
+    const currentCity = item.friend?.address?.currentCity
+      ? item.friend?.address?.currentCity.charAt(0).toUpperCase() +
+        item.friend?.address?.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const workCountry = item.friend?.address?.currentCountry
+      ? item.friend?.address?.currentCountry.charAt(0).toUpperCase() +
+        item.friend?.address?.currentCountry.slice(1).toLowerCase()
+      : '';
 
     const calculateAge = dob => {
+      if (!dob) {
+        return 'N/A';
+      }
       const birthDate = new Date(dob);
       const difference = Date.now() - birthDate.getTime();
       const ageDate = new Date(difference);
@@ -357,84 +610,242 @@ const MatchesScreen = ({navigation}) => {
     };
 
     const age = calculateAge(dateOfBirth);
+    const height = friend?.height || 'N/A';
 
-    const height = user.height || 'N/A';
+    const imageCount = Array.isArray(item.friend?.userProfilePic)
+      ? item.friend?.userProfilePic.length
+      : 0;
+
+    const userAllImage = Array.isArray(item.friend?.userProfilePic)
+      ? item.friend?.userProfilePic.map(pic => pic.url)
+      : [];
+
+    const userAllImageShare = () => {
+      const allImages = {
+        userAllImage,
+      };
+      // console.log(' === userAllImage ===> ', userAllImage);
+      navigation.navigate('UserUploadImageFullScreen', {allImages});
+    };
 
     return (
-      <View style={style.renderContainer}>
-        <TouchableOpacity activeOpacity={1}>
-          <View>
-            <Image
-              source={profilePic ? {uri: profilePic} : images.empty_male_Image}
-              style={style.userImageStyle}
-              resizeMode={'cover'}
-            />
+      <View>
+        <View style={style.renderContainer}>
+          <TouchableOpacity activeOpacity={1}>
+            <View>
+              <Image
+                source={
+                  profilePic ? {uri: profilePic} : images.empty_male_Image
+                }
+                style={style.userImageStyle}
+                resizeMode={'cover'}
+              />
 
-            <LinearGradient
-              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-              style={style.gradient}
-            />
+              <LinearGradient
+                colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+                style={style.gradient}
+              />
 
-            <View style={style.UserDetailsContainer}>
-              <View style={style.onlineBodyStyle}>
-                <Text style={style.bodyTextStyle}>Online</Text>
-              </View>
-
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('UserDetailsScreen');
-                }}>
-                <Text style={style.userNameTextStyle}>
-                  {firstName || 'NAN'} {lastName || 'NAN'}
-                </Text>
-
-                <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
-                  <Text style={style.userDetailsTextStyle}>{age},</Text>
-                  <Text style={style.userDetailsTextStyle}>{height}</Text>
-
-                  <View style={style.verticalLineStyle} />
-
-                  <Text style={style.userDetailsTextStyle}>{motherTongue}</Text>
-                  <Text style={style.userDetailsTextStyle}>{cast}</Text>
+              <View style={style.UserDetailsContainer}>
+                <View style={style.onlineBodyStyle}>
+                  <Text style={style.bodyTextStyle}>Online</Text>
                 </View>
 
-                <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>
-                    {jobTitle || 'N/A'}
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('UserDetailsScreen');
+                  }}>
+                  <Text style={style.userNameTextStyle}>
+                    {firstNames} {lastNames}
                   </Text>
 
-                  <View style={style.verticalLineStyle} />
+                  <View style={style.userDetailsDescriptionContainer}>
+                    <Text style={style.userDetailsTextStyle}>
+                      {age || 'N/A'} yrs,
+                    </Text>
+                    <Text style={style.userDetailsTextStyle}>
+                      {' '}
+                      {height || 'N/A'}
+                    </Text>
 
-                  <Text style={style.userDetailsTextStyle}>{workCountry}</Text>
-                </View>
-              </TouchableOpacity>
+                    <View style={style.verticalLineStyle} />
 
-              <View style={style.RenderBottomImageContainer}>
-                <TouchableOpacity>
-                  <Image source={icons.image_icon} style={style.imageStyle} />
+                    <Text style={style.userDetailsTextStyle}>
+                      {jobTitle || 'N/A'} at {companyName || 'N/A'}
+                    </Text>
+                  </View>
+
+                  <View style={style.userDetailsDescriptionContainer}>
+                    <Text style={style.userDetailsTextStyle}>
+                      {currentCity || 'N/A'},{' '}
+                    </Text>
+                    <Text style={style.userDetailsTextStyle}>
+                      {workCountry || 'N/A'}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <Image source={icons.video_icon} style={style.videoStyle} />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={style.starImageContainer}>
+                <View
+                  style={{
+                    marginTop: hp(15),
+                    flexDirection: 'row',
+                    // backgroundColor: 'red',
+                    alignItems: 'center',
+                    // flex: 1,
+                  }}>
                   <Image
-                    source={icons.starIcon}
-                    style={style.startImageStyle}
+                    source={images.gradient_button_background_img}
+                    style={{
+                      width: wp(105),
+                      height: hp(30),
+                      resizeMode: 'stretch',
+                      borderRadius: 50, // Adjust the radius as needed
+                      overflow: 'hidden',
+                    }}
                   />
-                </TouchableOpacity>
-              </View>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    // onPress={openModal}
+                    style={{
+                      position: 'absolute',
+                      left: 10,
+                      // top: 12,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      source={icons.couple_icon}
+                      style={{
+                        width: hp(16),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        tintColor: 'white',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: 9,
+                        fontSize: fontSize(10),
+                        lineHeight: hp(15),
+                        fontFamily: fontFamily.poppins600,
+                        top: 1,
+                      }}>
+                      {/*85% Match*/}
+                      {item?.matchPercentage}% Match
+                    </Text>
+                  </TouchableOpacity>
 
-              <View style={style.renderBottomButtonContainer}>
-                <View style={style.requestDeclineContainer}>
-                  <Text style={style.requestTextStyle}>Request Decline</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      position: 'absolute',
+                      right: 35,
+                      // top: 5,
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        width: hp(60),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 15,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}
+                      activeOpacity={0.5}
+                      onPress={userAllImageShare}>
+                      <Image
+                        source={icons.new_camera_icon}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          resizeMode: 'contain',
+                          marginRight: wp(10),
+                        }}
+                      />
+
+                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                    </TouchableOpacity>
+                    {/*</View>*/}
+
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      style={{
+                        width: hp(30),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}>
+                      <Image
+                        source={icons.starIcon}
+                        style={{
+                          width: hp(20),
+                          height: hp(16),
+                          resizeMode: 'contain',
+                          tintColor: colors.white,
+                        }}
+                      />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      // onPress={onThreeDotPress}
+                      style={{
+                        width: hp(30),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}>
+                      <Image
+                        source={icons.new_three_dot}
+                        style={{width: 4, height: 14, tintColor: colors.white}}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                marginTop: hp(10),
+                marginBottom: hp(25),
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins500,
+                  marginRight: hp(15),
+                }}>
+                Declined Request
+              </Text>
+              <Image
+                source={icons.matched_declined_icon}
+                style={{tintColor: '#BE6D6B', height: hp(22), width: hp(22)}}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            borderWidth: 0.7,
+            borderColor: '#E8E8E8',
+            marginBottom: hp(23),
+          }}
+        />
       </View>
     );
   };
@@ -456,12 +867,10 @@ const MatchesScreen = ({navigation}) => {
           return icons.matches_sent_icon; // Replace with your actual image reference for "Sent"
         case 'declined':
           return icons.matched_declined_icon; // Replace with your actual image reference for "Declined"
-        case 'deleted':
-          return icons.delete_Profile_icon; // Replace with your actual image reference for "Deleted"
+        // case 'deleted':
+        //   return icons.delete_Profile_icon; // Replace with your actual image reference for "Deleted"
         case 'blocked':
           return icons.block_icon; // Replace with your actual image reference for "Blocked"
-        case 'Demo':
-          return images.user_Two_Image; // Replace with your actual image reference for "Demo"
         default:
           return images.user_Three_Image; // Fallback image if none matches
       }
@@ -512,13 +921,13 @@ const MatchesScreen = ({navigation}) => {
             marginRight: 10,
             resizeMode: 'contain',
           };
-        case 'deleted':
-          return {
-            width: hp(19.21),
-            height: hp(14),
-            marginRight: 10,
-            resizeMode: 'contain',
-          };
+        // case 'deleted':
+        //   return {
+        //     width: hp(19.21),
+        //     height: hp(14),
+        //     marginRight: 10,
+        //     resizeMode: 'contain',
+        //   };
         case 'blocked':
           return {
             width: hp(14),
@@ -542,7 +951,7 @@ const MatchesScreen = ({navigation}) => {
           colors={
             selectedTab === item.id
               ? ['#0F52BA', '#8225AF'] // Gradient when selected
-              : [colors.white, colors.white] // Default white background when not selected
+              : ['#F9F9F9', '#F9F9F9'] // Default white background when not selected
           }
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0.7}}
@@ -1036,7 +1445,12 @@ const MatchesScreen = ({navigation}) => {
           </View>
         );
       case 'saved':
-        return <Text>Saved</Text>;
+        // return <Text>Saved</Text>;
+        return (
+          <View>
+            <MatchesInSavedScreen />
+          </View>
+        );
       case 'declined':
         // <Text>Declined</Text>;
         return (
@@ -1090,22 +1504,19 @@ const MatchesScreen = ({navigation}) => {
           </View>
         );
       case 'sent':
-        return <Text>Sent</Text>;
-      case 'deleted':
-        return <Text>Deleted</Text>;
+        // return <Text>Sent</Text>;
+        return (
+          <View>
+            <MatchesInSentScreen />
+          </View>
+        );
+      // case 'deleted':
+      //   return <Text>Deleted</Text>;
       case 'blocked':
         return (
           <View>
             {/*<Text>Blocked</Text>*/}
             <MatchesInBlockedScreen />
-          </View>
-        );
-      case 'Demo':
-        return (
-          <View>
-            {/*<Text>Demo</Text>*/}
-            {/*<DatingHomeScreen />*/}
-            <DemoNewPagination text="Hello" />
           </View>
         );
       default:

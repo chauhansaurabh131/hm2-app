@@ -1,39 +1,84 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
-const ProfileCheckboxGroup = ({data, selectedId, onChange, containerRow}) => {
+const ProfileCheckboxGroup = ({
+  data,
+  selectedId,
+  onChange,
+  containerRow,
+  layout = 'vertical',
+}) => {
   const [checkedId, setCheckedId] = useState(selectedId);
 
   const handleCheckboxChange = id => {
     setCheckedId(id);
-    // Call the onChange callback with the selected item
     const selectedItem = data.find(item => item.id === id);
     if (onChange) {
       onChange(selectedItem.label);
     }
   };
 
+  // Split data into two rows for horizontal layout
+  const firstRow = data.slice(0, 2);
+  const secondRow = data.slice(2, 4);
+
   return (
     <View>
-      {data.map(item => (
-        <View key={item.id} style={[styles.row, containerRow]}>
-          <TouchableOpacity
-            onPress={() => handleCheckboxChange(item.id)}
-            style={styles.checkboxContainer}>
-            <View style={styles.outerCircle}>
-              {checkedId === item.id && <View style={styles.innerCircle} />}
-            </View>
-          </TouchableOpacity>
-          <View style={styles.textContainer}>
-            <Text style={styles.label}>{item.label}</Text>
-            {item.subTitle && (
-              <Text style={styles.subTitle}>{item.subTitle}</Text>
-            )}
+      {layout === 'horizontal' ? (
+        <>
+          <View style={styles.row}>
+            {firstRow.map(item => (
+              <View
+                key={item.id}
+                style={[styles.checkboxWrapper, containerRow]}>
+                <TouchableOpacity
+                  onPress={() => handleCheckboxChange(item.id)}
+                  style={styles.checkboxContainer}>
+                  <View style={styles.outerCircle}>
+                    {checkedId === item.id && (
+                      <View style={styles.innerCircle} />
+                    )}
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.label}>{item.label}</Text>
+              </View>
+            ))}
           </View>
-        </View>
-      ))}
+          <View style={styles.row}>
+            {secondRow.map(item => (
+              <View
+                key={item.id}
+                style={[styles.checkboxWrapper, containerRow]}>
+                <TouchableOpacity
+                  onPress={() => handleCheckboxChange(item.id)}
+                  style={styles.checkboxContainer}>
+                  <View style={styles.outerCircle}>
+                    {checkedId === item.id && (
+                      <View style={styles.innerCircle} />
+                    )}
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.label}>{item.label}</Text>
+              </View>
+            ))}
+          </View>
+        </>
+      ) : (
+        data.map(item => (
+          <View key={item.id} style={[styles.row, containerRow]}>
+            <TouchableOpacity
+              onPress={() => handleCheckboxChange(item.id)}
+              style={styles.checkboxContainer}>
+              <View style={styles.outerCircle}>
+                {checkedId === item.id && <View style={styles.innerCircle} />}
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.label}>{item.label}</Text>
+          </View>
+        ))
+      )}
     </View>
   );
 };
@@ -43,6 +88,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+  },
+  checkboxWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // width: wp(50), // Adjust width to display two items per row
+    // marginBottom: 10,
+    // backgroundColor: 'red',
+    flex: 1,
   },
   checkboxContainer: {
     marginRight: 10,
@@ -62,20 +115,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: colors.blue,
   },
-  textContainer: {
-    flex: 1,
-  },
   label: {
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
-  },
-  subTitle: {
-    fontSize: fontSize(12),
-    lineHeight: hp(18),
-    fontFamily: fontFamily.poppins400,
-    color: '#818181',
   },
 });
 

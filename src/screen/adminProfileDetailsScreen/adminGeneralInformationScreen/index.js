@@ -115,6 +115,18 @@ const AdminGeneralInformationScreen = (...params) => {
           </TouchableOpacity>
         </View>
       )}
+
+      {/*<Text>svbjsvbj</Text>*/}
+
+      <View
+        style={{
+          width: '100%',
+          borderColor: '#E8E8E8',
+          borderWidth: 0.7,
+          marginTop: 15,
+        }}
+      />
+
       <View style={style.bodyContainer}>
         <View style={style.tittleContainer}>
           <Text style={style.tittleTextStyle}>Date of Birth</Text>

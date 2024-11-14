@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
 
-const Checkbox = ({options, onSelect, defaultSelectedId}) => {
+const Checkbox = ({options, onSelect, defaultSelectedId, stateCheckedBox}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ const Checkbox = ({options, onSelect, defaultSelectedId}) => {
                 style={[
                   styles.checkbox,
                   selectedOption === option.id && styles.checked,
+                  stateCheckedBox,
                 ]}>
                 {selectedOption === option.id && (
                   <Text style={styles.check}>&#10003;</Text>
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    // backgroundColor: 'red',
   },
   column: {
     flex: 1,
@@ -101,21 +103,22 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   checkbox: {
-    width: 22,
-    height: 22,
+    width: hp(16),
+    height: hp(16),
     borderWidth: 1,
     borderColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
-    borderRadius: 5,
+    borderRadius: 2,
   },
   checked: {
     backgroundColor: '#000',
   },
   check: {
     color: '#fff',
-    fontSize: 13.5,
+    fontSize: 10,
+    top: -1,
   },
   label: {
     color: colors.black,

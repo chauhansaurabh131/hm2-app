@@ -29,6 +29,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: hp(31),
+    // backgroundColor: 'orange',
   },
   headingCredentialsImageStyle: {
     width: hp(21.2),
@@ -36,15 +37,19 @@ const style = StyleSheet.create({
     tintColor: colors.black,
   },
   headingCredentialsText: {
-    marginLeft: wp(12.8),
+    // marginLeft: wp(12.8),
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
   backButtonContainer: {
     position: 'absolute',
     right: 2,
+    width: hp(24),
+    height: hp(24),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backButtonIconStyle: {
     width: hp(14),
@@ -52,16 +57,14 @@ const style = StyleSheet.create({
   },
   underLineHeaderStyle: {
     width: '100%',
-    height: 1,
-    borderWidth: 1,
-    borderColor: '#F2F2F2',
-    // borderColor: 'red',
     marginTop: hp(12),
+    height: 1,
+    backgroundColor: '#E7E7E7',
   },
   bodyContainerView: {
     flex: 1,
     marginHorizontal: wp(17),
-    marginTop: hp(14),
+    marginTop: hp(22),
   },
   bodyTittleTextStyle: {
     color: colors.black,
@@ -184,13 +187,14 @@ const style = StyleSheet.create({
     fontFamily: fontFamily.poppins600,
   },
   tittleDescriptionTextContainer: {
-    marginTop: hp(8),
+    marginTop: hp(16),
     marginBottom: hp(15),
   },
   tittleDescriptionTextStyle: {
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    color: colors.black,
+    fontFamily: fontFamily.poppins400,
+    color: '#7C7878',
   },
 });
 

@@ -389,7 +389,7 @@ const PremiumMatchesComponent = ({isOnline}) => {
   const renderUserItem = ({item}) => {
     // console.log(' === send  ===> ', item?.friendsDetails);
 
-    console.log(' === item______ ===> ', item.address.currentCity);
+    // console.log(' === item______ ===> ', item.address.currentCity);
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
@@ -401,12 +401,12 @@ const PremiumMatchesComponent = ({isOnline}) => {
         item.lastName.slice(1).toLowerCase()
       : '';
 
-    const currentCity = item.address.currentCity
+    const currentCity = item.address?.currentCity
       ? item.address.currentCity.charAt(0).toUpperCase() +
         item.address.currentCity.slice(1).toLowerCase()
       : '';
 
-    const currentCountry = item.address.currentCountry
+    const currentCountry = item.address?.currentCountry
       ? item.address.currentCountry.charAt(0).toUpperCase() +
         item.address.currentCountry.slice(1).toLowerCase()
       : '';
@@ -562,6 +562,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 13,
     marginLeft: -12,
+    marginTop: 12,
   },
   image: {
     width: wp(110),
@@ -616,8 +617,9 @@ const styles = StyleSheet.create({
   },
   shareImageStyle: {
     width: hp(38),
-    height: hp(20),
-    resizeMode: 'contain',
+    height: hp(22),
+    resizeMode: 'stretch',
+    // marginRight: 8,
   },
 });
 

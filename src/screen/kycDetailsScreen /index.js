@@ -18,6 +18,9 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RNBlobUtil from 'react-native-blob-util'; // Import RNBlobUtil
 import {useSelector} from 'react-redux';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import LinearGradient from 'react-native-linear-gradient';
+import {colors} from '../../utils/colors';
 
 const KycDetailsScreen = ({route}) => {
   const {kycData} = route.params; // Retrieve kycData from route params
@@ -247,10 +250,10 @@ const KycDetailsScreen = ({route}) => {
         </View>
 
         <View style={style.headingTittleContainer}>
-          <Image
-            source={icons.notification_icon}
-            style={style.headingCredentialsImageStyle}
-          />
+          {/*<Image*/}
+          {/*  source={icons.notification_icon}*/}
+          {/*  style={style.headingCredentialsImageStyle}*/}
+          {/*/>*/}
           <Text style={style.headingCredentialsText}>KYC Details</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
@@ -361,11 +364,76 @@ const KycDetailsScreen = ({route}) => {
                 buttonName={'Select Files'}
                 containerStyle={style.selectedFileButton}
                 onPress={onSelectFilesPress}
+                buttonTextStyle={{
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}
               />
             </View>
           </>
         )}
       </View>
+
+      {/*Photo Verify*/}
+      <View
+        style={{
+          width: '100%',
+          backgroundColor: '#E7E7E7',
+          height: 0.7,
+          marginTop: 27,
+          // marginBottom: 16,
+        }}
+      />
+
+      <View style={style.secondBodyContainer}>
+        <Text style={style.photoVerifyText}>Photo Verify</Text>
+
+        <View style={{marginTop: 15}}>
+          <Text style={style.SubTextTittle}>
+            To verify your profile photo with a selfie. Download{' '}
+          </Text>
+          <Text style={style.SubTextTittle}>app and Complete Verification</Text>
+        </View>
+
+        <TouchableOpacity activeOpacity={0.7} style={{marginTop: hp(24)}}>
+          <LinearGradient
+            colors={['#0D4EB3', '#9413D0']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1.5}}
+            style={{
+              width: '100%',
+              height: 50,
+              borderRadius: 25,
+              flexDirection: 'row',
+              alignItems: 'center',
+              // justifyContent: 'space-between',
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                color: colors.white,
+                marginLeft: hp(20),
+                textAlign: 'center',
+              }}>
+              Start Verification
+            </Text>
+            <Image
+              source={icons.back_arrow_icon}
+              style={{
+                width: hp(14),
+                height: hp(14),
+                tintColor: colors.white,
+                marginRight: hp(22.12),
+                position: 'absolute',
+                right: 0,
+                transform: [{rotate: '180deg'}],
+              }}
+            />
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );

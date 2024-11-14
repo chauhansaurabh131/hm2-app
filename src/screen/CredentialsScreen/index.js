@@ -54,6 +54,12 @@ const CredentialsScreen = () => {
 
   const userImage = user?.user?.profilePic;
 
+  // console.log(' === currentMobile ===> ', currentMobile);
+
+  const maskedMobile = currentMobile
+    ? `*******${String(currentMobile).slice(-3)}`
+    : 'N/A';
+
   const token = user?.tokens?.access?.token;
   const dispatch = useDispatch();
 
@@ -195,6 +201,10 @@ const CredentialsScreen = () => {
 
   const currentMobileString = String(currentMobile);
 
+  const maskedMobileString = currentMobileString
+    ? `*******${String(currentMobile).slice(-3)}`
+    : 'N/A';
+
   const onMobileChangePress = () => {
     // setVerificationCodeSent(true);
 
@@ -227,9 +237,20 @@ const CredentialsScreen = () => {
       case 'email':
         return (
           <View style={style.bottomSheetContainer}>
-            <Text style={style.bottomSheetTittleText}>Update Email</Text>
+            <View style={{marginHorizontal: 30}}>
+              <Text style={style.bottomSheetTittleText}>Update Email</Text>
+            </View>
 
-            <View style={style.bottomSheetBodyContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 0.7,
+                backgroundColor: '#E7E7E7',
+                marginTop: 20,
+              }}
+            />
+
+            <View style={[style.bottomSheetBodyContainer, {marginTop: 15}]}>
               <Text style={style.bottomSheetBodyTitleText}>Current Email</Text>
 
               <TextInput
@@ -281,12 +302,23 @@ const CredentialsScreen = () => {
                     Update Mobile Number
                   </Text>
 
-                  <Text style={style.bottomSheetBodyTitleText}>
-                    Current Mobile Number
-                  </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                      marginTop: 20,
+                    }}
+                  />
+
+                  <View style={{marginTop: 15}}>
+                    <Text style={style.bottomSheetBodyTitleText}>
+                      Current Mobile Number
+                    </Text>
+                  </View>
 
                   <TextInput
-                    placeholder={currentMobileString}
+                    placeholder={maskedMobileString}
                     placeholderTextColor={'black'}
                     editable={false}
                     style={style.textInputContainer}
@@ -425,9 +457,20 @@ const CredentialsScreen = () => {
   const renderPasswordBottomSheetContent = () => {
     return (
       <View style={style.bottomSheetContainer}>
-        <Text style={style.bottomSheetTittleText}>Update Password</Text>
+        <View style={{marginHorizontal: 30}}>
+          <Text style={style.bottomSheetTittleText}>Update Password</Text>
+        </View>
 
-        <View style={style.bottomSheetBodyContainer}>
+        <View
+          style={{
+            width: '100%',
+            height: 0.7,
+            backgroundColor: '#E7E7E7',
+            marginTop: 20,
+          }}
+        />
+
+        <View style={[style.bottomSheetBodyContainer, {marginTop: 15}]}>
           <Text style={style.bottomSheetBodyTitleText}>
             Enter Current Password
           </Text>
@@ -576,12 +619,12 @@ const CredentialsScreen = () => {
         />
 
         <View style={style.headingTittleContainer}>
-          <Image
-            source={icons.credentials_icon}
-            style={style.headingCredentialsImageStyle}
-          />
+          {/*<Image*/}
+          {/*  source={icons.credentials_icon}*/}
+          {/*  style={style.headingCredentialsImageStyle}*/}
+          {/*/>*/}
 
-          <Text style={style.headingCredentialsText}>Credentials</Text>
+          <Text style={style.headingCredentialsText}>Login Details</Text>
 
           <TouchableOpacity
             style={style.backButtonContainer}
@@ -597,56 +640,64 @@ const CredentialsScreen = () => {
       <View style={style.underLineHeaderStyle} />
 
       <View style={style.credentialBodyContainer}>
-        <Text style={style.bodyCredentialsTittleText}>Email</Text>
+        <View style={{marginHorizontal: 17}}>
+          <Text style={style.bodyCredentialsTittleText}>Email</Text>
 
-        <View style={style.bodyFillFullContainer}>
-          <Text style={style.UserEmailTextStyle}>{currentEmail}</Text>
+          <View style={style.bodyFillFullContainer}>
+            <Text style={style.UserEmailTextStyle}>{currentEmail}</Text>
 
-          <Image source={icons.green_check_icon} style={style.checkIconStyle} />
+            <Image
+              source={icons.green_check_icon}
+              style={style.checkIconStyle}
+            />
 
-          <TouchableOpacity
-            style={style.editImageContainer}
-            onPress={() => openBottomSheet('email')}>
-            <Image source={icons.edit_icon} style={style.editImageStyle} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={style.editImageContainer}
+              onPress={() => openBottomSheet('email')}>
+              <Image source={icons.edit_icon} style={style.editImageStyle} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <Text style={[style.bodyCredentialsTittleText, {marginTop: 16}]}>
-          Password
-        </Text>
-
-        <View style={style.bodyFillFullContainer}>
-          <Text style={style.UserEmailTextStyle}>*********</Text>
-
-          <TouchableOpacity
-            style={style.editImageContainer}
-            onPress={openPasswordBottomSheet}>
-            <Image source={icons.edit_icon} style={style.editImageStyle} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={style.descriptionBodyUnderlineStyle} />
-
-        <Text style={[style.bodyCredentialsTittleText, {marginTop: 16}]}>
-          Mobile Number
-        </Text>
-
-        <View style={style.bodyFillFullContainer}>
-          <Text style={style.UserEmailTextStyle}>
-            {/*{currentMobile.substring(0, 7).replace(/\d/g, '*') +*/}
-            {/*  currentMobile.substring(7)}*/}
-            {currentMobile}
+        <View style={{marginHorizontal: 17}}>
+          <Text style={[style.bodyCredentialsTittleText, {marginTop: 16}]}>
+            Password
           </Text>
 
-          <Image source={icons.green_check_icon} style={style.checkIconStyle} />
+          <View style={style.bodyFillFullContainer}>
+            <Text style={style.UserEmailTextStyle}>*********</Text>
 
-          <TouchableOpacity
-            style={style.editImageContainer}
-            onPress={() => openBottomSheet('mobile')}>
-            <Image source={icons.edit_icon} style={style.editImageStyle} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={style.editImageContainer}
+              onPress={openPasswordBottomSheet}>
+              <Image source={icons.edit_icon} style={style.editImageStyle} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={style.descriptionBodyUnderlineStyle} />
+
+        <View style={{marginHorizontal: 17}}>
+          <Text style={[style.bodyCredentialsTittleText, {marginTop: 16}]}>
+            Mobile Number
+          </Text>
+
+          <View style={style.bodyFillFullContainer}>
+            <Text style={style.UserEmailTextStyle}>{maskedMobile}</Text>
+
+            <Image
+              source={icons.green_check_icon}
+              style={style.checkIconStyle}
+            />
+
+            <TouchableOpacity
+              style={style.editImageContainer}
+              onPress={() => openBottomSheet('mobile')}>
+              <Image source={icons.edit_icon} style={style.editImageStyle} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={style.descriptionBodyUnderlineStyle} />
@@ -654,7 +705,7 @@ const CredentialsScreen = () => {
 
       <RBSheet
         ref={bottomSheetRef}
-        height={420}
+        height={430}
         closeOnDragDown={true}
         closeOnPressMask={true}
         customStyles={{
@@ -671,7 +722,7 @@ const CredentialsScreen = () => {
 
       <RBSheet
         ref={passwordBottomSheetRef}
-        height={isIOS ? 550 : 500} // Adjust the height as per your requirement
+        height={isIOS ? 550 : 530} // Adjust the height as per your requirement
         closeOnDragDown={true}
         closeOnPressMask={true}
         customStyles={{

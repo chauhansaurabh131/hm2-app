@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {Image, SafeAreaView, TouchableOpacity, View, Text} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent ';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent ';
 
 const UserUploadImageFullScreen = () => {
   const route = useRoute();
@@ -24,6 +24,11 @@ const UserUploadImageFullScreen = () => {
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
   };
+
+  // Determine the correct image array
+  const imageArray = Array.isArray(allImages)
+    ? allImages
+    : allImages.userAllImage;
 
   return (
     <SafeAreaView style={style.container}>
@@ -50,10 +55,8 @@ const UserUploadImageFullScreen = () => {
         onBackButtonPress={toggleModal}
       />
 
-      {allImages &&
-      allImages.userAllImage &&
-      allImages.userAllImage.length > 0 ? (
-        <ImagePaginationAndPinableComponent images={allImages.userAllImage} />
+      {imageArray && imageArray.length > 0 ? (
+        <ImagePaginationAndPinableComponent images={imageArray} />
       ) : (
         // Show message if no images are found
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

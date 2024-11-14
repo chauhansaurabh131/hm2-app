@@ -36,15 +36,19 @@ export const style = StyleSheet.create({
     tintColor: colors.black,
   },
   headingCredentialsText: {
-    marginLeft: wp(12.8),
+    // marginLeft: wp(12.8),
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
   backButtonContainer: {
     position: 'absolute',
     right: 2,
+    width: hp(24),
+    height: hp(24),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backButtonIconStyle: {
     width: hp(14),
@@ -52,10 +56,9 @@ export const style = StyleSheet.create({
   },
   underLineHeaderStyle: {
     width: '100%',
-    height: 1,
-    borderWidth: 1,
-    borderColor: '#F2F2F2',
     marginTop: hp(12),
+    height: 1,
+    backgroundColor: '#E7E7E7',
   },
   bodyBoxContainer: {
     flex: 1,
@@ -72,6 +75,8 @@ export const style = StyleSheet.create({
   boxBackGroundImage: {
     width: '100%',
     height: hp(130),
+    borderTopRightRadius: 14,
+    borderTopLeftRadius: 14,
   },
   imageTextContainer: {
     position: 'absolute',
@@ -126,7 +131,7 @@ export const style = StyleSheet.create({
   },
   descriptionText: {
     color: '#8F8F8F',
-    fontSize: fontSize(12),
+    fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins400,
   },
@@ -200,7 +205,7 @@ export const style = StyleSheet.create({
     margin: 10,
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins600,
+    fontFamily: fontFamily.poppins400,
   },
   autoRenewButton: {
     width: wp(158),

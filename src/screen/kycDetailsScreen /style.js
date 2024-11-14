@@ -36,15 +36,19 @@ export const style = StyleSheet.create({
     tintColor: colors.black,
   },
   headingCredentialsText: {
-    marginLeft: wp(12.8),
+    // marginLeft: wp(12.8),
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
   backButtonContainer: {
     position: 'absolute',
     right: 2,
+    width: hp(24),
+    height: hp(24),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backButtonIconStyle: {
     width: hp(14),
@@ -52,14 +56,13 @@ export const style = StyleSheet.create({
   },
   underLineHeaderStyle: {
     width: '100%',
-    height: 1,
-    borderWidth: 1,
-    borderColor: '#F2F2F2',
     marginTop: hp(12),
+    height: 1,
+    backgroundColor: '#E7E7E7',
   },
   submitFunctionContainer: {
     marginHorizontal: wp(17),
-    flex: 1,
+    // flex: 1,
     marginTop: hp(13),
   },
   finalSubmitText: {
@@ -78,8 +81,8 @@ export const style = StyleSheet.create({
   subSubmitTextTittle: {
     color: colors.black,
     fontFamily: fontFamily.poppins400,
-    fontSize: fontSize(11),
-    lineHeight: hp(16),
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
     marginTop: hp(11),
   },
   selectedImageContainer: {
@@ -125,7 +128,7 @@ export const style = StyleSheet.create({
     width: '100%',
     height: hp(45),
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: '#E5E5E5',
     borderRadius: 25,
     paddingLeft: 20,
     paddingRight: 50,
@@ -173,5 +176,21 @@ export const style = StyleSheet.create({
     width: '100%',
     height: hp(50),
     marginTop: hp(20),
+  },
+  secondBodyContainer: {
+    marginTop: 16,
+    marginHorizontal: 17,
+  },
+  photoVerifyText: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  SubTextTittle: {
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
   },
 });

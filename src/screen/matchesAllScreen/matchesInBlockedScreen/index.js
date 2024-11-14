@@ -15,12 +15,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../../utils/colors';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const MatchesInBlockedScreen = () => {
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
@@ -98,7 +100,7 @@ const MatchesInBlockedScreen = () => {
   }
 
   const renderBlockedUser = ({item}) => {
-    console.log(' === item ===> ', item?.friend?.name);
+    console.log(' === item ===> ', item?.friend?.userProfilePic);
     const profileImage = item?.friend?.profilePic;
     const user = item?.blockedUser; // Adjust this based on actual data structure
 
@@ -112,80 +114,260 @@ const MatchesInBlockedScreen = () => {
     const name = item?.friend?.name;
     const firstName = item?.friend?.firstName;
     const lastName = item?.friend?.lastName;
-    const gender = item?.friend?.gender;
     const age = calculateAge(item?.friend?.dateOfBirth);
     const height = item?.friend?.height;
-    const motherTongue = item?.friend?.motherTongue;
-    const cast = item?.friend?.cast;
     const jobTitle = item?.friend?.userProfessional?.jobTitle;
-    const workCountry = item?.friend?.userProfessional?.workCountry;
-    const userState = item?.friend?.userProfessional?.state;
-    const workCity = item?.friend?.userProfessional?.workCity;
+    const currentCity = item?.friend?.address?.currentCity
+      ? item?.friend?.address?.currentCity.charAt(0).toUpperCase() +
+        item?.friend?.address?.currentCity.slice(1).toLowerCase()
+      : '';
+    const currentCountry = item?.friend?.address?.currentCountry
+      ? item?.friend?.address?.currentCountry.charAt(0).toUpperCase() +
+        item?.friend?.address?.currentCountry.slice(1).toLowerCase()
+      : '';
+
+    const imageCount = Array.isArray(item?.friend?.userProfilePic)
+      ? item?.friend?.userProfilePic.length
+      : 0;
+
+    const userAllImage = Array.isArray(item?.friend?.userProfilePic)
+      ? item?.friend?.userProfilePic.map(pic => pic.url)
+      : [];
+
+    const userAllImageShare = () => {
+      const allImages = {
+        userAllImage,
+      };
+      // console.log(' === userAllImage ===> ', userAllImage);
+      navigation.navigate('UserUploadImageFullScreen', {allImages});
+    };
 
     return (
-      <View style={{marginHorizontal: 17}}>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            /* navigation.navigate('UserDetailsScreen'); */
-          }}>
-          <View>
-            <Image
-              source={
-                profileImage ? {uri: profileImage} : images.empty_male_Image
-              }
-              style={styles.userImageStyle}
-              resizeMode={'cover'}
-            />
-            <LinearGradient
-              colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-              style={styles.gradient}
-            />
+      <View>
+        <View style={{marginHorizontal: 17}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              /* navigation.navigate('UserDetailsScreen'); */
+            }}>
+            <View>
+              <Image
+                source={
+                  profileImage ? {uri: profileImage} : images.empty_male_Image
+                }
+                style={styles.userImageStyle}
+                resizeMode={'cover'}
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+                style={styles.gradient}
+              />
 
-            <View style={styles.UserDetailsContainer}>
-              <View style={styles.onlineBodyStyle}>
-                <Text style={styles.bodyTextStyle}>Online</Text>
-              </View>
+              <View style={styles.UserDetailsContainer}>
+                <View style={styles.onlineBodyStyle}>
+                  <Text style={styles.bodyTextStyle}>Online</Text>
+                </View>
 
-              <Text style={styles.userNameTextStyle}>
-                {firstName} {lastName || name}
-              </Text>
-
-              <View style={styles.userDetailsDescriptionContainer}>
-                <Text style={styles.userDetailsTextStyle}>{gender}</Text>
-                <Text style={styles.userDetailsTextStyle}>{age},</Text>
-                <Text style={styles.userDetailsTextStyle}>{height}</Text>
-
-                <View style={styles.verticalLineStyle} />
-
-                <Text style={styles.userDetailsTextStyle}>
-                  {motherTongue || 'N/A'}
+                <Text style={styles.userNameTextStyle}>
+                  {firstName} {lastName || name}
                 </Text>
-                <Text style={styles.userDetailsTextStyle}>{cast || 'N/A'}</Text>
-              </View>
 
-              <View style={styles.userDetailsDescriptionContainer}>
-                <Text style={styles.userDetailsTextStyle}>{jobTitle}</Text>
-                <View style={styles.verticalLineStyle} />
-                <Text style={styles.userDetailsTextStyle}>{workCountry}</Text>
-                <Text style={styles.userDetailsTextStyle}>
-                  {userState || 'N/A'}
-                </Text>
-                <Text style={styles.userDetailsTextStyle}>
-                  {workCity || 'N/A'}
-                </Text>
-              </View>
+                <View
+                  style={[
+                    styles.userDetailsDescriptionContainer,
+                    {marginTop: 3},
+                  ]}>
+                  {/*<Text style={styles.userDetailsTextStyle}>{gender}</Text>*/}
+                  <Text style={styles.userDetailsTextStyle}>{age} yrs,</Text>
+                  <Text style={styles.userDetailsTextStyle}> {height}</Text>
 
-              <View style={{marginTop: hp(22), flexDirection: 'row'}}>
-                <View style={styles.renderBottomButtonContainer}>
-                  <View style={styles.requestDeclineContainer}>
-                    <Text style={styles.requestTextStyle}>Blocked</Text>
+                  <View style={styles.verticalLineStyle} />
+
+                  <Text style={styles.userDetailsTextStyle}>
+                    {' '}
+                    {jobTitle || 'N/A'}
+                  </Text>
+                </View>
+
+                <View style={styles.userDetailsDescriptionContainer}>
+                  <Text style={styles.userDetailsTextStyle}>
+                    {currentCity},{' '}
+                  </Text>
+                  <Text style={styles.userDetailsTextStyle}>
+                    {currentCountry || 'N/A'}
+                  </Text>
+                </View>
+
+                {/*<View style={{marginTop: hp(22), flexDirection: 'row'}}>*/}
+                {/*  <View style={styles.renderBottomButtonContainer}>*/}
+                {/*    <View style={styles.requestDeclineContainer}>*/}
+                {/*      <Text style={styles.requestTextStyle}>Blocked</Text>*/}
+                {/*    </View>*/}
+                {/*  </View>*/}
+                {/*</View>*/}
+
+                <View
+                  style={{
+                    marginTop: hp(15),
+                    flexDirection: 'row',
+                    // backgroundColor: 'red',
+                    alignItems: 'center',
+                    // flex: 1,
+                  }}>
+                  <Image
+                    source={images.gradient_button_background_img}
+                    style={{
+                      width: wp(105),
+                      height: hp(30),
+                      resizeMode: 'stretch',
+                      borderRadius: 50, // Adjust the radius as needed
+                      overflow: 'hidden',
+                    }}
+                  />
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    // onPress={openModal}
+                    style={{
+                      position: 'absolute',
+                      left: 10,
+                      // top: 12,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      source={icons.couple_icon}
+                      style={{
+                        width: hp(16),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        tintColor: 'white',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginLeft: 9,
+                        fontSize: fontSize(10),
+                        lineHeight: hp(15),
+                        fontFamily: fontFamily.poppins600,
+                        top: 1,
+                      }}>
+                      {/*85% Match*/}
+                      {item?.matchPercentage}% Match
+                    </Text>
+                  </TouchableOpacity>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      position: 'absolute',
+                      right: 35,
+                      // top: 5,
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        width: hp(60),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 15,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}
+                      activeOpacity={0.5}
+                      onPress={userAllImageShare}>
+                      <Image
+                        source={icons.new_camera_icon}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          resizeMode: 'contain',
+                          marginRight: wp(10),
+                        }}
+                      />
+
+                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                    </TouchableOpacity>
+                    {/*</View>*/}
+
+                    <TouchableOpacity
+                      activeOpacity={0.5}
+                      style={{
+                        width: hp(30),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}>
+                      <Image
+                        source={icons.starIcon}
+                        style={{
+                          width: hp(20),
+                          height: hp(16),
+                          resizeMode: 'contain',
+                          tintColor: colors.white,
+                        }}
+                      />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      // onPress={onThreeDotPress}
+                      style={{
+                        width: hp(30),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
+                      }}>
+                      <Image
+                        source={icons.new_three_dot}
+                        style={{width: 4, height: 14, tintColor: colors.white}}
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
+        <View style={{alignSelf: 'center', flexDirection: 'row', marginTop: 5}}>
+          <Text
+            style={{
+              color: colors.black,
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins500,
+              marginRight: hp(11),
+            }}>
+            Blocked by you
+          </Text>
+          <Image
+            source={icons.block_icon}
+            style={{
+              tintColor: '#FF0000',
+              height: hp(22),
+              width: hp(22),
+              resizeMode: 'contain',
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            borderColor: '#E8E8E8',
+            borderWidth: 0.7,
+            marginTop: 21,
+            marginBottom: 23,
+          }}
+        />
       </View>
     );
   };
@@ -274,27 +456,28 @@ const styles = StyleSheet.create({
     width: wp(34.8),
     height: hp(12),
     borderRadius: 5,
-    backgroundColor: '#24FF00',
+    backgroundColor: '#24FF00A8',
     justifyContent: 'center',
   },
   bodyTextStyle: {
     color: colors.black,
-    fontSize: fontSize(8),
+    fontSize: fontSize(9),
     lineHeight: hp(12),
     textAlign: 'center',
   },
   userNameTextStyle: {
     color: colors.white,
-    fontSize: fontSize(20),
-    lineHeight: hp(30),
+    fontSize: fontSize(24),
+    lineHeight: hp(36),
     fontFamily: fontFamily.poppins700,
+    marginTop: 3,
   },
   userDetailsDescriptionContainer: {
     flexDirection: 'row',
   },
   userDetailsTextStyle: {
     color: colors.white,
-    fontSize: fontSize(10),
+    fontSize: fontSize(11),
     lineHeight: hp(14),
     fontFamily: fontFamily.poppins400,
     marginRight: wp(2),
@@ -302,7 +485,7 @@ const styles = StyleSheet.create({
   verticalLineStyle: {
     width: hp(1),
     height: '100%',
-    backgroundColor: colors.white,
+    backgroundColor: colors.darkGray,
     marginHorizontal: wp(5),
   },
   renderBottomButtonContainer: {

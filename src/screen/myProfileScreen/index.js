@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
-import {hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import AdminProfileDetailsScreen from '../adminProfileDetailsScreen';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,6 +19,8 @@ import {dataCountingList, userDatas} from '../../actions/homeActions';
 import ImagePaginationComponent from '../../components/imagePaginationComponent';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {colors} from '../../utils/colors';
 
 const MyProfileScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -30,12 +32,14 @@ const MyProfileScreen = () => {
   );
   const [editedDescription, setEditedDescription] = useState(description);
 
+  const bottomSheetRef = useRef(null);
+
   const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
-  const imageUrls = userData?.userProfilePic.map(pic => pic.url);
+  // const imageUrls = userData?.userProfilePic.map(pic => pic.url);
 
   const profileImage = user?.user?.profilePic;
 
@@ -72,9 +76,44 @@ const MyProfileScreen = () => {
 
   const firstName = capitalizeFirstLetter(user?.user?.firstName);
   const lastName = capitalizeFirstLetter(user?.user?.lastName);
-  const gender = capitalizeFirstLetter(user.user.gender);
-  const age = user.user.age;
-  const height = user.user.height;
+  const jobTitle = capitalizeFirstLetter(
+    user?.user?.userProfessional?.jobTitle,
+  );
+  const currentCity = capitalizeFirstLetter(user?.user?.address?.currentCity);
+  const currentCountry = capitalizeFirstLetter(
+    user?.user?.address?.currentCountry,
+  );
+
+  const calculateAge = dob => {
+    if (!dob) {
+      return 'N/A';
+    } // Handle missing date of birth
+    const birthDate = new Date(dob);
+    const difference = Date.now() - birthDate.getTime();
+    const ageDate = new Date(difference);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+  const age = calculateAge(user?.user?.dateOfBirth);
+  const height = user.user?.height;
+
+  const imageCount = Array.isArray(user?.user?.userProfilePic)
+    ? user?.user?.userProfilePic.length
+    : 0;
+
+  // const userAllImage = Array.isArray(user?.user?.userProfilePic)
+  //   ? user?.user?.userProfilePic.map(pic => pic.url)
+  //   : [];
+
+  const userAllImageShare = () => {
+    // const allImages = {
+    //   userAllImage,
+    // };
+    // console.log(' === userAllImage ===> ', userAllImage);
+    // navigation.navigate('UserProfileUploadImageFullScreen', {allImages});
+    navigation.navigate('UserProfileUploadImageFullScreen');
+  };
+
+  // console.log(' === user.user.age ===> ', user?.user?.userProfilePic);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -118,19 +157,24 @@ const MyProfileScreen = () => {
         onBackButtonPress={toggleModal}
       />
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View>
-          <ImagePaginationComponent imageUrls={imageUrls} />
-          {/*<LinearGradient*/}
-          {/*  colors={['transparent', 'rgba(0, 0, 0, 0.9)']}*/}
-          {/*  style={{*/}
-          {/*    position: 'absolute',*/}
-          {/*    bottom: 0,*/}
-          {/*    left: 0,*/}
-          {/*    right: 0,*/}
-          {/*    height: 150,*/}
-          {/*  }}*/}
-          {/*/>*/}
+          <Image
+            source={
+              profileImage ? {uri: profileImage} : images.empty_male_Image
+            }
+            style={style.userProfileImage}
+          />
+          <LinearGradient
+            colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 150,
+            }}
+          />
 
           <View style={style.UserDetailsContainer}>
             <View
@@ -138,56 +182,83 @@ const MyProfileScreen = () => {
                 position: 'absolute',
                 bottom: -1,
                 width: '100%',
-                // backgroundColor: 'rgba(0,0,0,0.1)',
-                height: 150,
+                height: 130,
               }}>
               <View style={{marginLeft: wp(18.16)}}>
-                <View style={style.onlineBodyStyle}>
-                  <Text style={style.bodyTextStyle}>Online</Text>
-                </View>
                 <Text style={style.userNameTextStyle}>
                   {firstName} {lastName}
                 </Text>
 
-                <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>{gender}</Text>
+                <View
+                  style={[
+                    style.userDetailsDescriptionContainer,
+                    {marginTop: 5},
+                  ]}>
                   <Text style={style.userDetailsTextStyle}>
-                    {age || 'N/A'},
+                    {age || 'N/A'} yrs,
                   </Text>
                   <Text style={style.userDetailsTextStyle}>{height}</Text>
 
                   <View style={style.verticalLineStyle} />
 
-                  <Text style={style.userDetailsTextStyle}>Gujarati</Text>
-                  <Text style={style.userDetailsTextStyle}>Patel</Text>
+                  <Text style={style.userDetailsTextStyle}>{jobTitle}</Text>
                 </View>
 
                 <View style={style.userDetailsDescriptionContainer}>
                   <Text style={style.userDetailsTextStyle}>
-                    Software Engineer
+                    {currentCity},{' '}
                   </Text>
 
-                  <View style={style.verticalLineStyle} />
-
-                  <Text style={style.userDetailsTextStyle}>NY</Text>
-                  <Text style={style.userDetailsTextStyle}>United</Text>
-                  <Text style={style.userDetailsTextStyle}>States</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {currentCountry}
+                  </Text>
                 </View>
 
                 <View style={style.bottomImageContainer}>
                   <TouchableOpacity
-                    onPress={() => {
-                      // navigation.navigate('UserUploadImageFullScreen');
-                      // navigation.navigate('SetProfilePictureScreen');
+                    activeOpacity={0.5}
+                    style={{
+                      width: hp(60),
+                      height: hp(30),
+                      backgroundColor: '#282727',
+                      borderRadius: 15,
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}
+                    // onPress={() => {
+                    //   // navigation.navigate('UserUploadImageFullScreen');
+                    //   // navigation.navigate('SetProfilePictureScreen');
+                    // }}
+                    onPress={userAllImageShare}>
+                    <Image
+                      source={icons.new_camera_icon}
+                      style={{
+                        width: hp(15),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                        marginRight: wp(11),
+                      }}
+                    />
+                    <Text style={{color: 'white'}}>{imageCount}</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => bottomSheetRef.current.open()}
+                    activeOpacity={0.5}
+                    style={{
+                      width: hp(30),
+                      height: hp(30),
+                      borderRadius: 50,
+                      backgroundColor: '#282727',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: hp(19),
                     }}>
                     <Image
-                      source={icons.image_icon}
-                      style={{
-                        width: hp(20),
-                        height: hp(20),
-                        resizeMode: 'contain',
-                        marginRight: wp(22),
-                      }}
+                      source={icons.new_three_dot}
+                      style={{width: hp(4), height: hp(14)}}
                     />
                   </TouchableOpacity>
                 </View>
@@ -195,6 +266,76 @@ const MyProfileScreen = () => {
             </View>
           </View>
         </View>
+
+        {/* Bottom Sheet */}
+        <RBSheet
+          ref={bottomSheetRef}
+          height={130}
+          openDuration={250}
+          customStyles={{
+            draggableIcon: {
+              backgroundColor: '#ffffff',
+            },
+            container: {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            },
+          }}>
+          <View style={{marginHorizontal: 17, marginTop: 30}}>
+            <TouchableOpacity
+              onPress={() => bottomSheetRef.current.close()}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={icons.share_icon}
+                style={{
+                  width: hp(16),
+                  height: hp(16),
+                  resizeMode: 'contain',
+                  marginRight: hp(15),
+                }}
+              />
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Share Profile
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => bottomSheetRef.current.close()}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 20,
+              }}>
+              <Image
+                source={icons.copy_icon}
+                style={{
+                  width: hp(16),
+                  height: hp(16),
+                  resizeMode: 'contain',
+                  marginRight: hp(15),
+                }}
+              />
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Copy URL
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </RBSheet>
 
         {/*HEADER TO LIKE DISLIKE*/}
         <View style={style.profileLikeDislikeContainer}>
@@ -240,9 +381,16 @@ const MyProfileScreen = () => {
           </View>
         </View>
 
-        <View style={style.bodyContainerStyle}>
-          <View style={style.underLineStyle} />
-        </View>
+        {/*<View style={style.underLineStyle} />*/}
+
+        <View
+          style={{
+            width: '100%',
+            height: 4,
+            backgroundColor: '#F8F8F8',
+            marginTop: 15,
+          }}
+        />
 
         <View style={style.bodyContainer}>
           <Text style={style.TittleTextStyle}>About Me</Text>
