@@ -13,6 +13,7 @@ import {addressDetails} from '../../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
 import {style} from './style';
 import {colors} from '../../../utils/colors';
+import {hp} from '../../../utils/helpers';
 
 const AdminAddressDetailsScreen = (...params) => {
   const userPersonalData = params[0];
@@ -20,21 +21,26 @@ const AdminAddressDetailsScreen = (...params) => {
 
   const {isAddressLoading} = useSelector(state => state.auth);
 
+  const capitalizeFirstLetter = str =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+
   const [residingAddress, setResidingAddress] = useState(
-    userPersonalData?.address?.currentResidenceAddress || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.address?.currentResidenceAddress),
   );
   const [currentCity, setCurrentCity] = useState(
-    userPersonalData?.address?.currentCity || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.address?.currentCity),
   );
   const [currentCountry, setCurrentCountry] = useState(
-    userPersonalData?.address?.currentCountry || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.address?.currentCountry),
   );
 
   // Combine residingAddress, currentCity, and currentCountry into permanentAddress
   const [permanentAddress, setPermanentAddress] = useState(
-    `${userPersonalData?.address?.currentResidenceAddress || 'N/A'}, ${
-      userPersonalData?.address?.currentCity || 'N/A'
-    }, ${userPersonalData?.address?.currentCountry || 'N/A'}`,
+    `${capitalizeFirstLetter(
+      userPersonalData?.address?.currentResidenceAddress,
+    )}, ${userPersonalData?.address?.currentCity || 'N/A'}, ${
+      userPersonalData?.address?.currentCountry || 'N/A'
+    }`,
   );
 
   // Update permanentAddress dynamically when any of the individual address parts change
@@ -59,6 +65,14 @@ const AdminAddressDetailsScreen = (...params) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View
+        style={{
+          width: '100%',
+          borderColor: '#E8E8E8',
+          borderWidth: 0.7,
+          marginTop: hp(25),
+        }}
+      />
       <View style={style.bodyContainer}>
         <View style={style.residencyContainer}>
           <Text style={style.titleText}>Current Residing Address</Text>
@@ -122,7 +136,7 @@ const AdminAddressDetailsScreen = (...params) => {
             {isAddressLoading ? (
               <ActivityIndicator size="small" color={colors.blue} />
             ) : (
-              <Image source={icons.save_icon} style={style.saveIcon} />
+              <Image source={icons.new_Save_icon} style={style.saveIcon} />
             )}
           </TouchableOpacity>
         </View>
@@ -135,7 +149,7 @@ const AdminAddressDetailsScreen = (...params) => {
             {isAddressLoading ? (
               <ActivityIndicator size="small" color={colors.blue} />
             ) : (
-              <Image source={icons.edit_icon} style={style.editIcon} />
+              <Image source={icons.new_edit_icon} style={style.editIcon} />
             )}
           </TouchableOpacity>
         </View>

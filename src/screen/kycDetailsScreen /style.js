@@ -67,16 +67,16 @@ export const style = StyleSheet.create({
   },
   finalSubmitText: {
     color: colors.black,
-    fontSize: fontSize(11),
-    lineHeight: hp(16),
+    fontSize: fontSize(14),
+    lineHeight: hp(18),
     fontFamily: fontFamily.poppins400,
     marginTop: hp(14),
   },
   uploadIdText: {
     color: colors.black,
     fontFamily: fontFamily.poppins500,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
   },
   subSubmitTextTittle: {
     color: colors.black,
@@ -184,7 +184,7 @@ export const style = StyleSheet.create({
   photoVerifyText: {
     fontSize: fontSize(16),
     lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
   SubTextTittle: {

@@ -183,7 +183,7 @@ const AlertsScreen = () => {
                   activeOpacity={0.5}
                   style={{
                     backgroundColor: '#EEEEEE',
-                    borderRadius: 10,
+                    borderRadius: 20,
                     width: 96,
                     height: 40,
                     justifyContent: 'center',
@@ -206,7 +206,7 @@ const AlertsScreen = () => {
                     start={{x: 1, y: 0}}
                     end={{x: 0, y: 0}}
                     style={{
-                      borderRadius: 10,
+                      borderRadius: 20,
                       justifyContent: 'center',
                       width: 96,
                       height: 40,

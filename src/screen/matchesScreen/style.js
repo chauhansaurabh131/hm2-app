@@ -25,7 +25,7 @@ const style = StyleSheet.create({
     width: hp(24),
     height: hp(24),
     borderRadius: 50,
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     marginTop: hp(14),
     marginRight: wp(20),
   },

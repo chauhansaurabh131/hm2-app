@@ -24,7 +24,7 @@ const style = StyleSheet.create({
     height: hp(24),
     borderRadius: 50,
     marginRight: wp(17),
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
   },
   userStoryContainer: {
     marginTop: hp(15),

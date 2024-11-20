@@ -1,0 +1,102 @@
+import {StyleSheet} from 'react-native';
+import {colors} from '../../../utils/colors';
+import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+
+export const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  editButtonContainer: {
+    position: 'absolute',
+    right: 20,
+    top: -45,
+  },
+  saveContainer: {
+    marginTop: hp(10),
+    borderRadius: 25,
+    backgroundColor: '#F0F9FF',
+    width: hp(40),
+    height: hp(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconStyle: {
+    width: hp(15),
+    height: hp(15),
+    tintColor: colors.blue,
+  },
+  underLineStyle: {
+    width: '100%',
+    borderColor: '#E8E8E8',
+    borderWidth: 0.7,
+    marginTop: hp(25),
+  },
+  bodyContainer: {
+    marginTop: hp(30),
+    marginHorizontal: 17,
+  },
+  labelText: {
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins500,
+    color: colors.black,
+  },
+  subLabelText: {
+    color: colors.black,
+    fontSize: fontSize(18),
+    lineHeight: hp(28),
+    fontFamily: fontFamily.poppins600,
+    marginTop: hp(2),
+  },
+  minAgeTextInput: {
+    color: colors.black,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins600,
+    marginTop: hp(2),
+    borderWidth: 1,
+    borderColor: colors.gray,
+    paddingVertical: 10,
+    paddingHorizontal: hp(15),
+    borderRadius: 5,
+    width: hp(65),
+  },
+  maxAgeTextInput: {
+    color: colors.black,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins600,
+    marginTop: hp(2),
+    borderWidth: 1,
+    borderColor: colors.gray,
+    paddingVertical: 10,
+    paddingHorizontal: hp(15),
+    borderRadius: 5,
+    width: hp(65),
+  },
+  textInputContainerStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  toTextStyle: {
+    color: colors.gray,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  editTextInput: {
+    color: colors.black,
+    fontSize: fontSize(18),
+    lineHeight: hp(28),
+    fontFamily: fontFamily.poppins600,
+    marginTop: hp(2),
+    borderWidth: 1,
+    borderColor: colors.gray,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+  },
+});

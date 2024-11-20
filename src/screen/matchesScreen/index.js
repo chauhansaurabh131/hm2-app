@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -32,6 +32,7 @@ import MatchesInAcceptedScreen from '../matchesAllScreen/matchesInAcceptedScreen
 import MatchesInBlockedScreen from '../matchesAllScreen/matchesInBlockedScreen';
 import MatchesInSavedScreen from '../matchesAllScreen/matchesInSavedScreen';
 import MatchesInSentScreen from '../matchesAllScreen/matchesInSentScreen';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -42,6 +43,12 @@ const MatchesScreen = ({navigation}) => {
   const [step, setStep] = useState(1);
   const [userActions, setUserActions] = useState({});
   const [requestStatus, setRequestStatus] = useState(null);
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   // const [currentPage, setCurrentPage] = useState(1);
   // const [users, setUsers] = useState([]); // Store combined users here
@@ -1533,13 +1540,16 @@ const MatchesScreen = ({navigation}) => {
             style={style.customerHeaderLogo}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileLogoStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}

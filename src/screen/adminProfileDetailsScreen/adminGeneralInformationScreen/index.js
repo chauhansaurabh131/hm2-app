@@ -11,6 +11,7 @@ import {icons} from '../../../assets';
 import {useDispatch} from 'react-redux';
 import {addressDetails, updateDetails} from '../../../actions/homeActions';
 import {style} from './style';
+import {hp} from '../../../utils/helpers';
 
 const AdminGeneralInformationScreen = (...params) => {
   const userPersonalData = params[0];
@@ -46,17 +47,22 @@ const AdminGeneralInformationScreen = (...params) => {
 
   const [birthTime, setBirthTime] = useState(formattedBirthTime || 'N/A');
 
+  const capitalizeFirstLetter = str =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+
   const religionData = userPersonalData?.religion;
-  const [religion, setReligion] = useState(religionData || 'N/A');
+  const [religion, setReligion] = useState(capitalizeFirstLetter(religionData));
 
   const Caste = userPersonalData?.caste;
-  const [caste, setCaste] = useState(Caste || 'N/A');
+  const [caste, setCaste] = useState(capitalizeFirstLetter(Caste));
 
   const CurrentCity = userPersonalData?.address?.currentCity;
-  const [currentCity, setCurrentCity] = useState(CurrentCity || 'N/A');
+  const [currentCity, setCurrentCity] = useState(
+    capitalizeFirstLetter(CurrentCity),
+  );
 
   const Country = userPersonalData?.address?.currentCountry;
-  const [country, setCountry] = useState(Country || 'N/A');
+  const [country, setCountry] = useState(capitalizeFirstLetter(Country));
   const [isEditing, setIsEditing] = useState(false);
 
   const apiDispatch = useDispatch();
@@ -103,7 +109,7 @@ const AdminGeneralInformationScreen = (...params) => {
       {isEditing ? (
         <View style={style.buttonContainer}>
           <TouchableOpacity onPress={handleSave} style={style.buttonStyle}>
-            <Image source={icons.save_icon} style={style.saveIcon} />
+            <Image source={icons.new_Save_icon} style={style.saveIcon} />
           </TouchableOpacity>
         </View>
       ) : (
@@ -111,7 +117,7 @@ const AdminGeneralInformationScreen = (...params) => {
           <TouchableOpacity
             onPress={() => setIsEditing(true)}
             style={style.buttonStyle}>
-            <Image source={icons.edit_icon} style={style.editIcon} />
+            <Image source={icons.new_edit_icon} style={style.editIcon} />
           </TouchableOpacity>
         </View>
       )}
@@ -123,7 +129,7 @@ const AdminGeneralInformationScreen = (...params) => {
           width: '100%',
           borderColor: '#E8E8E8',
           borderWidth: 0.7,
-          marginTop: 15,
+          marginTop: hp(25),
         }}
       />
 

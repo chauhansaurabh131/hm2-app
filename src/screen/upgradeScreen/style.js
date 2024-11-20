@@ -28,7 +28,7 @@ const style = StyleSheet.create({
     borderRadius: 50,
     marginTop: hp(14),
     marginRight: hp(18),
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
   },
   headerDescriptionContainer: {
     alignItems: 'center',

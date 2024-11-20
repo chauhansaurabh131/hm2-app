@@ -34,19 +34,19 @@ const UserEducationDetail = (...params) => {
 
         <Text style={style.detailSubTittleText}>
           {/*BCA*/}
-          {degree}
+          {degree || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>College/University</Text>
         <Text style={style.detailSubTittleText}>
           {/*Delhi University*/}
-          {college}
+          {college || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>City</Text>
         <Text style={style.detailSubTittleText}>
           {/*Noida*/}
-          {educationState}
+          {educationState || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>State</Text>
@@ -56,7 +56,7 @@ const UserEducationDetail = (...params) => {
 
         <Text style={style.detailSubTittleText}>
           {/*India*/}
-          {educationCountry}
+          {educationCountry || 'N/A'}
         </Text>
       </View>
     </SafeAreaView>

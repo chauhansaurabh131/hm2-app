@@ -100,7 +100,7 @@ const MatchesInBlockedScreen = () => {
   }
 
   const renderBlockedUser = ({item}) => {
-    console.log(' === item ===> ', item?.friend?.userProfilePic);
+    // console.log(' === item ===> ', item?.friend?.userProfilePic);
     const profileImage = item?.friend?.profilePic;
     const user = item?.blockedUser; // Adjust this based on actual data structure
 

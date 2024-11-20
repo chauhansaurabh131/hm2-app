@@ -1,35 +1,27 @@
 import {StyleSheet} from 'react-native';
 import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 
-const style = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
+export const styles = StyleSheet.create({
+  hobbiesContainer: {
+    // alignItems: 'center',
   },
-  containerBody: {
-    marginTop: hp(15),
+  hobbyBox: {
+    // backgroundColor: colors.lightGray, // Adjust this color as needed
+    backgroundColor: '#E8E9EB', // Adjust this color as needed
+    padding: wp(2),
+    margin: wp(2),
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: wp(90),
+    height: wp(50), // Ensure the box is square
   },
-  detailTittleText: {
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins500,
+  hobbyText: {
+    fontSize: 16,
     color: colors.black,
-  },
-  detailSubTittleText: {
-    color: colors.black,
-    fontSize: fontSize(18),
-    lineHeight: hp(28),
-    fontFamily: fontFamily.poppins600,
-    marginTop: hp(2),
-  },
-  detailsTittleTextStyle: {
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins500,
-    color: colors.black,
-    marginTop: hp(15),
+    textAlign: 'center',
   },
 });
 
-export default style;
+// export default style;

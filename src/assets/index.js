@@ -165,6 +165,11 @@ export const icons = {
   new_three_dot: require('./icons/new_three_dot.png'),
   received_accept_icon: require('./icons/received_accpected_icon.png'),
   received_declined_icon: require('./icons/received_declined_icon.png'),
+  success_Icon_icon: require('./icons/success_share_icon.png'),
+  success_share_icon: require('./icons/share_success_icon.png'),
+  new_edit_icon: require('./icons/new_edit_icon.png'),
+  new_Save_icon: require('./icons/new_save_icon.png'),
+  edit_partner_preference: require('./icons/edit_partner_preference.png'),
 };
 
 export const gif = {

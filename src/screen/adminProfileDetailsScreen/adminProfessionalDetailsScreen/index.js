@@ -13,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {style} from './style';
 import {professionalDetail} from '../../../actions/homeActions';
 import {colors} from '../../../utils/colors';
+import {hp} from '../../../utils/helpers';
 
 const AdminProfessionalDetailsScreen = (...params) => {
   const userPersonalData = params[0];
@@ -22,23 +23,26 @@ const AdminProfessionalDetailsScreen = (...params) => {
   // const {isSendRequestLoading} = useSelector(state => state.auth);
   // console.log(' === isSendRequestLoading ===> ', isSendRequestLoading);
 
+  const capitalizeFirstLetter = str =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+
   const [currentDesignation, setCurrentDesignation] = useState(
-    userPersonalData?.userProfessional?.jobTitle || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userProfessional?.jobTitle),
   );
   const [jobType, setJobType] = useState(
-    userPersonalData?.userProfessional?.jobType || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userProfessional?.jobType),
   );
   const [companyName, setCompanyName] = useState(
-    userPersonalData?.userProfessional?.companyName || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userProfessional?.companyName),
   );
   const [salary, setSalary] = useState(
     userPersonalData?.userProfessional?.currentSalary || 'N/A',
   );
   const [workCity, setWorkCity] = useState(
-    userPersonalData?.userProfessional?.workCity || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userProfessional?.workCity),
   );
   const [workCountry, setWorkCountry] = useState(
-    userPersonalData?.userProfessional?.workCountry || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userProfessional?.workCountry),
   );
   const [isEditing, setIsEditing] = useState(false);
 
@@ -59,6 +63,15 @@ const AdminProfessionalDetailsScreen = (...params) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View
+        style={{
+          width: '100%',
+          borderColor: '#E8E8E8',
+          borderWidth: 0.7,
+          marginTop: hp(25),
+        }}
+      />
+
       <View style={style.bodyContainer}>
         <View style={style.bodySubContainer}>
           <Text style={style.tittleText}>Current Designation</Text>
@@ -148,7 +161,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
             {/*{isSendRequestLoading ? (*/}
             {/*  <ActivityIndicator size="small" color={colors.blue} />*/}
             {/*) : (*/}
-            <Image source={icons.save_icon} style={style.saveIcon} />
+            <Image source={icons.new_Save_icon} style={style.saveIcon} />
             {/*)}*/}
           </TouchableOpacity>
         </View>
@@ -161,7 +174,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
             {/*{isSendRequestLoading ? (*/}
             {/*  <ActivityIndicator size="small" color={colors.blue} />*/}
             {/*) : (*/}
-            <Image source={icons.edit_icon} style={style.editIcon} />
+            <Image source={icons.new_edit_icon} style={style.editIcon} />
             {/*)}*/}
           </TouchableOpacity>
         </View>

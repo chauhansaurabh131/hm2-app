@@ -1,117 +1,233 @@
 import React, {useRef, useState} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
+import {colors} from '../../utils/colors';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {useDispatch, useSelector} from 'react-redux';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {icons} from '../../assets';
-import {colors} from '../../utils/colors';
-import {fontSize} from '../../utils/helpers';
+import {updateDetails} from '../../actions/homeActions';
 
 const Abc = () => {
-  const bottomSheetRef = useRef(null);
-  const [selectedOption, setSelectedOption] = useState(null); // Start as null to track no selection
+  const {user} = useSelector(state => state.auth);
+  const initialHobbies = user?.user?.hobbies || []; // Default to empty array if undefined
 
-  // Function to handle option selection
-  const handleOptionSelect = option => {
-    setSelectedOption(option); // Update selected option
-    bottomSheetRef.current.close(); // Close the bottom sheet
+  console.log(' === initialHobbies ===> ', initialHobbies);
+
+  const [hobbies, setHobbies] = useState(initialHobbies); // State for selected hobbies
+  const [creative, setCreative] = useState(''); // TextInput value
+  const [isEditing, setIsEditing] = useState(false); // State for Edit/Save toggle
+  const refRBSheet = useRef(); // Reference for the Bottom Sheet
+  const apiDispatch = useDispatch();
+
+  // List of all available hobbies for selection
+  const availableHobbies = [
+    'dancing',
+    'singing',
+    'writing',
+    'running',
+    'racing',
+    'gambler',
+    ...initialHobbies.filter(
+      hobby =>
+        ![
+          'dancing',
+          'singing',
+          'writing',
+          'running',
+          'racing',
+          'gambler',
+        ].includes(hobby.toLowerCase()),
+    ),
+  ];
+
+  // Function to handle hobby selection/deselection
+  const toggleHobby = hobby => {
+    if (hobbies.includes(hobby)) {
+      // Remove hobby if already selected
+      setHobbies(hobbies.filter(item => item !== hobby));
+    } else {
+      // Add hobby if not selected
+      setHobbies([...hobbies, hobby]);
+    }
+    // refRBSheet.current.close(); // Close BottomSheet after selection
   };
 
-  // Function to handle "Add" button press
-  const handleAddPress = () => {
-    console.log('Selected option:', selectedOption); // Log selected option to the terminal
+  // Function to handle Save button click
+  const handleSave = () => {
+    console.log('Selected Hobbies:', hobbies); // Log selected hobbies
+    setIsEditing(false); // Toggle back to Edit mode
+
+    apiDispatch(updateDetails({hobbies: hobbies}));
   };
 
   return (
-    <SafeAreaView
-      style={{marginHorizontal: 17, backgroundColor: 'white', flex: 1}}>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          style={{
-            marginTop: 50,
-            width: '100%',
-            height: 50,
-            borderColor: '#E5E5E5',
-            borderWidth: 1,
-            borderRadius: 50,
-            paddingLeft: 20,
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-          onPress={() => bottomSheetRef.current.open()} // Open the bottom sheet
-        >
-          <Text>{selectedOption || 'Open'}</Text>
-          {/* Display selected option or "Open" */}
-          <Image
-            source={icons.drooDownLogo}
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      {/* Edit/Save Button */}
+      {isEditing ? (
+        <View>
+          <TouchableOpacity
+            onPress={handleSave}
             style={{
-              width: 13,
-              height: 10,
-              marginRight: 21,
-              tintColor: colors.black,
+              marginTop: hp(10),
+              borderRadius: 25,
+              backgroundColor: '#F0F9FF',
+              width: hp(40),
+              height: hp(40),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.new_Save_icon}
+              style={{
+                width: hp(15),
+                height: hp(15),
+                tintColor: colors.blue,
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              refRBSheet.current.open(); // Open BottomSheet
+              setIsEditing(true);
             }}
-          />
-        </TouchableOpacity>
-      </View>
+            style={{
+              marginTop: hp(10),
+              borderRadius: 25,
+              backgroundColor: '#F0F9FF',
+              width: hp(40),
+              height: hp(40),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.new_edit_icon}
+              style={{width: hp(15), height: hp(15), tintColor: colors.blue}}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
 
-      <TouchableOpacity
-        style={{
-          marginTop: 50,
-          width: '100%',
-          height: 50,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: selectedOption ? 'black' : '#d3d3d3',
-        }}
-        onPress={handleAddPress} // Add onPress handler to log the selected option
-        disabled={!selectedOption} // Disable button if no option is selected
-      >
-        <Text style={{fontSize: fontSize(24), color: 'white'}}>Add</Text>
-      </TouchableOpacity>
+      <View style={{marginHorizontal: 17, marginTop: 50}}>
+        <TextInput
+          value={creative}
+          onChangeText={setCreative}
+          placeholder={'Hobbies and Interest'}
+          editable={false}
+          style={{
+            color: colors.black,
+            fontSize: fontSize(18),
+            lineHeight: hp(28),
+            fontFamily: fontFamily.poppins600,
+            marginTop: hp(2),
+            borderWidth: 1,
+            borderColor: colors.gray,
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: 5,
+            borderTopWidth: 0,
+            borderLeftWidth: 0,
+            borderRightWidth: 0,
+          }}
+        />
+
+        {/* Display hobbies as tags */}
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginTop: hp(10),
+          }}>
+          {hobbies.map((hobby, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => toggleHobby(hobby)} // Remove hobby on press
+              style={{
+                borderColor: colors.gray,
+                borderWidth: 1,
+                borderRadius: 20,
+                paddingHorizontal: wp(15),
+                paddingVertical: hp(5),
+                marginRight: wp(10),
+                marginBottom: hp(10),
+                backgroundColor: colors.white,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                  lineHeight: hp(24),
+                }}>
+                {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
 
       {/* Bottom Sheet */}
       <RBSheet
-        ref={bottomSheetRef}
-        height={300}
+        ref={refRBSheet}
+        height={hp(300)}
         openDuration={250}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        // onClose={() => setIsEditing(false)} // Close editing mode when bottom sheet closes
         customStyles={{
-          draggableIcon: {
-            backgroundColor: '#ffffff',
-          },
           container: {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
+            paddingHorizontal: wp(5),
+          },
+          draggableIcon: {
+            backgroundColor: colors.gray,
           },
         }}>
-        <View style={{marginHorizontal: 17}}>
-          <Text style={{fontSize: 18, marginBottom: 10}}>
-            This is a Bottom Sheet
+        <View>
+          <Text
+            style={{
+              fontSize: fontSize(18),
+              fontFamily: fontFamily.poppins600,
+              marginBottom: hp(2),
+            }}>
+            Edit Hobbies
           </Text>
+          <View style={{width: '100%', height: 1, backgroundColor: 'red'}} />
 
-          <TouchableOpacity
-            style={{marginTop: 10}}
-            onPress={() => handleOptionSelect('1 Month')}>
-            <Text>1 Month</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{marginTop: 10}}
-            onPress={() => handleOptionSelect('3 Month')}>
-            <Text>3 Month</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{marginTop: 10}}
-            onPress={() => handleOptionSelect('6 Month')}>
-            <Text>6 Month</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{marginTop: 10}}
-            onPress={() => handleOptionSelect('Till I activate')}>
-            <Text>Till I activate</Text>
-          </TouchableOpacity>
+          <View style={{marginHorizontal: 17}}>
+            {availableHobbies.map((hobby, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => toggleHobby(hobby)} // Add/remove hobby on press
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    marginRight: wp(5),
+                    color: hobbies.includes(hobby)
+                      ? colors.green
+                      : colors.black,
+                  }}>
+                  {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </RBSheet>
     </SafeAreaView>

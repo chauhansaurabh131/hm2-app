@@ -31,6 +31,7 @@ import io from 'socket.io-client';
 import NewAddStoryScreen from '../newAddStoryScreen';
 import {RequestUserPermission} from '../../service/pushNotification';
 import NewPremiumMatchesComponent from '../../components/newPremiumMatchesComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const HomeScreen = ({route}) => {
   const [showMeAll, setShowMeAll] = useState(false);
@@ -106,6 +107,10 @@ const HomeScreen = ({route}) => {
   }, [dispatch]);
 
   const {userData} = useSelector(state => state.home);
+
+  // {userData?.data?.length}
+
+  // console.log(' === 1111 ===> ', userData?.data[0]?.totalDocs);
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
@@ -226,6 +231,10 @@ const HomeScreen = ({route}) => {
     }
   };
 
+  const closeWelcomeModal = () => {
+    setShowModal(false);
+  };
+
   const toggleModal = () => {
     // console.log(' === toggleModal ===> ', topModalVisible);
     setTopModalVisible(!topModalVisible);
@@ -266,6 +275,13 @@ const HomeScreen = ({route}) => {
     setShowMeAllStories(false);
   };
 
+  const topModalBottomSheetRef = useRef(null);
+
+  // Function to open bottom sheet from Abc component
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <View style={{marginHorizontal: 17}}>
@@ -283,7 +299,8 @@ const HomeScreen = ({route}) => {
           {/*TOP PROFILE BUTTON TOGGLE*/}
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={openTopSheetModal}
+            // onPress={openTopSheetModal}
+            onPress={openBottomSheet}
             style={style.headerTopSheetImageContainer}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
@@ -291,6 +308,8 @@ const HomeScreen = ({route}) => {
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={{marginTop: hp(15)}}>
           <NewAddStoryScreen />

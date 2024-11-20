@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
+  Alert,
+  FlatList,
 } from 'react-native';
 import {colors} from '../../utils/colors';
 import {icons, images} from '../../assets';
@@ -25,7 +27,8 @@ const SuccessStoryEditInformationScreen = ({route}) => {
   const [description, setDescrition] = useState('');
   const [birthday, setBirthday] = useState('');
   const [partnerId, setPartnerId] = useState('');
-  const [selectedImages, setSelectedImages] = useState([null, null, null]);
+  // const [selectedImages, setSelectedImages] = useState([null, null, null]);
+  const [selectedImages, setSelectedImages] = useState([]);
   const [imagePaths, setImagePaths] = useState([]); // Add this state to store image paths
   const navigation = useNavigation();
 
@@ -206,6 +209,31 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     });
   };
 
+  const openGallery = () => {
+    const options = {
+      mediaType: 'photo',
+      selectionLimit: 1, // Limit selection to 1 image per selection
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('Image Picker Error: ', response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        const newImageUri = response.assets[0].uri;
+
+        // Check if adding the new image exceeds the 3-image limit
+        if (selectedImages.length >= 3) {
+          Alert.alert('Limit Exceeded', 'You can only add up to 3 images.');
+        } else {
+          // Add the new image URI to the selectedImages array
+          setSelectedImages(prevImages => [...prevImages, newImageUri]);
+        }
+      }
+    });
+  };
+
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
   };
@@ -253,17 +281,27 @@ const SuccessStoryEditInformationScreen = ({route}) => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.introText}>
-        Let's spread your love story to the world.
+      <Text style={styles.introText}>Share Your Story</Text>
+      <Text
+        style={{
+          color: '#9D9D9D',
+          marginHorizontal: 17,
+          fontSize: fontSize(12),
+          lineHeight: hp(18),
+          fontFamily: fontFamily.poppins400,
+          marginBottom: hp(20),
+          marginTop: 2,
+        }}>
+        Found your partner on HappyMilan?
       </Text>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <Text style={styles.label}>Me & His Name</Text>
+          <Text style={styles.label}>Your & Your Partner Name</Text>
 
           <TextInput
             placeholder={'Name'}
-            placeholderTextColor={'grey'}
+            placeholderTextColor={'#D9D9D9'}
             value={name.toString()}
             onChangeText={setName}
             style={styles.input}
@@ -273,7 +311,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
 
           <TextInput
             placeholder={'DD/MM/YYYY'}
-            placeholderTextColor={'grey'}
+            placeholderTextColor={'#D9D9D9'}
             style={styles.input}
             onChangeText={handleBirthdayChange}
             value={birthday}
@@ -284,7 +322,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
 
           <TextInput
             placeholder={'Enter Here'}
-            placeholderTextColor={'grey'}
+            placeholderTextColor={'#D9D9D9'}
             maxLength={8}
             value={partnerId} // Ensure state is bound to this input
             onChangeText={setPartnerId} // Ensure this updates the state
@@ -302,55 +340,99 @@ const SuccessStoryEditInformationScreen = ({route}) => {
             style={styles.textArea}
           />
 
-          <View style={styles.imageContainer}>
-            <TouchableOpacity
-              onPress={() => ImagePicker(0)}
-              style={styles.imagePicker}>
-              {selectedImages[0] ? (
-                <Image
-                  source={{uri: selectedImages[0]}}
-                  style={styles.selectedImage}
-                />
-              ) : (
-                <>
-                  <Image source={icons.add_image_icon} style={styles.icon} />
-                  <Text style={styles.addPhotoText}>Add Photo</Text>
-                </>
-              )}
-            </TouchableOpacity>
+          {/*<View style={styles.imageContainer}>*/}
+          {/*  <TouchableOpacity*/}
+          {/*    onPress={() => ImagePicker(0)}*/}
+          {/*    style={styles.imagePicker}>*/}
+          {/*    {selectedImages[0] ? (*/}
+          {/*      <Image*/}
+          {/*        source={{uri: selectedImages[0]}}*/}
+          {/*        style={styles.selectedImage}*/}
+          {/*      />*/}
+          {/*    ) : (*/}
+          {/*      <>*/}
+          {/*        <Image source={icons.add_image_icon} style={styles.icon} />*/}
+          {/*        <Text style={styles.addPhotoText}>Add Photo</Text>*/}
+          {/*      </>*/}
+          {/*    )}*/}
+          {/*  </TouchableOpacity>*/}
 
-            <TouchableOpacity
-              onPress={() => ImagePicker(1)}
-              style={styles.imagePicker}>
-              {selectedImages[1] ? (
-                <Image
-                  source={{uri: selectedImages[1]}}
-                  style={styles.selectedImage}
-                />
-              ) : (
-                <>
-                  <Image source={icons.add_image_icon} style={styles.icon} />
-                  <Text style={styles.addPhotoText}>Add Photo</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
+          {/*  <TouchableOpacity*/}
+          {/*    onPress={() => ImagePicker(1)}*/}
+          {/*    style={styles.imagePicker}>*/}
+          {/*    {selectedImages[1] ? (*/}
+          {/*      <Image*/}
+          {/*        source={{uri: selectedImages[1]}}*/}
+          {/*        style={styles.selectedImage}*/}
+          {/*      />*/}
+          {/*    ) : (*/}
+          {/*      <>*/}
+          {/*        <Image source={icons.add_image_icon} style={styles.icon} />*/}
+          {/*        <Text style={styles.addPhotoText}>Add Photo</Text>*/}
+          {/*      </>*/}
+          {/*    )}*/}
+          {/*  </TouchableOpacity>*/}
+          {/*</View>*/}
+
+          {/*<TouchableOpacity*/}
+          {/*  onPress={() => ImagePicker(2)}*/}
+          {/*  style={styles.imagePickerFull}>*/}
+          {/*  {selectedImages[2] ? (*/}
+          {/*    <Image*/}
+          {/*      source={{uri: selectedImages[2]}}*/}
+          {/*      style={styles.selectedImageFull}*/}
+          {/*    />*/}
+          {/*  ) : (*/}
+          {/*    <>*/}
+          {/*      <Image source={icons.add_image_icon} style={styles.icon} />*/}
+          {/*      <Text style={styles.addPhotoText}>Add Photo</Text>*/}
+          {/*    </>*/}
+          {/*  )}*/}
+          {/*</TouchableOpacity>*/}
 
           <TouchableOpacity
-            onPress={() => ImagePicker(2)}
-            style={styles.imagePickerFull}>
-            {selectedImages[2] ? (
-              <Image
-                source={{uri: selectedImages[2]}}
-                style={styles.selectedImageFull}
-              />
-            ) : (
-              <>
-                <Image source={icons.add_image_icon} style={styles.icon} />
-                <Text style={styles.addPhotoText}>Add Photo</Text>
-              </>
-            )}
+            style={{
+              width: '100%',
+              height: 50,
+              borderRadius: 100,
+              borderColor: '#E6E6E6',
+              borderWidth: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 27,
+            }}
+            onPress={openGallery} // Open the gallery when the button is pressed
+          >
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins400,
+              }}>
+              Add Marriage Photos
+            </Text>
           </TouchableOpacity>
+
+          <FlatList
+            data={selectedImages}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item}) => (
+              <Image
+                source={{uri: item}}
+                style={{
+                  width: 112,
+                  height: 154,
+                  marginTop: 20,
+                  marginRight: 10, // Add space between images
+                  borderRadius: 10,
+                }}
+                resizeMode="cover"
+              />
+            )}
+            horizontal // Set to true for horizontal scrolling
+            showsHorizontalScrollIndicator={false} // Hide horizontal scrollbar
+          />
 
           <View style={styles.actionButtons}>
             <TouchableOpacity
@@ -413,9 +495,9 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: fontSize(16),
     lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
     marginTop: hp(35),
-    marginBottom: hp(20),
+    // marginBottom: hp(20),
     marginHorizontal: 17,
   },
   content: {
@@ -424,8 +506,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.black,
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
     fontFamily: fontFamily.poppins400,
   },
   input: {
@@ -434,9 +516,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.black,
-    marginTop: hp(10),
-    padding: 10,
+    marginTop: hp(8),
+    // padding: 10,
     color: colors.black,
+    marginBottom: 25,
+    paddingLeft: 20,
+    paddingRight: 15,
   },
   textArea: {
     height: hp(150),
@@ -496,12 +581,12 @@ const styles = StyleSheet.create({
     marginTop: 54,
   },
   notNowButton: {
-    width: 100,
+    width: hp(140),
     height: 50,
     backgroundColor: '#F8F8F8',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 100,
   },
   notNowText: {
     color: colors.black,
@@ -510,14 +595,17 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
   },
   publishButton: {
-    width: 100,
+    width: hp(180),
     height: 50,
-    borderRadius: 10,
+    borderRadius: 100,
     justifyContent: 'center',
   },
   publishButtonText: {
     textAlign: 'center',
     color: colors.white,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
   },
 });
 

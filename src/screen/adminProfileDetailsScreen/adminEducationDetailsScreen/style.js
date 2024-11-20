@@ -9,6 +9,7 @@ export const style = StyleSheet.create({
   },
   bodyContainer: {
     marginTop: hp(30),
+    marginHorizontal: 17,
   },
   bodySubContainer: {
     marginBottom: hp(15),
@@ -40,7 +41,7 @@ export const style = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    right: 0,
+    right: 20,
     top: -45,
   },
   buttonBodyContainer: {
@@ -53,14 +54,14 @@ export const style = StyleSheet.create({
     justifyContent: 'center',
   },
   saveIcon: {
-    width: hp(20),
-    height: hp(20),
-    resizeMode: 'contain',
+    width: hp(15),
+    height: hp(15),
     tintColor: colors.blue,
+    // resizeMode: 'contain',
   },
   editIcon: {
-    width: hp(25),
-    height: hp(25),
+    width: hp(15),
+    height: hp(15),
     tintColor: colors.blue,
   },
 });

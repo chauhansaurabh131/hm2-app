@@ -102,12 +102,34 @@ const SuccessStoryPageScreen = ({route}) => {
                 <Text style={style.readTextNumberStyle}>10K</Text>
                 <Text style={style.readTextStyle}>Read</Text>
               </View>
+
+              <View
+                style={{
+                  width: 1,
+                  height: 25,
+                  // borderRadius: 'red',
+                  backgroundColor: '#F1EFEF',
+                  // borderColor: 'red',
+                  marginRight: hp(27),
+                }}
+              />
+
               <View style={style.headingTittleStyle}>
                 <Text style={style.heartNumberStyle}>9K</Text>
                 <Text style={style.heartTextStyle}>Heart</Text>
               </View>
             </View>
           </View>
+
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    width: 1,*/}
+          {/*    height: 25,*/}
+          {/*    // borderRadius: 'red',*/}
+          {/*    backgroundColor: 'red',*/}
+          {/*    borderColor: 'red',*/}
+          {/*  }}*/}
+          {/*/>*/}
 
           <Text style={style.headingDescriptionTextStyle}>
             {story?.content ||
@@ -126,33 +148,76 @@ const SuccessStoryPageScreen = ({route}) => {
             affair ended when he had her beheaded.)`}
           </Text>
 
-          <View style={style.shareImageContainer}>
-            <TouchableOpacity activeOpacity={0.6}>
-              <Image source={icons.share_icon} style={style.shareIconStyle} />
-              <Text style={{color: 'black', fontSize: 10}}>Share</Text>
-            </TouchableOpacity>
+          {/*<View style={style.shareImageContainer}>*/}
+          {/*  <TouchableOpacity activeOpacity={0.6}>*/}
+          {/*    <Image source={icons.share_icon} style={style.shareIconStyle} />*/}
+          {/*    <Text style={{color: 'black', fontSize: 10}}>Share</Text>*/}
+          {/*  </TouchableOpacity>*/}
 
-            <View style={style.spaceStyle} />
+          {/*  <View style={style.spaceStyle} />*/}
 
-            <TouchableOpacity activeOpacity={0.6}>
-              <Image source={icons.heart_icon} style={style.heartIconStyle} />
-            </TouchableOpacity>
-          </View>
+          {/*  <TouchableOpacity activeOpacity={0.6}>*/}
+          {/*    <Image source={icons.heart_icon} style={style.heartIconStyle} />*/}
+          {/*  </TouchableOpacity>*/}
+          {/*</View>*/}
 
           {/*<Text style={style.userNameTextStyle}>Riya & Rohan</Text>*/}
-          <Text style={style.userNameTextStyle}>
-            Story of {story?.title || 'Riya & Rohan'}
-          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              // backgroundColor: 'orange',
+              alignItems: 'center',
+              marginTop: 40,
+            }}>
+            <View>
+              <Text style={style.userNameTextStyle}>
+                {story?.title || 'Riya & Rohan'}
+              </Text>
+              <Text style={style.userDateTextStyle}>
+                Married on 19 Apr 2023
+              </Text>
+            </View>
 
-          <Text style={style.userDateTextStyle}>Married on 19 Apr 2023</Text>
+            <View
+              style={{flexDirection: 'row', position: 'absolute', right: 0}}>
+              <TouchableOpacity activeOpacity={0.5}>
+                <Image
+                  source={icons.success_Icon_icon}
+                  style={{
+                    width: hp(38),
+                    height: hp(38),
+                    resizeMode: 'contain',
+                    marginRight: hp(16),
+                  }}
+                />
+              </TouchableOpacity>
 
+              <TouchableOpacity activeOpacity={0.5}>
+                <Image
+                  source={icons.success_share_icon}
+                  style={{width: hp(38), height: hp(38), resizeMode: 'contain'}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 1,
+            backgroundColor: '#E7E7E7',
+            marginTop: hp(30),
+          }}
+        />
+        <View style={{marginHorizontal: 17}}>
           <Text
             style={{
-              marginTop: 40,
+              marginTop: 20,
               color: colors.black,
               fontSize: hp(14),
               lineHeight: hp(21),
-              fontFamily: fontFamily.poppins400,
+              fontFamily: fontFamily.poppins500,
             }}>
             Read More Stories
           </Text>
@@ -165,7 +230,7 @@ const SuccessStoryPageScreen = ({route}) => {
             onBackButtonPress={toggleModal}
           />
 
-          <View style={{height: 150}} />
+          <View style={{height: 50}} />
         </View>
       </ScrollView>
     </SafeAreaView>

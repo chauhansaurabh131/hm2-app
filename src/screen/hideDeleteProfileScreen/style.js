@@ -174,7 +174,7 @@ const style = StyleSheet.create({
     marginTop: hp(66),
   },
   confirmButtonStyle: {
-    width: wp(126),
+    width: hp(126),
     height: hp(50),
     borderRadius: 50,
     justifyContent: 'center',

@@ -6,9 +6,8 @@ import {
   View,
   StyleSheet,
   Image,
-  TouchableOpacity,
   ActivityIndicator,
-  ImageBackground,
+  TouchableOpacity,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getSuccessStories} from '../../actions/homeActions';
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     marginRight: 15, // Spacing between cards
-    marginLeft: 2,
+    // marginLeft: 2,
     // shadowColor: '#000',
     // shadowOffset: {width: 0, height: 2},
     // shadowOpacity: 0.2,

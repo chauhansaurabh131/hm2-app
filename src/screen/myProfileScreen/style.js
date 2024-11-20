@@ -39,7 +39,7 @@ const style = StyleSheet.create({
 
   UserDetailsContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: hp(5),
     width: '100%',
     // backgroundColor: 'rgba(0,0,0,0.2)',
     // marginRight: wp(17),
@@ -168,6 +168,7 @@ const style = StyleSheet.create({
     height: 8,
     marginTop: hp(20),
     tintColor: colors.blue,
+    resizeMode: 'contain',
   },
 });
 

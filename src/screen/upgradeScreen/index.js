@@ -16,6 +16,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {paymentDetails} from '../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const UpgradeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('silver');
@@ -26,6 +27,15 @@ const UpgradeScreen = () => {
   const [pressed, setPressed] = useState(false);
 
   const dispatch = useDispatch();
+
+  const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openTopBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   useEffect(() => {
     dispatch(paymentDetails());
@@ -392,13 +402,16 @@ const UpgradeScreen = () => {
               style={style.headerLogoStyle}
             />
 
-            <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+            {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+            <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
               <Image
-                source={images.profileDisplayImage}
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
                 style={style.profileImageStyle}
               />
             </TouchableOpacity>
           </View>
+
+          <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
           <View style={style.headerDescriptionContainer}>
             <Text style={style.headerTittleTextStyle}>

@@ -2,7 +2,6 @@ import React, {useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
   SafeAreaView,
   StyleSheet,
   View,
@@ -16,17 +15,19 @@ const ImagePaginationAndPinableComponent = ({images}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const flatListRef = useRef(null);
 
-  const renderItem = ({item}) => (
-    <View style={{flex: 1}}>
-      <Pinchable>
-        <FastImage
-          source={{uri: item}} // Display the image from the URI
-          style={{width: width, height: '100%'}}
-          resizeMode="stretch"
-        />
-      </Pinchable>
-    </View>
-  );
+  const renderItem = ({item}) => {
+    return (
+      <View style={{flex: 1, backgroundColor: 'black'}}>
+        <Pinchable>
+          <FastImage
+            source={{uri: item}}
+            style={{width: width, height: '100%'}}
+            resizeMode="contain"
+          />
+        </Pinchable>
+      </View>
+    );
+  };
 
   const handleScroll = event => {
     if (event && event.nativeEvent && event.nativeEvent.contentOffset) {
@@ -36,14 +37,9 @@ const ImagePaginationAndPinableComponent = ({images}) => {
     }
   };
 
-  const onViewableItemsChanged = useRef(({viewableItems}) => {
-    if (viewableItems.length > 0) {
-      setCurrentPage(viewableItems[0].index || 0);
-    }
-  }).current;
-
   return (
     <SafeAreaView style={{flex: 1}}>
+      {/* FlatList to render images */}
       <FlatList
         ref={flatListRef}
         data={images} // Pass the images prop here
@@ -53,17 +49,17 @@ const ImagePaginationAndPinableComponent = ({images}) => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{itemVisiblePercentThreshold: 50}}
         scrollEventThrottle={16}
       />
-      <View style={styles.pagination}>
+
+      {/* Pagination as vertical line */}
+      <View style={styles.paginationContainer}>
         {images.map((_, index) => (
           <View
             key={index}
             style={[
-              styles.paginationDot,
-              currentPage === index && styles.paginationDotActive,
+              styles.paginationLine,
+              currentPage >= index && styles.paginationLineActive,
             ]}
           />
         ))}
@@ -73,23 +69,22 @@ const ImagePaginationAndPinableComponent = ({images}) => {
 };
 
 const styles = StyleSheet.create({
-  pagination: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+  paginationContainer: {
     position: 'absolute',
-    top: 13,
-    justifyContent: 'space-evenly',
+    top: 10, // Place near the top
+    width: '90%', // Almost full screen width
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Spread lines evenly
+    alignSelf: 'center',
   },
-  paginationDot: {
-    width: 48.53,
-    height: 3,
-    borderRadius: 4,
+  paginationLine: {
+    height: 2, // Thickness of the line
+    flex: 1, // Each line takes equal space
     backgroundColor: 'grey',
-    marginHorizontal: 5,
+    marginHorizontal: 4, // Small gap between lines
   },
-  paginationDotActive: {
-    backgroundColor: 'white',
+  paginationLineActive: {
+    backgroundColor: 'white', // Highlight active line
   },
 });
 

@@ -51,41 +51,6 @@ const HomeTopSheetComponent = ({
   // console.log(' === isModalVisible  open===> ', isModalVisible);
 
   useEffect(() => {
-    if (!accessToken) {
-      return;
-    }
-
-    const socketIo = io('https://happymilan.tech', {
-      path: '/api/socket.io',
-      query: {token: accessToken},
-    });
-
-    socketIo.on('connect', () => {
-      console.log('Connected to socket');
-      socketIo.emit('userInActive');
-    });
-
-    socketIo.on('onlineUser', data => {
-      console.log('Data from socket:', data);
-    });
-
-    socketIo.on('disconnect', () => {
-      console.log('Disconnected from socket');
-      socketIo.emit('userInActive');
-    });
-
-    setSocket(socketIo);
-
-    return () => {
-      if (socket) {
-        socket.emit('userInActive');
-        socket.disconnect();
-      }
-      setSocket(null);
-    };
-  }, [accessToken]);
-
-  useEffect(() => {
     let timeoutId;
 
     if (isVisible) {

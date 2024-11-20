@@ -77,7 +77,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   readTextNumberStyle: {
-    marginRight: wp(37),
+    marginRight: wp(27),
     textAlign: 'center',
     color: colors.black,
     fontSize: fontSize(14),
@@ -85,7 +85,7 @@ const style = StyleSheet.create({
     fontFamily: fontFamily.poppins600,
   },
   readTextStyle: {
-    marginRight: 37,
+    marginRight: hp(27),
     fontSize: fontSize(8),
     lineHeight: hp(12),
     fontFamily: fontFamily.poppins500,
@@ -144,13 +144,13 @@ const style = StyleSheet.create({
   },
   userNameTextStyle: {
     color: colors.black,
-    fontSize: fontSize(18),
-    lineHeight: hp(27),
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
     fontFamily: fontFamily.poppins500,
-    marginTop: hp(30),
+    // marginTop: hp(30),
   },
   userDateTextStyle: {
-    color: colors.lightGray,
+    color: '#858585',
   },
 });
 

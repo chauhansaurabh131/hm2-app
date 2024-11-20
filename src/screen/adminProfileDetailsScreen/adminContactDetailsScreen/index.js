@@ -13,6 +13,7 @@ import {icons} from '../../../assets';
 import {style} from './style';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../../actions/homeActions';
+import {hp} from '../../../utils/helpers';
 
 const AdminContactDetailsScreen = (...params) => {
   const userPersonalData = params[0];
@@ -46,6 +47,15 @@ const AdminContactDetailsScreen = (...params) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View
+        style={{
+          width: '100%',
+          borderColor: '#E8E8E8',
+          borderWidth: 0.7,
+          marginTop: hp(25),
+        }}
+      />
+
       <View style={style.bodyContainer}>
         <View style={style.bodySubContainer}>
           <Text style={style.tittleText}>Mobile Number</Text>
@@ -106,7 +116,7 @@ const AdminContactDetailsScreen = (...params) => {
             {isUpdatingProfile ? (
               <ActivityIndicator size="small" color={colors.blue} />
             ) : (
-              <Image source={icons.save_icon} style={style.saveIcon} />
+              <Image source={icons.new_Save_icon} style={style.saveIcon} />
             )}
           </TouchableOpacity>
         </View>
@@ -119,7 +129,7 @@ const AdminContactDetailsScreen = (...params) => {
             {isUpdatingProfile ? (
               <ActivityIndicator size="small" color={colors.blue} />
             ) : (
-              <Image source={icons.edit_icon} style={style.editIcon} />
+              <Image source={icons.new_edit_icon} style={style.editIcon} />
             )}
           </TouchableOpacity>
         </View>

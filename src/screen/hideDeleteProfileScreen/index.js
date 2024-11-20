@@ -24,6 +24,7 @@ import {changeStack, logout} from '../../actions/authActions';
 import {updateDetails} from '../../actions/homeActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
@@ -39,12 +40,16 @@ const HideDeleteProfileScreen = () => {
 
   const apiDispatch = useDispatch();
 
-  const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
-
+  const {user} = useSelector(state => state.auth);
   const token = user?.tokens?.access?.token;
-
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const handleOptionSelect = option => {
     setSelectedOption(option); // Update selected option
@@ -166,13 +171,16 @@ const HideDeleteProfileScreen = () => {
             style={style.customerHeaderImage}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}
@@ -558,7 +566,14 @@ const HideDeleteProfileScreen = () => {
                   borderRadius: 50,
                   justifyContent: 'center',
                 }}>
-                <Text style={{color: colors.white, textAlign: 'center'}}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    textAlign: 'center',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
                   Delete
                 </Text>
               </LinearGradient>
@@ -733,7 +748,11 @@ const HideDeleteProfileScreen = () => {
                 <CommonGradientButton
                   onPress={onHideProfilePress}
                   buttonName={'Yes, Hide'}
-                  containerStyle={{width: wp(126), height: hp(50)}}
+                  containerStyle={{
+                    width: hp(126),
+                    height: hp(50),
+                    borderRadius: 50,
+                  }}
                 />
               </View>
             </View>

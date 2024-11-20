@@ -13,6 +13,7 @@ import {style} from './style';
 import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import {educationDetails} from '../../../actions/homeActions';
+import {hp} from '../../../utils/helpers';
 
 const AdminEducationDetailsScreen = (...params) => {
   const userPersonalData = params[0];
@@ -20,20 +21,23 @@ const AdminEducationDetailsScreen = (...params) => {
 
   const {isEducationLoading} = useSelector(state => state.auth);
 
+  const capitalizeFirstLetter = str =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+
   const [degree, setDegree] = useState(
-    userPersonalData?.userEducation?.degree || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userEducation?.degree),
   );
   const [college, setCollege] = useState(
-    userPersonalData?.userEducation?.collage || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userEducation?.collage),
   );
   const [city, setCity] = useState(
-    userPersonalData?.userEducation?.city || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userEducation?.city),
   );
   const [state, setState] = useState(
-    userPersonalData?.userEducation?.state || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userEducation?.state),
   );
   const [country, setCountry] = useState(
-    userPersonalData?.userEducation?.country || 'N/A',
+    capitalizeFirstLetter(userPersonalData?.userEducation?.country),
   );
   const [isEditing, setIsEditing] = useState(false);
 
@@ -53,6 +57,15 @@ const AdminEducationDetailsScreen = (...params) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View
+        style={{
+          width: '100%',
+          borderColor: '#E8E8E8',
+          borderWidth: 0.7,
+          marginTop: hp(25),
+        }}
+      />
+
       <View style={style.bodyContainer}>
         <View style={style.bodySubContainer}>
           <Text style={style.tittleText}>Degree</Text>
@@ -129,7 +142,7 @@ const AdminEducationDetailsScreen = (...params) => {
             {isEducationLoading ? (
               <ActivityIndicator size="small" color={colors.blue} />
             ) : (
-              <Image source={icons.save_icon} style={style.saveIcon} />
+              <Image source={icons.new_Save_icon} style={style.saveIcon} />
             )}
           </TouchableOpacity>
         </View>
@@ -142,7 +155,7 @@ const AdminEducationDetailsScreen = (...params) => {
             {isEducationLoading ? (
               <ActivityIndicator size="small" color={colors.blue} />
             ) : (
-              <Image source={icons.edit_icon} style={style.editIcon} />
+              <Image source={icons.new_edit_icon} style={style.editIcon} />
             )}
           </TouchableOpacity>
         </View>

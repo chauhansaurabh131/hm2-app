@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
@@ -9,6 +9,7 @@ import CheckBoxComponent from '../../components/checkBoxComponent ';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import ProfileCheckboxGroup from '../../components/profileCheckBox';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const EmailSmsAlertScreen = () => {
   const navigation = useNavigation();
@@ -17,6 +18,12 @@ const EmailSmsAlertScreen = () => {
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -56,13 +63,16 @@ const EmailSmsAlertScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}
@@ -125,18 +135,11 @@ const EmailSmsAlertScreen = () => {
         </Text>
 
         <View style={{marginTop: 4}}>
-          {/*<CheckBoxComponent*/}
-          {/*  options={privacyOptions}*/}
-          {/*  onSelect={handleSelect}*/}
-          {/*  defaultSelectedId={1}*/}
-          {/*/>*/}
-
           <ProfileCheckboxGroup
             data={privacyOptions}
             selectedId={1}
-            layout="horizontal" // Specify layout as "horizontal"
-            // containerRow={{marginTop: 10}}
             containerLabel={{color: 'orange'}}
+            checkboxRowContainer={{alignItems: 'center'}}
           />
         </View>
       </View>

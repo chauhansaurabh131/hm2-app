@@ -9,6 +9,7 @@ export const style = StyleSheet.create({
   },
   containerBody: {
     marginTop: hp(15),
+    marginHorizontal: 17,
   },
   detailTittleText: {
     fontSize: fontSize(14),

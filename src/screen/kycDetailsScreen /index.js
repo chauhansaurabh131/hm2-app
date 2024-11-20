@@ -21,6 +21,7 @@ import {useSelector} from 'react-redux';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const KycDetailsScreen = ({route}) => {
   const {kycData} = route.params; // Retrieve kycData from route params
@@ -37,6 +38,12 @@ const KycDetailsScreen = ({route}) => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -241,13 +248,16 @@ const KycDetailsScreen = ({route}) => {
             source={images.happyMilanColorLogo}
             style={style.customerHeaderImage}
           />
-          <TouchableOpacity onPress={openTopSheetModal}>
+          {/*<TouchableOpacity onPress={openTopSheetModal}>*/}
+          <TouchableOpacity onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={style.headingTittleContainer}>
           {/*<Image*/}
@@ -275,10 +285,13 @@ const KycDetailsScreen = ({route}) => {
 
       <View style={style.submitFunctionContainer}>
         {kycData?.isDocUpload || isSubmitted ? (
-          <Text style={style.finalSubmitText}>
-            Thank you for submitting documents. We will review and update you
-            within 24 hours.
-          </Text>
+          <>
+            <Text style={style.uploadIdText}>Upload ID</Text>
+            <Text style={style.finalSubmitText}>
+              Thank you for submitting documents. We will review and update you
+              within 24 hours.
+            </Text>
+          </>
         ) : selectedImage ? (
           <View>
             <Text style={style.uploadIdText}>Upload ID</Text>
@@ -415,6 +428,9 @@ const KycDetailsScreen = ({route}) => {
                 color: colors.white,
                 marginLeft: hp(20),
                 textAlign: 'center',
+                fontSize: fontSize(14),
+                lineHeight: hp(21),
+                fontFamily: fontFamily.poppins400,
               }}>
               Start Verification
             </Text>
@@ -428,6 +444,7 @@ const KycDetailsScreen = ({route}) => {
                 position: 'absolute',
                 right: 0,
                 transform: [{rotate: '180deg'}],
+                resizeMode: 'contain',
               }}
             />
           </LinearGradient>

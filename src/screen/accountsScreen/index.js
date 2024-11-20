@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -15,6 +15,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const AccountsScreen = ({navigation}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -25,6 +26,12 @@ const AccountsScreen = ({navigation}) => {
   const userId = user?.user?.id;
 
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -96,13 +103,16 @@ const AccountsScreen = ({navigation}) => {
             style={style.customerHeaderImage}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <Text style={style.headerTittleStyle}>Account Setting</Text>
       </View>

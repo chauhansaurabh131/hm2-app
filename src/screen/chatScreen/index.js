@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -19,6 +19,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import io from 'socket.io-client';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect} from '@react-navigation/native';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -33,6 +34,12 @@ const ChatScreen = ({navigation}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
 
   const dispatch = useDispatch();
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -178,7 +185,8 @@ const ChatScreen = ({navigation}) => {
             style={style.customerHeaderLogo}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             {userImage ? (
               <Image source={{uri: userImage}} style={style.profileLogoStyle} />
             ) : (
@@ -189,6 +197,8 @@ const ChatScreen = ({navigation}) => {
             )}
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -16,6 +16,7 @@ import CommonGradientButton from '../../components/commonGradientButton';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const PlanScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -24,6 +25,12 @@ const PlanScreen = () => {
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -42,13 +49,16 @@ const PlanScreen = () => {
             style={style.customerHeaderImage}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}

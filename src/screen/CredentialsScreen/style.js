@@ -149,7 +149,8 @@ const style = StyleSheet.create({
   bottomSheetButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: isIOS ? hp(40) : hp(50),
+    // marginTop: isIOS ? hp(40) : hp(40),
+    marginTop: hp(40),
     // backgroundColor: 'red',
   },
   bottomSheetNotNowContainer: {
@@ -188,9 +189,9 @@ const style = StyleSheet.create({
   submitButtonTextStyle: {
     textAlign: 'center',
     color: colors.white,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins600,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
   },
   verificationTextStyle: {
     color: colors.black,

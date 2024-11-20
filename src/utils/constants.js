@@ -18,6 +18,8 @@ import AdminEducationDetailsScreen from '../screen/adminProfileDetailsScreen/adm
 import AdminProfessionalDetailsScreen from '../screen/adminProfileDetailsScreen/adminProfessionalDetailsScreen';
 import AdminHobbiesAndInterestScreen from '../screen/adminProfileDetailsScreen/adminHobbiesAndInterestScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AdminPartnerPreferenceScreen from '../screen/adminProfileDetailsScreen/adminPartnerPreferenceScreen';
+import {hp} from './helpers';
 
 export const STANDARD_SCREEN_HEIGHT = 764;
 export const STANDARD_SCREEN_WIDTH = 390;
@@ -166,6 +168,12 @@ export const AdminDetailsProfile = [
     phaseName: 'Hobbies and Interest',
     component: params => <AdminHobbiesAndInterestScreen {...params} />,
     icon: require('../assets/icons/interner_logo.png'),
+  },
+  {
+    phaseName: 'Partner Preference',
+    component: params => <AdminPartnerPreferenceScreen {...params} />,
+    icon: require('../assets/icons/edit_partner_preference.png'),
+    style: {width: hp(18), height: hp(18), resize: 'contain'},
   },
 ];
 

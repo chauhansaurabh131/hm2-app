@@ -22,6 +22,7 @@ import {accepted_Decline_Request, userLike} from '../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
 import NewAddStoryScreen from '../newAddStoryScreen';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const UserDetailScreen = ({navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -45,9 +46,11 @@ const UserDetailScreen = ({navigation}) => {
 
   const {userData, matchesUserData} = route.params;
 
-  console.log(' === userData... ===> ', matchesUserData?.userLikeDetails);
+  const topModalBottomSheetRef = useRef(null);
 
-  // console.log(' === matchesUserData ===> ', matchesUserData);
+  const openTopBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const {isSendRequestLoading} = useSelector(state => state.home);
 
@@ -341,7 +344,8 @@ const UserDetailScreen = ({navigation}) => {
           style={style.customHeaderLogo}
         />
 
-        <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+        {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+        <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
           <Image
             // source={images.profileDisplayImage}
             source={userImage ? {uri: userImage} : images.empty_male_Image}
@@ -349,6 +353,8 @@ const UserDetailScreen = ({navigation}) => {
           />
         </TouchableOpacity>
       </View>
+
+      <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
       <View style={style.userStoryContainer}>
         <NewAddStoryScreen />
@@ -1057,9 +1063,10 @@ const UserDetailScreen = ({navigation}) => {
               }}
             />
           </TouchableOpacity>
-          <UsersProfileDetailsScreen userData={userData || matchesUserData} />
-          <View style={{height: 50}} />
+          {/*<UsersProfileDetailsScreen userData={userData || matchesUserData} />*/}
         </View>
+        <UsersProfileDetailsScreen userData={userData || matchesUserData} />
+        <View style={{height: 50}} />
       </ScrollView>
     </SafeAreaView>
   );

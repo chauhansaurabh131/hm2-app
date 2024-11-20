@@ -20,6 +20,7 @@ import * as text from 'formik';
 import {colors} from '../../utils/colors';
 import {changeStack, logout} from '../../actions/authActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const CredentialsScreen = () => {
   const navigation = useNavigation();
@@ -51,8 +52,12 @@ const CredentialsScreen = () => {
   const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
-
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+  const openTopBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   // console.log(' === currentMobile ===> ', currentMobile);
 
@@ -604,13 +609,16 @@ const CredentialsScreen = () => {
             style={style.customerHeaderImage}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}
@@ -705,7 +713,7 @@ const CredentialsScreen = () => {
 
       <RBSheet
         ref={bottomSheetRef}
-        height={430}
+        height={hp(430)}
         closeOnDragDown={true}
         closeOnPressMask={true}
         customStyles={{
@@ -722,7 +730,7 @@ const CredentialsScreen = () => {
 
       <RBSheet
         ref={passwordBottomSheetRef}
-        height={isIOS ? 550 : 530} // Adjust the height as per your requirement
+        height={isIOS ? hp(550) : hp(530)} // Adjust the height as per your requirement
         closeOnDragDown={true}
         closeOnPressMask={true}
         customStyles={{
@@ -740,7 +748,7 @@ const CredentialsScreen = () => {
       {/*PASSWORD CHANGE SECOND BOTTOMSHEET*/}
       <RBSheet
         ref={bottomSheetPasswordChangeRef2}
-        height={350} // Set the height of the bottom sheet
+        height={hp(350)} // Set the height of the bottom sheet
         closeOnPressMask={false} // Allows closing when clicking outside the bottom sheet
         customStyles={{
           container: {

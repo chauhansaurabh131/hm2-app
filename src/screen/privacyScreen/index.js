@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
@@ -6,8 +6,9 @@ import {useNavigation} from '@react-navigation/native';
 import ProfileCheckboxGroup from '../../components/profileCheckBox';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
-import {hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const PrivacyScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -16,8 +17,13 @@ const PrivacyScreen = () => {
   const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
-
   const userImage = user?.user?.profilePic;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -83,13 +89,16 @@ const PrivacyScreen = () => {
             style={style.customerHeaderImage}
           />
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.profileImageStyle}
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}
@@ -124,6 +133,7 @@ const PrivacyScreen = () => {
             data={Display_Name}
             selectedId={selectedId || 1} // Default to 1 if `selectedId` is undefined
             onChange={handleCheckboxChange}
+            checkboxRowContainer={{alignItems: 'center'}}
           />
         </View>
       </View>
@@ -136,18 +146,19 @@ const PrivacyScreen = () => {
         </Text>
 
         <View style={{marginTop: hp(10)}}>
-          {/*<ProfileCheckboxGroup*/}
-          {/*  data={Profile_Privacy}*/}
-          {/*  selectedId={1}*/}
-          {/*  containerRow={{marginTop: 10}}*/}
-          {/*/>*/}
-
           <ProfileCheckboxGroup
             data={Profile_Privacy}
             selectedId={1}
-            layout="vertical" // Specify layout as "vertical"
             containerRow={{marginTop: 10}}
+            outerCircle={{top: 4}}
+            label={{
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins500,
+            }}
           />
+
+          {/*<Text></Text>*/}
         </View>
       </View>
     </SafeAreaView>

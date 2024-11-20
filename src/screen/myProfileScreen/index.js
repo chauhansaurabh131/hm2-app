@@ -21,6 +21,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {colors} from '../../utils/colors';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const MyProfileScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -35,6 +36,7 @@ const MyProfileScreen = () => {
   const bottomSheetRef = useRef(null);
 
   const navigation = useNavigation();
+  const topModalBottomSheetRef = useRef(null);
 
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
@@ -44,6 +46,10 @@ const MyProfileScreen = () => {
   const profileImage = user?.user?.profilePic;
 
   const dispatch = useDispatch();
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   useEffect(() => {
     // dataCountingList();
@@ -136,7 +142,8 @@ const MyProfileScreen = () => {
           style={style.customHeaderLogo}
         />
 
-        <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+        {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
+        <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
           <Image
             source={
               profileImage ? {uri: profileImage} : images.empty_male_Image
@@ -145,6 +152,8 @@ const MyProfileScreen = () => {
           />
         </TouchableOpacity>
       </View>
+
+      <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
       <View style={style.userStoryContainer}>
         <NewAddStoryScreen />
@@ -422,10 +431,10 @@ const MyProfileScreen = () => {
             />
           </TouchableOpacity>
 
-          <AdminProfileDetailsScreen
-            onEditButtonPress={handleEditDescription}
-            userData={userData}
-          />
+          {/*<AdminProfileDetailsScreen*/}
+          {/*  onEditButtonPress={handleEditDescription}*/}
+          {/*  userData={userData}*/}
+          {/*/>*/}
 
           {isEditing && (
             <TouchableOpacity onPress={handleSaveDescription}>
@@ -435,6 +444,11 @@ const MyProfileScreen = () => {
             </TouchableOpacity>
           )}
         </View>
+
+        <AdminProfileDetailsScreen
+          onEditButtonPress={handleEditDescription}
+          userData={userData}
+        />
       </ScrollView>
     </SafeAreaView>
   );
