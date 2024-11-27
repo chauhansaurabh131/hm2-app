@@ -1,4 +1,9 @@
 import * as TYPES from './actionTypes';
+import {
+  GET_ALL_ACCEPTED_DATING,
+  GET_ALL_ACCEPTED_FAILED_DATING,
+  GET_ALL_ACCEPTED_SUCCESS_DATING,
+} from './actionTypes';
 
 // GET ALL USER
 export function userDatas(data) {
@@ -307,4 +312,38 @@ export const datingPartnerReferencesSuccess = data => ({
 
 export const datingPartnerReferencesFailure = () => ({
   type: TYPES.DATING_PARTNER_PREFERENCES_DETAILS_FAILED,
+});
+
+// GET ALL REQUEST DATING
+export function getAllRequestedDating(payload, callBack) {
+  return {
+    type: TYPES.GET_ALL_REQUESTED_DATING,
+    data: {payload, callBack},
+  };
+}
+
+export const getAllRequestedSuccessDating = data => ({
+  type: TYPES.GET_ALL_REQUESTED_SUCCESS_DATING,
+  data,
+});
+
+export const getAllRequestedFailureDating = () => ({
+  type: TYPES.GET_ALL_REQUESTED_FAILED_DATING,
+});
+
+//GET ALL ACCEPTED FRIEND REQUESTED
+export function getAllAcceptedDating(payload, callBack) {
+  return {
+    type: TYPES.GET_ALL_ACCEPTED_DATING,
+    data: {payload, callBack},
+  };
+}
+
+export const getAllAcceptedSuccessDating = data => ({
+  type: TYPES.GET_ALL_ACCEPTED_SUCCESS_DATING,
+  data,
+});
+
+export const getAllAcceptedFailureDating = () => ({
+  type: TYPES.GET_ALL_ACCEPTED_FAILED_DATING,
 });

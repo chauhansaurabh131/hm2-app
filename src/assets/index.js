@@ -170,6 +170,9 @@ export const icons = {
   new_edit_icon: require('./icons/new_edit_icon.png'),
   new_Save_icon: require('./icons/new_save_icon.png'),
   edit_partner_preference: require('./icons/edit_partner_preference.png'),
+  dating_check_icon: require('./icons/dating_check_icon.png'),
+  dating_cancel_icon: require('./icons/dating_cancel_icon.png'),
+  date_cancel_icon: require('./icons/date_cancel_icon.png'),
 };
 
 export const gif = {

@@ -72,6 +72,8 @@ import ViewUserStatusScreen from '../screen/viewUserStatusScreen';
 import UserUploadImageFullScreen from '../screen/userUploadImageFullScreen';
 import UserProfileUploadImageFullScreen from '../screen/userProfileUploadImageFullScreen';
 import UserEditProfileScreen from '../screen/userEditProfileScreen';
+import DatingUserDetailsScreen from '../screen/datingAllScreen/datingUserDetailsScreen';
+import VerifyIdentityScreen from '../screen/verifyIdentityScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -444,6 +446,15 @@ const MainNavigator = () => {
           name={'UserEditProfileScreen'}
           component={UserEditProfileScreen}
         />
+        <Stack.Screen
+          name={'DatingUserDetailsScreen'}
+          component={DatingUserDetailsScreen}
+        />
+
+        <Stack.Screen
+          name={'VerifyIdentityScreen'}
+          component={VerifyIdentityScreen}
+        />
       </Stack.Navigator>
     );
   };
@@ -511,24 +522,6 @@ const MainNavigator = () => {
           }}
         />
 
-        {/*<Tab.Screen*/}
-        {/*  name="Home"*/}
-        {/*  component={appType === 'dating' ? ChatScreen : HomeScreen}*/}
-        {/*  // initialParams={{selectedBox: selectedBox}}*/}
-        {/*  options={{*/}
-        {/*    tabBarIcon: ({color, size, focused}) => (*/}
-        {/*      <Image source={icons.homeIcon} style={getIconStyle(focused)} />*/}
-        {/*    ),*/}
-        {/*    tabBarLabel: ({focused}) => (*/}
-        {/*      <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>*/}
-        {/*        Home*/}
-        {/*      </Text>*/}
-        {/*    ),*/}
-        {/*    tabBarButton: props => <CustomTabBarButton {...props} />,*/}
-        {/*    headerShown: false,*/}
-        {/*  }}*/}
-        {/*/>*/}
-
         <Tab.Screen
           name="Matches"
           component={appType === 'dating' ? DatingExploreScreen : MatchesScreen}
@@ -542,7 +535,8 @@ const MainNavigator = () => {
             ),
             tabBarLabel: ({focused}) => (
               <Text style={[getLabelStyle(focused), style.bottomTabTextStyle]}>
-                Matches
+                {/*Explore*/}
+                {appType === 'dating' ? 'Explore' : 'Matches'}
               </Text>
             ),
             tabBarButton: props => <CustomTabBarButton {...props} />,

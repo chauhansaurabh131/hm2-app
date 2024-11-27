@@ -4,6 +4,11 @@ import * as homeActions from '../actions/homeActions';
 import * as TYPES from '../actions/actionTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
+import {GET_ALL_ACCEPTED_DATING} from '../actions/actionTypes';
+import {
+  getAllAcceptedFailureDating,
+  getAllAcceptedSuccessDating,
+} from '../actions/homeActions';
 
 function* getUserData(action) {
   try {
@@ -279,6 +284,33 @@ function* AddDatingPartnerReferences(action) {
   }
 }
 
+function* getAllRequesteDating(action) {
+  try {
+    const response = yield call(
+      home.datingGetAllRequested,
+      action.data.payload,
+    );
+    yield put(homeActions.getAllRequestedSuccessDating(response.data));
+    if (action.data.callBack) {
+      action.data.callBack();
+    }
+  } catch (error) {
+    yield put(homeActions.getAllRequestedFailureDating());
+  }
+}
+
+function* getAllAcceptedDatingData(action) {
+  try {
+    const response = yield call(home.datingGetAllAccepted, action.data.payload);
+    yield put(homeActions.getAllAcceptedSuccessDating(response.data));
+    if (action.data.callBack) {
+      action.data.callBack();
+    }
+  } catch (error) {
+    yield put(homeActions.getAllAcceptedFailureDating());
+  }
+}
+
 function* homeSaga() {
   yield all([takeLatest(TYPES.GET_USER_DATA, getUserData)]);
   yield all([takeLatest(TYPES.SEND_REQUEST, sendFriendRequest)]);
@@ -309,6 +341,11 @@ function* homeSaga() {
       TYPES.DATING_PARTNER_PREFERENCES_DETAILS,
       AddDatingPartnerReferences,
     ),
+  ]);
+
+  yield all([takeLatest(TYPES.GET_ALL_REQUESTED_DATING, getAllRequesteDating)]);
+  yield all([
+    takeLatest(TYPES.GET_ALL_ACCEPTED_DATING, getAllAcceptedDatingData),
   ]);
   // yield all([takeLatest(TYPES.REMOVE_SHORT_LIST, removeShortLists)]);
   // yield all([takeLatest(TYPES.USER_LIKE, userLikes)]);

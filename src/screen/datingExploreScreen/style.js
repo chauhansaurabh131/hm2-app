@@ -33,7 +33,8 @@ export const style = StyleSheet.create({
   buttonGroup: {
     flexDirection: 'row',
     alignSelf: 'center',
-    width: wp(245),
+    // width: wp(245),
+    width: '100%',
     height: hp(40),
     borderRadius: 20,
     borderColor: '#F1F1F1',
@@ -42,7 +43,7 @@ export const style = StyleSheet.create({
   },
   activeButton: {
     borderRadius: 20,
-    width: wp(123),
+    width: wp(107),
     height: hp(40),
     justifyContent: 'center',
     alignItems: 'center',
@@ -56,7 +57,7 @@ export const style = StyleSheet.create({
   inactiveButton: {
     backgroundColor: 'transparent',
     borderRadius: 20,
-    width: wp(123),
+    width: wp(124),
     height: hp(40),
     justifyContent: 'center',
     alignItems: 'center',
@@ -105,7 +106,53 @@ export const style = StyleSheet.create({
     marginTop: hp(17),
   },
   categoryBodyContainer: {
-    // alignItems: 'center',
     marginTop: hp(5),
+  },
+  requestRenderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: hp(10),
+  },
+  renderUserProfileImage: {
+    width: hp(47),
+    height: hp(47),
+    borderRadius: 25,
+    marginRight: wp(16),
+  },
+  requestRenderBodyContainer: {
+    flex: 1,
+    marginTop: hp(30),
+  },
+  requestRenderNameContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  requestRenderName: {
+    fontSize: fontSize(16),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins600,
+    color: colors.black,
+  },
+  requestRenderRelative: {
+    fontSize: fontSize(10),
+    lineHeight: hp(15),
+    fontFamily: fontFamily.poppins400,
+    color: '#BEBDBD',
+  },
+  requestRenderOccupation: {
+    fontSize: fontSize(10),
+    lineHeight: hp(12),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  requestRenderButtonContainer: {
+    flexDirection: 'row',
+    top: 10,
+  },
+  requestRenderButton: {
+    width: hp(63),
+    height: hp(34),
+    resizeMode: 'contain',
   },
 });

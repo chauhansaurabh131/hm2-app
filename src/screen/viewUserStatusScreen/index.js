@@ -15,9 +15,10 @@ import {
 import {useNavigation, useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradient
 import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {icons} from '../../assets';
 import {useSelector} from 'react-redux';
+import CommonGradientButton from '../../components/commonGradientButton';
 
 const ViewUserStatusScreen = () => {
   const route = useRoute(); // Get the route object
@@ -298,37 +299,98 @@ const ViewUserStatusScreen = () => {
           <View
             style={{
               backgroundColor: 'white',
-              padding: 20,
+              // padding: 0,
               borderRadius: 10,
-              width: '80%',
-              alignItems: 'center',
+              // width: '80%',
+              // alignItems: 'center',
+              width: hp(340),
             }}>
-            <Text style={{fontSize: 18, marginBottom: 20}}>
-              Are you sure you want to delete this status?
-            </Text>
-
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <TouchableOpacity
+            <View style={{marginHorizontal: hp(38)}}>
+              <Text
                 style={{
-                  backgroundColor: 'red',
-                  padding: 10,
-                  borderRadius: 5,
-                  marginRight: 10,
-                }}
-                onPress={handleDelete}>
-                <Text style={{color: 'white'}}>Delete</Text>
-              </TouchableOpacity>
+                  fontSize: fontSize(18),
+                  lineHeight: hp(27),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.black,
+                  marginTop: hp(64),
+                  textAlign: 'center',
+                }}>
+                Confirm to delete this status?
+              </Text>
 
-              <TouchableOpacity
+              <View
                 style={{
-                  backgroundColor: 'gray',
-                  padding: 10,
-                  borderRadius: 5,
-                }}
-                onPress={handleCancel}>
-                <Text style={{color: 'white'}}>Cancel</Text>
-              </TouchableOpacity>
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: hp(44),
+                  marginBottom: hp(38),
+                }}>
+                {/*<TouchableOpacity*/}
+                {/*  style={{*/}
+                {/*    backgroundColor: 'red',*/}
+                {/*    padding: 10,*/}
+                {/*    borderRadius: 5,*/}
+                {/*    marginRight: 10,*/}
+                {/*  }}*/}
+                {/*  onPress={handleDelete}>*/}
+                {/*  <Text style={{color: 'white'}}>Delete</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                <TouchableOpacity activeOpacity={0.7} onPress={handleCancel}>
+                  <LinearGradient
+                    colors={['#0D4EB3', '#9413D0']}
+                    style={{
+                      width: wp(126),
+                      height: hp(50),
+                      borderRadius: 50,
+                      borderWidth: 1,
+                      justifyContent: 'center',
+                      borderColor: 'transparent', // Set border color to transparent
+                    }}>
+                    <View
+                      style={{
+                        borderRadius: 50, // <-- Inner Border Radius
+                        flex: 1,
+                        backgroundColor: colors.white,
+                        justifyContent: 'center',
+                        margin: isIOS ? 0 : 1,
+                      }}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          backgroundColor: 'transparent',
+                          color: colors.black,
+                          margin: 10,
+                          fontSize: fontSize(14),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins600,
+                        }}>
+                        Not Now
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{*/}
+                {/*    backgroundColor: 'gray',*/}
+                {/*    padding: 10,*/}
+                {/*    borderRadius: 5,*/}
+                {/*  }}*/}
+                {/*  onPress={handleCancel}>*/}
+                {/*  <Text style={{color: 'white'}}>Cancel</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                <CommonGradientButton
+                  onPress={handleDelete}
+                  buttonName={'Yes, Delete'}
+                  containerStyle={{
+                    width: hp(126),
+                    height: hp(50),
+                    borderRadius: 50,
+                  }}
+                />
+              </View>
             </View>
           </View>
         </View>

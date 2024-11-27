@@ -1549,7 +1549,9 @@ const MatchesScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+        <View>
+          <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+        </View>
 
         <HomeTopSheetComponent
           isVisible={topModalVisible}

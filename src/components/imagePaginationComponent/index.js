@@ -21,7 +21,7 @@ const ImagePaginationComponent = ({imageUrls}) => {
       <Image
         source={{uri: item}}
         style={{width: width, height: hp(500), backgroundColor: 'black'}}
-        resizeMode="stretch"
+        resizeMode="contain"
       />
       <LinearGradient
         colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
@@ -46,6 +46,7 @@ const ImagePaginationComponent = ({imageUrls}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      {/* Image Slider */}
       <FlatList
         ref={flatListRef}
         data={imageUrls}
@@ -59,13 +60,15 @@ const ImagePaginationComponent = ({imageUrls}) => {
         viewabilityConfig={{itemVisiblePercentThreshold: 50}}
         scrollEventThrottle={16}
       />
+
+      {/* Pagination */}
       <View style={styles.pagination}>
         {imageUrls.map((_, index) => (
           <View
             key={index}
             style={[
               styles.paginationDot,
-              currentPage === index && styles.paginationDotActive,
+              index <= currentPage ? styles.paginationDotActive : null, // White for current and previous
             ]}
           />
         ))}
@@ -83,22 +86,21 @@ const styles = StyleSheet.create({
     height: 200, // Adjust the height as per your requirement
   },
   pagination: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
     position: 'absolute',
-    top: 13,
-    justifyContent: 'space-evenly',
+    top: 10, // Place near the top
+    width: '90%', // Almost full screen width
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Spread lines evenly
+    alignSelf: 'center',
   },
   paginationDot: {
-    width: 48.53,
-    height: 3,
-    borderRadius: 4,
-    backgroundColor: 'grey',
-    marginHorizontal: 5,
+    height: 2, // Thickness of the line
+    flex: 1, // Each line takes equal space
+    backgroundColor: 'grey', // Default grey color
+    marginHorizontal: 4, // Small gap between lines
   },
   paginationDotActive: {
-    backgroundColor: 'white',
+    backgroundColor: 'white', // White for current and previous images
   },
 });
 

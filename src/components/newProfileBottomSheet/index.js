@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../assets';
@@ -50,135 +57,155 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
   };
 
   const onLogOutPress = () => {
-    // closeBottomSheet();
+    closeBottomSheet();
     setConfirmationVisible(true);
-    // bottomSheetRef.current.close();
   };
 
   return (
-    <RBSheet
-      ref={bottomSheetRef}
-      height={hp(550)}
-      openDuration={250}
-      customStyles={{
-        container: {
-          justifyContent: 'center',
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-        },
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}>
-      <View style={{flex: 1}}>
-        {/* Touchable Text to close the bottom sheet */}
-        {/*<TouchableOpacity onPress={closeBottomSheet}>*/}
-        {/*  <Text>Profile Details</Text>*/}
-        {/*</TouchableOpacity>*/}
-        <View style={{marginHorizontal: 27}}>
-          <Image
-            source={userImage ? {uri: userImage} : images.empty_male_Image}
-            style={styles.modalHeaderProfileStyle}
-          />
+      <RBSheet
+        ref={bottomSheetRef}
+        height={hp(550)}
+        openDuration={250}
+        customStyles={{
+          container: {
+            justifyContent: 'center',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        <View style={{flex: 1}}>
+          {/* Touchable Text to close the bottom sheet */}
+          {/*<TouchableOpacity onPress={closeBottomSheet}>*/}
+          {/*  <Text>Profile Details</Text>*/}
+          {/*</TouchableOpacity>*/}
+          <View style={{marginHorizontal: 27}}>
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={styles.modalHeaderProfileStyle}
+            />
 
-          <Text style={styles.userNameTextStyle}>{name}</Text>
+            <Text style={styles.userNameTextStyle}>{name}</Text>
 
-          <View style={styles.userDescriptionContainer}>
-            <Text style={styles.userNumberTextStyle}>{UserUniqueId}</Text>
-            <View style={styles.userDescriptionTextStyle} />
-            <Text style={styles.freeProfileText}>FREE Profile</Text>
+            <View style={styles.userDescriptionContainer}>
+              <Text style={styles.userNumberTextStyle}>{UserUniqueId}</Text>
+              <View style={styles.userDescriptionTextStyle} />
+              <Text style={styles.freeProfileText}>FREE Profile</Text>
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={{marginTop: hp(12)}}
+              onPress={() => {
+                navigation.navigate('Upgrader');
+                closeBottomSheet();
+              }}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={styles.upgradeContainer}>
+                <Text style={styles.upgradeText}>Upgrade</Text>
+                <Image source={icons.crownIcon} style={styles.crownIconStyle} />
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{marginTop: hp(12)}}
-            onPress={() => {
-              navigation.navigate('Upgrader');
-              closeBottomSheet();
-            }}>
-            <LinearGradient
-              colors={['#0D4EB3', '#9413D0']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1.5}}
-              style={styles.upgradeContainer}>
-              <Text style={styles.upgradeText}>Upgrade</Text>
-              <Image source={icons.crownIcon} style={styles.crownIconStyle} />
-            </LinearGradient>
-          </TouchableOpacity>
+          <View style={styles.horizontalLine} />
+
+          <View style={styles.bodyContainer}>
+            <TouchableOpacity
+              style={styles.labelContainer}
+              onPress={() => {
+                {
+                  appType === 'dating'
+                    ? navigation.navigate('DatingProfileScreen')
+                    : navigation.navigate('MyProfileScreen');
+                }
+                closeBottomSheet();
+              }}>
+              <View style={styles.labelViewContainer}>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={icons.profileLogo}
+                    style={styles.profileIcon}
+                  />
+                </View>
+                <Text style={styles.labelText}>My Profile</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.labelContainer}
+              onPress={() => {
+                navigation.navigate('AccountsScreen');
+                closeBottomSheet();
+              }}>
+              <View style={styles.labelViewContainer}>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={icons.settingIcon}
+                    style={styles.settingIcon}
+                  />
+                </View>
+                <Text style={styles.labelText}>Accounts</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.labelContainer}
+              onPress={() => {
+                navigation.navigate('PrivacyScreen');
+                closeBottomSheet();
+              }}>
+              <View style={styles.labelViewContainer}>
+                <View style={styles.imageContainer}>
+                  <Image source={icons.logLogo} style={styles.privacyIcon} />
+                </View>
+                <Text style={styles.labelText}>Privacy Policy</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.labelContainer}
+              onPress={() => {
+                navigation.navigate('ConnectToWebScreen');
+                closeBottomSheet();
+              }}>
+              <View style={styles.labelViewContainer}>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={icons.linkDevicesIcon}
+                    style={styles.linkDeviceIcon}
+                  />
+                </View>
+                <Text style={styles.labelText}>Connect to Web</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={onLogOutPress}
+              style={styles.logOutContainer}>
+              <Text style={styles.buttonText}>Log Out</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+      </RBSheet>
 
-        <View style={styles.horizontalLine} />
-
-        <View style={styles.bodyContainer}>
-          <TouchableOpacity
-            style={styles.labelContainer}
-            onPress={() => {
-              {
-                appType === 'dating'
-                  ? navigation.navigate('DatingProfileScreen')
-                  : navigation.navigate('MyProfileScreen');
-              }
-              closeBottomSheet();
-            }}>
-            <View style={styles.labelViewContainer}>
-              <View style={styles.imageContainer}>
-                <Image source={icons.profileLogo} style={styles.profileIcon} />
-              </View>
-              <Text style={styles.labelText}>My Profile</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.labelContainer}
-            onPress={() => {
-              navigation.navigate('AccountsScreen');
-              closeBottomSheet();
-            }}>
-            <View style={styles.labelViewContainer}>
-              <View style={styles.imageContainer}>
-                <Image source={icons.settingIcon} style={styles.settingIcon} />
-              </View>
-              <Text style={styles.labelText}>Accounts</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.labelContainer}
-            onPress={() => {
-              navigation.navigate('PrivacyScreen');
-              closeBottomSheet();
-            }}>
-            <View style={styles.labelViewContainer}>
-              <View style={styles.imageContainer}>
-                <Image source={icons.logLogo} style={styles.privacyIcon} />
-              </View>
-              <Text style={styles.labelText}>Privacy Policy</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.labelContainer}
-            onPress={() => {
-              navigation.navigate('ConnectToWebScreen');
-              closeBottomSheet();
-            }}>
-            <View style={styles.labelViewContainer}>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={icons.linkDevicesIcon}
-                  style={styles.linkDeviceIcon}
-                />
-              </View>
-              <Text style={styles.labelText}>Connect to Web</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={onLogOutPress}
-            style={styles.logOutContainer}>
-            <Text style={styles.buttonText}>Log Out</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <Modal animationType="none" isVisible={isConfirmationVisible}>
+      <Modal
+        transparent={true}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        isVisible={isConfirmationVisible}
+        onBackdropPress={onStayButtonPress} // Dismiss on backdrop press if desired
+        backdropOpacity={0.7} // Semi-transparent background
+      >
         <View style={styles.modalBodyContainer}>
           <Text style={styles.modalTextStyle}>
             Are you sure you want to exit?
@@ -191,14 +218,11 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0.5}}
                 style={styles.stayButtonContainer}>
-                <Text style={styles.stayTextStyle}>stay</Text>
+                <Text style={styles.stayTextStyle}>Stay</Text>
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              activeOpacity={0.7}
-              // onPress={SelectSetDurationModalClose}
-              onPress={handleLogout}>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleLogout}>
               <LinearGradient
                 colors={['#0D4EB3', '#9413D0']}
                 style={styles.logOutContainers}>
@@ -210,7 +234,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           </View>
         </View>
       </Modal>
-    </RBSheet>
+    </SafeAreaView>
   );
 };
 
@@ -301,9 +325,9 @@ const styles = StyleSheet.create({
   labelText: {
     color: colors.black,
     marginLeft: hp(17),
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontWeight: fontFamily.poppins400,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontWeight: fontFamily.poppins500,
   },
   profileIcon: {
     width: hp(17.22),

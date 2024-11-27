@@ -825,7 +825,7 @@ const MatchesInNewScreen = () => {
       {/* Bottom Sheet */}
       <RBSheet
         ref={sheetRef}
-        height={300} // Height of the bottom sheet
+        height={hp(150)} // Height of the bottom sheet
         // openDuration={250} // Duration of the opening animation
         closeOnDragDown={true} // Allow closing the sheet by dragging it down
         customStyles={{
@@ -836,9 +836,9 @@ const MatchesInNewScreen = () => {
         }}>
         {/* Content inside the bottom sheet */}
         <View style={{flex: 1}}>
-          <Text style={{fontSize: 18}}>First Name: {selectedFirstName}</Text>
+          {/*<Text style={{fontSize: 18}}>First Name: {selectedFirstName}</Text>*/}
 
-          <View style={{marginHorizontal: 30}}>
+          <View style={{marginHorizontal: 30, marginTop: 20}}>
             <TouchableOpacity
               style={{
                 flexDirection: 'row',

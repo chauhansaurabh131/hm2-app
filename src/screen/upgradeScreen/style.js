@@ -38,49 +38,45 @@ const style = StyleSheet.create({
     color: colors.white,
     fontSize: fontSize(20),
     lineHeight: hp(30),
-    fontWeight: '600',
+    fontFamily: fontFamily.poppins600,
     marginBottom: hp(12),
   },
   headerTittleDescriptionTextStyle: {
     color: colors.white,
-    fontSize: fontSize(10),
-    lineHeight: hp(15),
-    fontWeight: '400',
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
   },
   itemContainer: {
-    marginTop: 10,
-    width: wp(340),
-    height: hp(91),
-    borderRadius: 15,
-    marginBottom: 1,
+    // marginTop: 10,
+    // width: wp(355),
+    width: '100%',
+    height: hp(113),
+    borderRadius: 20,
+    marginBottom: 17,
     backgroundColor: colors.white,
     alignSelf: 'center',
-    borderColor: colors.blue, // Border color
-    elevation: 1, // Add shadow
-    shadowColor: colors.blue, // Shadow color
-    shadowOffset: {width: 0, height: 2}, // Shadow offset
-    shadowOpacity: 0.5, // Shadow opacity
-    shadowRadius: 2, // Shadow radius
+    borderColor: '#EBEBEB', // Border color
+    // elevation: 1, // Add shadow
+    // shadowColor: colors.blue, // Shadow color
+    // shadowOffset: {width: 0, height: 2}, // Shadow offset
+    // shadowOpacity: 0.5, // Shadow opacity
+    // shadowRadius: 2, // Shadow radius
+    borderWidth: 1,
   },
   bottomSheetOneMonthText: {
-    textAlign: 'center',
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
-    color: colors.black,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins700,
+    color: '#8225AF',
   },
   oneMonthPriceText: {
     color: colors.black,
-    fontSize: fontSize(54),
-    lineHeight: hp(81),
+    fontSize: fontSize(30),
+    lineHeight: hp(54),
     fontFamily: fontFamily.poppins700,
-    textAlign: 'center',
   },
-  bottomSheetHeadingBodyContainer: {
-    flexDirection: 'row',
-    alignSelf: 'center',
-    alignItems: 'center',
-  },
+
   InrText: {
     color: colors.black,
     fontSize: fontSize(14),
@@ -89,44 +85,40 @@ const style = StyleSheet.create({
   },
   oldPriceText: {
     textDecorationLine: 'line-through',
-    marginLeft: 5,
     color: colors.black,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontSize: fontSize(18),
+    lineHeight: hp(27),
+    fontFamily: fontFamily.poppins600,
   },
   offerContainer: {
-    width: wp(84),
-    height: hp(28),
+    width: wp(93),
+    height: hp(29),
     borderRadius: 14,
-    backgroundColor: '#F0FCF6',
-    marginLeft: wp(10),
+    backgroundColor: '#A7F7D1',
     alignItems: 'center',
     justifyContent: 'center',
   },
   offerTextStyle: {
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins500,
-    color: '#17C270',
+    fontFamily: fontFamily.poppins600,
+    color: colors.black,
   },
   headingLine: {
-    marginTop: hp(25),
+    marginTop: hp(24),
     width: '100%',
-    borderWidth: 1,
-    borderColor: '#E3E3E3',
+    borderWidth: 0.7,
+    borderColor: '#EDEDED',
+    marginBottom: 24,
   },
   bodyTittleText: {
     fontSize: fontSize(16),
-    lineHeight: hp(28),
-    fontFamily: fontFamily.poppins600,
-    color: colors.black,
-    textAlign: 'center',
-    marginTop: hp(20),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins700,
+    color: '#8225AF',
   },
   tittleBodyContainer: {
-    marginHorizontal: wp(30),
-    marginTop: hp(18),
+    marginTop: hp(15),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -138,7 +130,7 @@ const style = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
   },
   tittleTextColor: {
-    color: colors.blue,
+    fontFamily: fontFamily.poppins600,
   },
   checkIcon: {
     width: hp(14),
@@ -146,10 +138,12 @@ const style = StyleSheet.create({
     resizeMode: 'contain',
   },
   bottomSheetBottomButtonContainer: {
-    flexDirection: 'row',
-    marginHorizontal: wp(30),
-    justifyContent: 'space-between',
-    marginTop: isIOS ? hp(30) : hp(50),
+    // flexDirection: 'row',
+    // marginHorizontal: wp(30),
+    // justifyContent: 'space-between',
+    // marginTop: isIOS ? hp(30) : hp(50),
+    marginHorizontal: 24,
+    marginTop: 32,
   },
   notNowButtonColorGradient: {
     width: wp(110),
@@ -176,9 +170,9 @@ const style = StyleSheet.create({
     fontFamily: fontFamily.poppins500,
   },
   payButtonColorGradient: {
-    width: wp(178),
+    width: '100%',
     height: hp(50),
-    borderRadius: 10,
+    borderRadius: 25,
     justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
@@ -186,9 +180,9 @@ const style = StyleSheet.create({
   payButtonText: {
     textAlign: 'center',
     color: colors.white,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins600,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
   },
   payButtonIcon: {
     width: hp(14),
@@ -198,7 +192,8 @@ const style = StyleSheet.create({
     marginLeft: wp(14),
   },
   headingBodYContainer: {
-    width: wp(335),
+    // width: wp(335),
+    width: '100%',
     height: hp(60),
     borderWidth: 1,
     borderColor: colors.blue,
@@ -209,6 +204,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    // marginHorizontal: 18,
   },
   silverTouchableFunctionality: {
     borderRadius: 25,
@@ -288,6 +284,82 @@ const style = StyleSheet.create({
     textAlign: 'center',
     color: colors.black,
     marginBottom: hp(24),
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
+    // marginTop: -20,
+  },
+
+  bottomTittleText: {
+    color: colors.black,
+    textAlign: 'center',
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
+    marginTop: hp(20),
+    marginBottom: hp(22),
+  },
+  bottomQueryBody: {
+    width: '100%',
+    borderColor: '#EBEBEB',
+    borderWidth: 1,
+    borderRadius: 14,
+  },
+  queryTittleContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 17,
+    marginBottom: hp(22),
+    marginTop: hp(22),
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  queryTittle: {
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins500,
+    color: colors.black,
+  },
+  querySubTittle: {
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  querySubTittleContainer: {
+    paddingHorizontal: 17,
+    marginBottom: hp(25),
+  },
+  queryBorderCenterLine: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#EBEBEB',
+  },
+  planSummeryTittle: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins700,
+    color: colors.black,
+  },
+  planSummerySubTittle: {
+    fontFamily: fontFamily.poppins400,
+  },
+  planSummaryPrice: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins700,
+    color: colors.black,
+  },
+  totalText: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins600,
+    color: colors.black,
+  },
+  gstTextStyle: {
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
   },
 });
 

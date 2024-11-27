@@ -1,0 +1,215 @@
+import {StyleSheet} from 'react-native';
+import {colors} from '../../../utils/colors';
+import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
+
+export const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: hp(14),
+    marginBottom: hp(10),
+  },
+  appLogo: {
+    width: wp(96),
+    height: hp(24),
+    marginLeft: wp(17),
+    resizeMode: 'contain',
+  },
+  profileIcon: {
+    width: hp(24),
+    height: hp(24),
+    borderRadius: 50,
+    marginRight: wp(17),
+    resizeMode: 'cover',
+  },
+  bodyImageContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '90%',
+    marginRight: wp(17),
+    marginHorizontal: wp(17),
+  },
+  imageBodyContainer: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+  },
+  onlineBody: {
+    width: wp(34),
+    height: hp(12),
+    borderRadius: 5,
+    backgroundColor: '#24FF00A8',
+  },
+  onlineText: {
+    color: colors.black,
+    fontSize: fontSize(9),
+    lineHeight: hp(12),
+    textAlign: 'center',
+  },
+  imageTittleContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  imageTittleText: {
+    color: colors.white,
+    fontSize: fontSize(24),
+    lineHeight: hp(36),
+    fontFamily: fontFamily.poppins700,
+  },
+  imageSubTittleContainer: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  imageSubTittleText: {
+    color: colors.white,
+    fontSize: fontSize(14),
+    lineHeight: hp(18),
+    fontFamily: fontFamily.poppins400,
+  },
+  verticalLine: {
+    width: 1,
+    height: '80%',
+    backgroundColor: '#E5E5E5CC',
+    marginLeft: hp(8),
+    marginRight: hp(8),
+    top: 2,
+  },
+  iconsContainer: {
+    marginHorizontal: 17,
+    marginTop: hp(26),
+  },
+  iconsBodyContainer: {
+    flexDirection: 'row',
+    // backgroundColor: 'silver',
+    justifyContent: 'center',
+  },
+  imagesContainer: {
+    width: hp(63),
+    height: hp(40),
+    borderRadius: 27,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 7,
+  },
+  disLikeIcon: {
+    width: hp(20),
+    height: hp(17),
+    resizeMode: 'contain',
+  },
+  cancelIcon: {
+    width: hp(15),
+    height: hp(15),
+    resizeMode: 'contain',
+  },
+  likeIcon: {
+    width: hp(19),
+    height: hp(17),
+    resizeMode: 'contain',
+  },
+  sendIcon: {
+    width: hp(17),
+    height: hp(17),
+    resizeMode: 'contain',
+  },
+  threeDotContainer: {
+    width: hp(35),
+    height: hp(40),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 6,
+  },
+  threeDotIcon: {
+    width: hp(15),
+    height: hp(20),
+  },
+  descriptionText: {
+    marginTop: hp(34),
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+    marginBottom: hp(28),
+  },
+  verticalBreakLine: {
+    width: '100%',
+    height: hp(8),
+    backgroundColor: '#F5F5F5',
+  },
+  purposeContainer: {
+    marginHorizontal: 17,
+    marginTop: hp(18),
+  },
+  purposeText: {
+    color: colors.black,
+    fontSize: fontSize(18),
+    lineHeight: hp(27),
+    fontFamily: fontFamily.poppins600,
+  },
+  purposeSubTittleContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: hp(15),
+  },
+  purposeSubTittleBody: {
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 20,
+    paddingVertical: hp(8),
+    paddingHorizontal: wp(15),
+    marginRight: wp(8),
+    marginBottom: hp(8),
+    marginTop: hp(14),
+  },
+  purposeSubTittleText: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    color: colors.black,
+    fontFamily: fontFamily.poppins400,
+  },
+  baseInfoContainer: {
+    marginHorizontal: 17,
+    marginTop: hp(21),
+  },
+  baseInfoMargin: {
+    marginTop: hp(21),
+  },
+  baseInfoTittle: {
+    fontSize: fontSize(14),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  baseInfoSubTittle: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins700,
+    color: colors.black,
+  },
+  languageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 15,
+  },
+  languageContainerBody: {
+    borderWidth: 1,
+    borderColor: '#DEDEDE',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    marginRight: 15,
+    marginBottom: 8,
+    marginTop: 3,
+  },
+  languageText: {
+    fontSize: fontSize(14),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
+    color: colors.black,
+  },
+});

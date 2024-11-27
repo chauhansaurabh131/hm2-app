@@ -9,6 +9,7 @@ const initialState = {
   isAddressLoading: false,
   isEducationLoading: false,
   appUsesType: '',
+  // getAllRequest: [],
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -201,6 +202,19 @@ export default (state = initialState, action) => {
       };
     case TYPES.DATING_PARTNER_PREFERENCES_DETAILS_FAILED:
       return {...state, isSendRequestLoading: false};
+
+    // GET ALL REQUESTED DATING
+    // case TYPES.GET_ALL_REQUESTED_DATING:
+    //   return {...state, isSendRequestLoading: true};
+    //
+    // case TYPES.GET_ALL_REQUESTED_SUCCESS_DATING:
+    //   return {
+    //     ...state,
+    //     getAllRequest: action.data,
+    //     isSendRequestLoading: false,
+    //   };
+    // case TYPES.GET_ALL_REQUESTED_FAILED_DATING:
+    //   return {...state, isSendRequestLoading: false};
 
     default:
       return state;

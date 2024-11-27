@@ -40,7 +40,6 @@ export const style = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
   },
   profileLikeDislikeContainer: {
-    // backgroundColor: 'green',
     marginHorizontal: wp(18),
     marginTop: hp(19),
   },
@@ -98,11 +97,12 @@ export const style = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
     marginTop: hp(27),
     marginBottom: hp(27),
+    marginHorizontal: hp(18),
   },
   backGroundSpace: {
     width: '100%',
     backgroundColor: '#F5F5F5',
-    height: hp(8),
+    height: hp(4),
   },
   purposeContainer: {
     marginTop: hp(18),
@@ -111,6 +111,7 @@ export const style = StyleSheet.create({
   purposeContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
   purposeTextStyle: {
     color: colors.black,

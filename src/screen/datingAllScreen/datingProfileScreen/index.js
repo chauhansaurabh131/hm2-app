@@ -152,11 +152,12 @@ const DatingProfileScreen = () => {
               </View>
             </View>
           </View>
-
-          <View style={style.horizontalLine} />
-
-          <Text style={style.writeBoutYourSelfText}>{writeBoutYourSelf}</Text>
         </View>
+
+        <View style={style.horizontalLine} />
+
+        <Text style={style.writeBoutYourSelfText}>{writeBoutYourSelf}</Text>
+        {/*</View>*/}
 
         <View style={style.backGroundSpace} />
 

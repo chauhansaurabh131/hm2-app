@@ -389,66 +389,56 @@ const KycDetailsScreen = ({route}) => {
       </View>
 
       {/*Photo Verify*/}
-      <View
-        style={{
-          width: '100%',
-          backgroundColor: '#E7E7E7',
-          height: 0.7,
-          marginTop: 27,
-          // marginBottom: 16,
-        }}
-      />
+      <View style={style.horizontalLine} />
 
       <View style={style.secondBodyContainer}>
-        <Text style={style.photoVerifyText}>Photo Verify</Text>
-
-        <View style={{marginTop: 15}}>
-          <Text style={style.SubTextTittle}>
-            To verify your profile photo with a selfie. Download{' '}
-          </Text>
-          <Text style={style.SubTextTittle}>app and Complete Verification</Text>
+        <View style={style.verifyTittleContainer}>
+          <Text style={style.photoVerifyText}>Photo Verify</Text>
+          {kycData?.isSelfieUpload && (
+            <Text style={style.reviewProgressText}>Review In Progress</Text>
+          )}
         </View>
 
-        <TouchableOpacity activeOpacity={0.7} style={{marginTop: hp(24)}}>
-          <LinearGradient
-            colors={['#0D4EB3', '#9413D0']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1.5}}
-            style={{
-              width: '100%',
-              height: 50,
-              borderRadius: 25,
-              flexDirection: 'row',
-              alignItems: 'center',
-              // justifyContent: 'space-between',
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                color: colors.white,
-                marginLeft: hp(20),
-                textAlign: 'center',
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
-              }}>
-              Start Verification
+        <View style={{marginTop: 15}}>
+          {kycData?.isSelfieUpload ? (
+            <>
+              <Text style={style.kycPictureSubTittle}>
+                Thank you! Your selfie has been submitted successfully
+              </Text>
+
+              <Text style={[style.kycPictureSubTittle, {marginTop: hp(15)}]}>
+                We'll notify you once verification is complete. Contact{'\n'}
+                support if you have questions
+              </Text>
+            </>
+          ) : (
+            <Text style={style.SubTextTittle}>
+              To verify your profile photo with a selfie. Download{'\n'}app and
+              Complete Verification
             </Text>
-            <Image
-              source={icons.back_arrow_icon}
-              style={{
-                width: hp(14),
-                height: hp(14),
-                tintColor: colors.white,
-                marginRight: hp(22.12),
-                position: 'absolute',
-                right: 0,
-                transform: [{rotate: '180deg'}],
-                resizeMode: 'contain',
-              }}
-            />
-          </LinearGradient>
-        </TouchableOpacity>
+          )}
+        </View>
+
+        {!kycData?.isSelfieUpload && (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={style.verifyButtonContainer}
+            onPress={() => {
+              navigation.navigate('VerifyIdentityScreen');
+            }}>
+            <LinearGradient
+              colors={['#0D4EB3', '#9413D0']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1.5}}
+              style={style.verifyButtonBody}>
+              <Text style={style.verifyButtonText}>Start Verification</Text>
+              <Image
+                source={icons.back_arrow_icon}
+                style={style.verifyButtonIconStyle}
+              />
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Toast ref={ref => Toast.setRef(ref)} />

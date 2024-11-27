@@ -115,7 +115,8 @@ const ChatUserScreen = ({route}) => {
 
   useEffect(() => {
     if (accessToken) {
-      const socket = io('https://happymilan.tech', {
+      // const socket = io('https://happymilan.tech', {
+      const socket = io('https://stag.mntech.website', {
         path: '/api/socket.io',
         query: {
           token: accessToken,

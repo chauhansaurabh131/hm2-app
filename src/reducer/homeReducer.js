@@ -1,4 +1,9 @@
 import * as TYPES from '../actions/actionTypes';
+import {
+  GET_ALL_ACCEPTED_DATING,
+  GET_ALL_ACCEPTED_FAILED_DATING,
+  GET_ALL_ACCEPTED_SUCCESS_DATING,
+} from '../actions/actionTypes';
 
 const initialState = {
   isUserDataLoading: false,
@@ -26,6 +31,8 @@ const initialState = {
   isDisLikeLoader: false,
   shortListData: [],
   sendRequestData: [],
+  getAllRequest: [],
+  getAllAccepted: [],
 };
 export default (state = initialState, action) => {
   // console.log(' === Reducer_action.data ===> ', action.data);
@@ -236,6 +243,32 @@ export default (state = initialState, action) => {
     //   };
     // case TYPES.REMOVE_SHORT_LIST_FAILED:
     //   return {...state, isGetPaymentDetailsLoading: false};
+
+    // GET ALL REQUESTED DATING
+    case TYPES.GET_ALL_REQUESTED_DATING:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.GET_ALL_REQUESTED_SUCCESS_DATING:
+      return {
+        ...state,
+        getAllRequest: action.data,
+        isSendRequestLoading: false,
+      };
+    case TYPES.GET_ALL_REQUESTED_FAILED_DATING:
+      return {...state, isSendRequestLoading: false};
+
+    //GET ALL REQUESTED ACCEPTED DATING
+    case TYPES.GET_ALL_ACCEPTED_DATING:
+      return {...state, isSendRequestLoading: true};
+
+    case TYPES.GET_ALL_ACCEPTED_SUCCESS_DATING:
+      return {
+        ...state,
+        getAllAccepted: action.data,
+        isSendRequestLoading: false,
+      };
+    case TYPES.GET_ALL_ACCEPTED_FAILED_DATING:
+      return {...state, isSendRequestLoading: false};
 
     default:
       return state;

@@ -101,6 +101,7 @@ export const style = StyleSheet.create({
   },
   bottomSheetBody: {
     marginHorizontal: wp(27),
+    marginTop: hp(15),
   },
   distanceContainer: {
     flexDirection: 'row',

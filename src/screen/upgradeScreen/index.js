@@ -3,7 +3,9 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -25,6 +27,11 @@ const UpgradeScreen = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState('');
   const [pressed, setPressed] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState(null); // Track which question is expanded
+
+  const toggleExpand = index => {
+    setExpandedIndex(expandedIndex === index ? null : index); // Toggle expand/collapse
+  };
 
   const dispatch = useDispatch();
 
@@ -47,8 +54,8 @@ const UpgradeScreen = () => {
 
   // console.log(' === PlanDetails.... ===> ', PlanDetails);
 
-  const openBottomSheet = (newPrice, oldPrice) => {
-    setSelectedPrice({newPrice, oldPrice});
+  const openBottomSheet = (newPrice, oldPrice, label) => {
+    setSelectedPrice({newPrice, oldPrice, label});
     RBSheetRef.current.open();
     setIsBottomSheetOpen(true);
   };
@@ -66,79 +73,79 @@ const UpgradeScreen = () => {
     silver: [
       {
         key: '1',
-        NewPrice: '599.00',
-        OldPrice: '718.00',
+        NewPrice: '599',
+        OldPrice: '718',
         Discount: '20% off',
         label: 'One',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
       {
         key: '2',
-        NewPrice: '899.00',
-        OldPrice: '1079.00',
+        NewPrice: '899',
+        OldPrice: '1079',
         Discount: '20% off',
         label: 'Two',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
       {
         key: '3',
-        NewPrice: '1199.00',
-        OldPrice: '1319.00',
+        NewPrice: '1199',
+        OldPrice: '1319',
         Discount: '20% off',
         label: 'Three',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
     ],
     gold: [
       {
         key: '1',
-        NewPrice: '799.00',
-        OldPrice: '718.00',
+        NewPrice: '799',
+        OldPrice: '718',
         Discount: '20% off',
         label: 'One',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
       {
         key: '2',
-        NewPrice: '1099.00',
-        OldPrice: '1079.00',
+        NewPrice: '1099',
+        OldPrice: '1079',
         Discount: '20% off',
         label: 'Two',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
       {
         key: '3',
-        NewPrice: '1399.00',
-        OldPrice: '1319.00',
+        NewPrice: '1399',
+        OldPrice: '1319',
         Discount: '20% off',
         label: 'Three',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
     ],
     platinum: [
       {
         key: '1',
-        NewPrice: '999.00',
-        OldPrice: '718.00',
+        NewPrice: '999',
+        OldPrice: '718',
         Discount: '20% off',
         label: 'One',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
       {
         key: '2',
-        NewPrice: '1299.00',
-        OldPrice: '1079.00',
+        NewPrice: '1299',
+        OldPrice: '1079',
         Discount: '20% off',
         label: 'Two',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
       {
         key: '3',
-        NewPrice: '1699.00',
-        OldPrice: '1319.00',
+        NewPrice: '1699',
+        OldPrice: '1319',
         Discount: '20% off',
         label: 'Three',
-        labels: 'Month Plan',
+        labels: 'Month',
       },
     ],
   });
@@ -155,125 +162,177 @@ const UpgradeScreen = () => {
   };
 
   const renderItem = ({item}) => (
-    <TouchableOpacity
-      style={[
-        style.itemContainer,
-        pressed && {backgroundColor: 'white'}, // Change background color when pressed
-      ]}
-      activeOpacity={0.7}
-      onPress={() => openBottomSheet(item.NewPrice, item.OldPrice)}>
-      <View>
-        <View
-          style={{
-            marginTop: hp(20),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 17,
-          }}>
-          <Text
+    <View style={{marginHorizontal: 18}}>
+      <TouchableHighlight
+        underlayColor="#F9FBFF"
+        style={[
+          style.itemContainer,
+          pressed && {backgroundColor: 'white'}, // Change background color when pressed
+        ]}
+        activeOpacity={0.7}
+        onPress={() =>
+          openBottomSheet(item.NewPrice, item.OldPrice, item.label)
+        }>
+        <View>
+          <View
             style={{
-              color: colors.black,
-              fontFamily: fontFamily.poppins600,
-              fontSize: fontSize(13),
-              lineHeight: hp(19.5),
-              alignSelf: 'center',
+              marginTop: hp(25),
+              flexDirection: 'row',
+              // justifyContent: 'space-between',
+              // marginHorizontal: 17,
+              // backgroundColor: 'red',
+              alignItems: 'center',
+              marginHorizontal: hp(27),
             }}>
-            {item.label}{' '}
             <Text
               style={{
-                color: colors.black,
-                fontFamily: fontFamily.poppins400,
-                fontSize: fontSize(13),
-                lineHeight: hp(19.5),
+                color: '#8225AF',
+                fontFamily: fontFamily.poppins600,
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                alignSelf: 'center',
+                // backgroundColor: 'orange',
+                width: '40%',
               }}>
-              {item.labels}
-            </Text>
-          </Text>
-
-          <Text
-            style={{
-              fontSize: fontSize(10),
-              lineHeight: hp(15),
-              fontFamily: fontFamily.poppins400,
-              color: 'black',
-              alignSelf: 'center',
-
-              position: 'absolute',
-              right: 127,
-            }}>
-            INR
-          </Text>
-
-          <View style={{width: 100, marginRight: 40}}>
-            <View style={{flexDirection: 'row'}}>
+              {item.label}{' '}
               <Text
                 style={{
-                  fontSize: fontSize(22),
-                  lineHeight: hp(36),
-                  fontFamily: fontFamily.poppins600,
                   color: colors.black,
-                  textAlign: 'left',
-                  width: '100%',
-                  marginLeft: hp(20),
+                  fontFamily: fontFamily.poppins600,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                }}>
+                {item.labels}
+              </Text>
+            </Text>
+
+            {/*<View style={{width: 100, marginRight: 40}}>*/}
+            <View
+              style={{
+                marginLeft: wp(20),
+                flexDirection: 'row',
+                // backgroundColor: 'orange',
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(24),
+                  lineHeight: hp(36),
+                  fontFamily: fontFamily.poppins700,
+                  color: 'black',
+                }}>
+                Rs.
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: fontSize(24),
+                  lineHeight: hp(36),
+                  fontFamily: fontFamily.poppins700,
+                  color: colors.black,
                 }}>
                 {item.NewPrice}
               </Text>
 
-              <Image
-                source={icons.rightSideIcon}
-                style={{
-                  width: hp(4.57),
-                  height: hp(8),
-                  alignSelf: 'center',
-                  marginLeft: hp(2),
-                }}
-              />
+              {/*<Image*/}
+              {/*  source={icons.rightSideIcon}*/}
+              {/*  style={{*/}
+              {/*    width: hp(4.57),*/}
+              {/*    height: hp(8),*/}
+              {/*    alignSelf: 'center',*/}
+              {/*    marginLeft: hp(2),*/}
+              {/*  }}*/}
+              {/*/>*/}
             </View>
           </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            alignSelf: 'flex-end',
-            marginTop: hp(3),
-          }}>
-          <Text
-            style={{
-              textAlign: 'right',
-              textDecorationLine: 'line-through',
-              color: colors.black,
-              fontFamily: fontFamily.poppins500,
-              fontSize: fontSize(10),
-              lineHeight: hp(15),
-              marginRight: hp(20),
-            }}>
-            {item.OldPrice}
-          </Text>
 
           <View
             style={{
-              width: wp(54),
-              height: hp(20),
-              borderRadius: 12,
-              backgroundColor: '#F0FCF6',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: hp(25),
+              flexDirection: 'row',
+              // alignSelf: 'flex-end',
+              marginTop: hp(3),
+              marginLeft: wp(165),
+              // backgroundColor: 'orange',
             }}>
             <Text
               style={{
-                fontSize: fontSize(10),
-                lineHeight: hp(15),
-                fontFamily: fontFamily.poppins500,
-                color: '#17C270',
+                // textAlign: 'right',
+                textDecorationLine: 'line-through',
+                color: colors.black,
+                fontFamily: fontFamily.poppins600,
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                // width: '42%',
+                // backgroundColor: 'red',
+                // marginRight: hp(20),
               }}>
-              {item.Discount}
+              Rs. {item.OldPrice}
             </Text>
+
+            <View
+              style={{
+                width: hp(77),
+                height: hp(24),
+                backgroundColor: '#A7F7D1',
+                borderRadius: 12,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginLeft: hp(10),
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                }}>
+                {item.Discount}
+              </Text>
+            </View>
+          </View>
+
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    width: wp(77),*/}
+          {/*    height: hp(20),*/}
+          {/*    borderRadius: 12,*/}
+          {/*    backgroundColor: '#A7F7D1',*/}
+          {/*    justifyContent: 'center',*/}
+          {/*    alignItems: 'center',*/}
+          {/*    // marginRight: hp(25),*/}
+          {/*  }}>*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      fontSize: fontSize(10),*/}
+          {/*      lineHeight: hp(15),*/}
+          {/*      fontFamily: fontFamily.poppins500,*/}
+          {/*      color: '#17C270',*/}
+          {/*    }}>*/}
+          {/*    {item.Discount}*/}
+          {/*  </Text>*/}
+          {/*</View>*/}
+          <View
+            style={{
+              position: 'absolute',
+              // justifyContent: 'center',
+              // alignItems: 'center',
+              // alignSelf: 'center',
+              right: 15,
+              marginTop: hp(50),
+            }}>
+            <Image
+              source={icons.rightSideIcon}
+              style={{
+                width: hp(8),
+                height: hp(14),
+                alignSelf: 'center',
+                marginLeft: hp(2),
+                tintColor: '#EBEBEB',
+              }}
+            />
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableHighlight>
+    </View>
   );
 
   return (
@@ -291,7 +350,7 @@ const UpgradeScreen = () => {
         </View>
         <RBSheet
           ref={RBSheetRef}
-          height={screenHeight * 0.7 - 50}
+          height={screenHeight * 0.9 - 60}
           closeOnDragDown={true}
           closeOnPressMask={true}
           onClose={handleSheetClosed} // Added onClose callback
@@ -308,83 +367,152 @@ const UpgradeScreen = () => {
             },
           }}>
           <View style={{flex: 1}}>
-            <Text style={style.bottomSheetOneMonthText}>One Month Plan</Text>
+            <View style={{marginHorizontal: 24}}>
+              <Text style={style.bottomSheetOneMonthText}>
+                {selectedPrice.label}{' '}
+                <Text style={{color: colors.black}}>Month</Text>
+              </Text>
 
-            <Text style={style.oneMonthPriceText}>
-              {selectedPrice.newPrice}
-            </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={style.oneMonthPriceText}>
+                  Rs.{selectedPrice.newPrice}
+                </Text>
 
-            <View style={style.bottomSheetHeadingBodyContainer}>
-              <Text style={style.InrText}>INR</Text>
+                <Text style={style.oldPriceText}>
+                  Rs.{selectedPrice.oldPrice}
+                </Text>
 
-              <Text style={style.oldPriceText}>{selectedPrice.oldPrice}</Text>
-
-              <View style={style.offerContainer}>
-                <Text style={style.offerTextStyle}>20% Off</Text>
+                <View style={style.offerContainer}>
+                  <Text style={style.offerTextStyle}>20% Off</Text>
+                </View>
               </View>
             </View>
 
             <View style={style.headingLine} />
 
-            <Text style={style.bodyTittleText}>What Will You Get?</Text>
+            <View style={{marginHorizontal: 24}}>
+              <Text style={style.bodyTittleText}>Plan Benefits</Text>
 
-            <View style={style.tittleBodyContainer}>
-              <Text style={style.tittleOneTextStyle}>
-                Message to{' '}
-                <Text style={style.tittleTextColor}>10 Profiles</Text>
-              </Text>
+              <View style={style.tittleBodyContainer}>
+                <Text style={style.tittleOneTextStyle}>
+                  Message to{' '}
+                  <Text style={style.tittleTextColor}>10 Profiles</Text>
+                </Text>
 
-              <Image
-                source={icons.confirm_check_icon}
-                style={style.checkIcon}
-              />
+                <Image
+                  source={icons.confirm_check_icon}
+                  style={style.checkIcon}
+                />
+              </View>
+
+              <View style={style.tittleBodyContainer}>
+                <Text style={style.tittleOneTextStyle}>
+                  Send request to{' '}
+                  <Text style={style.tittleTextColor}>10 Profiles</Text>
+                </Text>
+
+                <Image
+                  source={icons.confirm_check_icon}
+                  style={style.checkIcon}
+                />
+              </View>
+
+              <View style={style.tittleBodyContainer}>
+                <Text style={style.tittleOneTextStyle}>Online Support</Text>
+                <Image
+                  source={icons.confirm_check_icon}
+                  style={style.checkIcon}
+                />
+              </View>
             </View>
 
-            <View style={style.tittleBodyContainer}>
-              <Text style={style.tittleOneTextStyle}>
-                Send request to{' '}
-                <Text style={style.tittleTextColor}>10 Profiles</Text>
-              </Text>
+            <View style={[style.headingLine, {marginBottom: 0}]} />
 
-              <Image
-                source={icons.confirm_check_icon}
-                style={style.checkIcon}
-              />
+            <View style={{backgroundColor: '#F9F9F9'}}>
+              <View
+                style={{
+                  marginHorizontal: 24,
+                  // backgroundColor: 'grey',
+                  marginTop: 24,
+                  marginBottom: 24,
+                }}>
+                <Text style={style.bodyTittleText}>Plan Summary</Text>
+
+                <View style={style.tittleBodyContainer}>
+                  <Text style={style.planSummeryTittle}>
+                    Gold
+                    <Text style={style.planSummerySubTittle}>
+                      {' '}
+                      - One Month Plan
+                    </Text>
+                  </Text>
+
+                  <Text style={style.planSummaryPrice}>
+                    Rs. {selectedPrice.oldPrice}
+                  </Text>
+                </View>
+
+                <View style={style.tittleBodyContainer}>
+                  <Text style={style.tittleOneTextStyle}>
+                    Send request to{' '}
+                    <Text style={style.tittleTextColor}>10 Profiles</Text>
+                  </Text>
+
+                  <Text style={style.planSummaryPrice}>Rs. 200</Text>
+                </View>
+              </View>
             </View>
 
-            <View style={style.tittleBodyContainer}>
-              <Text style={style.tittleOneTextStyle}>Online Support</Text>
-              <Image
-                source={icons.confirm_check_icon}
-                style={style.checkIcon}
-              />
+            <View style={[style.headingLine, {marginTop: 0}]} />
+
+            <View
+              style={{
+                marginHorizontal: 24,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text style={style.totalText}>
+                  Total Payable{' '}
+                  <Text style={style.gstTextStyle}>(Incl. 18% GST)</Text>
+                </Text>
+
+                <Text style={style.planSummaryPrice}>
+                  Rs. {selectedPrice.newPrice}
+                </Text>
+              </View>
             </View>
 
             <View style={style.bottomSheetBottomButtonContainer}>
-              <TouchableOpacity activeOpacity={0.7} onPress={closeBottomSheet}>
-                <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']}
-                  style={style.notNowButtonColorGradient}>
-                  <View style={style.notNowButtonContainer}>
-                    <Text style={style.notNowButtonText}>Not Now</Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
+              {/*<TouchableOpacity activeOpacity={0.7} onPress={closeBottomSheet}>*/}
+              {/*  <LinearGradient*/}
+              {/*    colors={['#0D4EB3', '#9413D0']}*/}
+              {/*    style={style.notNowButtonColorGradient}>*/}
+              {/*    <View style={style.notNowButtonContainer}>*/}
+              {/*      <Text style={style.notNowButtonText}>Not Now</Text>*/}
+              {/*    </View>*/}
+              {/*  </LinearGradient>*/}
+              {/*</TouchableOpacity>*/}
 
-              <TouchableOpacity
-                activeOpacity={0.5}
-                // onPress={handleModalClose}
-              >
+              <TouchableOpacity activeOpacity={0.5} onPress={closeBottomSheet}>
                 <LinearGradient
                   colors={['#0D4EB3', '#9413D0']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
                   style={style.payButtonColorGradient}>
-                  <Text style={style.payButtonText}>Proceed to Pay</Text>
-                  <Image
-                    source={icons.light_arrow_icon}
-                    style={style.payButtonIcon}
-                  />
+                  <Text style={style.payButtonText}>Continue Payment</Text>
+                  {/*<Image*/}
+                  {/*  source={icons.light_arrow_icon}*/}
+                  {/*  style={style.payButtonIcon}*/}
+                  {/*/>*/}
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -419,97 +547,254 @@ const UpgradeScreen = () => {
             </Text>
 
             <Text style={style.headerTittleDescriptionTextStyle}>
-              Upgrade your profile and find your perfect match faster
+              Upgrade your profile and find your perfect match
             </Text>
 
-            <Text style={style.headerTittleDescriptionTextStyle}>
-              with exclusive benefits!
-            </Text>
+            {/*<Text style={style.headerTittleDescriptionTextStyle}>*/}
+            {/*  with exclusive benefits!*/}
+            {/*</Text>*/}
           </View>
         </LinearGradient>
 
-        <View style={style.headingBodYContainer}>
-          <TouchableOpacity
-            onPress={() => handleOptionClick('silver')}
-            style={style.silverTouchableFunctionality}>
-            <LinearGradient
-              colors={
-                selectedOption === 'silver'
-                  ? ['#0D4EB3', '#9413D0']
-                  : ['transparent', 'transparent']
-              }
-              start={{x: 0, y: 0.5}}
-              end={{x: 1, y: 0.5}}
-              style={style.silverTextContainer}
-            />
+        <View style={{marginHorizontal: 18}}>
+          <View style={style.headingBodYContainer}>
+            <TouchableOpacity
+              onPress={() => handleOptionClick('silver')}
+              style={style.silverTouchableFunctionality}>
+              <LinearGradient
+                colors={
+                  selectedOption === 'silver'
+                    ? ['#0D4EB3', '#9413D0']
+                    : ['transparent', 'transparent']
+                }
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 0.5}}
+                style={style.silverTextContainer}
+              />
 
-            <Text
-              style={[
-                style.silverText,
-                {color: selectedOption === 'silver' ? 'white' : 'black'},
-              ]}>
-              Silver
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  style.silverText,
+                  {color: selectedOption === 'silver' ? 'white' : 'black'},
+                ]}>
+                Silver
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => handleOptionClick('gold')}
-            style={style.goldContainer}>
-            <LinearGradient
-              colors={
-                selectedOption === 'gold'
-                  ? ['#0D4EB3', '#9413D0']
-                  : ['transparent', 'transparent']
-              }
-              start={{x: 0, y: 0.5}}
-              end={{x: 1, y: 0.5}}
-              style={style.goldBodyContainer}
-            />
-            <Text
-              style={[
-                style.goldText,
-                {color: selectedOption === 'gold' ? 'white' : 'black'},
-              ]}>
-              Gold
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleOptionClick('gold')}
+              style={style.goldContainer}>
+              <LinearGradient
+                colors={
+                  selectedOption === 'gold'
+                    ? ['#0D4EB3', '#9413D0']
+                    : ['transparent', 'transparent']
+                }
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 0.5}}
+                style={style.goldBodyContainer}
+              />
+              <Text
+                style={[
+                  style.goldText,
+                  {color: selectedOption === 'gold' ? 'white' : 'black'},
+                ]}>
+                Gold
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => handleOptionClick('platinum')}
-            style={style.platinumBodyContainer}>
-            <LinearGradient
-              colors={
-                selectedOption === 'platinum'
-                  ? ['#0D4EB3', '#9413D0']
-                  : ['transparent', 'transparent']
-              }
-              start={{x: 0, y: 0.5}}
-              end={{x: 1, y: 0.5}}
-              style={style.platinumBody}
-            />
-            <Text
-              style={[
-                style.platinumText,
-                {color: selectedOption === 'platinum' ? 'white' : 'black'},
-              ]}>
-              Platinum
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleOptionClick('platinum')}
+              style={style.platinumBodyContainer}>
+              <LinearGradient
+                colors={
+                  selectedOption === 'platinum'
+                    ? ['#0D4EB3', '#9413D0']
+                    : ['transparent', 'transparent']
+                }
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 0.5}}
+                style={style.platinumBody}
+              />
+              <Text
+                style={[
+                  style.platinumText,
+                  {color: selectedOption === 'platinum' ? 'white' : 'black'},
+                ]}>
+                Platinum
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <Text style={style.choiceDescriptionText}>
-          Choose your subscription
-        </Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={style.choiceDescriptionText}>
+            Choose your subscription
+          </Text>
 
-        <FlatList
-          data={subscriptionPlans[selectedOption]}
-          renderItem={renderItem}
-        />
-        <HomeTopSheetComponent
-          isVisible={topModalVisible}
-          onBackdropPress={toggleModal}
-          onBackButtonPress={toggleModal}
-        />
+          <FlatList
+            data={subscriptionPlans[selectedOption]}
+            renderItem={renderItem}
+          />
+          <HomeTopSheetComponent
+            isVisible={topModalVisible}
+            onBackdropPress={toggleModal}
+            onBackButtonPress={toggleModal}
+          />
+
+          <Text style={style.bottomTittleText}>Frequently Asked Questions</Text>
+
+          <View style={{marginHorizontal: 18}}>
+            <View style={style.bottomQueryBody}>
+              {/* Question 1 */}
+              <TouchableOpacity
+                onPress={() => toggleExpand(0)}
+                style={{
+                  backgroundColor: expandedIndex === 0 ? '#F5F9FF' : 'white',
+                  borderTopRightRadius: 14,
+                  borderTopLeftRadius: 14,
+                }}>
+                <View style={style.queryTittleContainer}>
+                  <Text style={style.queryTittle}>
+                    What payment options are available?
+                  </Text>
+
+                  <Image
+                    source={icons.down_arrow_icon}
+                    style={{
+                      width: hp(9),
+                      height: hp(5),
+                      transform: [
+                        {rotate: expandedIndex === 0 ? '-180deg' : '-90deg'},
+                      ], // Rotate arrow when expanded
+                    }}
+                  />
+                </View>
+                {expandedIndex === 0 && ( // Show text only if expanded
+                  <View style={style.querySubTittleContainer}>
+                    <Text style={style.querySubTittle}>
+                      HappyMilan is a social networking website that{'\n'}
+                      caters to both categories: matrimony and dating.{'\n'}
+                      Users can select either option when registering
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              <View style={style.queryBorderCenterLine} />
+
+              {/* Question 2 */}
+              <TouchableOpacity
+                onPress={() => toggleExpand(1)}
+                style={{
+                  backgroundColor: expandedIndex === 1 ? '#F5F9FF' : 'white',
+                }}>
+                <View style={style.queryTittleContainer}>
+                  <Text style={style.queryTittle}>
+                    Can I cancel the plan at any time?
+                  </Text>
+
+                  <Image
+                    source={icons.down_arrow_icon}
+                    style={{
+                      width: hp(9),
+                      height: hp(5),
+                      transform: [
+                        {rotate: expandedIndex === 1 ? '-180deg' : '-90deg'},
+                      ], // Rotate arrow when expanded
+                    }}
+                  />
+                </View>
+
+                {expandedIndex === 1 && ( // Show text only if expanded
+                  <View style={style.querySubTittleContainer}>
+                    <Text style={style.querySubTittle}>
+                      HappyMilan is a social networking website that{'\n'}
+                      caters to both categories: matrimony and dating.{'\n'}
+                      Users can select either option when registering
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              <View style={style.queryBorderCenterLine} />
+
+              {/* Question 3 */}
+              <TouchableOpacity
+                onPress={() => toggleExpand(2)}
+                style={{
+                  backgroundColor: expandedIndex === 2 ? '#F5F9FF' : 'white',
+                }}>
+                <View style={style.queryTittleContainer}>
+                  <Text style={style.queryTittle}>
+                    Is there a refund policy?
+                  </Text>
+
+                  <Image
+                    source={icons.down_arrow_icon}
+                    style={{
+                      width: hp(9),
+                      height: hp(5),
+                      transform: [
+                        {rotate: expandedIndex === 2 ? '-180deg' : '-90deg'},
+                      ], // Rotate arrow when expanded
+                    }}
+                  />
+                </View>
+
+                {expandedIndex === 2 && ( // Show text only if expanded
+                  <View style={style.querySubTittleContainer}>
+                    <Text style={style.querySubTittle}>
+                      HappyMilan is a social networking website that{'\n'}
+                      caters to both categories: matrimony and dating.{'\n'}
+                      Users can select either option when registering
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              <View style={style.queryBorderCenterLine} />
+
+              {/* Question 4 */}
+              <TouchableOpacity
+                onPress={() => toggleExpand(3)}
+                style={{
+                  backgroundColor: expandedIndex === 3 ? '#F5F9FF' : 'white',
+                  borderBottomLeftRadius: 14,
+                  borderBottomRightRadius: 14,
+                }}>
+                <View style={style.queryTittleContainer}>
+                  <Text style={style.queryTittle}>
+                    Will I need to pay any additional charges?
+                  </Text>
+
+                  <Image
+                    source={icons.down_arrow_icon}
+                    style={{
+                      width: hp(9),
+                      height: hp(5),
+                      transform: [
+                        {rotate: expandedIndex === 3 ? '-180deg' : '-90deg'},
+                      ], // Rotate arrow when expanded
+                    }}
+                  />
+                </View>
+
+                {expandedIndex === 3 && ( // Show text only if expanded
+                  <View style={style.querySubTittleContainer}>
+                    <Text style={style.querySubTittle}>
+                      HappyMilan is a social networking website that{'\n'}
+                      caters to both categories: matrimony and dating.{'\n'}
+                      Users can select either option when registering
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={{height: 50}} />
+        </ScrollView>
       </View>
     </SafeAreaView>
   );

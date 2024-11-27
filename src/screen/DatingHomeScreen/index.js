@@ -24,6 +24,7 @@ import DatingSwipeDataComponent from '../../components/datingSwipeDataComponent'
 import {style} from './style';
 import {colors} from '../../utils/colors';
 import axios from 'axios';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const DatingHomeScreen = () => {
   const [showModal, setShowModal] = useState(true);
@@ -31,7 +32,7 @@ const DatingHomeScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [bottomsheetVisible, setBottomSheVisible] = useState(false);
   const [progress, setProgress] = useState(0.6); // Initial progress value
-  const [ageprogress, setAgeProgress] = useState(0.1); // Initial progress value
+  const [ageProgress, setAgeProgress] = useState(0); // Initial progress value
   const [cards, setCards] = useState([]);
   const [initialCards, setInitialCards] = useState([]); // State to hold the initial cards
   const [resetKey, setResetKey] = useState(0); // State to handle resetting the swiper
@@ -42,6 +43,16 @@ const DatingHomeScreen = () => {
   const dispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
+
+  const topModalBottomSheetRef = useRef(null);
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
+
+  // Calculate age dynamically based on progress
+  const minAge = 18;
+  const maxAge = 50; // Max possible age
+  const currentAge = Math.round(minAge + (maxAge - minAge) * ageProgress);
 
   // console.log(' === user999999 ===> ', user);
 
@@ -161,7 +172,8 @@ const DatingHomeScreen = () => {
 
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={openTopSheetModal}
+            // onPress={openTopSheetModal}
+            onPress={openBottomSheet}
             style={{alignSelf: 'center'}}>
             {userImage ? (
               <Image source={{uri: userImage}} style={style.dropDownTopImage} />
@@ -173,6 +185,8 @@ const DatingHomeScreen = () => {
             )}
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         {/*TOP SHEET*/}
         <HomeTopSheetComponent
@@ -197,7 +211,7 @@ const DatingHomeScreen = () => {
         <RBSheet
           ref={RBSheetRef}
           onClose={openBottomSheetModal}
-          height={480}
+          height={hp(380)}
           closeOnDragDown={true}
           closeOnPressMask={true}
           customStyles={{
@@ -228,34 +242,32 @@ const DatingHomeScreen = () => {
             <View style={style.BottomSheetUnderLine} />
 
             <View style={style.bottomSheetBody}>
-              <View style={style.distanceContainer}>
-                <Text style={style.distanceText}>Distance</Text>
+              {/*<View style={style.distanceContainer}>*/}
+              {/*  <Text style={style.distanceText}>Distance</Text>*/}
 
-                <Text style={style.distanceTextSlider}>{`${Math.ceil(
-                  progress * 10,
-                )} km`}</Text>
-              </View>
+              {/*  <Text style={style.distanceTextSlider}>{`${Math.ceil(*/}
+              {/*    progress * 10,*/}
+              {/*  )} km`}</Text>*/}
+              {/*</View>*/}
 
-              <CustomProgressBar
-                progress={progress}
-                onMoveCircle={newProgress => setProgress(newProgress)}
-              />
+              {/*<CustomProgressBar*/}
+              {/*  progress={progress}*/}
+              {/*  onMoveCircle={newProgress => setProgress(newProgress)}*/}
+              {/*/>*/}
 
               <View style={style.ageContainer}>
                 <Text style={style.ageTextStyle}>Age</Text>
 
-                <Text style={style.ageTextSlider}>{`18-${Math.max(
-                  Math.ceil(ageprogress * 50),
-                )}`}</Text>
+                <Text style={style.ageTextSlider}>{`18-${currentAge}`}</Text>
               </View>
 
               <CustomProgressBar
-                progress={ageprogress}
+                progress={ageProgress}
                 onMoveCircle={newProgress => setAgeProgress(newProgress)}
               />
             </View>
 
-            <View style={style.BottomSheetUnderLine} />
+            {/*<View style={style.BottomSheetUnderLine} />*/}
 
             <View style={style.bottomSheetBody}>
               <GradientButton

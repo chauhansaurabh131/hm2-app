@@ -91,8 +91,8 @@ const NewLogInScreen = () => {
                   alignSelf: 'center',
                   color: colors.blue,
                   marginTop: hp(40),
-                  fontSize: fontSize(12),
-                  lineHeight: hp(18),
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
                   fontFamily: fontFamily.poppins400,
                 }}>
                 Reset Password

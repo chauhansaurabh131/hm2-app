@@ -89,6 +89,22 @@ const datingPartnerReferencesApi = async data => {
   return put('/api/v1/user/dating-partner/', data, true);
 };
 
+const datingGetAllRequested = async data => {
+  return get(
+    '/api/v1/user/friend/get-frd-requests?appUsesType=dating',
+    data,
+    true,
+  );
+};
+
+const datingGetAllAccepted = async data => {
+  return get(
+    '/api/v1/user/friend/get-frd-mobile?appUsesType=dating',
+    data,
+    true,
+  );
+};
+
 export const home = {
   getUserAllData,
   sendFriendsRequest,
@@ -110,6 +126,8 @@ export const home = {
   isLikeDetails,
   isDisLikeDetails,
   datingPartnerReferencesApi,
+  datingGetAllRequested,
+  datingGetAllAccepted,
   // removeAddShortList,
   // userLikes,
   // user_Dis_Like,
