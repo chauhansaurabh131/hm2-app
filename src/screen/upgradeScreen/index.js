@@ -539,7 +539,9 @@ const UpgradeScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+          <View>
+            <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+          </View>
 
           <View style={style.headerDescriptionContainer}>
             <Text style={style.headerTittleTextStyle}>

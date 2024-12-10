@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 import {icons} from '../../assets';
 import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../utils/helpers'; // Ensure you have the icons in your assets
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 const NewDropDownTextInput = ({
   placeholder,
   dropdownData = [],
   onValueChange,
+  bottomSheetHeight = 300, // Default height for the bottom sheet
 }) => {
   const [value, setValue] = useState('');
   const [isFocused, setFocused] = useState(false);
@@ -68,7 +69,6 @@ const NewDropDownTextInput = ({
 
   const labelStyle = {
     position: 'absolute',
-    // left: 10,
     top: labelPosition.interpolate({
       inputRange: [0, 1],
       outputRange: [20, -10], // Move the label up when value is selected or input is focused
@@ -104,7 +104,7 @@ const NewDropDownTextInput = ({
       {/* Bottom sheet */}
       <RBSheet
         ref={refRBSheet}
-        height={300} // Set the height of the bottom sheet
+        height={bottomSheetHeight} // Use dynamic height for bottom sheet
         closeOnDragDown={true}
         customStyles={{
           container: {
@@ -120,13 +120,6 @@ const NewDropDownTextInput = ({
                 style={styles.dropdownItem}
                 onPress={() => handleSelectOption(item)}>
                 <Text style={styles.dropdownText}>{item}</Text>
-                {/*<View*/}
-                {/*  style={{*/}
-                {/*    width: '100%',*/}
-                {/*    borderWidth: 0.5,*/}
-                {/*    borderColor: 'black',*/}
-                {/*  }}*/}
-                {/*/>*/}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -162,12 +155,11 @@ const styles = StyleSheet.create({
     height: 6,
     width: 10,
     tintColor: colors.black,
+    transform: [{rotate: '-90deg'}],
   },
   dropdownContainer: {
     backgroundColor: 'white',
     borderColor: 'gray',
-    // borderWidth: 1,
-    // maxHeight: 150, // Limit dropdown height
   },
   dropdownItem: {
     paddingVertical: 10,

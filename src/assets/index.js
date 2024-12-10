@@ -44,6 +44,7 @@ export const images = {
   adventurous_img: require('./images/adventurous_img.png'),
   gradient_button_background_img: require('./images/gradient_background_img.png'),
   add_Stories_img: require('./images/add_stroies_image.png'),
+  gradient_header_background_img: require('./images/gradient_header_background_img.png'),
 };
 
 export const icons = {
@@ -173,6 +174,7 @@ export const icons = {
   dating_check_icon: require('./icons/dating_check_icon.png'),
   dating_cancel_icon: require('./icons/dating_cancel_icon.png'),
   date_cancel_icon: require('./icons/date_cancel_icon.png'),
+  search_gradient_icon: require('./icons/search_gradient_icon.png'),
 };
 
 export const gif = {

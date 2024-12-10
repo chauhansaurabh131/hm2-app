@@ -296,6 +296,24 @@ const HomeScreen = ({route}) => {
             }}
           />
 
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              right: 45,
+              height: hp(24),
+              width: hp(30),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onPress={() => {
+              navigation.navigate('SearchFilterScreen');
+            }}>
+            <Image
+              source={icons.search_gradient_icon}
+              style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
+            />
+          </TouchableOpacity>
+
           {/*TOP PROFILE BUTTON TOGGLE*/}
           <TouchableOpacity
             activeOpacity={0.7}

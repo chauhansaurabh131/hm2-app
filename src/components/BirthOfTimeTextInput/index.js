@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import moment from 'moment'; // Import moment
+import {fontFamily, fontSize} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
 const BirthOfTimeTextInput = ({
@@ -27,14 +28,16 @@ const BirthOfTimeTextInput = ({
   const handleFocus = () => setFocused(true);
   const handleBlur = () => setFocused(false);
 
-  // Handle text input to enforce HH:MM format with validation
+  // Handle text input to enforce HH:MM format with AM/PM
   const handleTextChange = text => {
-    let formattedText = text.replace(/[^0-9:]/g, '');
+    let formattedText = text.replace(/[^0-9: ]/g, ''); // Allow colon and spaces
 
+    // Automatically format the input into HH:MM AM/PM format
     if (formattedText.length > 2 && !formattedText.includes(':')) {
       formattedText = formattedText.slice(0, 2) + ':' + formattedText.slice(2);
     }
 
+    // Split time into hours, minutes and AM/PM
     const parts = formattedText.split(':');
     let hours = parts[0] || '';
     let minutes = parts[1] || '';
@@ -43,13 +46,15 @@ const BirthOfTimeTextInput = ({
       minutes = '59';
     }
 
-    if (hours && parseInt(hours, 10) > 23) {
-      hours = '23';
+    if (hours && parseInt(hours, 10) > 12) {
+      // 12-hour format validation
+      hours = '12';
     }
 
-    formattedText = (hours ? hours : '00') + (minutes ? ':' + minutes : '');
+    // Ensure the time format stays valid
+    formattedText = (hours ? hours : '12') + (minutes ? ':' + minutes : '');
 
-    if (formattedText.length <= 5) {
+    if (formattedText.length <= 7) {
       onChangeText(formattedText);
     }
   };
@@ -59,11 +64,9 @@ const BirthOfTimeTextInput = ({
     setModalVisible(true);
   };
 
-  // Update time from picker and close modal
+  // Update time from picker and close modal using moment for formatting (AM/PM)
   const handleConfirm = () => {
-    const hours = selectedTime.getHours().toString().padStart(2, '0');
-    const minutes = selectedTime.getMinutes().toString().padStart(2, '0');
-    const formattedTime = `${hours}:${minutes}`;
+    const formattedTime = moment(selectedTime).format('hh:mm A'); // Format with AM/PM
     onChangeText(formattedTime);
     setModalVisible(false);
   };
@@ -86,13 +89,14 @@ const BirthOfTimeTextInput = ({
         <TextInput
           style={styles.input}
           value={value}
+          editable={false}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChangeText={handleTextChange}
           keyboardType="numeric"
-          placeholder={isFocused ? 'HH:MM' : ''}
+          placeholder={isFocused ? 'HH:MM AM/PM' : ''}
           placeholderTextColor={'gray'}
-          maxLength={5}
+          maxLength={8} // Allow for AM/PM formatting
           {...props}
         />
         {showImage && (
@@ -117,9 +121,10 @@ const BirthOfTimeTextInput = ({
             <DatePicker
               mode="time"
               date={selectedTime}
-              is24hour={true}
+              is24hour={true} // Use 12-hour format for AM/PM
               onDateChange={setSelectedTime}
               minuteInterval={1}
+              textColor={'black'}
             />
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.button} onPress={handleConfirm}>

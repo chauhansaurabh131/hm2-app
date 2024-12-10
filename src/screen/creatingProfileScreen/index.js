@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -10,15 +10,14 @@ import {
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import {icons, images} from '../../assets';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
 import style from './style';
-import Abc from '../abc';
 import DOBTextInputComponent from '../../components/DOBTextInputComponent';
 import BirthOfTimeTextInput from '../../components/BirthOfTimeTextInput';
+import moment from 'moment-timezone';
 
 const CreatingProfileScreen = () => {
   const dropdownData = [
@@ -28,6 +27,7 @@ const CreatingProfileScreen = () => {
     'My Brother',
     'My Friend',
   ];
+
   const [selectedOption, setSelectedOption] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -36,33 +36,74 @@ const CreatingProfileScreen = () => {
 
   const navigation = useNavigation();
   const apiDispatch = useDispatch();
+  const {isUpdatingProfile, user} = useSelector(state => state.auth);
 
-  const {isUpdatingProfile} = useSelector(state => state.auth);
-  console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
+  // console.log(' === user?.user ===> ', user?.user);
+  // console.log(' === creatingProfileFor ===> ', user?.user?.creatingProfileFor);
 
-  const formatSelectedOption = option => {
-    return option
-      .split(' ')
-      .map(
-        (word, index) =>
-          index === 0
-            ? word.toLowerCase() // Make the first word lowercase
-            : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(), // Capitalize the first letter of subsequent words
-      )
-      .join('');
-  };
+  useEffect(() => {
+    // Set first name and last name from the user object with proper formatting
+    if (user?.user?.name) {
+      const nameParts = user.user.name.split(' ');
+      const formattedFirstName = nameParts[0]
+        ? nameParts[0].charAt(0).toUpperCase() +
+          nameParts[0].slice(1).toLowerCase()
+        : '';
+      const formattedLastName =
+        nameParts.length > 1
+          ? nameParts.slice(1).join(' ').charAt(0).toUpperCase() +
+            nameParts.slice(1).join(' ').slice(1).toLowerCase()
+          : '';
+      setFirstName(formattedFirstName); // Update first name
+      setLastName(formattedLastName); // Update last name
+    }
+
+    // Set birthTime if available and format it into 'hh:mm A' format (AM/PM)
+    if (user?.user?.birthTime) {
+      const formattedTime = moment(user?.user?.birthTime).format('hh:mm A');
+      setBirthOfTime(formattedTime); // Set the formatted birth time
+    }
+
+    // Set the selectedOption based on the creatingProfileFor value
+    if (user?.user?.creatingProfileFor) {
+      setSelectedOption(user.user.creatingProfileFor); // Update selected option
+    }
+
+    // Set the formatted dateOfBirth
+    if (user?.user?.dateOfBirth) {
+      const formattedDateOfBirth = moment(user.user.dateOfBirth).format(
+        'DD/MM/YYYY',
+      );
+      setDateOfBirth(formattedDateOfBirth); // Set formatted date
+    }
+  }, [user]); // Run this effect whenever `user` changes
+
+  useEffect(() => {
+    console.log('User creatingProfileFor:', user?.user?.creatingProfileFor); // Check user data
+    if (user?.user?.creatingProfileFor) {
+      setSelectedOption(user.user.creatingProfileFor); // Set the value for dropdown
+    }
+  }, [user?.user?.creatingProfileFor]);
 
   const onStartNowPress = () => {
-    const formattedOption = formatSelectedOption(selectedOption);
+    const formattedOption = selectedOption
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
 
     const [day, month, year] = dateOfBirth.split('/');
     const dob = new Date(`${year}-${month}-${day}`);
 
-    const [hours, minutes] = birthOfTime.split(':').map(Number);
-    const birthTime = new Date(dob); // Start with the dob date
-    birthTime.setHours(hours, minutes, 0, 0);
+    const currentDate = moment().format('YYYY-MM-DD');
 
-    // console.log(' === birthOfTime ===> ', birthOfTime);
+    // Combine the current date with the time entered by the user
+    const combinedDateTime = moment(
+      `${currentDate} ${birthOfTime}`,
+      'YYYY-MM-DD hh:mm A',
+    );
+
+    // Format to ISO string, while keeping local time (no UTC conversion)
+    const formattedDateTime = combinedDateTime.format(); // Default format is ISO-8601 (local timezone)
 
     if (!selectedOption) {
       Toast.show({
@@ -96,11 +137,20 @@ const CreatingProfileScreen = () => {
       return;
     }
 
-    if (isNaN(birthTime.getTime())) {
+    // Convert birthOfTime to ISO datetime string
+    const [hours, minutes] = birthOfTime.split(':');
+    const birthDateTime = new Date();
+    birthDateTime.setHours(parseInt(hours, 10));
+    birthDateTime.setMinutes(parseInt(minutes, 10));
+    birthDateTime.setSeconds(0);
+
+    console.log(' === birthDateTime ===> ', birthDateTime);
+
+    if (isNaN(birthDateTime.getTime())) {
       Toast.show({
         type: 'error',
-        text1: 'Invalid Date',
-        text2: 'Please enter a valid date of time.',
+        text1: 'Invalid Time',
+        text2: 'Please enter a valid time.',
       });
       return;
     }
@@ -112,7 +162,7 @@ const CreatingProfileScreen = () => {
           firstName: firstName,
           lastName: lastName,
           dateOfBirth: dob,
-          birthTime: birthTime,
+          birthTime: formattedDateTime, // Send as ISO string
         },
         () => {
           navigation.navigate('GeneralInformationScreen');
@@ -133,6 +183,7 @@ const CreatingProfileScreen = () => {
             placeholder="Select an option"
             dropdownData={dropdownData}
             onValueChange={setSelectedOption}
+            value={selectedOption} // This will bind the selected value to the dropdown
           />
         </View>
 
@@ -140,7 +191,13 @@ const CreatingProfileScreen = () => {
           <FloatingLabelInput
             label="First Name"
             value={firstName}
-            onChangeText={setFirstName}
+            onChangeText={text => {
+              const nameParts = text.split(' ');
+              setFirstName(nameParts[0]);
+              setLastName(
+                nameParts.length > 1 ? nameParts.slice(1).join(' ') : '',
+              );
+            }}
           />
         </View>
 
@@ -155,8 +212,8 @@ const CreatingProfileScreen = () => {
         <View style={style.spaceMarginStyle}>
           <DOBTextInputComponent
             label="Date of Birth"
-            value={dateOfBirth} // Bind the value to dateOfBirth state
-            onChangeText={setDateOfBirth} // Set the onChangeText handler
+            value={dateOfBirth}
+            onChangeText={setDateOfBirth}
             imageSource={icons.calendar_icon}
           />
         </View>
@@ -167,7 +224,7 @@ const CreatingProfileScreen = () => {
             value={birthOfTime}
             onChangeText={setBirthOfTime}
             showImage={true}
-            imageSource={icons.select_time_icon} // Example image source
+            imageSource={icons.select_time_icon}
           />
         </View>
 
@@ -175,8 +232,7 @@ const CreatingProfileScreen = () => {
           activeOpacity={0.7}
           onPress={onStartNowPress}
           style={style.startButton}
-          disabled={isUpdatingProfile} // Disable button while loading
-        >
+          disabled={isUpdatingProfile}>
           {isUpdatingProfile ? (
             <ActivityIndicator size="large" color="#FFFFFF" />
           ) : (

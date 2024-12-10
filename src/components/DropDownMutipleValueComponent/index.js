@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderBottomWidth: 1,
     borderRadius: 0,
-    paddingHorizontal: 8,
+    // paddingHorizontal: 8,
   },
   dropdownFocused: {},
   placeholderStyle: {

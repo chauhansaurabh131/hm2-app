@@ -11,6 +11,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: hp(12),
+    alignItems: 'center',
   },
   headerImageStyle: {
     top: -15,

@@ -2,6 +2,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Keyboard,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -9,7 +10,7 @@ import {
 } from 'react-native';
 import style from './style';
 
-import React, {useReducer, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import {images} from '../../assets';
@@ -29,6 +30,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-crop-picker';
+import Abc from '../abc';
 
 // Import other screens as needed
 
@@ -102,6 +104,8 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
 };
 
 const AddPersonalInfo = ({navigation}) => {
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
   const phaseReducerInitialState = {
     activeIndex: 0,
   };
@@ -211,6 +215,25 @@ const AddPersonalInfo = ({navigation}) => {
 
   const RenderComp = PersonalInfoPhases[activeIndex].Component;
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   const openGallery = () => {
     ImagePicker.openPicker({
       multiple: true,
@@ -284,14 +307,15 @@ const AddPersonalInfo = ({navigation}) => {
     //   // navigation.navigate('SetProfilePictureScreen');
     //   openGallery();
     // } else {
+
     if (activeIndex === 0) {
       apiDispatch(
         updateDetails(
           {
-            gender: genderSelectedOption,
-            maritalStatus: maritalSelectedOption,
-            caste: selectCaste,
-            religion: selectReligion,
+            gender: genderSelectedOption.toLowerCase(),
+            maritalStatus: maritalSelectedOption.toLowerCase(),
+            caste: selectCaste.toLowerCase(),
+            religion: selectReligion.toLowerCase(),
             height: userHeight,
             weight: userWeight,
 
@@ -308,13 +332,22 @@ const AddPersonalInfo = ({navigation}) => {
       );
     } else if (activeIndex === 1) {
       // Call addressDetails API for Address Details
+      const formattedCountry =
+        currentCountry.charAt(0).toLowerCase() + currentCountry.slice(1);
+
+      const formattedState =
+        currentState.charAt(0).toLowerCase() + currentState.slice(1);
+
+      const formattedCity =
+        selectCurrentCity.charAt(0).toLowerCase() + selectCurrentCity.slice(1);
+
       apiDispatch(
         addressDetails(
           {
             currentResidenceAddress: currentAddress,
-            currentCountry: currentCountry,
-            currentState: currentState,
-            currentCity: selectCurrentCity,
+            currentCountry: formattedCountry,
+            currentState: formattedState,
+            currentCity: formattedCity,
           },
           () => dispatch({type: NEXT_SCREEN}),
         ),
@@ -327,6 +360,7 @@ const AddPersonalInfo = ({navigation}) => {
           {
             mobileNumber: mobileNumber,
             homeMobileNumber: homeNumber,
+            userProfileCompleted: true,
           },
           () => dispatch({type: NEXT_SCREEN}),
         ),
@@ -334,15 +368,19 @@ const AddPersonalInfo = ({navigation}) => {
     } else if (activeIndex === 3) {
       // Call addressDetails API for Address Details
 
+      const convertFirstLetterToLowerCase = str => {
+        return str.charAt(0).toLowerCase() + str.slice(1);
+      };
+
       apiDispatch(
         // updateDetails(
         educationDetails(
           {
-            degree: degree,
-            collage: collage,
-            city: collageCity,
-            state: collageState,
-            country: collageCountry,
+            degree: convertFirstLetterToLowerCase(degree),
+            collage: convertFirstLetterToLowerCase(collage),
+            city: convertFirstLetterToLowerCase(collageCity),
+            state: convertFirstLetterToLowerCase(collageState),
+            country: convertFirstLetterToLowerCase(collageCountry),
           },
           () => dispatch({type: NEXT_SCREEN}),
         ),
@@ -350,25 +388,40 @@ const AddPersonalInfo = ({navigation}) => {
     } else if (activeIndex === 4) {
       // Call addressDetails API for Address Details
 
+      // Extract only the numeric part of the salary (e.g., '2 lakh' => 2)
+      const numericSalary = parseInt(salary.replace(/\D/g, ''), 10); // This removes all non-digit characters
+
+      // Check if numericSalary is valid
+      if (isNaN(numericSalary)) {
+        console.error('Invalid salary value!');
+        return; // You can also show an error message to the user if needed
+      }
+      console.log(' === salary ===> ', salary);
+
+      const convertFirstLetterToLowerCase = str => {
+        return str.charAt(0).toLowerCase() + str.slice(1);
+      };
+
       apiDispatch(
         professionalDetail(
           {
             jobTitle: jobTitle,
             jobType: jobType,
             companyName: companyName,
-            currentSalary: salary,
-            workCity: workInCity,
-            workCountry: workInCountry,
+            currentSalary: numericSalary,
+            workCity: convertFirstLetterToLowerCase(workInCity),
+            workCountry: convertFirstLetterToLowerCase(workInCountry),
           },
           () => dispatch({type: NEXT_SCREEN}),
         ),
       );
     } else if (activeIndex === 5) {
+      console.log(' === selectedItems ===> ', selectedItems);
+
       apiDispatch(
         updateDetails(
           {
-            hobbies: selectedItems.map(item => item.label),
-            userProfileCompleted: true,
+            hobbies: selectedItems,
           },
           // () => navigation.navigate('SetProfilePictureScreen'),
         ),
@@ -554,65 +607,60 @@ const AddPersonalInfo = ({navigation}) => {
         />
       )}
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginHorizontal: 17,
-          height: hp(87),
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.7}
+      {!isKeyboardVisible && (
+        <View
           style={{
-            width: wp(133),
-            height: hp(44),
-            borderRadius: 25,
-            borderWidth: 1,
-            borderColor: colors.black,
-            justifyContent: 'center',
-          }}
-          onPress={navigateToBack}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-              color: colors.black,
-            }}>
-            Back
-          </Text>
-        </TouchableOpacity>
-
-        {/*<CommonGradientButton*/}
-        {/*  buttonName={'Next'}*/}
-        {/*  containerStyle={{width: wp(162), height: hp(50), borderRadius: 25}}*/}
-        {/*  onPress={navigateToNext}*/}
-        {/*/>*/}
-
-        <TouchableOpacity
-          onPress={navigateToNext}
-          style={{
-            width: wp(176),
-            height: hp(44),
-            borderRadius: 30,
-            backgroundColor: colors.black,
-            justifyContent: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 17,
+            height: hp(87),
             alignItems: 'center',
           }}>
-          <Text
+          <TouchableOpacity
+            activeOpacity={0.7}
             style={{
-              color: colors.white,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
+              width: wp(133),
+              height: hp(44),
+              borderRadius: 25,
+              borderWidth: 1,
+              borderColor: colors.black,
+              justifyContent: 'center',
+            }}
+            onPress={navigateToBack}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins400,
+                color: colors.black,
+              }}>
+              Back
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={navigateToNext}
+            style={{
+              width: wp(176),
+              height: hp(44),
+              borderRadius: 30,
+              backgroundColor: colors.black,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            {/*Continue*/}
-            {activeIndex === 5 ? 'Add Photos' : 'Continue'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <Text
+              style={{
+                color: colors.white,
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins400,
+              }}>
+              {activeIndex === 5 ? 'Add Photos' : 'Continue'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );

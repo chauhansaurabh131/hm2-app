@@ -287,7 +287,11 @@ const SetProfilePictureScreen = ({route}) => {
       <View style={styles.imageWrapper}>
         <Image
           source={icons.add_image_icon}
-          style={{width: 50, height: 50, resizeMode: 'contain'}}
+          style={{
+            width: 50,
+            height: 50,
+            resizeMode: 'contain',
+          }}
         />
       </View>
     </TouchableOpacity>
@@ -350,8 +354,8 @@ const styles = StyleSheet.create({
   mediaContainer: {
     margin: 5,
     position: 'relative',
-    width: hp(106),
-    height: hp(106),
+    width: hp(108),
+    height: hp(108),
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

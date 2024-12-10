@@ -74,6 +74,8 @@ import UserProfileUploadImageFullScreen from '../screen/userProfileUploadImageFu
 import UserEditProfileScreen from '../screen/userEditProfileScreen';
 import DatingUserDetailsScreen from '../screen/datingAllScreen/datingUserDetailsScreen';
 import VerifyIdentityScreen from '../screen/verifyIdentityScreen';
+import SearchFilterScreen from '../screen/searchFilterScreen';
+import SearchUserDataScreen from '../screen/searchUserDataScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -652,6 +654,18 @@ const MainNavigator = () => {
         <Tab.Screen
           name="AccountsScreen"
           component={ExtraScreens}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="SearchFilterScreen"
+          component={SearchFilterScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="SearchUserDataScreen"
+          component={SearchUserDataScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
       </Tab.Navigator>

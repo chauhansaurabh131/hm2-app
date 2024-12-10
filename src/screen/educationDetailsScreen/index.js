@@ -42,151 +42,31 @@ const EducationDetailsScreen = ({
 
   const educationCountryDropdownData = ['India', 'Sri-Lanka', 'US', 'UK'];
 
+  // Dynamic height assignment based on dropdown type
+  const getDropdownHeight = dropdownType => {
+    switch (dropdownType) {
+      case 'Degree':
+        return hp(400); // Set height for gender dropdown
+      case 'City':
+        return hp(230); // Set height for marital status dropdown
+      case 'State':
+        return hp(230); // Set height for caste dropdown
+      case 'Country':
+        return hp(250); // Set height for caste dropdown
+      default:
+        return hp(300); // Default height
+    }
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      {/*<KeyboardAwareScrollView>*/}
-      {/*  <View style={{marginHorizontal: 17}}>*/}
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        // marginLeft: wp(12),*/}
-      {/*        color: colors.black,*/}
-      {/*        fontSize: fontSize(14),*/}
-      {/*        lineHeight: hp(18),*/}
-      {/*        fontFamily: fontFamily.poppins600,*/}
-      {/*        fontWeight: '400',*/}
-      {/*        marginTop: hp(20),*/}
-      {/*        marginBottom: hp(7),*/}
-      {/*      }}>*/}
-      {/*      Degree*/}
-      {/*    </Text>*/}
-
-      {/*    <TextInputSearchAndDropDowm*/}
-      {/*      value={degree}*/}
-      {/*      onChangeText={setDegree}*/}
-      {/*      placeholder={'Select'}*/}
-      {/*      dropdownItems={['B.com', 'BCA', 'BBA']}*/}
-      {/*    />*/}
-
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        color: colors.black,*/}
-      {/*        fontSize: fontSize(14),*/}
-      {/*        lineHeight: hp(18),*/}
-      {/*        fontFamily: fontFamily.poppins600,*/}
-      {/*        fontWeight: '400',*/}
-      {/*        marginTop: hp(15),*/}
-      {/*        marginBottom: hp(7),*/}
-      {/*      }}>*/}
-      {/*      Collage/University*/}
-      {/*    </Text>*/}
-
-      {/*    <TextInputSearchAndDropDowm*/}
-      {/*      value={collage}*/}
-      {/*      onChangeText={setCollage}*/}
-      {/*      placeholder={'Select'}*/}
-      {/*      dropdownItems={['ABC', 'XYZ', 'AAA']}*/}
-      {/*    />*/}
-
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        color: colors.black,*/}
-      {/*        fontSize: fontSize(14),*/}
-      {/*        lineHeight: hp(18),*/}
-      {/*        fontFamily: fontFamily.poppins600,*/}
-      {/*        fontWeight: '400',*/}
-      {/*        marginTop: hp(15),*/}
-      {/*        marginBottom: hp(7),*/}
-      {/*      }}>*/}
-      {/*      City*/}
-      {/*    </Text>*/}
-
-      {/*    <TextInputSearchAndDropDowm*/}
-      {/*      value={collageCity}*/}
-      {/*      onChangeText={setCollageCity}*/}
-      {/*      placeholder={'Select'}*/}
-      {/*      dropdownItems={[*/}
-      {/*        'GUJARAT',*/}
-      {/*        'MUMBAI',*/}
-      {/*        'DELHI',*/}
-      {/*        'SURAT',*/}
-      {/*        'VADODARA',*/}
-      {/*        'AHAMADABAD',*/}
-      {/*        'ANAND',*/}
-      {/*        'NAVSARI',*/}
-      {/*      ]}*/}
-      {/*    />*/}
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        color: colors.black,*/}
-      {/*        fontSize: fontSize(14),*/}
-      {/*        lineHeight: hp(18),*/}
-      {/*        fontFamily: fontFamily.poppins600,*/}
-      {/*        fontWeight: '400',*/}
-      {/*        marginTop: hp(15),*/}
-      {/*        marginBottom: hp(7),*/}
-      {/*      }}>*/}
-      {/*      State*/}
-      {/*    </Text>*/}
-
-      {/*    <TextInputSearchAndDropDowm*/}
-      {/*      value={collageState}*/}
-      {/*      onChangeText={setCollageState}*/}
-      {/*      placeholder={'Select'}*/}
-      {/*      dropdownItems={[*/}
-      {/*        'GUJARAT',*/}
-      {/*        'MUMBAI',*/}
-      {/*        'DELHI',*/}
-      {/*        'SURAT',*/}
-      {/*        'VADODARA',*/}
-      {/*        'AHAMADABAD',*/}
-      {/*        'ANAND',*/}
-      {/*        'NAVSARI',*/}
-      {/*      ]}*/}
-      {/*    />*/}
-
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        // marginLeft: wp(12),*/}
-      {/*        color: colors.black,*/}
-      {/*        fontSize: fontSize(14),*/}
-      {/*        lineHeight: hp(18),*/}
-      {/*        fontFamily: fontFamily.poppins600,*/}
-      {/*        fontWeight: '400',*/}
-      {/*        marginTop: hp(15),*/}
-      {/*        marginBottom: hp(7),*/}
-      {/*      }}>*/}
-      {/*      Country*/}
-      {/*    </Text>*/}
-
-      {/*    /!*<TextInputWithDropDownComponent*!/*/}
-      {/*    /!*  dropdownItems={['GUJARAT', 'MUMBAI', 'DELHI']}*!/*/}
-      {/*/>*/}
-
-      {/*    <TextInputSearchAndDropDowm*/}
-      {/*      value={collageCountry}*/}
-      {/*      onChangeText={setCollageCountry}*/}
-      {/*      placeholder={'Select'}*/}
-      {/*      dropdownItems={[*/}
-      {/*        'GUJARAT',*/}
-      {/*        'MUMBAI',*/}
-      {/*        'DELHI',*/}
-      {/*        'SURAT',*/}
-      {/*        'VADODARA',*/}
-      {/*        'AHAMADABAD',*/}
-      {/*        'ANAND',*/}
-      {/*        'NAVSARI',*/}
-      {/*      ]}*/}
-      {/*    />*/}
-      {/*  </View>*/}
-      {/*  <View style={{height: 150}} />*/}
-      {/*</KeyboardAwareScrollView>*/}
-
       <View style={{marginHorizontal: wp(17)}}>
         <View style={{marginTop: 30}}>
           <NewDropDownTextInput
             placeholder="Degree"
             dropdownData={degreeDropdownData}
             onValueChange={setDegree}
+            bottomSheetHeight={getDropdownHeight('Degree')} // Dynamic height
           />
         </View>
 
@@ -203,6 +83,7 @@ const EducationDetailsScreen = ({
             placeholder="City"
             dropdownData={educationCityDropdownData}
             onValueChange={setCollageCity}
+            bottomSheetHeight={getDropdownHeight('City')} // Dynamic height
           />
         </View>
 
@@ -211,6 +92,7 @@ const EducationDetailsScreen = ({
             placeholder="State"
             dropdownData={educationStateDropdownData}
             onValueChange={setCollageState}
+            bottomSheetHeight={getDropdownHeight('State')} // Dynamic height
           />
         </View>
 
@@ -219,6 +101,7 @@ const EducationDetailsScreen = ({
             placeholder="Country"
             dropdownData={educationCountryDropdownData}
             onValueChange={setCollageCountry}
+            bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height
           />
         </View>
       </View>

@@ -125,6 +125,7 @@ const DOBTextInputComponent = ({
         <TextInput
           style={styles.input}
           value={value}
+          editable={false}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onChangeText={handleTextChange}
@@ -164,6 +165,7 @@ const DOBTextInputComponent = ({
                 mode="date"
                 maximumDate={maxDate} // Prevent dates beyond the current year
                 onDateChange={setSelectedDate} // Update date in state when scrolling
+                textColor={'black'}
               />
             </View>
             <TouchableOpacity

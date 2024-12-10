@@ -39,6 +39,7 @@ export const COUNTRY_LIST = [
   {label: 'Myanmar', value: '6'},
   {label: 'nepal', value: '7'},
   {label: 'sri-lanka', value: '8'},
+  {label: 'pakistan', value: '9'},
 ];
 
 export const Dating_List = [
