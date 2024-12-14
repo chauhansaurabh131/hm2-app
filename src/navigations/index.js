@@ -410,10 +410,10 @@ const MainNavigator = () => {
           name={'ConnectToWebScreen'}
           component={ConnectToWebScreen}
         />
-        <Stack.Screen
-          name={'SuccessStoryPageScreen'}
-          component={SuccessStoryPageScreen}
-        />
+        {/*<Stack.Screen*/}
+        {/*  name={'SuccessStoryPageScreen'}*/}
+        {/*  component={SuccessStoryPageScreen}*/}
+        {/*/>*/}
         <Stack.Screen
           name={'SuccessStoryEditInformationScreen'}
           component={SuccessStoryEditInformationScreen}
@@ -668,6 +668,17 @@ const MainNavigator = () => {
           component={SearchUserDataScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
+
+        <Tab.Screen
+          name="SuccessStoryPageScreen"
+          component={SuccessStoryPageScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+        {/*<Tab.Screen*/}
+        {/*  name="Abc"*/}
+        {/*  component={Abc}*/}
+        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
+        {/*/>*/}
       </Tab.Navigator>
     );
   };

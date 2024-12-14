@@ -144,7 +144,7 @@ const DatingExploreScreen = () => {
   );
 
   const renderAcceptedItem = ({item}) => {
-    console.log(' === var ===> ', item?.friendList?.datingData[0]?.Occupation);
+    // console.log(' === var ===> ', item?.friendList?.datingData[0]?.Occupation);
     const user = item.friendList || [];
     const profilePic = user?.profilePic;
     const name = user?.name || 'No Name';

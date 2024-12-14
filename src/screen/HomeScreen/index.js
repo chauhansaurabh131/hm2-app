@@ -34,7 +34,6 @@ import NewPremiumMatchesComponent from '../../components/newPremiumMatchesCompon
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const HomeScreen = ({route}) => {
-  const [showMeAll, setShowMeAll] = useState(false);
   const [showMeAllStories, setShowMeAllStories] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -260,14 +259,6 @@ const HomeScreen = ({route}) => {
     setCompleteModalModalVisible(true);
   };
 
-  const onPremiumMatchesAllOnPress = () => {
-    setShowMeAll(true);
-  };
-  const onPremiumMatchesAllnotPress = () => {
-    setShowMeAll(false);
-    console.log(' === onPremiumMatchesAllnotPress ===> ');
-  };
-
   const onStoriesAllOnPress = () => {
     setShowMeAllStories(true);
   };
@@ -280,6 +271,105 @@ const HomeScreen = ({route}) => {
   // Function to open bottom sheet from Abc component
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
+  };
+
+  const toastConfigs = {
+    AddShortlisted: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+    RemoveShortlisted: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+    ProfileLike: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(150),
+          height: hp(40),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+    ProfileDisLike: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(150),
+          height: hp(40),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
   };
 
   return (
@@ -563,7 +653,7 @@ const HomeScreen = ({route}) => {
         <View style={{marginHorizontal: 17}}>
           <View style={style.premiumTextContainer}>
             <Text style={style.premiumTextStyle}>Premium Matches</Text>
-            <Text style={style.premiumTextsStyle}>110</Text>
+            {/*<Text style={style.premiumTextsStyle}>110</Text>*/}
           </View>
 
           {/*PREMIUM MATCHES COMPONENT*/}
@@ -574,24 +664,22 @@ const HomeScreen = ({route}) => {
             {/*    completeOpenModal(selectedBox);*/}
             {/*  }}*/}
             {/*/>*/}
-            <NewPremiumMatchesComponent />
+            <NewPremiumMatchesComponent toastConfigs={toastConfigs} />
           </View>
         </View>
 
-        <TouchableOpacity
-          activeOpacity={0.7}
+        <TouchableHighlight
+          activeOpacity={0.3}
           style={{
-            // backgroundColor: 'orange',
-            height: hp(45),
             justifyContent: 'center',
-            backgroundColor: showMeAll ? '#F9FBFF' : 'white',
+            height: hp(45),
           }}
-          // onPress={onPremiumMatchesAllOnPress}
-          onPressIn={onPremiumMatchesAllOnPress} // Trigger when button is pressed
-          onPressOut={onPremiumMatchesAllnotPress} // Trigger when button is released
-        >
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('Matches');
+          }}>
           <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-        </TouchableOpacity>
+        </TouchableHighlight>
 
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
@@ -604,7 +692,7 @@ const HomeScreen = ({route}) => {
           </View>
 
           {userProfileCompleted === true && userPartnerPreCompleted === true ? (
-            <PremiumMatchesComponent />
+            <PremiumMatchesComponent toastConfigs={toastConfigs} />
           ) : (
             <Text>Fill form</Text>
           )}
@@ -737,7 +825,8 @@ const HomeScreen = ({route}) => {
         <View style={{height: isIOS ? hp(20) : hp(20)}} />
       </ScrollView>
       {/*</View>*/}
-      <Toast ref={ref => Toast.setRef(ref)} />
+      {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
+      <Toast config={toastConfigs} />
     </SafeAreaView>
   );
 };

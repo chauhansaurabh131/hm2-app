@@ -19,8 +19,11 @@ export function userDataFail() {
 }
 
 // SEND FRIEND REQUEST
-export function sendRequest(payload) {
-  return {type: TYPES.SEND_REQUEST, data: {payload}};
+export function sendRequest(payload, callBack) {
+  return {
+    type: TYPES.SEND_REQUEST,
+    data: {payload, callBack},
+  };
 }
 
 export const sendRequestSuccess = data => ({

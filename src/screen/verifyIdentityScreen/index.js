@@ -24,7 +24,7 @@ const VerifyIdentityScreen = ({navigation}) => {
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
 
-  console.log(' === var ===> ', userId, accessToken);
+  // console.log(' === var ===> ', userId, accessToken);
 
   const topModalBottomSheetRef = useRef(null);
   const cameraRef = useRef(null);

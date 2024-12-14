@@ -77,7 +77,7 @@ const GeneralInformationDetailsScreen = ({
                 label="Height"
                 value={userHeight}
                 onChangeText={setUserHeight}
-                showUnitText={'CM'}
+                showUnitText={'ft/cm'}
                 showUnit={true}
               />
             </View>
@@ -86,7 +86,7 @@ const GeneralInformationDetailsScreen = ({
                 label="Weight"
                 value={userWeight}
                 onChangeText={setUserWeight}
-                showUnitText={'KG'}
+                showUnitText={'kg'}
                 showUnit={true}
               />
             </View>

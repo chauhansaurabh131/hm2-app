@@ -210,6 +210,9 @@ const QRCodeScreen = () => {
 
       // Call the API with the token and channel
       await triggerLogin(channel, token);
+
+      console.log(' === channel ===> ', channel);
+      console.log(' === token ===> ', token);
     } catch (error) {
       console.error('Error parsing QR code data:', error);
       Alert.alert('Error', 'Failed to parse QR code data.');
@@ -236,9 +239,10 @@ const QRCodeScreen = () => {
       const result = await response.json();
 
       if (response.ok) {
+        // Success block
         Alert.alert('Success', 'Logged in successfully!');
-        console.log('API response:', result);
-        // Optionally navigate to another screen or handle success
+        console.log('API call successful:', result); // Log when API is successful
+        console.log('API Response:', result); // Optionally log full API response
       } else {
         Alert.alert('Failed', result.message || 'Failed to log in.');
         console.log('API error:', result);

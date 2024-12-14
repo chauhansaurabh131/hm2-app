@@ -42,6 +42,18 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     console.log(' === birthday ===> ', birthday);
     console.log(' === description ===> ', description);
 
+    // Check if description length is at least 150 characters
+    if (description.length < 200) {
+      Alert.alert(
+        'Error',
+        'Please enter at least 150 characters in the description.',
+      );
+    } else {
+      // Log the description to the terminal (console)
+      console.log('Description: ', description);
+      // Here you can do other submit-related actions (e.g., send data to server)
+    }
+
     const validImages = selectedImages.filter(image => image !== null);
 
     if (validImages.length === 0) {
@@ -224,8 +236,8 @@ const SuccessStoryEditInformationScreen = ({route}) => {
         const newImageUri = response.assets[0].uri;
 
         // Check if adding the new image exceeds the 3-image limit
-        if (selectedImages.length >= 3) {
-          Alert.alert('Limit Exceeded', 'You can only add up to 3 images.');
+        if (selectedImages.length >= 1) {
+          Alert.alert('Edit Thumbnail', 'You can only add 1 images.');
         } else {
           // Add the new image URI to the selectedImages array
           setSelectedImages(prevImages => [...prevImages, newImageUri]);
@@ -269,6 +281,10 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     setBirthday(formattedBirthday);
   };
 
+  const removeImage = uri => {
+    setSelectedImages(prevImages => prevImages.filter(image => image !== uri));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -295,6 +311,8 @@ const SuccessStoryEditInformationScreen = ({route}) => {
         Found your partner on HappyMilan?
       </Text>
 
+      <View style={{width: '100', height: 2, backgroundColor: '#F8F8F8'}} />
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <Text style={styles.label}>Your & Your Partner Name</Text>
@@ -318,7 +336,18 @@ const SuccessStoryEditInformationScreen = ({route}) => {
             keyboardType="numeric"
           />
 
-          <Text style={styles.label}>Your Partner's ID</Text>
+          <Text style={styles.label}>
+            Your Partner's ID{' '}
+            <Text
+              style={{
+                fontSize: fontSize(14),
+                lineHeight: hp(21),
+                fontFamily: fontFamily.poppins400,
+                color: '#8D8D8D',
+              }}>
+              (Ex. B100023)
+            </Text>
+          </Text>
 
           <TextInput
             placeholder={'Enter Here'}
@@ -410,7 +439,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
                 lineHeight: hp(24),
                 fontFamily: fontFamily.poppins400,
               }}>
-              Add Marriage Photos
+              Add Thumbnail
             </Text>
           </TouchableOpacity>
 
@@ -418,19 +447,62 @@ const SuccessStoryEditInformationScreen = ({route}) => {
             data={selectedImages}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-              <Image
-                source={{uri: item}}
-                style={{
-                  width: 112,
-                  height: 154,
-                  marginTop: 20,
-                  marginRight: 10, // Add space between images
-                  borderRadius: 10,
-                }}
-                resizeMode="cover"
-              />
+              // <Image
+              //   source={{uri: item}}
+              //   style={{
+              //     width: '50%',
+              //     height: 200,
+              //     marginTop: 20,
+              //     marginRight: 10, // Add space between images
+              //     borderRadius: 10,
+              //     // justifyContent: 'center',
+              //     // alignItems: 'center',
+              //     alignSelf: 'center',
+              //   }}
+              //   // resizeMode="cover"
+              // />
+              <View style={{marginTop: 20}}>
+                <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+                  <Image
+                    source={{uri: item}}
+                    style={{
+                      width: '70%',
+                      height: hp(250),
+                      // marginTop: 20,
+                      // marginRight: 10, // Add space between images
+                      borderRadius: 10,
+                      // justifyContent: 'center',
+                      // alignItems: 'center',
+                    }}
+                    // resizeMode="stretch"
+                  />
+                  <TouchableOpacity
+                    onPress={() => removeImage(item)} // Remove the image when pressed
+                    style={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background for the X button
+                      borderRadius: 50,
+                      // padding: 5,
+                      height: hp(20),
+                      width: hp(20),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 9,
+                        fontWeight: 'bold',
+                        // top: -2,
+                      }}>
+                      X
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             )}
-            horizontal // Set to true for horizontal scrolling
             showsHorizontalScrollIndicator={false} // Hide horizontal scrollbar
           />
 
@@ -578,7 +650,7 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 54,
+    marginTop: 35,
   },
   notNowButton: {
     width: hp(140),

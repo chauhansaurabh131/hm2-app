@@ -175,6 +175,10 @@ export const icons = {
   dating_cancel_icon: require('./icons/dating_cancel_icon.png'),
   date_cancel_icon: require('./icons/date_cancel_icon.png'),
   search_gradient_icon: require('./icons/search_gradient_icon.png'),
+  black_start_icon: require('./icons/black_start_icon.png'),
+  black_check_icon: require('./icons/black_check_icon.png'),
+  gradient_disLike_icon: require('./icons/gradient_dislike_icon.png'),
+  gradient_share_icon: require('./icons/gradient_share_icon.png'),
 };
 
 export const gif = {

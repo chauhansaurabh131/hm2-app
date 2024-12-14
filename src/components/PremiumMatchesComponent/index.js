@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {
-  View,
+  SafeAreaView,
   Text,
-  Image,
   FlatList,
+  View,
+  Image,
   StyleSheet,
   TouchableOpacity,
   Alert,
@@ -11,385 +12,226 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {
   accepted_Decline_Request,
-  addShortList,
   sendRequest,
+  userDatas,
+  userDis_Like,
+  userLike,
 } from '../../actions/homeActions';
-import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {icons, images} from '../../assets';
 import {colors} from '../../utils/colors';
+import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import LinearGradient from 'react-native-linear-gradient';
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
-const PremiumMatchesComponent = ({isOnline}) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const [hasMoreData, setHasMoreData] = useState(true);
+const PremiumMatchesComponent = ({toastConfigs}) => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
-  const dispatch = useDispatch();
+  const [users, setUsers] = useState([]); // State to store the user data
+  const [loading, setLoading] = useState(false); // Loading state
 
-  // console.log(' === PremiumMatchesComponent_______ ===> ', user);
+  const ShowToast = () => {
+    Toast.show({
+      type: 'AddShortlisted',
+      text1: 'Profile has been shortlisted',
+      visibilityTime: 1000,
+    });
+  };
 
-  // console.log(' === accessToken ===> ', accessToken);
+  const RemoveShortlisted = () => {
+    Toast.show({
+      type: 'RemoveShortlisted',
+      text1: 'Shortlisted has been removed',
+      visibilityTime: 1000,
+    });
+  };
+  const ProfileLike = () => {
+    Toast.show({
+      type: 'ProfileLike',
+      text1: 'Profile Like',
+      visibilityTime: 1000,
+    });
+  };
+  const ProfileDisLike = () => {
+    Toast.show({
+      type: 'ProfileDisLike',
+      text1: 'Profile Disliked',
+      visibilityTime: 1000,
+    });
+  };
 
-  // USER ALL DATA FETCH API
-  const fetchData = async (pageNumber = 1) => {
-    if (!hasMoreData) {
-      return;
+  useEffect(() => {
+    if (accessToken) {
+      fetchData();
     }
+  }, [accessToken]);
 
+  const fetchData = async () => {
+    setLoading(true); // Start loading
     try {
-      const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/getUserByGender?page=${pageNumber}`,
+      const response = await axios.get(
+        'https://stag.mntech.website/api/v1/user/user/getUserByGender',
         {
-          method: 'GET',
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         },
       );
 
-      const json = await response.json();
-      const newData = json?.data[0]?.paginatedResults || [];
-
-      if (newData.length === 0) {
-        setHasMoreData(false); // No more data to fetch
-      } else {
-        setData(prevData => {
-          const mergedData = [...prevData];
-          newData.forEach(newItem => {
-            if (!mergedData.some(item => item._id === newItem._id)) {
-              mergedData.push(newItem); // Avoid duplicates
-            }
-          });
-          return mergedData; // Update with merged data
-        });
-      }
+      // Extract user data from the response
+      const userData = response.data?.data[0]?.paginatedResults || []; // Access the paginatedResults array
+      setUsers(userData); // Set the fetched user data to the state
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
-      Alert.alert('Error', 'Failed to fetch data. Please try again.');
-    } finally {
+      Alert.alert('Error', 'Failed to fetch data.');
       setLoading(false);
-      setIsFetchingMore(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const loadMoreData = () => {
-    if (!isFetchingMore && hasMoreData) {
-      setIsFetchingMore(true);
-      setPage(prevPage => {
-        const nextPage = prevPage + 1;
-        fetchData(nextPage); // Fetch more data when reaching the end
-        return nextPage;
-      });
+  const createLike = async likedUserId => {
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/like/create-like',
+        {
+          likedUserId: likedUserId,
+          isLike: true,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      // Handle successful response, maybe update local state or show success message
+      console.log('Like created successfully:', response.data);
+      ProfileLike();
+      fetchData();
+    } catch (error) {
+      console.error('Error creating like:', error);
+      Alert.alert('Error', 'Failed to create like.');
+      fetchData();
     }
   };
 
-  // SEND REQUEST FUNCTION
-  const onFriendRequestButtonPress = async item => {
-    console.log(' === onFriendRequestButtonPress ===> ', item?.friendsDetails);
+  const updateLike = async likedUserId => {
+    try {
+      const response = await axios.put(
+        `https://stag.mntech.website/api/v1/user/like/update-like/${likedUserId}`,
+        {
+          likedUserId: likedUserId,
+          isLike: false,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      // Handle successful response, maybe update local state or show success message
+      console.log('Like updated successfully:', response.data);
+      ProfileDisLike();
+      fetchData();
+    } catch (error) {
+      console.error('Error updating like:', error);
+      Alert.alert('Error', 'Failed to update like.');
+      fetchData();
+    }
+  };
 
-    const requestId = item?.friendsDetails?._id;
+  const handleLikePress = item => {
+    const isLiked = item?.userLikeDetails?.isLike; // Access the isLike property
 
-    console.log(' === Friend Request ID ===> ', requestId);
-
-    // Check if the status is 'accepted'
-    if (item?.friendsDetails?.status === 'accepted') {
-      // If the status is 'accepted', remove the friend request
-      try {
-        await dispatch(
-          accepted_Decline_Request({
-            user: item?._id,
-            request: requestId, // Use the existing request ID
-            status: 'removed',
-          }),
-        );
-
-        // Update the UI after removing the friend request
-        setData(prevData =>
-          prevData.map(userItem =>
-            userItem._id === item._id
-              ? {
-                  ...userItem,
-                  friendsDetails: {
-                    ...userItem.friendsDetails,
-                    status: 'none', // Update status locally to reflect removal
-                  },
-                }
-              : userItem,
-          ),
-        );
-      } catch (error) {
-        console.error('Error removing friend request:', error);
-        Alert.alert(
-          'Error',
-          'Failed to remove friend request. Please try again.',
-        );
-      }
-    } else if (item?.friendsDetails?.status === 'requested') {
-      // If the status is 'requested', reject the friend request
-      try {
-        await dispatch(
-          accepted_Decline_Request({
-            user: item?._id,
-            request: requestId, // Use the existing request ID
-            status: 'removed',
-          }),
-        );
-
-        // Update the UI after rejecting the request
-        setData(prevData =>
-          prevData.map(userItem =>
-            userItem._id === item._id
-              ? {
-                  ...userItem,
-                  friendsDetails: {
-                    ...userItem.friendsDetails,
-                    status: 'none', // Update status locally to reflect rejection
-                  },
-                }
-              : userItem,
-          ),
-        );
-      } catch (error) {
-        console.error('Error rejecting friend request:', error);
-        Alert.alert(
-          'Error',
-          'Failed to reject friend request. Please try again.',
-        );
-      }
+    if (isLiked) {
+      // If already liked, call the update-like API to unlike
+      updateLike(item?.userLikeDetails?._id);
     } else {
-      // Otherwise, send a new friend request
-      try {
-        const token = user?.tokens?.access?.token;
-
-        await dispatch(sendRequest({friend: item?._id, user: user.user.id}));
-
-        // Update the specific item in the data array to reflect the friend request status
-        setData(prevData =>
-          prevData.map(userItem =>
-            userItem._id === item._id
-              ? {
-                  ...userItem,
-                  friendsDetails: {
-                    ...userItem.friendsDetails,
-                    status: 'requested', // Update the status locally
-                  },
-                }
-              : userItem,
-          ),
-        );
-      } catch (error) {
-        console.error('Error sending friend request:', error);
-        Alert.alert(
-          'Error',
-          'Failed to send friend request. Please try again.',
-        );
-      }
+      // If not liked, call the create-like API to like
+      createLike(item._id);
     }
   };
 
-  // LIKE & DISLIKE FUNCTION
-  const handleLikePress = async item => {
-    // console.log(' === var ===> ', item?.userLikeDetails?._id);
-    const deleteId = item?.userLikeDetails?._id;
-    const isAlreadyLiked = item?.userLikeDetails?.isLike || false;
-    const success = await likeOrUnlikeUser(
-      item._id || item.id,
-      isAlreadyLiked,
-      deleteId,
+  const OnsendRequestedSend = item => {
+    console.log(' === item>>> ===> ', item);
+    dispatch(
+      sendRequest({friend: item?._id, user: user.user.id}, () => {
+        fetchData();
+      }),
     );
+  };
 
-    // Update state if the API call is successful
-    if (success !== null) {
-      setData(prevData =>
-        prevData.map(user =>
-          user._id === item._id
-            ? {
-                ...user,
-                userLikeDetails: {
-                  ...user.userLikeDetails,
-                  isLike: success,
-                },
-              }
-            : user,
+  const handleRequestAction = (item, requestId) => {
+    if (item?.friendsDetails?.status === 'requested') {
+      // If the request status is 'requested', decline or remove the request
+      dispatch(
+        accepted_Decline_Request(
+          {
+            user: item?._id,
+            request: requestId, // Use the existing request ID
+            status: 'removed', // Decline the request or remove it
+          },
+          () => {
+            fetchData();
+          },
         ),
       );
     }
   };
 
-  const likeOrUnlikeUser = async (likedUserId, isAlreadyLiked, deleteId) => {
-    try {
-      const url = isAlreadyLiked
-        ? `https://stag.mntech.website/api/v1/user/like/update-like/${deleteId}`
-        : 'https://stag.mntech.website/api/v1/user/like/create-like';
-      const method = isAlreadyLiked ? 'PUT' : 'POST';
-      const body = JSON.stringify({
-        likedUserId,
-        isLike: !isAlreadyLiked,
-      });
-
-      console.log(`Calling ${isAlreadyLiked ? 'PUT' : 'POST'} API for like`);
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body,
-      });
-
-      const result = await response.json();
-      console.log('Response:', result);
-
-      if (response.ok) {
-        return !isAlreadyLiked; // Toggle the like state
-      } else {
-        throw new Error(result.message || 'Error liking user');
-      }
-    } catch (error) {
-      console.error('Error liking/unliking user:', error.message);
-      // Alert.alert('Error', 'Failed to like/unlike user. Please try again.');
-      return null;
-    }
-  };
-
-  //SHORTLIST FUNCTION
-  const handleShortlistPress = async item => {
-    const isShortlisted = !!item.userShortListDetails; // If `userShortListDetails` exists, the user is shortlisted
-    const shortlistId = item._id;
-
-    if (isShortlisted) {
-      // If the user is already shortlisted, delete from shortlist
-      const success = await removeFromShortlist(item.userShortListDetails._id);
-      if (success) {
-        setData(prevData =>
-          prevData.map(user =>
-            user._id === item._id
-              ? {
-                  ...user,
-                  userShortListDetails: null, // Remove shortlist details on success
-                }
-              : user,
-          ),
-        );
-      }
-    } else {
-      // If the user is not shortlisted, add to shortlist
-      const success = await addToShortlist(shortlistId);
-      if (success) {
-        setData(prevData =>
-          prevData.map(user =>
-            user._id === item._id
-              ? {
-                  ...user,
-                  userShortListDetails: {_id: shortlistId}, // Add shortlist details on success
-                }
-              : user,
-          ),
-        );
-      }
-    }
-  };
-
-  // API call to remove user from shortlist
-  const removeFromShortlist = async deleteId => {
-    try {
-      const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${deleteId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-
-      const result = await response.json();
-      console.log('Remove from Shortlist Response:', result);
-
-      if (response.ok) {
-        // Alert.alert('Success', 'User removed from shortlist!');
-        console.log(' === Success ===> ', 'User removed from shortlist!');
-        return true;
-      } else {
-        throw new Error(result.message || 'Error removing user from shortlist');
-      }
-    } catch (error) {
-      console.error('Error removing from shortlist:', error.message);
-      // Alert.alert(
-      //   'Error',
-      //   'Failed to remove from shortlist. Please try again.',
-      // );
-      console.log(
-        ' === Error ===> ',
-        'Failed to remove from shortlist. Please try again.',
-      );
-      return false;
-    }
-  };
-
-  // API call to shortlist a user
   const addToShortlist = async shortlistId => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
         {
-          method: 'POST',
+          shortlistId: shortlistId,
+        },
+        {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
           },
-          body: JSON.stringify({shortlistId}),
         },
       );
-
-      const result = await response.json();
-      console.log('Shortlist Response:', result);
-
-      if (response.ok) {
-        // Alert.alert('Success', 'User added to shortlist!');
-        console.log(' === Success ===> ', 'User added to shortlist!');
-        return true;
-      } else {
-        throw new Error(result.message || 'Error adding user to shortlist');
-      }
+      console.log('Shortlist created successfully:', response.data);
+      ShowToast();
+      fetchData(); // Refresh the user data after adding to shortlist
     } catch (error) {
-      console.error('Error adding to shortlist:', error.message);
-      // Alert.alert('Error', 'Failed to add to shortlist. Please try again.');
-      console.log(
-        ' === Error ===> ',
-        'Failed to add to shortlist. Please try again.',
+      console.error('Error adding to shortlist:', error);
+      Alert.alert('Error', 'Failed to add to shortlist.');
+    }
+  };
+
+  const removeFromShortlist = async shortlistId => {
+    console.log(' === removeFromShortlist_______ ===> ', shortlistId);
+    try {
+      const response = await axios.delete(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+          },
+        },
       );
-      return false;
+      console.log('Shortlist removed successfully:', response.data);
+      RemoveShortlisted();
+      fetchData(); // Refresh the user data after removing from the shortlist
+    } catch (error) {
+      console.error('Error removing from shortlist:', error);
+      Alert.alert('Error', 'Failed to remove from shortlist.');
     }
   };
 
-  const calculateAge = dateOfBirth => {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
-
-  const renderUserItem = ({item}) => {
-    // console.log(' === send  ===> ', item?.friendsDetails);
-
-    // console.log(' === item______ ===> ', item.address.currentCity);
+  // Render each item in the list
+  const renderItem = ({item}) => {
+    // console.log(' === var ===> ', item?.friendsDetails);
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
@@ -411,20 +253,88 @@ const PremiumMatchesComponent = ({isOnline}) => {
         item.address.currentCountry.slice(1).toLowerCase()
       : '';
 
-    // const currentCity = item.address ? item.address.currentCity : '';
-    // const currentCountry = item.address ? item.address.currentCountry : '';
+    const userAllImage = Array.isArray(item?.userProfilePic)
+      ? item.userProfilePic.map(pic => pic.url)
+      : [];
 
-    const likeIconSource = item?.userLikeDetails?.isLike
-      ? icons.new_user_like_icon // Show this if user liked the item
-      : icons.new_like_icon;
+    const profileImage = item.profilePic;
+    const birthTime = item.birthTime;
 
-    const shortlistIconSource = item.userShortListDetails
-      ? icons.new_user_addStar_icon // If already shortlisted, show upgrade icon
-      : icons.new_star_icon; // If not shortlisted, show star icon
+    const JobTittle = item.userProfessional?.jobTitle
+      ? item.userProfessional?.jobTitle.charAt(0).toUpperCase() +
+        item.userProfessional?.jobTitle.slice(1).toLowerCase()
+      : '';
+
+    const calculateAge = dateOfBirth => {
+      const birthDate = new Date(dateOfBirth);
+      const today = new Date();
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+
+      // Adjust age if the current date is before the birthday in the current year
+      if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+
+      return age;
+    };
 
     const age = calculateAge(item.dateOfBirth);
 
-    // Extract the friend status
+    const handlePress = () => {
+      console.log(' === item........... ===> ', item);
+      const matchesUserData = {
+        userAllImage,
+        profileImage,
+        birthTime,
+        currentCity,
+        JobTittle,
+        currentCountry,
+        age,
+        gender: item?.gender,
+        height: item?.height,
+        cast: item?.cast,
+        firstName: item?.firstName,
+        lastName: item?.lastName,
+        motherTongue: item?.motherTongue,
+        about: item?.writeBoutYourSelf,
+        religion: item?.religion,
+        dateOfBirth: item?.dateOfBirth,
+        currentResidenceAddress: item?.address?.currentResidenceAddress,
+        originResidenceAddress: item?.address?.originResidenceAddress,
+        originCountry: item?.address?.originCountry,
+        originCity: item?.address?.originCity,
+        mobileNumber: item?.mobileNumber,
+        homeMobileNumber: item?.homeMobileNumber,
+        email: item?.email,
+        degree: item?.userEducation?.degree,
+        collage: item?.userEducation?.collage,
+        educationCity: item?.userEducation?.city,
+        educationState: item?.userEducation?.state,
+        educationCountry: item?.userEducation?.country,
+        Designation: item?.userProfessional?.jobTitle,
+        companyName: item?.userProfessional?.companyName,
+        jobType: item?.userProfessional?.jobType,
+        currentSalary: item?.userProfessional?.currentSalary,
+        workCity: item?.userProfessional?.workCity,
+        workCountry: item?.userProfessional?.workCountry,
+        hobbies: item?.hobbies,
+        matchPercentage: item?.matchPercentage,
+        userLikeDetails: item?.userLikeDetails,
+      };
+
+      // console.log('User Data:', matchesUserData);
+
+      // Navigate to UserDetailsScreen
+      navigation.navigate('UserDetailsScreen', {matchesUserData});
+    };
+
+    const isLiked = item?.userLikeDetails?.isLike; // Access the isLike property
+
     const friendStatus = item?.friendsDetails?.status;
 
     // Set the icon based on the friend request status
@@ -435,134 +345,317 @@ const PremiumMatchesComponent = ({isOnline}) => {
         ? icons.new_user_send_icon // Request already sent, allow for rejection
         : icons.new_send_icon; // No request sent, allow sending a request
 
+    // Determine the star icon based on userShortListDetails
+    const starIconSource = item?.userShortListDetails
+      ? icons.black_check_icon
+      : icons.black_start_icon;
+
     return (
-      <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.itemContainer}
+        activeOpacity={0.6}
+        onPress={handlePress}>
         <View
           style={{
             height: hp(225),
             borderRadius: 10,
             backgroundColor: '#FFFFFF',
-            // shadowColor: '#EFEFEF',
             borderWidth: 1,
             borderColor: '#EFEFEF',
-            // shadowOpacity: 0.5,
-            // shadowRadius: 6,
-            // elevation: 2,
           }}>
-          <View>
-            <Image
-              style={
-                item.profilePic
-                  ? styles.image
-                  : [styles.image, styles.imageWithBorder]
-              }
-              source={
-                item.profilePic
-                  ? {uri: item.profilePic}
-                  : images.empty_male_Image
-              }
-            />
-            <View style={styles.overlayContainer}>
-              {isOnline && (
-                <View style={styles.onlineBodyContainer}>
-                  <Text style={styles.onlineText}>Online</Text>
-                </View>
-              )}
+          <Image
+            style={
+              item.profilePic
+                ? styles.image
+                : [styles.image, styles.imageWithBorder]
+            }
+            source={
+              item.profilePic ? {uri: item.profilePic} : images.empty_male_Image
+            }
+          />
 
-              <TouchableOpacity
-                onPress={() => handleShortlistPress(item)}
-                style={{position: 'absolute', right: 0, padding: 10}}>
-                <Image source={shortlistIconSource} style={styles.starIcon} />
-              </TouchableOpacity>
-            </View>
+          <View style={styles.overlayContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                if (item?.userShortListDetails) {
+                  // If the user is already in the shortlist, remove them
+                  removeFromShortlist(item.userShortListDetails._id);
+                } else {
+                  // If the user is not in the shortlist, add them
+                  addToShortlist(item._id);
+                }
+              }}
+              style={{position: 'absolute', right: 0, padding: 10}}>
+              <Image source={starIconSource} style={styles.starIcon} />
+            </TouchableOpacity>
           </View>
 
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.name}>
+            <Text style={styles.itemText}>
               {firstName} {lastName}
             </Text>
-            <View style={styles.nameContainer}>
-              <Text style={styles.nameDetailTextStyle}>{age || 'N/A'}</Text>
-              <Text style={styles.nameDetailTextStyle}> yrs, </Text>
-              <Text style={styles.nameDetailTextStyle}>
-                {item?.height || 'N/A'}
-              </Text>
-            </View>
-            <View style={styles.nameContainer}>
-              <Text style={styles.nameDetailTextStyle}>
-                {currentCity || 'N/A'}, {currentCountry || 'N/A'}
-              </Text>
-            </View>
-            <View style={styles.shareImageContainer}>
-              {/*<TouchableOpacity style={styles.shareImageContainerStyle}>*/}
-              {/*  <Image*/}
-              {/*    source={icons.thumsDownIcon}*/}
-              {/*    style={styles.shareImageStyle}*/}
-              {/*  />*/}
-              {/*</TouchableOpacity>*/}
 
-              <TouchableOpacity
-                style={styles.shareImageContainerStyle}
-                onPress={() => handleLikePress(item)}>
-                <Image source={likeIconSource} style={styles.shareImageStyle} />
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.nameDetailTextStyle}>{item?.age} yrs,</Text>
+              <Text style={styles.nameDetailTextStyle}> {item?.height}</Text>
+            </View>
+
+            <Text style={styles.nameDetailTextStyle}>
+              {currentCity || 'N/A'}, {currentCountry || 'N/A'}
+            </Text>
+
+            <View style={{flexDirection: 'row', marginTop: hp(12)}}>
+              <TouchableOpacity onPress={() => handleLikePress(item)}>
+                <Image
+                  source={
+                    isLiked ? icons.new_user_like_icon : icons.new_like_icon
+                  }
+                  style={{
+                    width: hp(38),
+                    height: hp(22),
+                    resizeMode: 'stretch',
+                    marginRight: 8,
+                  }}
+                />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.shareImageContainerStyle}
-                onPress={() => onFriendRequestButtonPress(item)}>
+                onPress={() => {
+                  OnsendRequestedSend(item);
+                  handleRequestAction(item, item?.friendsDetails?._id); // Call the new function
+                }}>
                 <Image
                   source={friendIconSource}
-                  style={styles.shareImageStyle}
+                  style={{
+                    width: hp(38),
+                    height: hp(22),
+                    resizeMode: 'stretch',
+                  }}
                 />
               </TouchableOpacity>
             </View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
+  // const toastConfigs = {
+  //   AddShortlisted: ({text1}) => (
+  //     <View style={styles.toastContainer}>
+  //       <Text style={styles.toastText}>{text1}</Text>
+  //     </View>
+  //   ),
+  //   RemoveShortlisted: ({text1}) => (
+  //     <View style={styles.toastContainer}>
+  //       <Text style={styles.toastText}>{text1}</Text>
+  //     </View>
+  //   ),
+  //   ProfileLike: ({text1}) => (
+  //     <View style={styles.toastContainer}>
+  //       <Text style={styles.toastText}>{text1}</Text>
+  //     </View>
+  //   ),
+  //   ProfileDisLike: ({text1}) => (
+  //     <View style={styles.toastContainer}>
+  //       <Text style={styles.toastText}>{text1}</Text>
+  //     </View>
+  //   ),
+  // };
+
   return (
-    <FlatList
-      data={data}
-      renderItem={renderUserItem}
-      keyExtractor={(item, index) => (item._id || item.id || item.name) + index}
-      onEndReached={loadMoreData}
-      onEndReachedThreshold={0.5}
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      ListFooterComponent={
-        isFetchingMore ? (
-          <View style={{alignItems: 'center'}}>
-            <Text>Loading Data...</Text>
-          </View>
-        ) : null
-      }
-      ListEmptyComponent={
-        !loading && !isFetchingMore ? (
-          <View
-            style={{
-              padding: 20,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text>No data available</Text>
-          </View>
-        ) : null
-      }
-      // contentContainerStyle={{paddingBottom: 200}}
-    />
+    <SafeAreaView style={{flex: 1}}>
+      {/* Check if there are paginatedResults to display */}
+      {/*{loading ? (*/}
+      {/*  <FlatList*/}
+      {/*    data={[1, 1, 1, 1]}*/}
+      {/*    horizontal={true}*/}
+      {/*    showsHorizontalScrollIndicator={false}*/}
+      {/*    renderItem={() => {*/}
+      {/*      return (*/}
+      {/*        <View*/}
+      {/*          style={{*/}
+      {/*            width: 120,*/}
+      {/*            height: 200,*/}
+      {/*            borderRadius: 10,*/}
+      {/*            // backgroundColor: 'orange',*/}
+      {/*          }}>*/}
+      {/*          <View*/}
+      {/*            style={{*/}
+      {/*              width: 100,*/}
+      {/*              height: 170,*/}
+      {/*              backgroundColor: '#9e9e9e',*/}
+      {/*              opacity: 0.4,*/}
+      {/*              alignItems: 'center',*/}
+      {/*              borderRadius: 10,*/}
+      {/*            }}>*/}
+      {/*            <ShimmerPlaceholder*/}
+      {/*              style={{*/}
+      {/*                width: '80%',*/}
+      {/*                height: 80,*/}
+      {/*                backgroundColor: 'black',*/}
+      {/*                marginTop: 10,*/}
+      {/*                borderRadius: 10,*/}
+      {/*              }}*/}
+      {/*            />*/}
+      {/*            <ShimmerPlaceholder*/}
+      {/*              style={{*/}
+      {/*                width: '60%',*/}
+      {/*                height: 10,*/}
+      {/*                backgroundColor: 'black',*/}
+      {/*                marginTop: 30,*/}
+      {/*              }}*/}
+      {/*            />*/}
+      {/*            <View*/}
+      {/*              style={{*/}
+      {/*                flexDirection: 'row',*/}
+      {/*                justifyContent: 'space-between',*/}
+      {/*                marginTop: 12,*/}
+      {/*              }}>*/}
+      {/*              <ShimmerPlaceholder*/}
+      {/*                style={{*/}
+      {/*                  width: 30,*/}
+      {/*                  height: 15,*/}
+      {/*                  backgroundColor: 'black',*/}
+      {/*                  borderRadius: 25,*/}
+      {/*                }}*/}
+      {/*              />*/}
+      {/*              <ShimmerPlaceholder*/}
+      {/*                style={{*/}
+      {/*                  width: 30,*/}
+      {/*                  height: 15,*/}
+      {/*                  backgroundColor: 'black',*/}
+      {/*                  borderRadius: 25,*/}
+      {/*                  marginLeft: 15,*/}
+      {/*                }}*/}
+      {/*              />*/}
+      {/*            </View>*/}
+      {/*          </View>*/}
+      {/*        </View>*/}
+      {/*      );*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*) :*/}
+      {users.length > 0 ? (
+        <FlatList
+          data={users}
+          keyExtractor={(item, index) => String(index)} // Use a unique key or index for now
+          renderItem={renderItem}
+          horizontal // Make the FlatList horizontal
+          showsHorizontalScrollIndicator={false} // Optionally hide the horizontal scroll indicator
+          contentContainerStyle={styles.listContainer} // Optional styling for the list
+        />
+      ) : (
+        // <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>
+        //   No Premium Matches Found.............................
+        // </Text>
+        <FlatList
+          data={[1, 1, 1, 1]}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          renderItem={() => {
+            return (
+              <View
+                style={{
+                  width: 120,
+                  height: 200,
+                  borderRadius: 10,
+                  // backgroundColor: 'orange',
+                }}>
+                <View
+                  style={{
+                    width: 100,
+                    height: 170,
+                    backgroundColor: '#9e9e9e',
+                    opacity: 0.4,
+                    alignItems: 'center',
+                    borderRadius: 10,
+                  }}>
+                  <ShimmerPlaceholder
+                    style={{
+                      width: '80%',
+                      height: 80,
+                      backgroundColor: 'black',
+                      marginTop: 10,
+                      borderRadius: 10,
+                    }}
+                  />
+                  <ShimmerPlaceholder
+                    style={{
+                      width: '60%',
+                      height: 10,
+                      backgroundColor: 'black',
+                      marginTop: 30,
+                    }}
+                  />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 12,
+                    }}>
+                    <ShimmerPlaceholder
+                      style={{
+                        width: 30,
+                        height: 15,
+                        backgroundColor: 'black',
+                        borderRadius: 25,
+                      }}
+                    />
+                    <ShimmerPlaceholder
+                      style={{
+                        width: 30,
+                        height: 15,
+                        backgroundColor: 'black',
+                        borderRadius: 25,
+                        marginLeft: 15,
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+        />
+      )}
+
+      <Toast config={toastConfigs} />
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  header: {
+    fontSize: 24,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  listContainer: {
+    // paddingLeft: 10, // Padding for the first item
+    paddingRight: 10, // Padding for the last item
+  },
   itemContainer: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     padding: 13,
     marginLeft: -12,
-    marginTop: 12,
+  },
+
+  imagePlaceholder: {
+    width: 150, // Placeholder width
+    height: 150, // Placeholder height
+    backgroundColor: '#ccc', // Placeholder background color
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 75, // Match the image's border radius
+    marginBottom: 10,
+  },
+  itemText: {
+    fontSize: fontSize(12),
+    lineHeight: hp(15),
+    fontFamily: fontFamily.poppins700,
+    color: colors.black,
   },
   image: {
     width: wp(110),
@@ -581,25 +674,10 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
   },
-  onlineText: {
-    color: 'black',
-    fontSize: fontSize(6),
-    alignItems: 'center',
-    textAlign: 'center',
-  },
   starIcon: {
-    width: hp(10.83),
-    height: hp(10),
+    width: hp(18),
+    height: hp(18),
     resizeMode: 'contain',
-  },
-  name: {
-    fontSize: fontSize(12),
-    lineHeight: hp(15),
-    fontFamily: fontFamily.poppins700,
-    color: colors.black,
-  },
-  nameContainer: {
-    flexDirection: 'row',
   },
   nameDetailTextStyle: {
     fontSize: fontSize(9),
@@ -608,18 +686,24 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
     top: 5,
   },
-  shareImageContainer: {
-    flexDirection: 'row',
-    marginTop: hp(12),
+  toastContainer: {
+    backgroundColor: '#333333', // Toast background color
+    // padding: 10,
+    borderRadius: 100,
+    marginHorizontal: 20,
+    // marginTop: -25,
+    width: wp(300),
+    height: hp(55),
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 1,
   },
-  shareImageContainerStyle: {
-    marginHorizontal: 4,
-  },
-  shareImageStyle: {
-    width: hp(38),
-    height: hp(22),
-    resizeMode: 'stretch',
-    // marginRight: 8,
+  toastText: {
+    color: 'white', // Toast text color
+    fontSize: fontSize(16),
+    textAlign: 'center',
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
   },
 });
 

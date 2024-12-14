@@ -34,7 +34,7 @@ const MatchesInSentScreen = () => {
   console.log(' === isDataStoriesLoader ===> ', isDataStoriesLoader);
 
   const renderItem = ({item}) => {
-    console.log(' === var ===> ', item?.friend?.userProfilePic);
+    // console.log(' === var ===> ', item?.friend?.userProfilePic);
 
     const friend = item?.friend;
     const profilePic = friend?.profilePic || 'https://via.placeholder.com/150';

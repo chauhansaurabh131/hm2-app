@@ -436,7 +436,7 @@ const SearchUserDataScreen = ({route}) => {
   };
 
   const renderSingleUserData = ({item}) => {
-    console.log(' === var ===> ', item?.dateOfBirth);
+    // console.log(' === var ===> ', item?.dateOfBirth);
 
     const name = item.name
       ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase()

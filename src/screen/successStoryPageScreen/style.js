@@ -13,13 +13,6 @@ const style = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // marginTop: hp(12),
-  },
-  headerLogoStyle: {
-    width: wp(96),
-    height: hp(24),
-    resizeMode: 'contain',
-    marginTop: hp(2),
   },
   profileLogo: {
     width: hp(24),
@@ -31,126 +24,94 @@ const style = StyleSheet.create({
     marginTop: hp(10),
   },
   headerTittleContainer: {
-    // marginTop: hp(30),
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: hp(14),
   },
   headerTittleTextStyle: {
     color: colors.black,
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins600,
   },
   addPhotoContainer: {
     width: hp(40),
     height: hp(40),
-    borderRadius: 50,
-    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
-    marginRight: wp(5),
   },
   addPhotoImageStyle: {
-    width: hp(11),
-    height: hp(11),
+    width: hp(14),
+    height: hp(14),
     alignSelf: 'center',
     resizeMode: 'contain',
+    marginLeft: 5,
   },
   bodyContainer: {
     marginHorizontal: 17,
-    marginTop: hp(11),
-  },
-  bodyHeadingTittleContainer: {
-    flexDirection: 'row',
-    marginTop: 21,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  bodyTittleHeadingText: {
-    color: colors.black,
-    fontSize: fontSize(18),
-    lineHeight: hp(27),
-    fontFamily: fontFamily.poppins500,
-  },
-  bodyTittleHeadingContainer: {
-    flexDirection: 'row',
-  },
-  readTextNumberStyle: {
-    marginRight: wp(27),
-    textAlign: 'center',
-    color: colors.black,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins600,
-  },
-  readTextStyle: {
-    marginRight: hp(27),
-    fontSize: fontSize(8),
-    lineHeight: hp(12),
-    fontFamily: fontFamily.poppins500,
-    color: colors.black,
-  },
-  headingTittleStyle: {
-    justifyContent: 'center',
-  },
-  heartNumberStyle: {
-    marginRight: wp(15),
-    textAlign: 'center',
-    color: colors.black,
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins600,
-  },
-  heartTextStyle: {
-    marginRight: wp(17),
-    color: colors.black,
-    fontSize: fontSize(8),
-    lineHeight: hp(12),
-    fontFamily: fontFamily.poppins500,
+    marginTop: hp(22),
   },
   headingDescriptionTextStyle: {
     color: colors.black,
     fontSize: fontSize(12),
     lineHeight: hp(18),
     fontFamily: fontFamily.poppins400,
-    marginTop: hp(23),
   },
-  headingDescriptionStyle: {
+  headerUnderLine: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#F2F2F2',
+    marginTop: 5,
+  },
+  postedContainer: {
+    flexDirection: 'row',
+    marginTop: hp(2),
+    alignItems: 'center',
+  },
+  postedNameText: {
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins600,
     color: colors.black,
-    fontSize: fontSize(12),
-    lineHeight: hp(18),
-    fontFamily: fontFamily.poppins400,
-    marginTop: hp(10),
   },
-  shareImageContainer: {
-    marginTop: hp(30),
+  postedTimeText: {
+    fontSize: fontSize(12),
+    lineHeight: hp(16),
+    fontFamily: fontFamily.poppins400,
+    color: '#787878',
+    marginLeft: 10,
+    marginTop: 1,
+  },
+  bodyShareContainer: {
+    marginTop: hp(28),
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
-  shareIconStyle: {
-    width: hp(15),
-    height: hp(18),
-    resizeMode: 'contain',
+  bodyShareContainers: {
+    flexDirection: 'row',
   },
-  spaceStyle: {
-    width: hp(39),
-  },
-  heartIconStyle: {
-    width: hp(34),
-    height: hp(34),
-    resizeMode: 'contain',
-  },
-  userNameTextStyle: {
+  viewsNumber: {
+    fontSize: fontSize(14),
+    lineHeight: hp(21),
+    fontFamily: fontFamily.poppins600,
     color: colors.black,
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
-    fontFamily: fontFamily.poppins500,
-    // marginTop: hp(30),
   },
-  userDateTextStyle: {
-    color: '#858585',
+  likeIconContainer: {
+    width: hp(38),
+    height: hp(38),
+    resizeMode: 'contain',
+    marginRight: wp(37),
+  },
+  shareIcon: {
+    width: hp(38),
+    height: hp(38),
+    resizeMode: 'contain',
+  },
+  bodyUnderLine: {
+    width: '100%',
+    height: 4,
+    backgroundColor: '#E7E7E7',
+    marginTop: hp(30),
   },
 });
 

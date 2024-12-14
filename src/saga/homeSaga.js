@@ -37,10 +37,40 @@ function* sendFriendRequest(action) {
 
     const response = yield call(home.sendFriendsRequest, action.data.payload);
     yield put(homeActions.sendRequestSuccess(response.data?.data));
+    if (action.data.callBack) {
+      action.data.callBack();
+    }
   } catch (error) {
     yield put(homeActions.sendRequestFail());
   }
 }
+
+// function* acceptedDeclineFriendRequest(action) {
+//   try {
+//     const accessToken = yield call(AsyncStorage.getItem, TOKEN);
+//     const cleanedToken = accessToken.replace(/^"|"$/g, '');
+//     const payloadWithToken = {
+//       ...action.data.payload,
+//       accessToken: cleanedToken,
+//     };
+//     console.log(' === action.data.payload ===> ', action.data.payload);
+//
+//     const response = yield call(
+//       home.acceptedDeclineRequested,
+//       action.data.payload,
+//     );
+//     yield put(
+//       homeActions.acceptedDeclineFriendRequestSuccess(response.data?.data),
+//     );
+//     if (action.data.callBack) {
+//       action.data.callBack();
+//     }
+//
+//     console.log(' === SAGA...2222222 ===> ', response.data?.data);
+//   } catch (error) {
+//     yield put(homeActions.acceptedDeclineFriendRequestFailure());
+//   }
+// }
 
 function* getFriendRequest(action) {
   const accessToken = yield call(AsyncStorage.getItem, TOKEN);

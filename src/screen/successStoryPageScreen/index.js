@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Share,
 } from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
@@ -15,7 +16,7 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatListComponent';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AppColorLogo from '../../components/appColorLogo';
 import {useSelector} from 'react-redux';
 
@@ -23,12 +24,273 @@ const SuccessStoryPageScreen = ({route}) => {
   const {story} = route.params;
 
   const [topModalVisible, setTopModalVisible] = useState(false);
+  const [likeData, setLikeData] = useState(null); // For storing response data
+  const [likesList, setLikesList] = useState([]); // Store the likes list
+  const [storyDetails, setStoryDetails] = useState(story); // Store the story data
+  const [viewsList, setViewsList] = useState([]); // Store the views list
   const navigation = useNavigation();
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
+  const tokens = user?.tokens?.access?.token;
 
   const {images, title, content, marriageDate} = story;
   const imageCount = images.length;
+  const StoriesId = story?._id;
+  const userId = user?.user?.id;
+
+  console.log(' === StoriesId ===> ', StoriesId);
+
+  // Function to call the API to fetch the list of likes
+  const fetchLikesPaginated = async () => {
+    if (!StoriesId || !tokens) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/story-Like/get-likes-paginated/${StoriesId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${tokens}`, // Pass the token in the Authorization header
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLikesList(data?.data || []); // Set the likes list to the state
+      } else {
+        console.error('Error fetching likes:', data);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
+  // Function to call the API to fetch the list of views (paginated)
+  const fetchViewsPaginated = async () => {
+    if (!StoriesId || !tokens) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/success-story-View/paginated-all/${StoriesId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${tokens}`, // Pass the token in the Authorization header
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setViewsList(data?.data || []); // Set the views list to the state
+      } else {
+        console.error('Error fetching views:', data);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
+  // Fetch the likes list on component mount or when the story ID changes
+  useEffect(() => {
+    fetchLikesPaginated();
+    fetchViewsPaginated(); // Fetch the views when the component mounts or updates
+  }, [StoriesId, tokens]);
+
+  const handleStoryView = async () => {
+    if (!StoriesId || !userId || !tokens) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/success-story-View/create-view',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokens}`,
+          },
+          body: JSON.stringify({
+            storyId: StoriesId,
+            viewerId: userId,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Story view tracked:', data);
+      } else {
+        console.error('Error tracking story view:', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    handleStoryView();
+  }, [StoriesId, userId, tokens]);
+
+  // Fetch the story data from the API
+  const fetchStoryData = async () => {
+    if (!StoriesId || !tokens) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/story/get-story-by-id/${StoriesId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${tokens}`, // Pass the token in the Authorization header
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStoryDetails(data); // Set the fetched story details
+      } else {
+        console.error('Error fetching story:', data);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
+  // Use useFocusEffect to refetch the story data when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchStoryData();
+    }, [StoriesId, tokens]),
+  );
+
+  // Fetch the like data from the API
+  const fetchLikeData = async () => {
+    if (!userId || !StoriesId || !tokens) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/story-Like/get-like-story/${StoriesId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${tokens}`, // Pass the token in the Authorization header
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLikeData(data); // Update the state with the response data
+      } else {
+        console.error('Error fetching like data:', data);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchLikeData();
+    }, [StoriesId, tokens]),
+  );
+
+  // Function to handle the "like" action (triggered on icon press)
+  const handleLike = async () => {
+    if (!userId || !StoriesId || !tokens) {
+      return; // Make sure we have all the necessary data
+    }
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/story-Like/create-like',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokens}`, // Use the user's token for authorization
+          },
+          body: JSON.stringify({
+            storyId: StoriesId,
+            isLike: true, // We are "liking" the story
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLikeData({data: [{isLike: true}]});
+        fetchLikeData();
+        fetchLikesPaginated();
+      } else {
+        console.error('Error liking the story:', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Function to handle the "unlike" action (triggered on icon press)
+  const handleUnlike = async () => {
+    if (!userId || !StoriesId || !tokens || !likeData?.data?.[0]?.id) {
+      return; // Ensure necessary data is available
+    }
+
+    try {
+      const likeId = likeData?.data?.[0]?.id; // ID of the like data to update
+
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/story-Like/update-like/${likeId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokens}`,
+          },
+          body: JSON.stringify({
+            storyId: StoriesId,
+            isLike: false, // We are "unliking" the story
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLikeData({data: [{isLike: false}]});
+        fetchLikeData();
+        fetchLikesPaginated();
+      } else {
+        console.error('Error unliking the story:', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Check if `likeData` exists and has the required structure
+  const isLiked = likeData?.data?.[0]?.isLike;
+
+  // Format the createdAt date
+  // const formattedTime = timeAgo(story?.createdAt);
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -36,6 +298,64 @@ const SuccessStoryPageScreen = ({route}) => {
 
   const openTopSheetModal = () => {
     toggleModal();
+  };
+
+  // Utility function to format time
+  const timeAgo = date => {
+    const now = new Date();
+    const diffInMs = now - new Date(date); // Difference in milliseconds
+    const diffInSec = Math.floor(diffInMs / 1000); // Convert milliseconds to seconds
+    const diffInMin = Math.floor(diffInSec / 60); // Convert seconds to minutes
+    const diffInHours = Math.floor(diffInMin / 60); // Convert minutes to hours
+    const diffInDays = Math.floor(diffInHours / 24); // Convert hours to days
+    const diffInMonths = Math.floor(diffInDays / 30); // Convert days to months
+    const diffInYears = Math.floor(diffInMonths / 12); // Convert months to years
+
+    // Handle cases for "just now", minutes, hours, days, and long dates
+    if (diffInSec < 60) {
+      return 'Just now';
+    } else if (diffInMin < 60) {
+      return `${diffInMin} min ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hr ago`;
+    } else if (diffInDays < 30) {
+      return `${diffInDays}d${diffInDays > 1 ? '' : ''} ago`;
+    } else if (diffInDays >= 30 && diffInDays < 365) {
+      return `${new Date(date).getDate()}-${
+        new Date(date).getMonth() + 1
+      }-${new Date(date).getFullYear()}`;
+    } else {
+      return `${new Date(date).getDate()}-${
+        new Date(date).getMonth() + 1
+      }-${new Date(date).getFullYear()}`;
+    }
+  };
+
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle empty string
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const postedFirstName = capitalizeFirstLetter(story?.userId?.name);
+  const postedLastName = capitalizeFirstLetter(story?.userId?.lastName);
+  const formattedTime = timeAgo(story?.createdAt);
+
+  const handleShare = async () => {
+    try {
+      const result = await Share.share({
+        message: 'Happy Milan App', // Message to share
+      });
+
+      if (result.action === Share.sharedAction) {
+        console.log('Content shared successfully');
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.error('Error sharing content:', error);
+    }
   };
 
   return (
@@ -60,77 +380,20 @@ const SuccessStoryPageScreen = ({route}) => {
             activeOpacity={0.6}
             style={style.addPhotoContainer}
             onPress={() => {
-              navigation.navigate('SuccessStoryEditInformationScreen');
+              navigation.goBack();
             }}>
-            <Image source={icons.plus_icon} style={style.addPhotoImageStyle} />
+            <Image
+              source={icons.back_arrow_icon}
+              style={style.addPhotoImageStyle}
+            />
           </TouchableOpacity>
         </View>
       </View>
 
+      <View style={style.headerUnderLine} />
+
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between', // Keep space between only when there are 3 or more images
-            alignItems: 'center',
-            // marginBottom: 20,
-            marginHorizontal: 17,
-          }}>
-          {images.map((imageUrl, index) => (
-            <Image
-              key={index}
-              source={{uri: imageUrl}}
-              style={[
-                {
-                  height: 200, // Fixed height for the image
-                  borderRadius: 15, // Rounded corners
-                  // marginHorizontal: 5, // Space between images
-                  resizeMode: 'cover',
-                  backgroundColor: 'red',
-                },
-                {width: (Dimensions.get('window').width - 50) / imageCount}, // Adjust width based on image count
-              ]}
-            />
-          ))}
-        </View>
-
         <View style={style.bodyContainer}>
-          <View style={style.bodyHeadingTittleContainer}>
-            <Text style={style.bodyTittleHeadingText}>Our Story</Text>
-            <View style={style.bodyTittleHeadingContainer}>
-              <View>
-                <Text style={style.readTextNumberStyle}>10K</Text>
-                <Text style={style.readTextStyle}>Read</Text>
-              </View>
-
-              <View
-                style={{
-                  width: 1,
-                  height: 25,
-                  // borderRadius: 'red',
-                  backgroundColor: '#F1EFEF',
-                  // borderColor: 'red',
-                  marginRight: hp(27),
-                }}
-              />
-
-              <View style={style.headingTittleStyle}>
-                <Text style={style.heartNumberStyle}>9K</Text>
-                <Text style={style.heartTextStyle}>Heart</Text>
-              </View>
-            </View>
-          </View>
-
-          {/*<View*/}
-          {/*  style={{*/}
-          {/*    width: 1,*/}
-          {/*    height: 25,*/}
-          {/*    // borderRadius: 'red',*/}
-          {/*    backgroundColor: 'red',*/}
-          {/*    borderColor: 'red',*/}
-          {/*  }}*/}
-          {/*/>*/}
-
           <Text style={style.headingDescriptionTextStyle}>
             {story?.content ||
               `When the Tudor king fell for a young lady-in-waiting, Anne Boleyn,
@@ -148,78 +411,71 @@ const SuccessStoryPageScreen = ({route}) => {
             affair ended when he had her beheaded.)`}
           </Text>
 
-          {/*<View style={style.shareImageContainer}>*/}
-          {/*  <TouchableOpacity activeOpacity={0.6}>*/}
-          {/*    <Image source={icons.share_icon} style={style.shareIconStyle} />*/}
-          {/*    <Text style={{color: 'black', fontSize: 10}}>Share</Text>*/}
-          {/*  </TouchableOpacity>*/}
+          <Text
+            style={[style.headingDescriptionTextStyle, {marginTop: hp(20)}]}>
+            Posted By
+          </Text>
 
-          {/*  <View style={style.spaceStyle} />*/}
+          <View style={style.postedContainer}>
+            <Text style={style.postedNameText}>{postedFirstName}</Text>
+            <Text style={style.postedNameText}> {postedLastName}</Text>
 
-          {/*  <TouchableOpacity activeOpacity={0.6}>*/}
-          {/*    <Image source={icons.heart_icon} style={style.heartIconStyle} />*/}
-          {/*  </TouchableOpacity>*/}
-          {/*</View>*/}
+            <Text style={style.postedTimeText}>{formattedTime}</Text>
+          </View>
 
-          {/*<Text style={style.userNameTextStyle}>Riya & Rohan</Text>*/}
-          <View
-            style={{
-              flexDirection: 'row',
-              // backgroundColor: 'orange',
-              alignItems: 'center',
-              marginTop: 40,
-            }}>
-            <View>
-              <Text style={style.userNameTextStyle}>
-                {story?.title || 'Riya & Rohan'}
+          <View style={style.bodyShareContainer}>
+            <View style={style.bodyShareContainers}>
+              <Text style={style.viewsNumber}>
+                {viewsList?.totalResults}{' '}
+                <Text style={{color: '#929292'}}>Reads</Text>
               </Text>
-              <Text style={style.userDateTextStyle}>
-                Married on 19 Apr 2023
+
+              <Text style={[style.viewsNumber, {marginLeft: wp(37)}]}>
+                {likesList?.totalResults}{' '}
+                <Text style={{color: '#929292'}}>Hearts</Text>
               </Text>
             </View>
 
-            <View
-              style={{flexDirection: 'row', position: 'absolute', right: 0}}>
-              <TouchableOpacity activeOpacity={0.5}>
+            <View style={style.bodyShareContainers}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  if (isLiked) {
+                    handleUnlike(); // Call the unlike function if the user has already liked the story
+                  } else {
+                    handleLike(); // Call the like function if the user hasn't liked the story yet
+                  }
+                }}>
                 <Image
-                  source={icons.success_Icon_icon}
-                  style={{
-                    width: hp(38),
-                    height: hp(38),
-                    resizeMode: 'contain',
-                    marginRight: hp(16),
-                  }}
+                  source={
+                    isLiked ? icons.user_like_icon : icons.gradient_disLike_icon
+                  }
+                  style={style.likeIconContainer}
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity activeOpacity={0.5}>
+              <TouchableOpacity activeOpacity={0.5} onPress={handleShare}>
                 <Image
-                  source={icons.success_share_icon}
-                  style={{width: hp(38), height: hp(38), resizeMode: 'contain'}}
+                  source={icons.gradient_share_icon}
+                  style={style.shareIcon}
                 />
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        <View
-          style={{
-            width: '100%',
-            height: 1,
-            backgroundColor: '#E7E7E7',
-            marginTop: hp(30),
-          }}
-        />
+        <View style={style.bodyUnderLine} />
+
         <View style={{marginHorizontal: 17}}>
           <Text
             style={{
               marginTop: 20,
               color: colors.black,
-              fontSize: hp(14),
-              lineHeight: hp(21),
+              fontSize: hp(16),
+              lineHeight: hp(24),
               fontFamily: fontFamily.poppins500,
             }}>
-            Read More Stories
+            More Stories
           </Text>
 
           <SuccessStoryFlatListComponent />

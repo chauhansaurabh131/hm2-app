@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
   ActivityIndicator,
-  TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getSuccessStories} from '../../actions/homeActions';
@@ -37,44 +37,43 @@ const SuccessStoryFlatListComponent = () => {
 
     return (
       <View style={styles.cardContainer}>
-        <TouchableOpacity
+        <TouchableHighlight
+          underlayColor="#F9FBFF"
           activeOpacity={0.3}
           onPress={() => {
             navigation.navigate('SuccessStoryPageScreen', {story: item});
-            // navigation.navigate('Abc', {story: item});
           }}>
-          <Image source={{uri: item?.images[0]}} style={styles.storyImage} />
-          <View style={{marginHorizontal: 14}}>
-            {/*<Text style={styles.storyTitle}>{item?.title}</Text>*/}
+          <View>
+            <Image source={{uri: item?.images[0]}} style={styles.storyImage} />
+            <View style={{marginHorizontal: 14}}>
+              <Text style={styles.storyTitle}>
+                {item?.title?.length > 20
+                  ? `${item.title.substring(0, 15)}...`
+                  : item.title}
+              </Text>
 
-            <Text style={styles.storyTitle}>
-              {item?.title?.length > 20
-                ? `${item.title.substring(0, 15)}...`
-                : item.title}
-            </Text>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: hp(14),
-                // marginBottom: hp(14),
-              }}>
-              <Text style={styles.readMoreText}>Read Story</Text>
-
-              <Image
-                source={icons.back_arrow_icon}
+              <View
                 style={{
-                  width: hp(12),
-                  height: hp(12),
-                  transform: [{rotate: '180deg'}],
-                  tintColor: '#7D7D7D',
-                }}
-              />
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: hp(14),
+                }}>
+                <Text style={styles.readMoreText}>Read Story</Text>
+
+                <Image
+                  source={icons.back_arrow_icon}
+                  style={{
+                    width: hp(12),
+                    height: hp(12),
+                    transform: [{rotate: '180deg'}],
+                    tintColor: '#7D7D7D',
+                  }}
+                />
+              </View>
             </View>
           </View>
-        </TouchableOpacity>
+        </TouchableHighlight>
       </View>
     );
   };

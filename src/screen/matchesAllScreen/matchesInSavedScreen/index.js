@@ -64,7 +64,7 @@ const MatchesInSavedScreen = () => {
   }, [accessToken]);
 
   const renderItem = ({item}) => {
-    console.log(' === var ===> ', item?.shortlistId?.userProfilePic);
+    // console.log(' === var ===> ', item?.shortlistId?.userProfilePic);
 
     const profileImage = item?.shortlistId?.profilePic;
 
