@@ -179,6 +179,7 @@ export const icons = {
   black_check_icon: require('./icons/black_check_icon.png'),
   gradient_disLike_icon: require('./icons/gradient_dislike_icon.png'),
   gradient_share_icon: require('./icons/gradient_share_icon.png'),
+  copy_id_card_icon: require('./icons/copy_id_card_icon.png'),
 };
 
 export const gif = {

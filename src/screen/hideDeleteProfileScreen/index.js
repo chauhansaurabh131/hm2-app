@@ -107,7 +107,7 @@ const HideDeleteProfileScreen = () => {
     console.log(' === ID ===> ', user?.user.id);
     try {
       const response = await axios.delete(
-        'https://happymilan.tech/api/v1/user/user/', // Adjust the URL as needed
+        'https://stag.mntech.website/api/v1/user/user/', // Adjust the URL as needed
         {
           headers: {
             Authorization: `Bearer ${token}`, // Include the authentication token
@@ -272,7 +272,7 @@ const HideDeleteProfileScreen = () => {
 
           <RBSheet
             ref={bottomSheetRef}
-            height={300}
+            height={hp(300)}
             openDuration={250}
             customStyles={{
               draggableIcon: {
@@ -678,19 +678,21 @@ const HideDeleteProfileScreen = () => {
               <Text
                 style={{
                   textAlign: 'center',
-                  fontSize: fontSize(20),
-                  lineHeight: hp(30),
+                  fontSize: fontSize(24),
+                  lineHeight: hp(36),
                   color: colors.black,
+                  fontFamily: fontFamily.poppins400,
                 }}>
                 Are you sure want
               </Text>
               <Text
                 style={{
                   textAlign: 'center',
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
+                  fontSize: fontSize(18),
+                  lineHeight: hp(30),
                   color: colors.black,
                   marginTop: hp(3),
+                  fontFamily: fontFamily.poppins400,
                 }}>
                 Hide Your Profile?
               </Text>

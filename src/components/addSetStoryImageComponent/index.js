@@ -12,6 +12,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
@@ -98,7 +99,7 @@ const AddSetStoryImageComponent = ({route}) => {
             );
 
             console.log('Image uploaded successfully');
-            Alert.alert('Success', 'Image shared successfully');
+            // Alert.alert('Success', 'Image shared successfully');
             navigation.goBack(); // Navigate back on success
           } catch (uploadError) {
             console.error('Error uploading image:', uploadError);
@@ -199,9 +200,12 @@ const AddSetStoryImageComponent = ({route}) => {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
             activeOpacity={0.7}
             style={styles.laterButtonContainer}>
-            <Text style={styles.buttonText}>later</Text>
+            <Text style={styles.buttonText}>Later</Text>
           </TouchableOpacity>
 
           <TouchableOpacity activeOpacity={0.7} onPress={handleShare}>
@@ -210,7 +214,11 @@ const AddSetStoryImageComponent = ({route}) => {
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1.5}}
               style={styles.shareButtonContainer}>
-              <Text style={styles.buttonText}>Share</Text>
+              {loading ? (
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text style={styles.buttonText}>Share</Text>
+              )}
             </LinearGradient>
           </TouchableOpacity>
         </View>

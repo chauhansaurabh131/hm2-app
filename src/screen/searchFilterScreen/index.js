@@ -24,10 +24,14 @@ import GradientButton from '../../components/GradientButton';
 import axios from 'axios';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import DropdownComponentBottomSheet from '../../components/newDropDownMutipleValueBottomSheet';
+import Toast from 'react-native-toast-message';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import Abc from '../abc';
 
 const SearchFilterScreen = () => {
-  const [ageSelectedRange, setAgeSelectedRange] = useState([18, 25]);
-  const [heightSelectedRange, setHeightSelectedRange] = useState([4, 8]);
+  const [ageSelectedRange, setAgeSelectedRange] = useState([22, 27]);
+  const [heightSelectedRange, setHeightSelectedRange] = useState([4, 5.5]);
   const [maritalStatus, setMaritalStatus] = useState([]);
   const [religionStatus, setReligionStatus] = useState([]);
   const [motherTongueStatus, setMotherTongueStatus] = useState([]);
@@ -51,6 +55,79 @@ const SearchFilterScreen = () => {
   const userImage = user?.user?.profilePic;
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openTopBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
+
+  const ShowToast = () => {
+    Toast.show({
+      type: 'profileNotFound',
+      text1: 'Profile Not Found',
+      visibilityTime: 1000,
+    });
+  };
+
+  const DeleteSearchData = () => {
+    Toast.show({
+      type: 'deleteSearchData',
+      text1: 'Search deleted successfully.',
+      visibilityTime: 1500,
+    });
+  };
+
+  const toastConfig = {
+    profileNotFound: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+    deleteSearchData: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+  };
 
   // Fetch saved searches from the API
   const fetchSavedSearches = async () => {
@@ -183,7 +260,8 @@ const SearchFilterScreen = () => {
       console.log('Delete Response:', response.data);
 
       // Show an alert
-      Alert.alert('Success', 'Search deleted successfully.');
+      // Alert.alert('Success', 'Search deleted successfully.');
+      DeleteSearchData();
 
       // Refresh the saved searches
       fetchSavedSearches();
@@ -196,15 +274,8 @@ const SearchFilterScreen = () => {
       Alert.alert('Error', 'Failed to delete search. Please try again.');
     }
   };
-  //
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchSavedSearches();
-  //   }, []),
-  // );
 
   const renderItem = ({item}) => {
-    console.log(' === item ===> ', item);
     return (
       <View style={style.itemContainer}>
         <TouchableOpacity onPress={() => handleSavedSearchClick(item)}>
@@ -322,7 +393,11 @@ const SearchFilterScreen = () => {
         );
 
         console.log('Profile ID API Response:', response.data); // Log the API response
-        navigation.navigate('SearchUserDataScreen', {data: response.data}); // Navigate to the results screen
+        // navigation.navigate('SearchUserDataScreen', {data: response.data}); // Navigate to the results screen
+        navigation.navigate('SearchUserDataScreen', {
+          data: response?.data?.data[0]?._id,
+        }); // Navigate to the results screen
+        // navigation.navigate('Abc', {data: response?.data?.data[0]?._id}); // Navigate to the results screen
         resetAllFields();
         setIsLoading(false);
       } catch (error) {
@@ -330,7 +405,9 @@ const SearchFilterScreen = () => {
           'Profile ID API Error:',
           error.response?.data || error.message,
         );
-        Alert.alert('Error', 'Failed to fetch user data by Profile ID'); // Show an alert in case of an error
+        setIsLoading(false);
+        ShowToast();
+        // Alert.alert('Error', 'Failed to fetch user data by Profile ID'); // Show an alert in case of an error
       }
       // finally {
       //   setIsLoading(false);
@@ -366,6 +443,16 @@ const SearchFilterScreen = () => {
       }),
     };
 
+    // console.log(' ===  ageSelectedRange[0] ===> ', ageSelectedRange[0]);
+    // console.log(' ===  ageSelectedRange[1] ===> ', ageSelectedRange[1]);
+    // console.log(' ===  heightSelectedRange[0] ===> ', heightSelectedRange[0]);
+    // console.log(' ===  heightSelectedRange[1] ===> ', heightSelectedRange[1]);
+    // console.log(' ===  maritalStatus ===> ', maritalStatus);
+    // console.log(' ===  religionStatus ===> ', religionStatus);
+    // console.log(' ===  motherTongueStatus ===> ', motherTongueStatus);
+    // console.log(' ===  countryLivingStatus ===> ', countryLivingStatus);
+    // console.log(' ===  cityLivingStatus ===> ', cityLivingStatus);
+
     console.log(' === requestData ===> ', requestData); // Log the request data
 
     try {
@@ -381,14 +468,18 @@ const SearchFilterScreen = () => {
       );
 
       console.log('API Response:', response.data); // Log the API response
-      navigation.navigate('SearchUserDataScreen', {data: response.data}); // Navigate to the results screen
+      // navigation.navigate('SearchUserDataScreen', {data: response.data}); // Navigate to the results screen
+      navigation.navigate('SearchUserDataScreen', {data: requestData}); // Navigate to the results screen
+      // navigation.navigate('Abc', {data: requestData}); // Navigate to the results screen
 
       // Reset all data after navigation
       resetAllFields();
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error('API Error:', error.response?.data || error.message);
-      Alert.alert('Error', 'Failed to call API'); // Show an alert in case of an error
+      // Alert.alert('Error', 'Failed to call API'); // Show an alert in case of an error
+      ShowToast();
     }
     // finally {
     //   setIsLoading(false);
@@ -397,8 +488,8 @@ const SearchFilterScreen = () => {
 
   // Helper function to reset all fields
   const resetAllFields = () => {
-    setAgeSelectedRange([18, 25]); // Reset age range
-    setHeightSelectedRange([4, 8]); // Reset height range
+    setAgeSelectedRange([22, 27]); // Reset age range
+    setHeightSelectedRange([4, 5.5]); // Reset height range
     setMaritalStatus([]); // Reset marital status
     setReligionStatus([]); // Reset religion status
     setMotherTongueStatus([]); // Reset mother tongue
@@ -409,8 +500,12 @@ const SearchFilterScreen = () => {
     setProfileID('');
   };
 
-  const onSearchPress = () => {
-    setModalVisible(true);
+  const onSearchPress = async () => {
+    if (profileID.trim()) {
+      handleModalClose();
+    } else {
+      setModalVisible(true);
+    }
   };
 
   const dropdownData = [
@@ -437,7 +532,7 @@ const SearchFilterScreen = () => {
     {label: 'us', value: '3'},
     {label: 'afghanistan', value: '4'},
     {label: 'china', value: '5'},
-    {label: 'Myanmar', value: '6'},
+    {label: 'myanmar', value: '6'},
     {label: 'nepal', value: '7'},
     {label: 'sri-lanka', value: '8'},
     {label: 'pakistan', value: '9'},
@@ -472,7 +567,7 @@ const SearchFilterScreen = () => {
           <Image source={icons.headerIconWhite} style={style.appLogo} />
           <TouchableOpacity
             activeOpacity={0.7}
-            // onPress={openBottomSheet}
+            onPress={openTopBottomSheet}
             style={style.headerTopSheetImageContainer}>
             <Image
               source={userImage ? {uri: userImage} : images.empty_male_Image}
@@ -480,6 +575,8 @@ const SearchFilterScreen = () => {
             />
           </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={style.headerSearchContainer}>
           <TextInput
@@ -518,101 +615,91 @@ const SearchFilterScreen = () => {
         <View
           style={{
             alignItems: 'center',
-            marginTop: hp(24),
+            marginTop: hp(25),
           }}>
           <AgeRangeSlider
             initialRange={ageSelectedRange} // Pass selected range from parent
             onSubmitRange={handleRangeSubmit} // Update parent when range changes
+            tittleLabelText={'Age'}
+            min={18}
+            max={50}
           />
         </View>
 
         <View
           style={{
             alignItems: 'center',
-            marginTop: hp(20),
+            marginTop: hp(25),
           }}>
           <HeightRangeSlider
             initialRange={heightSelectedRange} // Pass the selected range from parent
             onSubmitRange={handleHeightRangeSubmit} // Update parent when range changes
+            tittleLabelText={'Height (ft/cm)'}
           />
         </View>
 
-        <View style={{marginHorizontal: 17}}>
-          <DropDownMutipleValueComponent
+        <View style={{marginHorizontal: 17, marginTop: hp(25)}}>
+          <DropdownComponentBottomSheet
             data={dropdownData}
             height={50}
             searchPlaceholder={'Search Option'}
             placeholder={'Marital Status'}
             selectedItems={maritalStatus}
             setSelectedItems={setMaritalStatus}
-            placeholderStyle={{
-              fontFamily: fontFamily.poppins500,
-              fontSize: fontSize(16),
-              lineHeight: hp(27),
-            }}
+            bottomSheetHeight={hp(200)}
+            // placeholderStyle={{
+            //   fontFamily: fontFamily.poppins500,
+            //   fontSize: fontSize(16),
+            //   lineHeight: hp(27),
+            //   colors: 'black',
+            // }}
           />
 
-          <View style={{marginTop: 20}}>
-            <DropDownMutipleValueComponent
+          <View style={{marginTop: hp(30)}}>
+            <DropdownComponentBottomSheet
               data={religionData}
               height={50}
               searchPlaceholder={'Search Option'}
               placeholder={'Religion'}
               selectedItems={religionStatus}
               setSelectedItems={setReligionStatus}
-              placeholderStyle={{
-                fontFamily: fontFamily.poppins500,
-                fontSize: fontSize(16),
-                lineHeight: hp(27),
-              }}
+              bottomSheetHeight={hp(200)}
             />
           </View>
 
-          <View style={{marginTop: 20}}>
-            <DropDownMutipleValueComponent
+          <View style={{marginTop: 30}}>
+            <DropdownComponentBottomSheet
               data={motherTongueData}
               height={50}
               searchPlaceholder={'Search Option'}
               placeholder={'Mother Tongue'}
               selectedItems={motherTongueStatus}
               setSelectedItems={setMotherTongueStatus}
-              placeholderStyle={{
-                fontFamily: fontFamily.poppins500,
-                fontSize: fontSize(16),
-                lineHeight: hp(27),
-              }}
+              bottomSheetHeight={hp(200)}
             />
           </View>
 
-          <View style={{marginTop: 20}}>
-            <DropDownMutipleValueComponent
+          <View style={{marginTop: 30}}>
+            <DropdownComponentBottomSheet
               data={COUNTRY_LIST}
               height={50}
               searchPlaceholder={'Search Option'}
               placeholder={'Country Living'}
               selectedItems={countryLivingStatus}
               setSelectedItems={setCountryLivingStatus}
-              placeholderStyle={{
-                fontFamily: fontFamily.poppins500,
-                fontSize: fontSize(16),
-                lineHeight: hp(27),
-              }}
+              bottomSheetHeight={hp(430)}
             />
           </View>
 
-          <View style={{marginTop: 20}}>
-            <DropDownMutipleValueComponent
+          <View style={{marginTop: 30}}>
+            <DropdownComponentBottomSheet
               data={CurrentCity}
               height={50}
               searchPlaceholder={'Search Option'}
               placeholder={'City Living'}
               selectedItems={cityLivingStatus}
               setSelectedItems={setCityLivingStatus}
-              placeholderStyle={{
-                fontFamily: fontFamily.poppins500,
-                fontSize: fontSize(16),
-                lineHeight: hp(27),
-              }}
+              bottomSheetHeight={hp(280)}
             />
           </View>
 
@@ -828,6 +915,8 @@ const SearchFilterScreen = () => {
           )}
         </View>
       </RBSheet>
+
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 };

@@ -79,7 +79,7 @@ const ViewUserStatusScreen = () => {
   }, [statusAddTime]);
 
   // Function to start animation
-  const startAnimation = (duration = 3000) => {
+  const startAnimation = (duration = 9000) => {
     shouldNavigateBack.current = true; // Reset the flag when starting animation
     Animated.timing(progressAnim, {
       toValue: 1, // Finish progress

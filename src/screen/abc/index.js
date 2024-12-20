@@ -1,181 +1,302 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  Alert,
-  FlatList,
-  Image,
   SafeAreaView,
   Text,
-  TextInput,
-  TouchableOpacity,
+  FlatList,
   View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
-import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {useSelector} from 'react-redux';
+import {hp} from '../../utils/helpers';
+import {icons} from '../../assets';
+import axios from 'axios';
 
-const Abc = () => {
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [description, setDescrition] = useState('');
+const Abc = ({route}) => {
+  const {data} = route.params;
 
-  const openGallery = () => {
-    const options = {
-      mediaType: 'photo',
-      selectionLimit: 1, // Limit selection to 1 image per selection
-    };
+  // Getting the access token from Redux
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
 
-    launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('Image Picker Error: ', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const newImageUri = response.assets[0].uri;
+  console.log(' === route.params____ ===> ', data);
 
-        // Check if adding the new image exceeds the 1-image limit
-        if (selectedImages.length >= 1) {
-          Alert.alert('Edit Thumbnail', 'You can only add 1 image.');
-        } else {
-          // Add the new image URI to the selectedImages array
-          setSelectedImages(prevImages => [...prevImages, newImageUri]);
-        }
-      }
-    });
-  };
+  // State to store the API response data
+  const [singleUserData, setSingleUserData] = useState(null); // For single user fetched by ID
+  const [searchUserData, setSearchUserData] = useState([]); // For multiple users fetched by search
 
-  const removeImage = uri => {
-    setSelectedImages(prevImages => prevImages.filter(image => image !== uri));
-  };
-
-  // Function to handle submit action
-  const handleSubmit = () => {
-    // Check if description length is at least 150 characters
-    if (description.length < 200) {
-      Alert.alert(
-        'Error',
-        'Please enter at least 150 characters in the description.',
+  // Function to fetch user data by ID (single user)
+  const fetchUserDataById = async userId => {
+    try {
+      const response = await axios.get(
+        `https://stag.mntech.website/api/v1/user/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
-    } else {
-      // Log the description to the terminal (console)
-      console.log('Description: ', description);
-      // Here you can do other submit-related actions (e.g., send data to server)
+      console.log('User data fetched by ID:', response.data);
+      // Set the single user data into the state
+      setSingleUserData(response.data.data[0]); // Assuming the response has a 'data' field
+    } catch (error) {
+      console.error('Error fetching data by ID:', error);
+      Alert.alert('Error', 'Failed to fetch user data by ID.');
     }
   };
 
-  return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 17}}>
-        <TouchableOpacity
-          style={{
-            width: '100%',
-            height: 50,
-            borderRadius: 100,
-            borderColor: '#E6E6E6',
-            borderWidth: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 27,
-          }}
-          onPress={openGallery} // Open the gallery when the button is pressed
-        >
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-            }}>
-            Add Marriage Photos
-          </Text>
-        </TouchableOpacity>
+  // Function to fetch user data via search query (multiple users)
+  const fetchUserData = async () => {
+    if (!accessToken) {
+      console.error('No access token found');
+      return;
+    }
 
-        {/* FlatList to display selected images */}
-        <FlatList
-          data={selectedImages}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
-            <View style={{backgroundColor: 'orange', marginTop: 20}}>
-              <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                <Image
-                  source={{uri: item}}
-                  style={{
-                    width: '50%',
-                    height: 200,
-                    borderRadius: 10,
-                    alignSelf: 'center',
-                  }}
-                />
-                <TouchableOpacity
-                  onPress={() => removeImage(item)} // Remove the image when pressed
-                  style={{
-                    position: 'absolute',
-                    top: 10,
-                    right: 10,
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background for the X button
-                    borderRadius: 50,
-                    height: hp(20),
-                    width: hp(20),
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: 9,
-                      fontWeight: 'bold',
-                    }}>
-                    X
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-          horizontal={true} // Set to true for horizontal scrolling
-          showsHorizontalScrollIndicator={false} // Hide horizontal scrollbar
-        />
+    const url = 'https://stag.mntech.website/api/v1/user/search/search-user';
+    const requestBody = {
+      minAge: data.minAge,
+      maxAge: data.maxAge,
+      maritalStatus: data.maritalStatus,
+      religion: data.religion,
+      motherTongue: data.motherTongue,
+      minHeight: data.minHeight,
+      maxHeight: data.maxHeight,
+      currentCountry: data.currentCountry,
+      state: [], // Assuming you will populate this field as needed
+      currentCity: data.currentCity,
+    };
 
-        {/* Description TextInput */}
-        <TextInput
-          numberOfLines={20}
-          multiline={true}
-          placeholderTextColor={colors.black}
-          value={description}
-          onChangeText={setDescrition} // Update description state
-          style={{
-            height: hp(150),
-            borderWidth: 1,
-            borderColor: colors.black,
-            borderRadius: 10,
-            justifyContent: 'flex-start',
-            marginTop: hp(12),
-            padding: 10,
-            textAlignVertical: 'top',
-            color: colors.black,
-          }}
-        />
-      </View>
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-      {/* Submit Button */}
-      <TouchableOpacity
-        style={{
-          marginTop: 50,
-          alignItems: 'center',
-          paddingVertical: 12,
-          backgroundColor: colors.blue,
-          borderRadius: 8,
-        }}
-        onPress={handleSubmit} // Call handleSubmit on press
-      >
-        <Text
-          style={{
-            fontSize: fontSize(16),
-            color: 'white',
-            fontFamily: fontFamily.poppins600,
-          }}>
-          Submit
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+      console.log('API Response:', responseData);
+
+      // Store the search results (multiple users)
+      setSearchUserData(responseData.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch user data.');
+    }
+  };
+
+  // UseEffect to trigger the correct API call based on the type of 'data'
+  useEffect(() => {
+    if (accessToken) {
+      if (data && data.length === 24) {
+        // If the data is an ID (length 24 is common for MongoDB ObjectIds)
+        fetchUserDataById(data); // Fetch user data by ID (single user)
+      } else {
+        fetchUserData(); // Fetch user data for the search query (multiple users)
+      }
+    }
+  }, [accessToken, data]);
+
+  // Function to add user to shortlist
+  const addToShortlist = async shortlistId => {
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        {
+          shortlistId: shortlistId,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log('Shortlist created successfully:', response.data);
+      // Re-fetch the user data after adding to shortlist
+      // fetchUserData(); // Re-fetch the user data
+      if (data && data.length === 24) {
+        // If the data is an ID (length 24 is common for MongoDB ObjectIds)
+        fetchUserDataById(data); // Fetch user data by ID (single user)
+      } else {
+        fetchUserData(); // Fetch user data for the search query (multiple users)
+      }
+    } catch (error) {
+      console.error('Error adding to shortlist:', error);
+      Alert.alert('Error', 'Failed to add to shortlist.');
+    }
+  };
+
+  // Function to remove user from shortlist
+  const removeFromShortlist = async shortlistId => {
+    try {
+      const response = await axios.delete(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log('Shortlist removed successfully:', response.data);
+      // Re-fetch the user data after removing from shortlist
+      // fetchUserData(); // Re-fetch the user data
+      if (data && data.length === 24) {
+        // If the data is an ID (length 24 is common for MongoDB ObjectIds)
+        fetchUserDataById(data); // Fetch user data by ID (single user)
+      } else {
+        fetchUserData(); // Fetch user data for the search query (multiple users)
+      }
+    } catch (error) {
+      console.error('Error removing from shortlist:', error);
+      Alert.alert('Error', 'Failed to remove from shortlist.');
+    }
+  };
+
+  // FlatList render item
+  const renderItem = ({item}) => {
+    console.log(' === renderItem ===> ', item?.userShortListDetails);
+
+    const starIconSource = item?.userShortListDetails
+      ? icons.black_check_icon
+      : icons.black_start_icon;
+    return (
+      <View style={styles.itemContainer}>
+        <Image source={{uri: item.profilePic}} style={styles.image} />
+        <Text style={styles.name}>
+          {item.firstName} {item.lastName}
         </Text>
-      </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            if (item?.userShortListDetails) {
+              // If the user is already in the shortlist, remove them
+              removeFromShortlist(item.userShortListDetails._id);
+            } else {
+              // If the user is not in the shortlist, add them
+              addToShortlist(item._id);
+            }
+          }}>
+          <Image
+            source={starIconSource}
+            style={{
+              width: hp(25),
+              height: hp(25),
+              resizeMode: 'contain',
+              marginLeft: 35,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  // FlatList render item
+  const SearchUserDataRenderItem = ({item}) => {
+    console.log(' === SearchUserDataRenderItem ===> ', item);
+
+    const starIconSource = item?.userShortListDetails
+      ? icons.black_check_icon
+      : icons.black_start_icon;
+    return (
+      <View style={styles.itemContainer}>
+        <Image source={{uri: item.profilePic}} style={styles.image} />
+        <Text style={styles.name}>
+          {item.firstName} {item.lastName}
+        </Text>
+
+        <TouchableOpacity
+          onPress={() => {
+            if (item?.userShortListDetails) {
+              // If the user is already in the shortlist, remove them
+              removeFromShortlist(item.userShortListDetails._id);
+            } else {
+              // If the user is not in the shortlist, add them
+              addToShortlist(item._id);
+            }
+          }}>
+          <Image
+            source={starIconSource}
+            style={{
+              width: hp(25),
+              height: hp(25),
+              resizeMode: 'contain',
+              marginLeft: 35,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text>Total User Data: {singleUserData ? 1 : searchUserData.length}</Text>
+      {/* FlatList for single user (by ID) */}
+      {singleUserData && (
+        <FlatList
+          data={[singleUserData]} // Wrap the single user data in an array
+          renderItem={renderItem}
+          keyExtractor={item => item._id}
+          ListHeaderComponent={() => (
+            <Text style={styles.header}>Single User</Text>
+          )}
+        />
+      )}
+
+      {/* FlatList for multiple users (by search) */}
+      {searchUserData.length > 0 && (
+        <FlatList
+          data={searchUserData}
+          renderItem={SearchUserDataRenderItem}
+          keyExtractor={item => item._id}
+          ListHeaderComponent={() => (
+            <Text style={styles.header}>Search Results</Text>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };
+
+// Styles for the FlatList items and overall layout
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  header: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
+});
 
 export default Abc;

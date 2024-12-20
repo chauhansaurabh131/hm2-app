@@ -144,7 +144,7 @@ const CredentialsScreen = () => {
 
         // Make the API call
         const response = await fetch(
-          'https://happymilan.tech/api/v1/user/auth/update-password',
+          'https://stag.mntech.website/api/v1/user/auth/update-password',
           {
             method: 'PUT',
             headers: {

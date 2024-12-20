@@ -100,7 +100,7 @@ export const style = StyleSheet.create({
 
   ToggleContainer: {
     flex: 1,
-    marginTop: hp(20),
+    marginTop: hp(35),
   },
   rowContainer: {
     flexDirection: 'row',

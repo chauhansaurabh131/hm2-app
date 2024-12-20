@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -20,7 +20,7 @@ import {
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import {colors} from '../../utils/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';

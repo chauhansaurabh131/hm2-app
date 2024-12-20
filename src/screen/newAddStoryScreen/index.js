@@ -76,7 +76,7 @@ const NewAddStoryScreen = () => {
       })
       .catch(error => {
         console.log('Error opening gallery:', error);
-        Alert.alert('Error', 'Could not open the gallery.');
+        // Alert.alert('Error', 'Could not open the gallery.');
       });
   }, [navigation]);
 
@@ -125,7 +125,7 @@ const NewAddStoryScreen = () => {
   return (
     <SafeAreaView style={{backgroundColor: 'white'}}>
       <View style={styles.container}>
-        <View>
+        <TouchableOpacity onPress={handleImageClick}>
           <View style={styles.imageContainer}>
             {/* Update the onPress logic here */}
             <TouchableOpacity activeOpacity={0.7} onPress={handleImageClick}>
@@ -156,7 +156,7 @@ const NewAddStoryScreen = () => {
               />
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* FlatList to display other users' statuses */}
         <FlatList

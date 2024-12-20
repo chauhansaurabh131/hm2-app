@@ -156,22 +156,23 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   modalTittleText: {
-    fontSize: fontSize(20),
-    lineHeight: hp(21),
+    fontSize: fontSize(24),
+    lineHeight: hp(30),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
     marginTop: 5,
   },
   modalTittleDescriptionText: {
-    fontSize: fontSize(16),
+    fontSize: fontSize(18),
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
+    marginTop: hp(5),
   },
   modalButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginTop: hp(66),
+    marginTop: hp(43),
   },
   confirmButtonStyle: {
     width: hp(126),
