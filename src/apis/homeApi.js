@@ -1,4 +1,4 @@
-import {post, put, get, upload} from './index';
+import {post, put, get, upload, deleteRequest} from './index';
 
 const getUserAllData = async data => {
   // return get('/api/v1/user/user/', data, false);
@@ -15,6 +15,10 @@ const getAllFriendRequestData = async data => {
 
 const acceptedDeclineRequested = async data => {
   return post('/api/v1/user/friend/respond-friend-req', data, true);
+};
+
+const non_FriendBlockedUser = async data => {
+  return post('/api/v1/user/friend/block-user', data, true);
 };
 
 const setUserUpdateDetails = async data => {
@@ -51,6 +55,14 @@ const paymentDetail = async data => {
 
 const addShortListsData = async data => {
   return post('/api/v1/user/shortlist/create-shortlist', data, true);
+};
+
+const removeShortListsData = async data => {
+  return deleteRequest(
+    `/api/v1/user/shortlist/delete-short-list/${data}`,
+    {},
+    true,
+  );
 };
 
 const addDataCountingData = async data => {
@@ -110,6 +122,7 @@ export const home = {
   sendFriendsRequest,
   getAllFriendRequestData,
   acceptedDeclineRequested,
+  non_FriendBlockedUser,
   setUserUpdateDetails,
   updateUserAddress,
   educationDetail,
@@ -118,6 +131,7 @@ export const home = {
   partnerReferences,
   paymentDetail,
   addShortListsData,
+  removeShortListsData,
   addDataCountingData,
   getSuccessStories,
   getAllShortListData,

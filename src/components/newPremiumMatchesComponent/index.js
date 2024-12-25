@@ -36,6 +36,8 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
   const [users, setUsers] = useState([]); // State to store the user data
   const [loading, setLoading] = useState(false); // Loading state
 
+  console.log(' === users ===> ', users);
+
   const ShowToast = () => {
     Toast.show({
       type: 'AddShortlisted',
@@ -466,89 +468,7 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       {/* Check if there are paginatedResults to display */}
-      {/*{loading ? (*/}
-      {/*  <FlatList*/}
-      {/*    data={[1, 1, 1, 1]}*/}
-      {/*    horizontal={true}*/}
-      {/*    showsHorizontalScrollIndicator={false}*/}
-      {/*    renderItem={() => {*/}
-      {/*      return (*/}
-      {/*        <View*/}
-      {/*          style={{*/}
-      {/*            width: 120,*/}
-      {/*            height: 200,*/}
-      {/*            borderRadius: 10,*/}
-      {/*            // backgroundColor: 'orange',*/}
-      {/*          }}>*/}
-      {/*          <View*/}
-      {/*            style={{*/}
-      {/*              width: 100,*/}
-      {/*              height: 170,*/}
-      {/*              backgroundColor: '#9e9e9e',*/}
-      {/*              opacity: 0.4,*/}
-      {/*              alignItems: 'center',*/}
-      {/*              borderRadius: 10,*/}
-      {/*            }}>*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: '80%',*/}
-      {/*                height: 80,*/}
-      {/*                backgroundColor: 'black',*/}
-      {/*                marginTop: 10,*/}
-      {/*                borderRadius: 10,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: '60%',*/}
-      {/*                height: 10,*/}
-      {/*                backgroundColor: 'black',*/}
-      {/*                marginTop: 30,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <View*/}
-      {/*              style={{*/}
-      {/*                flexDirection: 'row',*/}
-      {/*                justifyContent: 'space-between',*/}
-      {/*                marginTop: 12,*/}
-      {/*              }}>*/}
-      {/*              <ShimmerPlaceholder*/}
-      {/*                style={{*/}
-      {/*                  width: 30,*/}
-      {/*                  height: 15,*/}
-      {/*                  backgroundColor: 'black',*/}
-      {/*                  borderRadius: 25,*/}
-      {/*                }}*/}
-      {/*              />*/}
-      {/*              <ShimmerPlaceholder*/}
-      {/*                style={{*/}
-      {/*                  width: 30,*/}
-      {/*                  height: 15,*/}
-      {/*                  backgroundColor: 'black',*/}
-      {/*                  borderRadius: 25,*/}
-      {/*                  marginLeft: 15,*/}
-      {/*                }}*/}
-      {/*              />*/}
-      {/*            </View>*/}
-      {/*          </View>*/}
-      {/*        </View>*/}
-      {/*      );*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*) :*/}
-      {users.length > 0 ? (
-        <FlatList
-          data={users}
-          keyExtractor={(item, index) => String(index)} // Use a unique key or index for now
-          renderItem={renderItem}
-          horizontal // Make the FlatList horizontal
-          showsHorizontalScrollIndicator={false} // Optionally hide the horizontal scroll indicator
-          contentContainerStyle={styles.listContainer} // Optional styling for the list
-        />
-      ) : (
-        // <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>
-        //   No Premium Matches Found.............................
-        // </Text>
+      {loading ? (
         <FlatList
           data={[1, 1, 1, 1]}
           horizontal={true}
@@ -617,6 +537,19 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
             );
           }}
         />
+      ) : users.length > 0 ? (
+        <FlatList
+          data={users}
+          keyExtractor={(item, index) => String(index)} // Use a unique key or index for now
+          renderItem={renderItem}
+          horizontal // Make the FlatList horizontal
+          showsHorizontalScrollIndicator={false} // Optionally hide the horizontal scroll indicator
+          contentContainerStyle={styles.listContainer} // Optional styling for the list
+        />
+      ) : (
+        <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>
+          No Premium Matches Found
+        </Text>
       )}
 
       <Toast config={toastConfigs} />

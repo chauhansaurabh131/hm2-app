@@ -3,6 +3,15 @@ import {
   GET_ALL_ACCEPTED_DATING,
   GET_ALL_ACCEPTED_FAILED_DATING,
   GET_ALL_ACCEPTED_SUCCESS_DATING,
+  GET_All_ACCEPTED_USER,
+  GET_All_ACCEPTED_USER_FAILED,
+  GET_All_ACCEPTED_USER_SUCCESS,
+  NON_FRIEND_BLOCKED,
+  NON_FRIEND_BLOCKED_SUCCESS,
+  REMOVE_SHORT_LIST,
+  REMOVE_SHORT_LIST_FAILED,
+  REMOVE_SHORT_LIST_SUCCESS,
+  RESET_USER_DATA,
 } from './actionTypes';
 
 // GET ALL USER
@@ -16,6 +25,22 @@ export function userDataSuccess(data) {
 
 export function userDataFail() {
   return {type: TYPES.GET_USER_DATA_FAILED};
+}
+export function resetUserData() {
+  return {type: TYPES.RESET_USER_DATA};
+}
+
+//GET ALL ACCEPTED USER DATA
+export function acceptedAllUserData(data) {
+  return {type: TYPES.GET_All_ACCEPTED_USER, data};
+}
+
+export function acceptedAllUserDataSuccess(data) {
+  return {type: TYPES.GET_All_ACCEPTED_USER_SUCCESS, data};
+}
+
+export function acceptedAllUserDataFail() {
+  return {type: TYPES.GET_All_ACCEPTED_USER_FAILED};
 }
 
 // SEND FRIEND REQUEST
@@ -61,6 +86,23 @@ export const acceptedDeclineFriendRequestSuccess = data => ({
 
 export const acceptedDeclineFriendRequestFailure = () => ({
   type: TYPES.ACCEPTED_DECLINE_FRIEND_REQUEST_FAILED,
+});
+
+//NON-FRIEND BLOCKED
+export function non_friend_Blocked(payload, callBack) {
+  return {
+    type: TYPES.NON_FRIEND_BLOCKED,
+    data: {payload, callBack},
+  };
+}
+
+export const non_friend_Blocked_Success = data => ({
+  type: TYPES.NON_FRIEND_BLOCKED_SUCCESS,
+  data,
+});
+
+export const non_friend_Blocked_Failure = () => ({
+  type: TYPES.NON_FRIEND_BLOCKED_FAILED,
 });
 
 //UPDATE USER DETAILS
@@ -163,7 +205,6 @@ export const paymentDetailsFailure = () => ({
 
 // ADD SHORT LIST
 export function addShortList(data) {
-  console.log(' === addShortList.... ===> ', data);
   return {type: TYPES.ADD_SHORT_LIST, data};
 }
 
@@ -173,6 +214,20 @@ export function addShortListSuccess(data) {
 
 export const addShortListFailure = () => ({
   type: TYPES.ADD_SHORT_LIST_FAILED,
+});
+
+// remove shortList
+export function removeShortList(data) {
+  console.log(' === addShortList.... ===> ', data);
+  return {type: TYPES.REMOVE_SHORT_LIST, data};
+}
+
+export function removeShortListSuccess(data) {
+  return {type: TYPES.REMOVE_SHORT_LIST_SUCCESS, data};
+}
+
+export const removeShortListFailure = () => ({
+  type: TYPES.REMOVE_SHORT_LIST_FAILED,
 });
 
 // USER LIKE

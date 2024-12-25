@@ -97,7 +97,7 @@ const ChatScreen = ({navigation}) => {
   // Function to filter friends based on user input
   const filteredFriends = friends.filter(friend => {
     const fullName =
-      `${friend.friendList.firstName} ${friend.friendList.lastName}`.toLowerCase();
+      `${friend?.friendList?.firstName} ${friend?.friendList?.lastName}`.toLowerCase();
     return fullName.includes(userInput.toLowerCase());
   });
 

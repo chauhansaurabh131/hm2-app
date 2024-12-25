@@ -1,235 +1,165 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
   FlatList,
   View,
   Image,
-  StyleSheet,
   TouchableOpacity,
-  Alert,
+  ActivityIndicator, // Import ActivityIndicator for the loader
 } from 'react-native';
-import {useSelector} from 'react-redux';
-import {hp} from '../../utils/helpers';
+import {
+  addShortList,
+  removeShortList,
+  userDatas,
+} from '../../actions/homeActions';
+import {useDispatch, useSelector} from 'react-redux';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {style} from '../searchUserDataScreen/style';
 import {icons} from '../../assets';
-import axios from 'axios';
+import {home} from '../../apis/homeApi';
+import Toast from 'react-native-toast-message';
 
-const Abc = ({route}) => {
-  const {data} = route.params;
+const Abc = () => {
+  const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
 
-  // Getting the access token from Redux
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
 
-  console.log(' === route.params____ ===> ', data);
+  // Use isUserDataLoading from Redux state to manage the loader
+  const {
+    userData = [],
+    totalPages = 1,
+    isUserDataLoading,
+  } = useSelector(state => state.home);
 
-  // State to store the API response data
-  const [singleUserData, setSingleUserData] = useState(null); // For single user fetched by ID
-  const [searchUserData, setSearchUserData] = useState([]); // For multiple users fetched by search
-
-  // Function to fetch user data by ID (single user)
-  const fetchUserDataById = async userId => {
-    try {
-      const response = await axios.get(
-        `https://stag.mntech.website/api/v1/user/user/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      console.log('User data fetched by ID:', response.data);
-      // Set the single user data into the state
-      setSingleUserData(response.data.data[0]); // Assuming the response has a 'data' field
-    } catch (error) {
-      console.error('Error fetching data by ID:', error);
-      Alert.alert('Error', 'Failed to fetch user data by ID.');
-    }
-  };
-
-  // Function to fetch user data via search query (multiple users)
-  const fetchUserData = async () => {
-    if (!accessToken) {
-      console.error('No access token found');
-      return;
-    }
-
-    const url = 'https://stag.mntech.website/api/v1/user/search/search-user';
-    const requestBody = {
-      minAge: data.minAge,
-      maxAge: data.maxAge,
-      maritalStatus: data.maritalStatus,
-      religion: data.religion,
-      motherTongue: data.motherTongue,
-      minHeight: data.minHeight,
-      maxHeight: data.maxHeight,
-      currentCountry: data.currentCountry,
-      state: [], // Assuming you will populate this field as needed
-      currentCity: data.currentCity,
-    };
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const responseData = await response.json();
-      console.log('API Response:', responseData);
-
-      // Store the search results (multiple users)
-      setSearchUserData(responseData.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      Alert.alert('Error', 'Failed to fetch user data.');
-    }
-  };
-
-  // UseEffect to trigger the correct API call based on the type of 'data'
   useEffect(() => {
-    if (accessToken) {
-      if (data && data.length === 24) {
-        // If the data is an ID (length 24 is common for MongoDB ObjectIds)
-        fetchUserDataById(data); // Fetch user data by ID (single user)
-      } else {
-        fetchUserData(); // Fetch user data for the search query (multiple users)
-      }
-    }
-  }, [accessToken, data]);
-
-  // Function to add user to shortlist
-  const addToShortlist = async shortlistId => {
-    try {
-      const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-        {
-          shortlistId: shortlistId,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      console.log('Shortlist created successfully:', response.data);
-      // Re-fetch the user data after adding to shortlist
-      // fetchUserData(); // Re-fetch the user data
-      if (data && data.length === 24) {
-        // If the data is an ID (length 24 is common for MongoDB ObjectIds)
-        fetchUserDataById(data); // Fetch user data by ID (single user)
-      } else {
-        fetchUserData(); // Fetch user data for the search query (multiple users)
-      }
-    } catch (error) {
-      console.error('Error adding to shortlist:', error);
-      Alert.alert('Error', 'Failed to add to shortlist.');
-    }
-  };
-
-  // Function to remove user from shortlist
-  const removeFromShortlist = async shortlistId => {
-    try {
-      const response = await axios.delete(
-        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      console.log('Shortlist removed successfully:', response.data);
-      // Re-fetch the user data after removing from shortlist
-      // fetchUserData(); // Re-fetch the user data
-      if (data && data.length === 24) {
-        // If the data is an ID (length 24 is common for MongoDB ObjectIds)
-        fetchUserDataById(data); // Fetch user data by ID (single user)
-      } else {
-        fetchUserData(); // Fetch user data for the search query (multiple users)
-      }
-    } catch (error) {
-      console.error('Error removing from shortlist:', error);
-      Alert.alert('Error', 'Failed to remove from shortlist.');
-    }
-  };
-
-  // FlatList render item
-  const renderItem = ({item}) => {
-    console.log(' === renderItem ===> ', item?.userShortListDetails);
-
-    const starIconSource = item?.userShortListDetails
-      ? icons.black_check_icon
-      : icons.black_start_icon;
-    return (
-      <View style={styles.itemContainer}>
-        <Image source={{uri: item.profilePic}} style={styles.image} />
-        <Text style={styles.name}>
-          {item.firstName} {item.lastName}
-        </Text>
-
-        <TouchableOpacity
-          onPress={() => {
-            if (item?.userShortListDetails) {
-              // If the user is already in the shortlist, remove them
-              removeFromShortlist(item.userShortListDetails._id);
-            } else {
-              // If the user is not in the shortlist, add them
-              addToShortlist(item._id);
-            }
-          }}>
-          <Image
-            source={starIconSource}
-            style={{
-              width: hp(25),
-              height: hp(25),
-              resizeMode: 'contain',
-              marginLeft: 35,
-            }}
-          />
-        </TouchableOpacity>
-      </View>
+    dispatch(
+      userDatas({
+        page,
+      }),
     );
+  }, [dispatch, page]);
+
+  const ShowToast = () => {
+    Toast.show({
+      type: 'AddShortlisted',
+      text1: 'Profile has been shortlisted',
+      visibilityTime: 1000,
+    });
   };
 
-  // FlatList render item
-  const SearchUserDataRenderItem = ({item}) => {
-    console.log(' === SearchUserDataRenderItem ===> ', item);
+  const RemoveShortlisted = () => {
+    Toast.show({
+      type: 'RemoveShortlisted',
+      text1: 'Shortlisted has been removed',
+      visibilityTime: 1000,
+    });
+  };
 
-    const starIconSource = item?.userShortListDetails
-      ? icons.black_check_icon
-      : icons.black_start_icon;
-    return (
-      <View style={styles.itemContainer}>
-        <Image source={{uri: item.profilePic}} style={styles.image} />
-        <Text style={styles.name}>
-          {item.firstName} {item.lastName}
+  const onShortListPress = item => {
+    if (item?.userShortListDetails) {
+      home.removeShortListsData(item.userShortListDetails._id).then(() => {
+        dispatch(removeShortList({userId: item._id}));
+        ShowToast();
+      });
+    } else {
+      home.addShortListsData({shortlistId: item._id}).then(({data: {data}}) => {
+        dispatch(
+          addShortList({
+            userId: item._id,
+            userShortListDetails: {...data, _id: data.id},
+          }),
+        );
+        RemoveShortlisted();
+      });
+    }
+  };
+
+  const toastConfigs = {
+    AddShortlisted: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
         </Text>
+      </View>
+    ),
+    RemoveShortlisted: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          borderRadius: 100,
+          marginHorizontal: 20,
+          marginTop: -25,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+  };
+
+  const renderItem = ({item, index}) => {
+    const starIconSource = item?.userShortListDetails
+      ? icons.black_check_icon // Check icon if shortlisted
+      : icons.black_start_icon; // Star icon if not shortlisted
+
+    const profileImage = item?.profilePic
+      ? {uri: item?.profilePic}
+      : require('../../assets/images/empty_Male_img.jpg');
+
+    return (
+      <View style={{padding: 10, borderBottomWidth: 1}}>
+        <Image
+          source={profileImage}
+          style={{width: 100, height: 100, borderRadius: 20}}
+        />
+        <Text style={{fontSize: fontSize(16)}}>{item.name}</Text>
 
         <TouchableOpacity
           onPress={() => {
-            if (item?.userShortListDetails) {
-              // If the user is already in the shortlist, remove them
-              removeFromShortlist(item.userShortListDetails._id);
-            } else {
-              // If the user is not in the shortlist, add them
-              addToShortlist(item._id);
-            }
+            onShortListPress(item);
+          }}
+          style={{
+            width: hp(30),
+            height: hp(30),
+            marginBottom: 50,
+            marginTop: 10,
+            marginLeft: 30,
           }}>
           <Image
             source={starIconSource}
             style={{
-              width: hp(25),
-              height: hp(25),
+              width: hp(30),
+              height: hp(30),
               resizeMode: 'contain',
-              marginLeft: 35,
             }}
           />
         </TouchableOpacity>
@@ -238,65 +168,28 @@ const Abc = ({route}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Total User Data: {singleUserData ? 1 : searchUserData.length}</Text>
-      {/* FlatList for single user (by ID) */}
-      {singleUserData && (
+    <SafeAreaView style={{flex: 1}}>
+      {/* Show loader when data is loading */}
+      {isUserDataLoading ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
         <FlatList
-          data={[singleUserData]} // Wrap the single user data in an array
+          data={userData}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
-          keyExtractor={item => item._id}
-          ListHeaderComponent={() => (
-            <Text style={styles.header}>Single User</Text>
-          )}
+          onEndReached={() => {
+            if (page < totalPages) {
+              setPage(prevState => prevState + 1);
+            }
+          }}
         />
       )}
 
-      {/* FlatList for multiple users (by search) */}
-      {searchUserData.length > 0 && (
-        <FlatList
-          data={searchUserData}
-          renderItem={SearchUserDataRenderItem}
-          keyExtractor={item => item._id}
-          ListHeaderComponent={() => (
-            <Text style={styles.header}>Search Results</Text>
-          )}
-        />
-      )}
+      <Toast config={toastConfigs} />
     </SafeAreaView>
   );
 };
-
-// Styles for the FlatList items and overall layout
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  header: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-});
 
 export default Abc;

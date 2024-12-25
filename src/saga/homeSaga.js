@@ -4,17 +4,25 @@ import * as homeActions from '../actions/homeActions';
 import * as TYPES from '../actions/actionTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
-import {GET_ALL_ACCEPTED_DATING} from '../actions/actionTypes';
+import {
+  GET_ALL_ACCEPTED_DATING,
+  NON_FRIEND_BLOCKED,
+  REMOVE_SHORT_LIST,
+} from '../actions/actionTypes';
 import {
   getAllAcceptedFailureDating,
   getAllAcceptedSuccessDating,
+  non_friend_Blocked_Failure,
+  non_friend_Blocked_Success,
+  removeShortListFailure,
+  removeShortListSuccess,
 } from '../actions/homeActions';
 
 function* getUserData(action) {
   try {
     const response = yield call(home.getUserAllData, action.data);
     // console.log(' === SAGA... ===> ', response.data);
-    yield put(homeActions.userDataSuccess(response.data));
+    yield put(homeActions.userDataSuccess(response.data?.data));
   } catch (error) {
     yield put(homeActions.userDataFail());
   }
@@ -107,6 +115,29 @@ function* acceptedDeclineFriendRequest(action) {
     console.log(' === SAGA...2222222 ===> ', response.data?.data);
   } catch (error) {
     yield put(homeActions.acceptedDeclineFriendRequestFailure());
+  }
+}
+
+function* non_friendBlockedRequest(action) {
+  try {
+    const accessToken = yield call(AsyncStorage.getItem, TOKEN);
+    const cleanedToken = accessToken.replace(/^"|"$/g, '');
+    const payloadWithToken = {
+      ...action.data.payload,
+      accessToken: cleanedToken,
+    };
+    console.log(' === action.data.payload ===> ', action.data.payload);
+
+    const response = yield call(
+      home.non_FriendBlockedUser,
+      action.data.payload,
+    );
+    yield put(homeActions.non_friend_Blocked_Success(response.data?.data));
+    if (action.data.callBack) {
+      action.data.callBack();
+    }
+  } catch (error) {
+    yield put(homeActions.non_friend_Blocked_Failure());
   }
 }
 
@@ -218,10 +249,20 @@ function* getPaymentDetail(action) {
 
 function* addShortLists(action) {
   try {
+    console.log(' === addShortLists ===> ', action.data);
     const response = yield call(home.addShortListsData, action.data);
     yield put(homeActions.addShortListSuccess(response.data));
   } catch (error) {
     yield put(homeActions.addShortListFailure());
+  }
+}
+
+function* removeShortLists(action) {
+  try {
+    const response = yield call(home.removeShortListsData, action.data);
+    yield put(homeActions.removeShortListSuccess(response.data));
+  } catch (error) {
+    yield put(homeActions.removeShortListFailure());
   }
 }
 
@@ -351,6 +392,7 @@ function* homeSaga() {
       acceptedDeclineFriendRequest,
     ),
   ]);
+  yield all([takeLatest(TYPES.NON_FRIEND_BLOCKED, non_friendBlockedRequest)]);
   yield all([takeLatest(TYPES.SET_UPDATE_USER_DETAILS, setUpdateDetails)]);
   yield all([takeLatest(TYPES.SET_USER_ADDRESS, updateAddress)]);
   yield all([takeLatest(TYPES.EDUCATION_DETAILS, educationDetails)]);
@@ -358,7 +400,6 @@ function* homeSaga() {
   yield all([takeEvery(TYPES.ADD_PROFILE_PICTURE, addProfilePicture)]);
   yield all([takeLatest(TYPES.PARTNER_PREFERENCES_DETAILS, partnerReferences)]);
   yield all([takeLatest(TYPES.GET_ALL_PAYMENT_DETAILS, getPaymentDetail)]);
-  yield all([takeLatest(TYPES.ADD_SHORT_LIST, addShortLists)]);
   yield all([takeLatest(TYPES.DATA_COUNTING_LIST, dataCountLists)]);
   yield all([takeLatest(TYPES.USER_LIKE, isLikeData)]);
   yield all([takeLatest(TYPES.USER_DIS_LIKE, isDisLikeData)]);

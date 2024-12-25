@@ -3,7 +3,14 @@ import {
   GET_ALL_ACCEPTED_DATING,
   GET_ALL_ACCEPTED_FAILED_DATING,
   GET_ALL_ACCEPTED_SUCCESS_DATING,
+  NON_FRIEND_BLOCKED,
+  NON_FRIEND_BLOCKED_FAILED,
+  NON_FRIEND_BLOCKED_SUCCESS,
+  REMOVE_SHORT_LIST,
+  REMOVE_SHORT_LIST_FAILED,
+  REMOVE_SHORT_LIST_SUCCESS,
 } from '../actions/actionTypes';
+import {omit} from 'react-native-vector-icons/lib/object-utils';
 
 const initialState = {
   isUserDataLoading: false,
@@ -13,6 +20,7 @@ const initialState = {
   getAllRequestData: [],
   isFriendRequestDataLoading: false,
   acceptedDeclineFriendData: [],
+  non_friendBlockedData: [],
   UserAddress: [],
   educationsDetails: [],
   professionalDetails: [],
@@ -24,6 +32,7 @@ const initialState = {
   isDataStoriesLoader: false,
   // userLike: [],
   addShortListData: [],
+  removeShortListData: [],
   storiesData: [],
   // removeShortListData: [],
   dataCount: [],
@@ -33,6 +42,7 @@ const initialState = {
   sendRequestData: [],
   getAllRequest: [],
   getAllAccepted: [],
+  totalPages: 1,
 };
 export default (state = initialState, action) => {
   // console.log(' === Reducer_action.data ===> ', action.data);
@@ -41,11 +51,23 @@ export default (state = initialState, action) => {
     case TYPES.GET_USER_DATA:
       return {...state, isUserDataLoading: true};
 
-    case TYPES.GET_USER_DATA_SUCCESS:
+    case TYPES.GET_USER_DATA_SUCCESS: {
       return {
         ...state,
-        userData: action.data,
+        userData: [
+          ...(action.data?.[0].currentPage === 1 ? [] : state.userData),
+          ...action.data?.[0]?.paginatedResults,
+        ],
+        totalPages: action.data?.[0]?.totalPages,
+        isUserDataLoading: false,
+      };
+    }
 
+    case TYPES.RESET_USER_DATA:
+      return {
+        ...state,
+        userData: [],
+        totalPages: 1,
         isUserDataLoading: false,
       };
 
@@ -58,12 +80,13 @@ export default (state = initialState, action) => {
     case TYPES.GET_USER_DATA_FAILED:
       return {...state, isUserDataLoading: false};
 
+    //
+
     // SEND FRIEND REQUEST
     case TYPES.SEND_REQUEST:
       return {...state, isSendRequestLoading: true};
 
     case TYPES.SEND_REQUEST_SUCCESS:
-      console.log(' === Reducer ===> ', action.data);
       return {
         ...state,
         sendRequest: action.data,
@@ -100,31 +123,18 @@ export default (state = initialState, action) => {
     case TYPES.ACCEPTED_DECLINE_FRIEND_REQUEST_FAILED:
       return {...state, isSendRequestLoading: false};
 
-    // UPDATE USER ADDRESS
-    // case TYPES.SET_USER_ADDRESS:
-    //   return {...state, isSendRequestLoading: true};
-    //
-    // case TYPES.SET_USER_ADDRESS_SUCCESS:
-    //   return {
-    //     ...state,
-    //     UserAddress: action.data,
-    //     isSendRequestLoading: false,
-    //   };
-    // case TYPES.SET_USER_ADDRESS_FAILED:
-    //   return {...state, isSendRequestLoading: false};
+    //NON-FRIEND BLOCKED
+    case TYPES.NON_FRIEND_BLOCKED:
+      return {...state, isSendRequestLoading: true};
 
-    //UPDATE EDUCATIONS DETAILS
-    // case TYPES.EDUCATION_DETAILS:
-    //   return {...state, isSendRequestLoading: true};
-    //
-    // case TYPES.ADD_EDUCATION_DETAILS_SUCCESS:
-    //   return {
-    //     ...state,
-    //     educationsDetails: action.data,
-    //     isSendRequestLoading: false,
-    //   };
-    // case TYPES.ADD_EDUCATION_DETAILS_FAILED:
-    //   return {...state, isSendRequestLoading: false};
+    case TYPES.NON_FRIEND_BLOCKED_SUCCESS:
+      return {
+        ...state,
+        non_friendBlockedData: action.data,
+        isSendRequestLoading: false,
+      };
+    case TYPES.NON_FRIEND_BLOCKED_FAILED:
+      return {...state, isSendRequestLoading: false};
 
     //GET ALL PAYMENT DETAILS
     case TYPES.GET_ALL_PAYMENT_DETAILS:
@@ -140,18 +150,36 @@ export default (state = initialState, action) => {
       return {...state, isGetPaymentDetailsLoading: false};
 
     // ADD SHORT LIST
-    case TYPES.ADD_SHORT_LIST:
-      return {...state, isGetPaymentDetailsLoading: true};
+    case TYPES.ADD_SHORT_LIST: {
+      const userIndex = [...state.userData].findIndex(
+        ({_id}) => _id === action.data.userId,
+      );
+      const userInfo = JSON.parse(JSON.stringify(state.userData[userIndex]));
 
-    case TYPES.ADD_SHORT_LIST_SUCCESS:
-      return {
-        ...state,
-        addShortListData: action.data,
-        isGetPaymentDetailsLoading: false,
+      const newUserData = JSON.parse(JSON.stringify([...state.userData]));
+
+      newUserData[userIndex] = {
+        ...userInfo,
+        userShortListDetails: action.data.userShortListDetails,
       };
-    case TYPES.ADD_SHORT_LIST_FAILED:
-      return {...state, isGetPaymentDetailsLoading: false};
 
+      return {...state, userData: newUserData};
+    }
+
+    //REMOVE SHORTLIST DATA
+
+    case TYPES.REMOVE_SHORT_LIST: {
+      const userIndex = [...state.userData].findIndex(
+        ({_id}) => _id === action.data.userId,
+      );
+      const userInfo = JSON.parse(JSON.stringify(state.userData[userIndex]));
+
+      const newUserData = JSON.parse(JSON.stringify([...state.userData]));
+
+      newUserData[userIndex] = omit(userInfo, 'userShortListDetails');
+
+      return {...state, userData: newUserData};
+    }
     // GET DATA COUNTING LIST
     case TYPES.DATA_COUNTING_LIST:
       return {...state, isDataCountingLoader: true};

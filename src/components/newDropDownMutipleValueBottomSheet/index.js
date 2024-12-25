@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     justifyContent: 'center',
-    paddingLeft: 10,
+    paddingLeft: 2,
     borderBottomWidth: 1, // Add bottom border for the TextInput look
     borderBottomColor: '#C0C0C0', // Optional: Customize the bottom line color
     borderTopWidth: 0,

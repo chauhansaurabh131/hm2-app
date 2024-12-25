@@ -55,9 +55,6 @@ const HomeScreen = ({route}) => {
     // requestPermissions();
   }, []);
 
-  // console.log(' === HomeScreen_____ ===> ', user);
-
-  // console.log(' === user ===> ', user);
   const userImage = user?.user?.profilePic;
 
   const accessToken = user?.tokens?.access?.token;
@@ -107,20 +104,9 @@ const HomeScreen = ({route}) => {
 
   const {userData} = useSelector(state => state.home);
 
-  // {userData?.data?.length}
-
-  // console.log(' === 1111 ===> ', userData?.data[0]?.totalDocs);
-
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
-
-  // console.log(' === 8888 ===> ', user?.user?.userPartner);
-
-  // console.log(
-  //   ' === userPartnerPreCompleted ===> ',
-  //   user?.user?.userPartnerPreCompleted,
-  // );
 
   console.log(' === userProfileCompleted ===> ', userProfileCompleted);
 
@@ -130,23 +116,9 @@ const HomeScreen = ({route}) => {
     }
   }, [userProfileCompleted]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (!userProfileCompleted === true) {
-  //       setShowModal(true);
-  //     }
-  //   }, []),
-  // );
-
   const capitalizeFirstLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-
-  // console.log(
-  //   ' === user?.user?.firstName ===> ',
-  //   user?.user?.firstName,
-  //   user?.user?.name,
-  // );
 
   const firstName = capitalizeFirstLetter(
     user?.user?.firstName || user?.user?.name || '',
