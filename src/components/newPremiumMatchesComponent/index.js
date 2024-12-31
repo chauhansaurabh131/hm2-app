@@ -36,7 +36,7 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
   const [users, setUsers] = useState([]); // State to store the user data
   const [loading, setLoading] = useState(false); // Loading state
 
-  console.log(' === users ===> ', users);
+  // console.log(' === users ===> ', users);
 
   const ShowToast = () => {
     Toast.show({

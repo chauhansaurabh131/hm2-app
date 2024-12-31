@@ -226,9 +226,9 @@ const UserDetailScreen = ({navigation}) => {
     setSubmitted(true);
   };
 
-  const imageUrls =
-    userData?.friendList?.userProfilePic.map(pic => pic.url) ||
-    matchesUserData?.userAllImage;
+  // const imageUrls =
+  //   userData?.friendList?.userProfilePic.map(pic => pic.url) ||
+  //   matchesUserData?.userAllImage;
 
   const profileImage = matchesUserData?.profileImage;
 

@@ -114,6 +114,8 @@ const ChatScreen = ({navigation}) => {
       : 'Offline';
 
     const handleItemPress = userData => {
+      console.log(' === handleItemPress_chatScreen ===> ', userData);
+
       navigation.navigate('ChatUserScreen', {
         userData,
       });

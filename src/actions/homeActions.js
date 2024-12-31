@@ -1,18 +1,4 @@
 import * as TYPES from './actionTypes';
-import {
-  GET_ALL_ACCEPTED_DATING,
-  GET_ALL_ACCEPTED_FAILED_DATING,
-  GET_ALL_ACCEPTED_SUCCESS_DATING,
-  GET_All_ACCEPTED_USER,
-  GET_All_ACCEPTED_USER_FAILED,
-  GET_All_ACCEPTED_USER_SUCCESS,
-  NON_FRIEND_BLOCKED,
-  NON_FRIEND_BLOCKED_SUCCESS,
-  REMOVE_SHORT_LIST,
-  REMOVE_SHORT_LIST_FAILED,
-  REMOVE_SHORT_LIST_SUCCESS,
-  RESET_USER_DATA,
-} from './actionTypes';
 
 // GET ALL USER
 export function userDatas(data) {
@@ -28,6 +14,20 @@ export function userDataFail() {
 }
 export function resetUserData() {
   return {type: TYPES.RESET_USER_DATA};
+}
+
+// ACCEPTED USER DATA
+
+export function acceptedUserDatas(data) {
+  return {type: TYPES.GET_ACCEPTED_USER_DATA, data};
+}
+
+export function acceptedUserDatasSuccess(data) {
+  return {type: TYPES.GET_ACCEPTED_USER_DATA_SUCCESS, data};
+}
+
+export function acceptedUserDatasFail() {
+  return {type: TYPES.GET_ACCEPTED_USER_DATA_FAILED};
 }
 
 //GET ALL ACCEPTED USER DATA

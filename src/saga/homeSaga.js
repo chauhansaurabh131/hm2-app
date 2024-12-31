@@ -4,19 +4,6 @@ import * as homeActions from '../actions/homeActions';
 import * as TYPES from '../actions/actionTypes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
-import {
-  GET_ALL_ACCEPTED_DATING,
-  NON_FRIEND_BLOCKED,
-  REMOVE_SHORT_LIST,
-} from '../actions/actionTypes';
-import {
-  getAllAcceptedFailureDating,
-  getAllAcceptedSuccessDating,
-  non_friend_Blocked_Failure,
-  non_friend_Blocked_Success,
-  removeShortListFailure,
-  removeShortListSuccess,
-} from '../actions/homeActions';
 
 function* getUserData(action) {
   try {
@@ -25,6 +12,16 @@ function* getUserData(action) {
     yield put(homeActions.userDataSuccess(response.data?.data));
   } catch (error) {
     yield put(homeActions.userDataFail());
+  }
+}
+
+function* getAcceptedUserData(action) {
+  try {
+    const response = yield call(home.getAcceptedUserData, action.data);
+    // console.log(' === SAGA... ===> ', response.data);
+    yield put(homeActions.acceptedUserDatasSuccess(response.data?.data));
+  } catch (error) {
+    yield put(homeActions.acceptedUserDatasFail());
   }
 }
 
@@ -384,6 +381,7 @@ function* getAllAcceptedDatingData(action) {
 
 function* homeSaga() {
   yield all([takeLatest(TYPES.GET_USER_DATA, getUserData)]);
+  yield all([takeLatest(TYPES.GET_ACCEPTED_USER_DATA, getAcceptedUserData)]);
   yield all([takeLatest(TYPES.SEND_REQUEST, sendFriendRequest)]);
   yield all([takeLatest(TYPES.GET_ALL_REQUEST, getFriendRequest)]);
   yield all([

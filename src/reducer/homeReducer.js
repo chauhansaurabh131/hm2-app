@@ -1,20 +1,10 @@
 import * as TYPES from '../actions/actionTypes';
-import {
-  GET_ALL_ACCEPTED_DATING,
-  GET_ALL_ACCEPTED_FAILED_DATING,
-  GET_ALL_ACCEPTED_SUCCESS_DATING,
-  NON_FRIEND_BLOCKED,
-  NON_FRIEND_BLOCKED_FAILED,
-  NON_FRIEND_BLOCKED_SUCCESS,
-  REMOVE_SHORT_LIST,
-  REMOVE_SHORT_LIST_FAILED,
-  REMOVE_SHORT_LIST_SUCCESS,
-} from '../actions/actionTypes';
 import {omit} from 'react-native-vector-icons/lib/object-utils';
 
 const initialState = {
   isUserDataLoading: false,
   userData: [],
+  acceptedUserData: [],
   isSendRequestLoading: false,
   sendRequest: [],
   getAllRequestData: [],
@@ -80,7 +70,29 @@ export default (state = initialState, action) => {
     case TYPES.GET_USER_DATA_FAILED:
       return {...state, isUserDataLoading: false};
 
-    //
+    // GET ALL ACCEPTED USER DATA'S-------------------------------------------------------------------------------------
+    case TYPES.GET_ACCEPTED_USER_DATA:
+      return {...state, isUserDataLoading: true};
+
+    case TYPES.GET_ACCEPTED_USER_DATA_SUCCESS: {
+      console.log(
+        ' === GET_ACCEPTED_USER_DATA_SUCCESS ===> ',
+        action.data?.currentPage,
+      );
+
+      return {
+        ...state,
+        acceptedUserData: [
+          ...(action.data?.currentPage === 1 ? [] : state.acceptedUserData),
+          ...action.data?.results,
+        ],
+        totalPages: action.data?.totalPages,
+        isUserDataLoading: false,
+      };
+    }
+
+    case TYPES.GET_ACCEPTED_USER_DATA_FAILED:
+      return {...state, isUserDataLoading: false};
 
     // SEND FRIEND REQUEST
     case TYPES.SEND_REQUEST:

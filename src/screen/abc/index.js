@@ -1,193 +1,137 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
   SafeAreaView,
   Text,
-  FlatList,
-  View,
-  Image,
   TouchableOpacity,
-  ActivityIndicator, // Import ActivityIndicator for the loader
+  View,
 } from 'react-native';
-import {
-  addShortList,
-  removeShortList,
-  userDatas,
-} from '../../actions/homeActions';
-import {useDispatch, useSelector} from 'react-redux';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {style} from '../searchUserDataScreen/style';
+import {useSelector} from 'react-redux';
 import {icons} from '../../assets';
-import {home} from '../../apis/homeApi';
-import Toast from 'react-native-toast-message';
+import {hp} from '../../utils/helpers';
+import axios from 'axios';
 
 const Abc = () => {
-  const dispatch = useDispatch();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
+  const userId = user?.user?.id;
 
-  // Use isUserDataLoading from Redux state to manage the loader
-  const {
-    userData = [],
-    totalPages = 1,
-    isUserDataLoading,
-  } = useSelector(state => state.home);
+  const fetchData = async (pageNumber = 1) => {
+    if (!hasMoreData) {
+      return;
+    }
 
-  useEffect(() => {
-    dispatch(
-      userDatas({
-        page,
-      }),
-    );
-  }, [dispatch, page]);
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/shortlist/get-short-list-paginat/${userId}?page=${pageNumber}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
 
-  const ShowToast = () => {
-    Toast.show({
-      type: 'AddShortlisted',
-      text1: 'Profile has been shortlisted',
-      visibilityTime: 1000,
-    });
-  };
+      const json = await response.json();
+      console.log('API response:', json);
 
-  const RemoveShortlisted = () => {
-    Toast.show({
-      type: 'RemoveShortlisted',
-      text1: 'Shortlisted has been removed',
-      visibilityTime: 1000,
-    });
-  };
-
-  const onShortListPress = item => {
-    if (item?.userShortListDetails) {
-      home.removeShortListsData(item.userShortListDetails._id).then(() => {
-        dispatch(removeShortList({userId: item._id}));
-        ShowToast();
-      });
-    } else {
-      home.addShortListsData({shortlistId: item._id}).then(({data: {data}}) => {
-        dispatch(
-          addShortList({
-            userId: item._id,
-            userShortListDetails: {...data, _id: data.id},
-          }),
-        );
-        RemoveShortlisted();
-      });
+      const newData = json?.data?.[0]?.paginatedResults || [];
+      if (newData.length === 0) {
+        setHasMoreData(false);
+      } else {
+        setData(prevData => [...prevData, ...newData]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch data. Please try again.');
+    } finally {
+      setLoading(false);
+      setIsFetchingMore(false);
     }
   };
 
-  const toastConfigs = {
-    AddShortlisted: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          borderRadius: 100,
-          marginHorizontal: 20,
-          marginTop: -25,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
-      </View>
-    ),
-    RemoveShortlisted: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          borderRadius: 100,
-          marginHorizontal: 20,
-          marginTop: -25,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
-      </View>
-    ),
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const loadMoreData = () => {
+    if (!isFetchingMore && hasMoreData) {
+      setIsFetchingMore(true);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchData(nextPage);
+    }
   };
 
-  const renderItem = ({item, index}) => {
-    const starIconSource = item?.userShortListDetails
-      ? icons.black_check_icon // Check icon if shortlisted
-      : icons.black_start_icon; // Star icon if not shortlisted
-
-    const profileImage = item?.profilePic
-      ? {uri: item?.profilePic}
-      : require('../../assets/images/empty_Male_img.jpg');
+  const renderAcceptedUserItem = ({item}) => {
+    console.log(' === var ===> ', item);
+    const profilePic = item?.user?.profilePic || 'default-image-url';
+    const name = item?.friendList?.firstName || item?.user?.name || 'Unknown';
+    const starIconSource = item.shortlistId
+      ? icons.black_check_icon
+      : icons.black_start_icon;
 
     return (
-      <View style={{padding: 10, borderBottomWidth: 1}}>
+      <SafeAreaView style={{marginLeft: 20, marginTop: 20}}>
         <Image
-          source={profileImage}
-          style={{width: 100, height: 100, borderRadius: 20}}
+          source={{uri: profilePic}}
+          style={{width: 150, height: 150, borderRadius: 10}}
         />
-        <Text style={{fontSize: fontSize(16)}}>{item.name}</Text>
-
+        <Text style={{marginTop: 5}}>{name}</Text>
         <TouchableOpacity
-          onPress={() => {
-            onShortListPress(item);
-          }}
+          // onPress={() => handleShortListPress(item)}
           style={{
             width: hp(30),
             height: hp(30),
-            marginBottom: 50,
-            marginTop: 10,
+            backgroundColor: '#282727',
+            borderRadius: 50,
+            marginTop: 5,
             marginLeft: 30,
+            marginBottom: 50,
           }}>
           <Image
             source={starIconSource}
-            style={{
-              width: hp(30),
-              height: hp(30),
-              resizeMode: 'contain',
-            }}
+            style={{width: hp(30), height: hp(30), resizeMode: 'contain'}}
           />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     );
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      {/* Show loader when data is loading */}
-      {isUserDataLoading ? (
+    <SafeAreaView>
+      {loading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       ) : (
         <FlatList
-          data={userData}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
-          onEndReached={() => {
-            if (page < totalPages) {
-              setPage(prevState => prevState + 1);
-            }
-          }}
+          data={data}
+          renderItem={renderAcceptedUserItem}
+          keyExtractor={(item, index) =>
+            item?._id || item?.id || `item-${index}`
+          }
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <View style={{alignItems: 'center', marginVertical: 10}}>
+                <Text style={{color: 'black'}}>Loading Data..</Text>
+              </View>
+            ) : null
+          }
         />
       )}
-
-      <Toast config={toastConfigs} />
     </SafeAreaView>
   );
 };

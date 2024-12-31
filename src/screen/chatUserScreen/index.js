@@ -43,6 +43,8 @@ const formatTime = timestamp => {
 const ChatUserScreen = ({route}) => {
   const {userData} = route.params;
 
+  console.log(' === ChatUserScreen___ ===> ', userData);
+
   const blockUserId = userData?.lastInitiatorUser;
   const blockReqId = userData?._id;
 
@@ -87,7 +89,7 @@ const ChatUserScreen = ({route}) => {
     console.log(
       ' === handleConfirmBlock ===> ',
       userData?.userList?._id,
-      userData?.friendList?._id,
+      userData?.friendList?._id || userData?.friendList[0]?._id,
     );
     // const blockUserId = userData?.lastInitiatorUser;
     // const blockReqId = userData?._id;
@@ -189,7 +191,7 @@ const ChatUserScreen = ({route}) => {
 
             const newImageMessage = {
               from: userData?.userList?._id,
-              to: userData?.friendList?._id,
+              to: userData?.friendList?._id || userData?.friendList[0]?._id,
               // message: 'image',
               // message: isAudio ? '' : 'image',
               message: Types,
@@ -221,12 +223,12 @@ const ChatUserScreen = ({route}) => {
       });
 
       socket.emit('getLastConversation', {
-        from: userData.userList._id,
-        to: userData.friendList._id,
+        from: userData?.userList?._id,
+        to: userData?.friendList._id || userData?.friendList[0]._id,
       });
       socket.emit('getLastConversation', {
-        to: userData.userList._id,
-        from: userData.friendList._id,
+        to: userData?.userList?._id,
+        from: userData?.friendList._id || userData?.friendList[0]._id,
       });
 
       socket.on('getLastConversation', data => {
@@ -257,7 +259,7 @@ const ChatUserScreen = ({route}) => {
     if (selectedImage) {
       const chatContent = {
         from: userData?.userList?._id,
-        to: userData?.friendList?._id,
+        to: userData?.friendList?._id || userData?.friendList[0]._id,
         message: mediaType === 'image' ? 'image' : 'video',
         fileName: selectedImage,
         type: mediaType,
@@ -268,7 +270,7 @@ const ChatUserScreen = ({route}) => {
     } else if (trimmedMessage) {
       const newMessage = {
         from: userData?.userList?._id,
-        to: userData?.friendList?._id,
+        to: userData?.friendList?._id || userData?.friendList[0]._id,
         message: trimmedMessage,
         sendAt: new Date().toISOString(),
         id: Math.random().toString(36).substr(2, 9),
@@ -279,7 +281,7 @@ const ChatUserScreen = ({route}) => {
     } else if (recordedAudio) {
       const chatContentAudio = {
         from: userData?.userList?._id,
-        to: userData?.friendList?._id,
+        to: userData?.friendList?._id || userData?.friendList[0]._id,
         // message: 'audio',
         fileName: recordedAudio, // Ensure this is a correct path
         type: 'audio',
@@ -643,7 +645,7 @@ const ChatUserScreen = ({route}) => {
     if (text.trim()) {
       socketRef.current.emit('typing', {
         from: userData?.userList?._id,
-        to: userData?.friendList?._id,
+        to: userData?.friendList?._id || userData?.friendList[0]._id,
       });
     } else {
       handleStopTyping();
@@ -653,16 +655,18 @@ const ChatUserScreen = ({route}) => {
   const handleStopTyping = () => {
     socketRef.current.emit('stopTyping', {
       from: userData?.userList?._id,
-      to: userData?.friendList?._id,
+      to: userData?.friendList?._id || userData?.friendList[0]._id,
     });
   };
 
-  const onlineStatusColor = userData?.friendList?.isUserActive
-    ? colors.blue
-    : '#A7A7A7';
-  const onlineStatusText = userData?.friendList?.isUserActive
-    ? 'Online'
-    : 'Offline';
+  const onlineStatusColor =
+    userData?.friendList?.isUserActive || userData?.friendList[0]?.isUserActive
+      ? colors.blue
+      : '#A7A7A7';
+  const onlineStatusText =
+    userData?.friendList?.isUserActive || userData?.friendList[0]?.isUserActive
+      ? 'Online'
+      : 'Offline';
 
   return (
     <MenuProvider>
@@ -707,14 +711,24 @@ const ChatUserScreen = ({route}) => {
 
             {userData && (
               <Image
-                source={{uri: userData.friendList?.profilePic}}
+                source={{
+                  uri:
+                    userData?.friendList?.profilePic ||
+                    userData?.friendList[0]?.profilePic,
+                }}
                 style={style.userProfileIcon}
               />
             )}
             <View style={style.detailsContainer}>
               <Text style={style.userNameTextStyle}>
                 {userData
-                  ? `${userData.friendList?.firstName} ${userData.friendList?.lastName}`
+                  ? `${
+                      userData?.friendList?.firstName ||
+                      userData?.friendList[0]?.firstName
+                    } ${
+                      userData?.friendList?.lastName ||
+                      userData?.friendList[0]?.lastName
+                    }`
                   : ''}
               </Text>
 
@@ -727,7 +741,8 @@ const ChatUserScreen = ({route}) => {
                 {typing ? 'Typing...' : onlineStatusText}
               </Text>
               <Text style={{color: 'black'}}>
-                {userData?.friendList?.isOnline}
+                {userData?.friendList?.isOnline ||
+                  userData?.friendList[0]?.isOnline}
               </Text>
             </View>
             {/*<TouchableOpacity activeOpacity={0.5}>*/}

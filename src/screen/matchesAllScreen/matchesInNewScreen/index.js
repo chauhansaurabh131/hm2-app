@@ -313,21 +313,6 @@ const MatchesInNewScreen = () => {
     setQuestionText('How is it Scams or fraudulent activity?'); // Change question text after selecting this option
   };
 
-  // Handler when any report reason is clicked (to close the bottom sheet)
-  // const handleReportReasonClick = (reason, category) => {
-  //   // Do any action you need with the clicked reason (e.g., report it)
-  //   // console.log('Selected Report Reason:', reason);
-  //   console.log(`Selected Report Reason: ${reason}, Category: ${category}`);
-  //
-  //   console.log(' === blockedFriendId ===> ', blockedFriendId);
-  //
-  //   // Close the bottom sheet
-  //   ReportBottomSheetRef.current.close();
-  //
-  //   // Optionally, reset or clear the report reasons state
-  //   resetBottomSheet(); // Reset everything to the initial state when closing the bottom sheet
-  // };
-
   const handleReportReasonClick = (reason, category) => {
     // Remove "How is it " from the category string
     const cleanedCategory = category.replace(/^How is it /, '').trim();

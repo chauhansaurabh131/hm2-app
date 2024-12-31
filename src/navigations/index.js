@@ -349,7 +349,7 @@ const MainNavigator = () => {
     return (
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName={'HomeTabs'}>
+        initialRouteName={'Abc'}>
         <Stack.Screen
           name="AddSetStoryImageComponent"
           component={AddSetStoryImageComponent}

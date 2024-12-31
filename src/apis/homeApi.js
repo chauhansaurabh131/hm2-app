@@ -5,6 +5,11 @@ const getUserAllData = async data => {
   return get('/api/v1/user/user/getUserByGender', data, true);
 };
 
+const getAcceptedUserData = async data => {
+  // return get('/api/v1/user/user/', data, false);
+  return get('/api/v1/user/friend/get-frd-mobile', data, true);
+};
+
 const sendFriendsRequest = async data => {
   return post('/api/v1/user/friend/create-friend', data, true);
 };
@@ -119,6 +124,7 @@ const datingGetAllAccepted = async data => {
 
 export const home = {
   getUserAllData,
+  getAcceptedUserData,
   sendFriendsRequest,
   getAllFriendRequestData,
   acceptedDeclineRequested,

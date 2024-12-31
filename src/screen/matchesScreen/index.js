@@ -115,6 +115,8 @@ const MatchesScreen = ({navigation}) => {
     state => state.home,
   );
 
+  console.log(' === getAllRequestData ===> ', getAllRequestData?.data);
+
   // console.log(' === userData/////// ===> ', userData?.data[0].paginatedResults);
 
   const {declineFriends, myAllFriends, isUserDataLoading} = useSelector(
@@ -191,7 +193,7 @@ const MatchesScreen = ({navigation}) => {
   };
   // USER REQUEST LIST RENDER ITEM //
   const renderUserRequestItem = ({item}) => {
-    // console.log(' === renderUserRequestItem ===> ', item);
+    console.log(' === renderUserRequestItem ===> ', item);
 
     // Ensure 'user' and its properties are defined before destructuring
     const user = item?.user || {};
