@@ -565,7 +565,6 @@ const MatchesInNewScreen = () => {
       <View style={{marginHorizontal: 17}}>
         <TouchableOpacity activeOpacity={1}>
           <View>
-            {/*<Image source={item.image} style={style.userImageStyle} />*/}
             <Image
               source={
                 profileImage ? {uri: profileImage} : images.empty_male_Image
@@ -974,6 +973,42 @@ const MatchesInNewScreen = () => {
           }
         }}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          !loading && !isFetchingMore ? (
+            <View
+              style={{
+                padding: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: hp(250),
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.no_Profile_Found_img}
+                  style={{
+                    width: hp(44),
+                    height: hp(44),
+                    resizeMode: 'contain',
+                  }}
+                />
+                <Text
+                  style={{
+                    color: colors.black,
+                    fontSize: fontSize(18),
+                    lineHeight: hp(27),
+                    fontFamily: fontFamily.poppins400,
+                    marginTop: hp(12),
+                  }}>
+                  No Profiles Found
+                </Text>
+              </View>
+            </View>
+          ) : null
+        }
       />
       {/*// )}*/}
       <Modal

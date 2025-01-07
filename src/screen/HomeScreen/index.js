@@ -666,7 +666,7 @@ const HomeScreen = ({route}) => {
           {userProfileCompleted === true && userPartnerPreCompleted === true ? (
             <PremiumMatchesComponent toastConfigs={toastConfigs} />
           ) : (
-            <Text>Fill form</Text>
+            <Text style={{color: 'black'}}>Fill form</Text>
           )}
         </View>
 

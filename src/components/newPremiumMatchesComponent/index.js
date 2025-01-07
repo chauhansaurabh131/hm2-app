@@ -36,7 +36,7 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
   const [users, setUsers] = useState([]); // State to store the user data
   const [loading, setLoading] = useState(false); // Loading state
 
-  // console.log(' === users ===> ', users);
+  console.log(' === users__ ===> ', users);
 
   const ShowToast = () => {
     Toast.show({
@@ -233,7 +233,7 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    // console.log(' === var ===> ', item?.friendsDetails);
+    console.log(' === var ===> ', item);
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +

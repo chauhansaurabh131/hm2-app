@@ -106,6 +106,20 @@ const ChatScreen = ({navigation}) => {
       return null;
     }
 
+    const firstname = item.friendList.lastName;
+
+    const firstName = item.friendList.firstName
+      ? item.friendList.firstName.charAt(0).toUpperCase() +
+        item.friendList.firstName.slice(1).toLowerCase()
+      : '';
+
+    const lastName = item.friendList.lastName
+      ? item.friendList.lastName.charAt(0).toUpperCase() +
+        item.friendList.lastName.slice(1).toLowerCase()
+      : '';
+
+    console.log(' === firstname ===> ', firstname);
+
     const onlineStatusColor = item.friendList.isUserActive
       ? colors.blue
       : '#A7A7A7';
@@ -149,7 +163,8 @@ const ChatScreen = ({navigation}) => {
                 color: colors.black,
                 marginRight: wp(10),
               }}>
-              {item.friendList.firstName} {item.friendList.lastName}
+              {/*{item.friendList.firstName} {item.friendList.lastName}*/}
+              {firstName} {lastName}
             </Text>
             <Text
               style={{
@@ -217,6 +232,7 @@ const ChatScreen = ({navigation}) => {
                 borderRadius: 25,
                 paddingLeft: 20,
                 borderColor: '#F0F0F0',
+                color: colors.black,
               }}
               placeholder="Search Member"
               placeholderTextColor="black"

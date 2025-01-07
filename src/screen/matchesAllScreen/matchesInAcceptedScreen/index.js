@@ -148,6 +148,7 @@ const MatchesInAcceptedScreen = () => {
   };
 
   const removeFromShortlist = async shortlistId => {
+    console.log(' === removeFromShortlist ===> ', shortlistId);
     try {
       const response = await axios.delete(
         `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
@@ -172,7 +173,8 @@ const MatchesInAcceptedScreen = () => {
     try {
       if (shortList) {
         // Remove from shortlist
-        const shortlistId = shortList[0]?._id; // Use the correct shortlist ID
+        const shortlistId = shortList?._id || shortList[0]?._id; // Use the correct shortlist ID
+        console.log(' === shortList___ ===> ', shortList);
         await removeFromShortlist(shortlistId);
 
         // Update the state to reflect removal

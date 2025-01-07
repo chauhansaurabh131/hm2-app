@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -8,29 +8,69 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
+  Alert,
+  Share,
+  Modal,
+  TextInput,
+  Clipboard,
 } from 'react-native';
 import {icons, images} from '../../../assets';
-import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../../utils/colors';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {non_friend_Blocked} from '../../../actions/homeActions';
+import Toast from 'react-native-toast-message';
+import {style} from './style';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const MatchesInBlockedScreen = () => {
-  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [blockedUsers, setBlockedUsers] = useState([]);
+  const [selectedFirstName, setSelectedFirstName] = useState('');
+  const [selectedUniqueId, setSelectedUniqueId] = useState('');
+  const [blockedFriendId, setBlockedFriendId] = useState('');
+  const [selectFriendId, setSelectFriendID] = useState('');
+  const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
+  const [reportReasons, setReportReasons] = useState([]);
+  const [questionText, setQuestionText] = useState(
+    'Why are you reporting this?',
+  );
+  const [isAboutClicked, setIsAboutClicked] = useState(false);
+  const [aboutText, setAboutText] = useState('');
+  const [isReportModalVisible, setReportModalVisible] = useState(false);
+
   const navigation = useNavigation();
+  const sheetRef = useRef(null);
+  const ReportBottomSheetRef = useRef();
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
 
-  const fetchBlockedUsers = async () => {
+  const CopyId = () => {
+    Toast.show({
+      type: 'Copied',
+      text1: 'Your ID has been copied!',
+      visibilityTime: 1000,
+    });
+  };
+
+  const fetchData = async (pageNumber = 1) => {
+    if (!hasMoreData) {
+      return;
+    }
+
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/get-block-listv2',
+        `https://stag.mntech.website/api/v1/user/friend/get-block-list?page=${pageNumber}`,
         {
           method: 'GET',
           headers: {
@@ -38,71 +78,343 @@ const MatchesInBlockedScreen = () => {
           },
         },
       );
-      const jsonResponse = await response.json();
-      console.log('Blocked Users Response:', jsonResponse);
 
-      // Check if results exist
-      const results = jsonResponse.data?.results || [];
-      setBlockedUsers(results); // Update state with the blocked users
+      const json = await response.json();
+      console.log('API response:', json);
+
+      const newData = json?.data?.results || [];
+      setHasMoreData(json?.data?.hasNextPage || false);
+
+      setData(prevData => [...prevData, ...newData]);
     } catch (error) {
-      console.error('Error fetching blocked users:', error);
+      console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch data. Please try again.');
     } finally {
       setLoading(false);
+      setIsFetchingMore(false);
     }
   };
 
   useEffect(() => {
-    fetchBlockedUsers();
+    fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        {/*<ActivityIndicator size="large" color="#0000ff" />*/}
-        <View style={{height: hp(449), marginHorizontal: 17}}>
-          <ShimmerPlaceholder
-            style={{
-              width: '100%',
-              height: hp(449),
-              borderRadius: 10,
-              marginBottom: hp(13),
-            }}
-          />
-          <View style={{marginTop: -180, marginHorizontal: 17}}>
-            <ShimmerPlaceholder style={{width: 100, height: 20}} />
+  const loadMoreData = () => {
+    if (!isFetchingMore && hasMoreData) {
+      setIsFetchingMore(true);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchData(nextPage);
+    }
+  };
 
-            <View style={{marginTop: 10}}>
-              <ShimmerPlaceholder style={{width: 100, height: 5}} />
-            </View>
+  const openBottomSheet = () => {
+    sheetRef.current.close();
+    ReportBottomSheetRef.current.open();
+  };
 
-            <View style={{marginTop: 50, flexDirection: 'row'}}>
-              <ShimmerPlaceholder
-                style={{
-                  width: wp(142),
-                  height: hp(40),
-                  justifyContent: 'center',
-                  marginRight: 40,
-                }}
-              />
-              <ShimmerPlaceholder
-                style={{
-                  width: wp(142),
-                  height: hp(40),
-                  justifyContent: 'center',
-                  marginRight: 40,
-                }}
-              />
-            </View>
-          </View>
-        </View>
-      </SafeAreaView>
+  const handleShare = async () => {
+    // Close the bottom sheet before sharing
+    sheetRef.current.close();
+
+    try {
+      // You can add a slight delay to allow the bottom sheet to close first if necessary
+      await new Promise(resolve => setTimeout(resolve, 50)); // Adjust delay as needed
+
+      // Now trigger the Share dialog
+      const result = await Share.share({
+        // message: 'Happy Milan App', // Message to share
+        message: selectedFirstName, // Message to share
+        // title: selectedFirstName,
+      });
+
+      if (result.action === Share.sharedAction) {
+        console.log('Content shared successfully');
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.error('Error sharing content:', error);
+    }
+  };
+
+  const handleBlockProfilePress = () => {
+    sheetRef.current.close();
+    setIsBlockModalVisible(true);
+  };
+
+  const handleConfirmBlock = async () => {
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            user: selectFriendId,
+            request: blockedFriendId,
+            status: 'removed',
+          }),
+        },
+      );
+
+      const json = await response.json();
+      console.log('Unfriend API response:', json);
+
+      if (response.ok) {
+        setData(prevData =>
+          prevData.filter(dataItem => dataItem._id !== blockedFriendId),
+        );
+        setIsBlockModalVisible(false);
+      } else {
+        Alert.alert('Error', json?.message || 'Failed to unfriend user.');
+      }
+    } catch (error) {
+      console.error('Error unfriending user:', error);
+      Alert.alert(
+        'Error',
+        'An error occurred while trying to unfriend the user.',
+      );
+    }
+  };
+
+  // Handler when "Inappropriate content" is clicked
+  const handleInappropriateContent = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Hate Speech or Discrimination',
+      'Harmful Language',
+      'Misinformation',
+      'Spam or Irrelevant Content',
+    ]);
+    setQuestionText('How is it Inappropriate content?');
+  };
+
+  // Handler when "Harassment or bullying" is clicked
+  const handleHarassmentOrBullying = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Threats or Intimidation',
+      'Hate Speech',
+      'Sexual Harassment',
+      'Discriminatory Harassment',
+    ]);
+    setQuestionText('How is it harassment or bullying?'); // Change question text after selecting this option
+  };
+
+  // Handler when "Fake Misleading Profile" is clicked
+  const handleFakeMisleadingProfile = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Fake Identity',
+      'Suspicious Behavior',
+      'Inactive or Duplicate Account',
+      'Age Misrepresentation',
+    ]);
+    setQuestionText('How is it Fake or misleading profile?'); // Change question text after selecting this option
+  };
+
+  // Handler when "Spam or promotional content." is clicked
+  const handleSpamPromotionalContent = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Unsolicited Advertising',
+      'Malware or Harmful Content',
+      'Phishing or Fraudulent Links',
+      'Irrelevant Promotional Content',
+    ]);
+    setQuestionText('How is it Spam or promotional content?'); // Change question text after selecting this option
+  };
+
+  // Handler when "Scams or fraudulent activity" is clicked
+  const handleScamsFraudulentActivity = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Romance Scams',
+      'Phishing Attempts',
+      'Job or Employment Scams',
+      'Counterfeit Products',
+    ]);
+    setQuestionText('How is it Scams or fraudulent activity?'); // Change question text after selecting this option
+  };
+
+  const handleReportReasonClick = (reason, category) => {
+    // Remove "How is it " from the category string
+    const cleanedCategory = category.replace(/^How is it /, '').trim();
+
+    console.log(
+      `Selected Report Reason: ${reason}, Category: ${cleanedCategory}`,
     );
-  }
+
+    // Close the bottom sheet
+    ReportBottomSheetRef.current.close();
+
+    // Call the API to submit the report
+    const submitReport = async () => {
+      try {
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Access token from Redux or state
+            },
+            body: JSON.stringify({
+              spamUserId: selectFriendId, // Example spam user ID, update with actual ID if needed
+              reason: cleanedCategory, // Use cleaned category as reason
+              remark: reason, // Use the specific report reason (like "Hate Speech") as remark
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('Report submitted successfully:', data);
+          // Alert.alert('success', 'Report to User success.');
+          setReportModalVisible(true);
+        } else {
+          console.error('Failed to submit report:', data);
+        }
+      } catch (error) {
+        console.error('Error submitting report:', error);
+      }
+    };
+
+    submitReport();
+
+    // Optionally, reset or clear the report reasons state
+    resetBottomSheet(); // Reset everything to the initial state when closing the bottom sheet
+  };
+
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setReportModalVisible(false);
+  };
+
+  // Handler for the back button to reset the state
+  const handleBackArrow = () => {
+    setReportReasons([]);
+    setQuestionText('Why are you reporting this?'); // Reset question text when going back
+    setIsAboutClicked(false); // Reset "About" state
+  };
+
+  // Handle the "Submit" action for "About" section
+  const handleSubmit = () => {
+    console.log('About Text Submitted:', aboutText);
+    // Close the bottom sheet after submission
+    ReportBottomSheetRef.current.close();
+
+    // Call the API to submit the report
+    const submitReport = async () => {
+      try {
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Access token from Redux or state
+            },
+            body: JSON.stringify({
+              spamUserId: selectFriendId, // Example spam user ID, update with actual ID if needed
+              reason: 'About', // Use cleaned category as reason
+              remark: aboutText, // Use the specific report reason (like "Hate Speech") as remark
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('Report submitted successfully:', data);
+          // Alert.alert('success', 'Report to User success.');
+          setReportModalVisible(true);
+        } else {
+          console.error('Failed to submit report:', data);
+        }
+      } catch (error) {
+        console.error('Error submitting report:', error);
+      }
+    };
+
+    submitReport();
+
+    // Reset the bottom sheet state
+    resetBottomSheet();
+  };
+
+  // Reset the bottom sheet to its initial state
+  const resetBottomSheet = () => {
+    setReportReasons([]);
+    setQuestionText('Why are you reporting this?');
+    setIsAboutClicked(false);
+    setAboutText('');
+  };
+
+  const onCopyIdPress = async selectedUniqueId => {
+    console.log(' === selectedUniqueId ===> ', selectedUniqueId);
+    await Clipboard.setString(selectedUniqueId);
+    sheetRef.current.close();
+    CopyId();
+  };
+
+  // if (loading) {
+  //   return (
+  //     <SafeAreaView style={styles.loadingContainer}>
+  //       {/*<ActivityIndicator size="large" color="#0000ff" />*/}
+  //       <View style={{height: hp(449), marginHorizontal: 17}}>
+  //         <ShimmerPlaceholder
+  //           style={{
+  //             width: '100%',
+  //             height: hp(449),
+  //             borderRadius: 10,
+  //             marginBottom: hp(13),
+  //           }}
+  //         />
+  //         <View style={{marginTop: -180, marginHorizontal: 17}}>
+  //           <ShimmerPlaceholder style={{width: 100, height: 20}} />
+  //
+  //           <View style={{marginTop: 10}}>
+  //             <ShimmerPlaceholder style={{width: 100, height: 5}} />
+  //           </View>
+  //
+  //           <View style={{marginTop: 50, flexDirection: 'row'}}>
+  //             <ShimmerPlaceholder
+  //               style={{
+  //                 width: wp(142),
+  //                 height: hp(40),
+  //                 justifyContent: 'center',
+  //                 marginRight: 40,
+  //               }}
+  //             />
+  //             <ShimmerPlaceholder
+  //               style={{
+  //                 width: wp(142),
+  //                 height: hp(40),
+  //                 justifyContent: 'center',
+  //                 marginRight: 40,
+  //               }}
+  //             />
+  //           </View>
+  //         </View>
+  //       </View>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   const renderBlockedUser = ({item}) => {
-    // console.log(' === item ===> ', item?.friend?.userProfilePic);
-    const profileImage = item?.friend?.profilePic;
-    const user = item?.blockedUser; // Adjust this based on actual data structure
+    const profileImage = item?.user?.profilePic;
+
+    const uniqueId = item?.user?.userUniqueId;
+
+    const FriendID = item?.friend?._id;
+
+    const blockedFriendIds = item?._id;
 
     const calculateAge = dob => {
       const birthDate = new Date(dob);
@@ -111,27 +423,27 @@ const MatchesInBlockedScreen = () => {
       return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
 
-    const name = item?.friend?.name;
-    const firstName = item?.friend?.firstName;
-    const lastName = item?.friend?.lastName;
-    const age = calculateAge(item?.friend?.dateOfBirth);
-    const height = item?.friend?.height;
-    const jobTitle = item?.friend?.userProfessional?.jobTitle;
-    const currentCity = item?.friend?.address?.currentCity
-      ? item?.friend?.address?.currentCity.charAt(0).toUpperCase() +
-        item?.friend?.address?.currentCity.slice(1).toLowerCase()
+    const name = item?.user?.name;
+    const firstName = item?.user?.firstName;
+    const lastName = item?.user?.lastName;
+    const age = calculateAge(item?.user?.dateOfBirth);
+    const height = item?.user?.height;
+    const jobTitle = item?.user?.userProfessional?.jobTitle;
+    const currentCity = item?.user?.address?.currentCity
+      ? item?.user?.address?.currentCity.charAt(0).toUpperCase() +
+        item?.user?.address?.currentCity.slice(1).toLowerCase()
       : '';
-    const currentCountry = item?.friend?.address?.currentCountry
-      ? item?.friend?.address?.currentCountry.charAt(0).toUpperCase() +
-        item?.friend?.address?.currentCountry.slice(1).toLowerCase()
+    const currentCountry = item?.user?.address?.currentCountry
+      ? item?.user?.address?.currentCountry.charAt(0).toUpperCase() +
+        item?.user?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
-    const imageCount = Array.isArray(item?.friend?.userProfilePic)
-      ? item?.friend?.userProfilePic.length
+    const imageCount = Array.isArray(item?.user?.userProfilePic)
+      ? item?.user?.userProfilePic.length
       : 0;
 
-    const userAllImage = Array.isArray(item?.friend?.userProfilePic)
-      ? item?.friend?.userProfilePic.map(pic => pic.url)
+    const userAllImage = Array.isArray(item?.user?.userProfilePic)
+      ? item?.user?.userProfilePic.map(pic => pic.url)
       : [];
 
     const userAllImageShare = () => {
@@ -142,9 +454,20 @@ const MatchesInBlockedScreen = () => {
       navigation.navigate('UserUploadImageFullScreen', {allImages});
     };
 
+    const matchPercentage = item?.friend?.matchPercentage;
+
+    const onThreeDotPress = () => {
+      setSelectedFirstName(firstName || name);
+      setSelectedUniqueId(uniqueId);
+      setBlockedFriendId(blockedFriendIds);
+      setSelectFriendID(FriendID);
+
+      sheetRef.current.open();
+    };
+
     return (
       <View>
-        <View style={{marginHorizontal: 17}}>
+        <View style={style.renderContainer}>
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
@@ -155,180 +478,87 @@ const MatchesInBlockedScreen = () => {
                 source={
                   profileImage ? {uri: profileImage} : images.empty_male_Image
                 }
-                style={styles.userImageStyle}
+                style={style.userImageStyle}
                 resizeMode={'cover'}
               />
               <LinearGradient
                 colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-                style={styles.gradient}
+                style={style.gradient}
               />
 
-              <View style={styles.UserDetailsContainer}>
-                <View style={styles.onlineBodyStyle}>
-                  <Text style={styles.bodyTextStyle}>Online</Text>
+              <View style={style.UserDetailsContainer}>
+                <View style={style.onlineBodyStyle}>
+                  <Text style={style.bodyTextStyle}>Online</Text>
                 </View>
 
-                <Text style={styles.userNameTextStyle}>
-                  {firstName} {lastName || name}
+                <Text style={style.userNameTextStyle}>
+                  {firstName || name} {lastName}
                 </Text>
 
                 <View
                   style={[
-                    styles.userDetailsDescriptionContainer,
+                    style.userDetailsDescriptionContainer,
                     {marginTop: 3},
                   ]}>
-                  {/*<Text style={styles.userDetailsTextStyle}>{gender}</Text>*/}
-                  <Text style={styles.userDetailsTextStyle}>{age} yrs,</Text>
-                  <Text style={styles.userDetailsTextStyle}> {height}</Text>
+                  <Text style={style.userDetailsTextStyle}>
+                    {age || 'N/A'} yrs,
+                  </Text>
+                  <Text style={style.userDetailsTextStyle}> {height}</Text>
 
-                  <View style={styles.verticalLineStyle} />
+                  <View style={style.verticalLineStyle} />
 
-                  <Text style={styles.userDetailsTextStyle}>
+                  <Text style={style.userDetailsTextStyle}>
                     {' '}
                     {jobTitle || 'N/A'}
                   </Text>
                 </View>
 
-                <View style={styles.userDetailsDescriptionContainer}>
-                  <Text style={styles.userDetailsTextStyle}>
+                <View style={style.userDetailsDescriptionContainer}>
+                  <Text style={style.userDetailsTextStyle}>
                     {currentCity},{' '}
                   </Text>
-                  <Text style={styles.userDetailsTextStyle}>
+                  <Text style={style.userDetailsTextStyle}>
                     {currentCountry || 'N/A'}
                   </Text>
                 </View>
 
-                {/*<View style={{marginTop: hp(22), flexDirection: 'row'}}>*/}
-                {/*  <View style={styles.renderBottomButtonContainer}>*/}
-                {/*    <View style={styles.requestDeclineContainer}>*/}
-                {/*      <Text style={styles.requestTextStyle}>Blocked</Text>*/}
-                {/*    </View>*/}
-                {/*  </View>*/}
-                {/*</View>*/}
-
-                <View
-                  style={{
-                    marginTop: hp(15),
-                    flexDirection: 'row',
-                    // backgroundColor: 'red',
-                    alignItems: 'center',
-                    // flex: 1,
-                  }}>
+                <View style={style.renderBottomContainer}>
                   <Image
                     source={images.gradient_button_background_img}
-                    style={{
-                      width: wp(105),
-                      height: hp(30),
-                      resizeMode: 'stretch',
-                      borderRadius: 50, // Adjust the radius as needed
-                      overflow: 'hidden',
-                    }}
+                    style={style.gradientImageBody}
                   />
                   <TouchableOpacity
                     activeOpacity={0.5}
                     // onPress={openModal}
-                    style={{
-                      position: 'absolute',
-                      left: 10,
-                      // top: 12,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                    }}>
+                    style={style.gradientImageContainer}>
                     <Image
                       source={icons.couple_icon}
-                      style={{
-                        width: hp(16),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                        tintColor: 'white',
-                      }}
+                      style={style.coupleImage}
                     />
-                    <Text
-                      style={{
-                        color: 'white',
-                        marginLeft: 9,
-                        fontSize: fontSize(10),
-                        lineHeight: hp(15),
-                        fontFamily: fontFamily.poppins600,
-                        top: 1,
-                      }}>
-                      {/*85% Match*/}
-                      {item?.matchPercentage}% Match
+                    <Text style={style.percentageText}>
+                      {matchPercentage}% Match
                     </Text>
                   </TouchableOpacity>
 
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      position: 'absolute',
-                      right: 35,
-                      // top: 5,
-                    }}>
+                  <View style={style.imageAndThreeDotContainer}>
                     <TouchableOpacity
-                      style={{
-                        width: hp(60),
-                        height: hp(30),
-                        backgroundColor: '#282727',
-                        borderRadius: 15,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        marginHorizontal: 5,
-                      }}
+                      style={style.ImagesContainer}
                       activeOpacity={0.5}
                       onPress={userAllImageShare}>
                       <Image
                         source={icons.new_camera_icon}
-                        style={{
-                          width: 16,
-                          height: 16,
-                          resizeMode: 'contain',
-                          marginRight: wp(10),
-                        }}
+                        style={style.cameraIcon}
                       />
 
                       <Text style={{color: colors.white}}>{imageCount}</Text>
                     </TouchableOpacity>
-                    {/*</View>*/}
 
                     <TouchableOpacity
-                      activeOpacity={0.5}
-                      style={{
-                        width: hp(30),
-                        height: hp(30),
-                        backgroundColor: '#282727',
-                        borderRadius: 50,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        marginHorizontal: 5,
-                      }}>
-                      <Image
-                        source={icons.starIcon}
-                        style={{
-                          width: hp(20),
-                          height: hp(16),
-                          resizeMode: 'contain',
-                          tintColor: colors.white,
-                        }}
-                      />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      // onPress={onThreeDotPress}
-                      style={{
-                        width: hp(30),
-                        height: hp(30),
-                        backgroundColor: '#282727',
-                        borderRadius: 50,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        marginHorizontal: 5,
-                      }}>
+                      onPress={onThreeDotPress}
+                      style={style.threeDotContainer}>
                       <Image
                         source={icons.new_three_dot}
-                        style={{width: 4, height: 14, tintColor: colors.white}}
+                        style={style.threeDotImage}
                       />
                     </TouchableOpacity>
                   </View>
@@ -337,52 +567,368 @@ const MatchesInBlockedScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{alignSelf: 'center', flexDirection: 'row', marginTop: 5}}>
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins500,
-              marginRight: hp(11),
-            }}>
-            Blocked by you
-          </Text>
-          <Image
-            source={icons.block_icon}
-            style={{
-              tintColor: '#FF0000',
-              height: hp(22),
-              width: hp(22),
-              resizeMode: 'contain',
-            }}
-          />
+
+        <View style={style.blockedTittleContainer}>
+          <Text style={style.blockedText}>Blocked by you</Text>
+          <Image source={icons.block_icon} style={style.blockedIcon} />
         </View>
 
-        <View
-          style={{
-            width: '100%',
-            borderColor: '#E8E8E8',
-            borderWidth: 0.7,
-            marginTop: 21,
-            marginBottom: 23,
-          }}
-        />
+        <View style={style.blockedUnderLine} />
       </View>
     );
   };
 
+  const toastConfigs = {
+    Copied: ({text1}) => (
+      <View style={style.toastsBody}>
+        <Text style={style.toastsText}>{text1}</Text>
+      </View>
+    ),
+  };
+
   return (
-    <SafeAreaView>
-      {blockedUsers.length > 0 ? (
-        <FlatList
-          data={blockedUsers}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderBlockedUser}
-        />
+    <SafeAreaView style={style.container}>
+      <View style={style.toastContainer}>
+        <Toast config={toastConfigs} />
+      </View>
+      {loading ? (
+        <SafeAreaView style={{flex: 1}}>
+          <View style={style.shimmerContainer}>
+            <ShimmerPlaceholder style={style.shimmerBox} />
+            <View style={style.shimmerBoxBody}>
+              <ShimmerPlaceholder style={style.shimmerSecondBox} />
+
+              <View style={style.shimmerThirdBoxContainer}>
+                <ShimmerPlaceholder style={style.shimmerThirdBox} />
+              </View>
+
+              <View style={style.shimmerBottomContainer}>
+                <ShimmerPlaceholder style={style.shimmerBottomContainerBox} />
+                <ShimmerPlaceholder style={style.shimmerBottomContainerBox} />
+              </View>
+            </View>
+          </View>
+        </SafeAreaView>
       ) : (
-        <Text>No blocked users found.</Text>
+        <FlatList
+          data={data}
+          renderItem={renderBlockedUser}
+          keyExtractor={(item, index) =>
+            item?._id || item?.id || `item-${index}`
+          }
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom: hp(130)}}
+          ListFooterComponent={
+            isFetchingMore ? (
+              <View style={{alignItems: 'center', marginVertical: 10}}>
+                <Text style={{color: 'black'}}>Loading Data...</Text>
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            !loading && !isFetchingMore ? (
+              <View
+                style={{
+                  padding: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    marginTop: hp(250),
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.no_Profile_Found_img}
+                    style={{
+                      width: hp(44),
+                      height: hp(44),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colors.black,
+                      fontSize: fontSize(18),
+                      lineHeight: hp(27),
+                      fontFamily: fontFamily.poppins400,
+                      marginTop: hp(12),
+                    }}>
+                    No Profiles Found
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          }
+        />
       )}
+
+      {/* Bottom Sheet */}
+      <RBSheet
+        ref={sheetRef}
+        height={hp(240)} // Height of the bottom sheet
+        // openDuration={250} // Duration of the opening animation
+        closeOnDragDown={true} // Allow closing the sheet by dragging it down
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {/* Content inside the bottom sheet */}
+        <View style={style.TDBContainer}>
+          <View style={style.TDBBodyContainer}>
+            <TouchableOpacity
+              onPress={handleShare}
+              style={style.TDBTopContainer}>
+              <Image source={icons.share_icon} style={style.TDBImages} />
+              <Text style={style.TDBTittleText}>Share Profile</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handleBlockProfilePress(blockedFriendId);
+              }}
+              style={style.TDBBodySecondContainer}>
+              <Image source={icons.block_icon} style={style.TDBImages} />
+              <Text style={style.TDBTittleText}>
+                Unblock {selectedFirstName}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={style.TDBBodySecondContainer}>
+              <Image source={icons.report_icon} style={style.TDBImages} />
+              <Text style={style.TDBTittleText}>Report this profile</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                onCopyIdPress(selectedUniqueId);
+              }}
+              style={style.TDBBodySecondContainer}>
+              <Image source={icons.copy_id_card_icon} style={style.TDBImages} />
+              <Text style={style.TDBTittleText}>
+                Copy ID : {selectedUniqueId}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </RBSheet>
+
+      {/*//BLOCK MODAL */}
+      <Modal
+        visible={isBlockModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsBlockModalVisible(false)}>
+        <View style={style.BlockModalContainer}>
+          <View style={style.modalModalBody}>
+            <Text style={style.blockModalFirstTittle}>
+              Are you sure you want to
+            </Text>
+            <Text style={style.blockModalSecondTittle}>Unblock This User?</Text>
+
+            <View style={style.blockModalButtonContainer}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleConfirmBlock}>
+                <LinearGradient
+                  colors={['#2D46B9', '#8D1D8D']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  style={style.blockModalYesButtonContainer}>
+                  <Text style={style.blockModalYesButtonText}>Yes</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  setIsBlockModalVisible(false);
+                }}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  style={style.blockModalNoButtonContainer}>
+                  <View style={style.blockModalBoButtonSecondContainer}>
+                    <Text style={style.blockModalNoButtonText}>No</Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <RBSheet
+        ref={ReportBottomSheetRef}
+        closeOnPressMask={true}
+        height={hp(500)}
+        customStyles={{
+          container: {
+            backgroundColor: 'white',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        <View style={style.ReportContainer}>
+          <View style={style.ReportBody}>
+            {(reportReasons.length > 0 || isAboutClicked) && (
+              <TouchableOpacity
+                onPress={handleBackArrow}
+                style={style.reportBackButtonContainer}>
+                <Image
+                  source={icons.back_arrow_icon}
+                  style={style.reportBackIcon}
+                />
+              </TouchableOpacity>
+            )}
+
+            <Text style={style.ReportText}>Report</Text>
+          </View>
+
+          <View style={style.reportUnderline} />
+
+          <Text style={style.reportQuestionText}>{questionText}</Text>
+
+          {reportReasons.length < 1 && !isAboutClicked && (
+            <View style={style.reportBodyContainer}>
+              <Text style={style.reportBodyText}>
+                Your identity will remain anonymous to the
+              </Text>
+              <Text style={style.reportBodyText}>reported user.</Text>
+            </View>
+          )}
+
+          {/* Show the list of reasons if there are any */}
+          {isAboutClicked ? (
+            // If "About" is clicked, show the TextInput and Submit button
+            <View style={style.reportTextInputContainer}>
+              <TextInput
+                style={style.reportTextInput}
+                placeholder="Please provide details..."
+                value={aboutText}
+                onChangeText={setAboutText}
+                multiline={true} // Enable multiline
+              />
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{marginTop: hp(9)}}
+                onPress={handleSubmit}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1.5}}
+                  style={style.reportSubmitButtonContainer}>
+                  <Text style={style.reportSubmitButtonText}>
+                    Submit Report
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          ) : reportReasons.length > 0 ? (
+            reportReasons.map((reason, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleReportReasonClick(reason, questionText)} // Close the bottom sheet when clicked
+              >
+                <Text style={style.reportTextInputReasonContainer}>
+                  {reason}
+                </Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <View style={style.reportTittleContainer}>
+              <TouchableOpacity onPress={handleInappropriateContent}>
+                <Text style={style.reportTittleText}>
+                  Inappropriate content
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={style.reportTittleBody}
+                onPress={handleHarassmentOrBullying}>
+                <Text style={style.reportTittleText}>
+                  Harassment or bullying.
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={style.reportTittleBody}
+                onPress={handleFakeMisleadingProfile}>
+                <Text style={style.reportTittleText}>
+                  Fake or misleading profile.
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={style.reportTittleBody}
+                onPress={handleSpamPromotionalContent}>
+                <Text style={style.reportTittleText}>
+                  Spam or promotional content.
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={style.reportTittleBody}
+                onPress={handleScamsFraudulentActivity}>
+                <Text style={style.reportTittleText}>
+                  Scams or fraudulent activity.
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={style.reportTittleBody}
+                onPress={() => setIsAboutClicked(true)} // Handle About click
+              >
+                <Text style={style.reportTittleText}>Others</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </RBSheet>
+
+      {/* Modal for success message */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isReportModalVisible}
+        onRequestClose={handleCloseModal}>
+        <View style={style.reportModalContainer}>
+          <View style={style.reportModalBody}>
+            <Text style={style.reportModalTittle}>
+              Thank you for your report.
+            </Text>
+
+            <View style={style.reportModalSecondTittleContainer}>
+              <Text style={style.reportModalSecondTittle}>
+                We’ll review it soon to help keep
+              </Text>
+              <Text style={style.reportModalSecondTittle}>
+                our community safe.
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={style.reportModalButtonContainer}
+              onPress={handleCloseModal}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={style.reportModalButtonBody}>
+                <Text style={style.reportModalButtonText}>Okay</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -392,11 +938,7 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1, // Ensures the SafeAreaView takes up full height
   },
-  loadingContainer: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
+
   emptyListContainer: {
     padding: 20,
     justifyContent: 'center',
@@ -428,66 +970,7 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingBottom: 200, // Adjust this value for more or less space
   },
-  userImageStyle: {
-    width: '100%',
-    height: hp(449),
-    borderRadius: 10,
-    marginBottom: hp(13),
-  },
-  gradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderRadius: 10,
-    width: '100%',
-    height: '40%',
-    marginBottom: hp(13),
-  },
-  UserDetailsContainer: {
-    position: 'absolute',
-    bottom: 35,
-    width: '100%',
-    marginLeft: wp(21),
-    // backgroundColor: 'grey',
-    // backgroundColor: 'rgba(0,0,0,0.05)',
-  },
-  onlineBodyStyle: {
-    width: wp(34.8),
-    height: hp(12),
-    borderRadius: 5,
-    backgroundColor: '#24FF00A8',
-    justifyContent: 'center',
-  },
-  bodyTextStyle: {
-    color: colors.black,
-    fontSize: fontSize(9),
-    lineHeight: hp(12),
-    textAlign: 'center',
-  },
-  userNameTextStyle: {
-    color: colors.white,
-    fontSize: fontSize(24),
-    lineHeight: hp(36),
-    fontFamily: fontFamily.poppins700,
-    marginTop: 3,
-  },
-  userDetailsDescriptionContainer: {
-    flexDirection: 'row',
-  },
-  userDetailsTextStyle: {
-    color: colors.white,
-    fontSize: fontSize(11),
-    lineHeight: hp(14),
-    fontFamily: fontFamily.poppins400,
-    marginRight: wp(2),
-  },
-  verticalLineStyle: {
-    width: hp(1),
-    height: '100%',
-    backgroundColor: colors.darkGray,
-    marginHorizontal: wp(5),
-  },
+
   renderBottomButtonContainer: {
     flexDirection: 'row',
     // marginTop: hp(20),

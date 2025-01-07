@@ -33,6 +33,8 @@ import MatchesInBlockedScreen from '../matchesAllScreen/matchesInBlockedScreen';
 import MatchesInSavedScreen from '../matchesAllScreen/matchesInSavedScreen';
 import MatchesInSentScreen from '../matchesAllScreen/matchesInSentScreen';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import MatchesInReceivedScreen from '../matchesAllScreen/matchesInReceivedScreen';
+import MatchesInDeclinedScreen from '../matchesAllScreen/MatchesInDeclinedScreen';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -115,7 +117,7 @@ const MatchesScreen = ({navigation}) => {
     state => state.home,
   );
 
-  console.log(' === getAllRequestData ===> ', getAllRequestData?.data);
+  // console.log(' === getAllRequestData ===> ', getAllRequestData?.data);
 
   // console.log(' === userData/////// ===> ', userData?.data[0].paginatedResults);
 
@@ -1403,6 +1405,7 @@ const MatchesScreen = ({navigation}) => {
             {/*    ListFooterComponent={<View style={{height: 130}} />}*/}
             {/*  />*/}
             {/*)}*/}
+
             <MatchesInAcceptedScreen />
           </View>
         );
@@ -1411,46 +1414,48 @@ const MatchesScreen = ({navigation}) => {
         // return <Text>Receive</Text>;
         return (
           <View>
-            {isFriendRequestDataLoading ? (
-              <View style={style.receivedShimmerContainer}>
-                <ShimmerPlaceholder style={style.receivedShimmerImageBody} />
-                <View style={style.receivedShimmerImageBodyInside}>
-                  <ShimmerPlaceholder style={style.receivedShimmerName} />
+            {/*{isFriendRequestDataLoading ? (*/}
+            {/*  <View style={style.receivedShimmerContainer}>*/}
+            {/*    <ShimmerPlaceholder style={style.receivedShimmerImageBody} />*/}
+            {/*    <View style={style.receivedShimmerImageBodyInside}>*/}
+            {/*      <ShimmerPlaceholder style={style.receivedShimmerName} />*/}
 
-                  <View style={style.receivedShimmerInsideOne}>
-                    <ShimmerPlaceholder style={style.receivedShimmerData} />
-                  </View>
+            {/*      <View style={style.receivedShimmerInsideOne}>*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerData} />*/}
+            {/*      </View>*/}
 
-                  <View style={style.receivedShimmerButtonContainer}>
-                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
-                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
-                  </View>
-                </View>
-              </View>
-            ) : getAllRequestData?.data.length === 0 ? (
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: hp(250),
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: colors.gray,
-                    fontSize: fontSize(21),
-                    lineHeight: hp(26),
-                  }}>
-                  No friend requests
-                </Text>
-              </View>
-            ) : (
-              <FlatList
-                data={getAllRequestData?.data}
-                keyExtractor={item => item.id}
-                renderItem={renderUserRequestItem}
-                ListFooterComponent={<View style={{height: 130}} />}
-              />
-            )}
+            {/*      <View style={style.receivedShimmerButtonContainer}>*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerButton} />*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerButton} />*/}
+            {/*      </View>*/}
+            {/*    </View>*/}
+            {/*  </View>*/}
+            {/*) : getAllRequestData?.data.length === 0 ? (*/}
+            {/*  <View*/}
+            {/*    style={{*/}
+            {/*      alignItems: 'center',*/}
+            {/*      marginTop: hp(250),*/}
+            {/*      justifyContent: 'center',*/}
+            {/*    }}>*/}
+            {/*    <Text*/}
+            {/*      style={{*/}
+            {/*        color: colors.gray,*/}
+            {/*        fontSize: fontSize(21),*/}
+            {/*        lineHeight: hp(26),*/}
+            {/*      }}>*/}
+            {/*      No friend requests*/}
+            {/*    </Text>*/}
+            {/*  </View>*/}
+            {/*) : (*/}
+            {/*  <FlatList*/}
+            {/*    data={getAllRequestData?.data}*/}
+            {/*    keyExtractor={item => item.id}*/}
+            {/*    renderItem={renderUserRequestItem}*/}
+            {/*    ListFooterComponent={<View style={{height: 130}} />}*/}
+            {/*  />*/}
+            {/*)}*/}
+
+            <MatchesInReceivedScreen />
           </View>
         );
       case 'saved':
@@ -1464,52 +1469,53 @@ const MatchesScreen = ({navigation}) => {
         // <Text>Declined</Text>;
         return (
           <View>
-            {isUserDataLoading ? (
-              <View style={style.receivedShimmerContainer}>
-                <ShimmerPlaceholder style={style.receivedShimmerImageBody} />
-                <View style={style.receivedShimmerImageBodyInside}>
-                  <ShimmerPlaceholder style={style.receivedShimmerName} />
+            {/*{isUserDataLoading ? (*/}
+            {/*  <View style={style.receivedShimmerContainer}>*/}
+            {/*    <ShimmerPlaceholder style={style.receivedShimmerImageBody} />*/}
+            {/*    <View style={style.receivedShimmerImageBodyInside}>*/}
+            {/*      <ShimmerPlaceholder style={style.receivedShimmerName} />*/}
 
-                  <View style={style.receivedShimmerInsideOne}>
-                    <ShimmerPlaceholder style={style.receivedShimmerData} />
-                  </View>
+            {/*      <View style={style.receivedShimmerInsideOne}>*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerData} />*/}
+            {/*      </View>*/}
 
-                  <View style={style.receivedShimmerButtonContainer}>
-                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
-                    <ShimmerPlaceholder style={style.receivedShimmerButton} />
-                  </View>
-                </View>
-              </View>
-            ) : declineFriends?.data.length === 0 ? (
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: hp(250),
-                  justifyContent: 'center',
-                }}>
-                <Image
-                  source={icons.no_Profile_Found_img}
-                  style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
-                />
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(18),
-                    lineHeight: hp(27),
-                    fontFamily: fontFamily.poppins400,
-                    marginTop: hp(12),
-                  }}>
-                  No friend requests
-                </Text>
-              </View>
-            ) : (
-              <FlatList
-                data={declineFriends?.data}
-                keyExtractor={item => item.id}
-                renderItem={renderUserDeclineItem}
-                ListFooterComponent={<View style={{height: 130}} />}
-              />
-            )}
+            {/*      <View style={style.receivedShimmerButtonContainer}>*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerButton} />*/}
+            {/*        <ShimmerPlaceholder style={style.receivedShimmerButton} />*/}
+            {/*      </View>*/}
+            {/*    </View>*/}
+            {/*  </View>*/}
+            {/*) : declineFriends?.data.length === 0 ? (*/}
+            {/*  <View*/}
+            {/*    style={{*/}
+            {/*      alignItems: 'center',*/}
+            {/*      marginTop: hp(250),*/}
+            {/*      justifyContent: 'center',*/}
+            {/*    }}>*/}
+            {/*    <Image*/}
+            {/*      source={icons.no_Profile_Found_img}*/}
+            {/*      style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}*/}
+            {/*    />*/}
+            {/*    <Text*/}
+            {/*      style={{*/}
+            {/*        color: colors.black,*/}
+            {/*        fontSize: fontSize(18),*/}
+            {/*        lineHeight: hp(27),*/}
+            {/*        fontFamily: fontFamily.poppins400,*/}
+            {/*        marginTop: hp(12),*/}
+            {/*      }}>*/}
+            {/*      No friend requests*/}
+            {/*    </Text>*/}
+            {/*  </View>*/}
+            {/*) : (*/}
+            {/*  <FlatList*/}
+            {/*    data={declineFriends?.data}*/}
+            {/*    keyExtractor={item => item.id}*/}
+            {/*    renderItem={renderUserDeclineItem}*/}
+            {/*    ListFooterComponent={<View style={{height: 130}} />}*/}
+            {/*  />*/}
+            {/*)}*/}
+            <MatchesInDeclinedScreen />
           </View>
         );
       case 'sent':

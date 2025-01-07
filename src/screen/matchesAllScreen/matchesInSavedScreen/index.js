@@ -765,6 +765,7 @@ const MatchesInSavedScreen = () => {
               </View>
             ) : null
           }
+          
         />
       )}
 
