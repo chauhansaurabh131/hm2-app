@@ -504,6 +504,16 @@ const MatchesInSavedScreen = () => {
     setIsUnFriendModalVisible(false);
   };
 
+  const handlePress = items => {
+    const matchesUserData = {
+      firstName: items?.friendList[0]?.name,
+      id: items?.friendList[0]?._id,
+      userData: items,
+    };
+    // console.log(' === var ===> ', matchesUserData);
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+  };
+
   const renderItem = ({item}) => {
     // console.log(' === var ===> ', item?.friendList[0]?.userProfilePic);
     const userId = item?.friendList?.[0]?._id;
@@ -622,31 +632,36 @@ const MatchesInSavedScreen = () => {
               </View>
 
               <View>
-                <Text style={styles.nameText}>
-                  {firstName || name} {lastName}
-                </Text>
-
-                <View style={styles.detailsContainer}>
-                  <Text style={styles.userDetailsTextStyle}>{age} yrs,</Text>
-                  <Text style={styles.userDetailsTextStyle}> {height}</Text>
-
-                  <View style={styles.verticalLineStyle} />
-
-                  <Text style={styles.userDetailsTextStyle}>
-                    {jobTittle || 'N/A'}
-                  </Text>
-                </View>
-
-                <View style={styles.userDetailsDescriptionContainer}>
-                  <Text style={styles.userDetailsTextStyle}>
-                    {currentCity},
+                <TouchableOpacity
+                  onPress={() => {
+                    handlePress(item);
+                  }}>
+                  <Text style={styles.nameText}>
+                    {firstName || name} {lastName}
                   </Text>
 
-                  <Text style={styles.userDetailsTextStyle}>
-                    {' '}
-                    {currentCountry}
-                  </Text>
-                </View>
+                  <View style={styles.detailsContainer}>
+                    <Text style={styles.userDetailsTextStyle}>{age} yrs,</Text>
+                    <Text style={styles.userDetailsTextStyle}> {height}</Text>
+
+                    <View style={styles.verticalLineStyle} />
+
+                    <Text style={styles.userDetailsTextStyle}>
+                      {jobTittle || 'N/A'}
+                    </Text>
+                  </View>
+
+                  <View style={styles.userDetailsDescriptionContainer}>
+                    <Text style={styles.userDetailsTextStyle}>
+                      {currentCity},
+                    </Text>
+
+                    <Text style={styles.userDetailsTextStyle}>
+                      {' '}
+                      {currentCountry}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
                 <View style={styles.bottomImagesContainer}>
                   <Image
@@ -765,7 +780,6 @@ const MatchesInSavedScreen = () => {
               </View>
             ) : null
           }
-          
         />
       )}
 

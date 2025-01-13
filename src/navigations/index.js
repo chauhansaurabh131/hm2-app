@@ -76,6 +76,7 @@ import DatingUserDetailsScreen from '../screen/datingAllScreen/datingUserDetails
 import VerifyIdentityScreen from '../screen/verifyIdentityScreen';
 import SearchFilterScreen from '../screen/searchFilterScreen';
 import SearchUserDataScreen from '../screen/searchUserDataScreen';
+import NewUserDetailsScreen from '../screen/newUserDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -456,6 +457,11 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'VerifyIdentityScreen'}
           component={VerifyIdentityScreen}
+        />
+
+        <Stack.Screen
+          name={'NewUserDetailsScreen'}
+          component={NewUserDetailsScreen}
         />
       </Stack.Navigator>
     );

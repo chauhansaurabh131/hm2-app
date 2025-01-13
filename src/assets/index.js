@@ -180,6 +180,8 @@ export const icons = {
   gradient_disLike_icon: require('./icons/gradient_dislike_icon.png'),
   gradient_share_icon: require('./icons/gradient_share_icon.png'),
   copy_id_card_icon: require('./icons/copy_id_card_icon.png'),
+  new_request_sent_icon: require('./icons/new_request_sent_icon.png'),
+  new_send_message_icon: require('./icons/new_send_message_icon.png'),
 };
 
 export const gif = {

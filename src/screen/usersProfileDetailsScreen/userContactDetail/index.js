@@ -40,21 +40,21 @@ const UserContactDetail = (...params) => {
 
         <Text style={style.detailSubTittleText}>
           {/*+91 90001 01021*/}
-          {mobileNumber}
+          {mobileNumber || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>Home Number</Text>
 
         <Text style={style.detailSubTittleText}>
           {/*+91 90001 01021*/}
-          {HomeMobileNumber}
+          {HomeMobileNumber || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>Email Address</Text>
 
         <Text style={style.detailSubTittleText}>
           {/*riyashah@gmail.com*/}
-          {email}
+          {email || 'N/A'}
         </Text>
       </View>
     </SafeAreaView>

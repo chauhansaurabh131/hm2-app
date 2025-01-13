@@ -118,7 +118,7 @@ const ChatScreen = ({navigation}) => {
         item.friendList.lastName.slice(1).toLowerCase()
       : '';
 
-    console.log(' === firstname ===> ', firstname);
+    // console.log(' === firstname ===> ', firstname);
 
     const onlineStatusColor = item.friendList.isUserActive
       ? colors.blue
@@ -128,7 +128,7 @@ const ChatScreen = ({navigation}) => {
       : 'Offline';
 
     const handleItemPress = userData => {
-      console.log(' === handleItemPress_chatScreen ===> ', userData);
+      // console.log(' === handleItemPress_chatScreen ===> ', userData);
 
       navigation.navigate('ChatUserScreen', {
         userData,

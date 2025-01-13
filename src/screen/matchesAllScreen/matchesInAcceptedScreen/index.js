@@ -293,6 +293,8 @@ const MatchesInAcceptedScreen = () => {
 
   // SEND MESSAGE FUNCTION
   const onSendMessagePress = userData => {
+    // console.log(' === onSendMessagePress ===> ', userData);
+
     sheetRef.current.close();
 
     console.log(' === onSendMessagePress ===> ', userData);
@@ -573,52 +575,65 @@ const MatchesInAcceptedScreen = () => {
       sheetRef.current.open();
     };
 
-    const handlePress = () => {
-      console.log(' === item........... ===> ', item);
+    // const handlePress = () => {
+    //   console.log(' === item........... ===> ', item);
+    //   const matchesUserData = {
+    //     userAllImage,
+    //     profileImage,
+    //     // birthTime,
+    //     currentCity,
+    //     // JobTittle,
+    //     currentCountry,
+    //     age,
+    //     gender: item?.gender,
+    //     height: item?.height,
+    //     cast: item?.cast,
+    //     firstName: item?.firstName,
+    //     lastName: item?.lastName,
+    //     motherTongue: item?.motherTongue,
+    //     about: item?.writeBoutYourSelf,
+    //     religion: item?.religion,
+    //     dateOfBirth: item?.dateOfBirth,
+    //     currentResidenceAddress: item?.address?.currentResidenceAddress,
+    //     originResidenceAddress: item?.address?.originResidenceAddress,
+    //     originCountry: item?.address?.originCountry,
+    //     originCity: item?.address?.originCity,
+    //     mobileNumber: item?.mobileNumber,
+    //     homeMobileNumber: item?.homeMobileNumber,
+    //     email: item?.email,
+    //     degree: item?.userEducation?.degree,
+    //     collage: item?.userEducation?.collage,
+    //     educationCity: item?.userEducation?.city,
+    //     educationState: item?.userEducation?.state,
+    //     educationCountry: item?.userEducation?.country,
+    //     Designation: item?.userProfessional?.jobTitle,
+    //     companyName: item?.userProfessional?.companyName,
+    //     jobType: item?.userProfessional?.jobType,
+    //     currentSalary: item?.userProfessional?.currentSalary,
+    //     workCity: item?.userProfessional?.workCity,
+    //     workCountry: item?.userProfessional?.workCountry,
+    //     hobbies: item?.hobbies,
+    //     matchPercentage: item?.matchPercentage,
+    //     userLikeDetails: item?.userLikeDetails,
+    //   };
+    //
+    //   // console.log('User Data:', matchesUserData);
+    //
+    //   // Navigate to UserDetailsScreen
+    //   navigation.navigate('UserDetailsScreen', {matchesUserData});
+    // };
+
+    const handlePress = items => {
+      // console.log(' === handlePress ===> ', item);
+
       const matchesUserData = {
-        userAllImage,
-        profileImage,
-        // birthTime,
-        currentCity,
-        // JobTittle,
-        currentCountry,
-        age,
-        gender: item?.gender,
-        height: item?.height,
-        cast: item?.cast,
-        firstName: item?.firstName,
-        lastName: item?.lastName,
-        motherTongue: item?.motherTongue,
-        about: item?.writeBoutYourSelf,
-        religion: item?.religion,
-        dateOfBirth: item?.dateOfBirth,
-        currentResidenceAddress: item?.address?.currentResidenceAddress,
-        originResidenceAddress: item?.address?.originResidenceAddress,
-        originCountry: item?.address?.originCountry,
-        originCity: item?.address?.originCity,
-        mobileNumber: item?.mobileNumber,
-        homeMobileNumber: item?.homeMobileNumber,
-        email: item?.email,
-        degree: item?.userEducation?.degree,
-        collage: item?.userEducation?.collage,
-        educationCity: item?.userEducation?.city,
-        educationState: item?.userEducation?.state,
-        educationCountry: item?.userEducation?.country,
-        Designation: item?.userProfessional?.jobTitle,
-        companyName: item?.userProfessional?.companyName,
-        jobType: item?.userProfessional?.jobType,
-        currentSalary: item?.userProfessional?.currentSalary,
-        workCity: item?.userProfessional?.workCity,
-        workCountry: item?.userProfessional?.workCountry,
-        hobbies: item?.hobbies,
-        matchPercentage: item?.matchPercentage,
-        userLikeDetails: item?.userLikeDetails,
+        firstName: items?.friendList?.name,
+        id: items?.friendList?._id,
+        userData: item,
       };
-
-      // console.log('User Data:', matchesUserData);
-
-      // Navigate to UserDetailsScreen
-      navigation.navigate('UserDetailsScreen', {matchesUserData});
+      // console.log(' === items____ ===> ', matchesUserData);
+      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      // navigation.navigate('Abc', {matchesUserData});
     };
 
     const starIconSource = item.friendList?.shortlistData
@@ -650,7 +665,11 @@ const MatchesInAcceptedScreen = () => {
                 <Text style={style.bodyTextStyle}>Online</Text>
               </View>
 
-              <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  handlePress(item);
+                }}>
                 <Text style={style.userNameTextStyle}>
                   {firstName || name} {lastName}
                 </Text>

@@ -5,22 +5,28 @@ import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 export const styles = StyleSheet.create({
   hobbiesContainer: {
     // alignItems: 'center',
+    // backgroundColor: 'red',
   },
   hobbyBox: {
     // backgroundColor: colors.lightGray, // Adjust this color as needed
-    backgroundColor: '#E8E9EB', // Adjust this color as needed
-    padding: wp(2),
-    margin: wp(2),
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: wp(90),
-    height: wp(50), // Ensure the box is square
+    backgroundColor: '#F3F3F3', // Adjust this color as needed
+    padding: wp(10),
+    // margin: wp(2),
+    borderRadius: 25,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // width: wp(90),
+    width: 'auto',
+    height: wp(42), // Ensure the box is square
+    marginRight: 10,
+    paddingHorizontal: 15,
   },
   hobbyText: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: colors.black,
     textAlign: 'center',
+    fontFamily: fontFamily.poppins400,
+    lineHeight: hp(24),
   },
 });
 

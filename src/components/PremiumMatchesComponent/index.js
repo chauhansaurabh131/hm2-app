@@ -291,52 +291,60 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
     const age = calculateAge(item.dateOfBirth);
 
-    const handlePress = () => {
-      console.log(' === item........... ===> ', item);
+    // const handlePress = () => {
+    //   console.log(' === item........... ===> ', item);
+    //   const matchesUserData = {
+    //     userAllImage,
+    //     profileImage,
+    //     birthTime,
+    //     currentCity,
+    //     JobTittle,
+    //     currentCountry,
+    //     age,
+    //     gender: item?.gender,
+    //     height: item?.height,
+    //     cast: item?.cast,
+    //     firstName: item?.firstName,
+    //     lastName: item?.lastName,
+    //     motherTongue: item?.motherTongue,
+    //     about: item?.writeBoutYourSelf,
+    //     religion: item?.religion,
+    //     dateOfBirth: item?.dateOfBirth,
+    //     currentResidenceAddress: item?.address?.currentResidenceAddress,
+    //     originResidenceAddress: item?.address?.originResidenceAddress,
+    //     originCountry: item?.address?.originCountry,
+    //     originCity: item?.address?.originCity,
+    //     mobileNumber: item?.mobileNumber,
+    //     homeMobileNumber: item?.homeMobileNumber,
+    //     email: item?.email,
+    //     degree: item?.userEducation?.degree,
+    //     collage: item?.userEducation?.collage,
+    //     educationCity: item?.userEducation?.city,
+    //     educationState: item?.userEducation?.state,
+    //     educationCountry: item?.userEducation?.country,
+    //     Designation: item?.userProfessional?.jobTitle,
+    //     companyName: item?.userProfessional?.companyName,
+    //     jobType: item?.userProfessional?.jobType,
+    //     currentSalary: item?.userProfessional?.currentSalary,
+    //     workCity: item?.userProfessional?.workCity,
+    //     workCountry: item?.userProfessional?.workCountry,
+    //     hobbies: item?.hobbies,
+    //     matchPercentage: item?.matchPercentage,
+    //     userLikeDetails: item?.userLikeDetails,
+    //   };
+    //
+    //   // Navigate to UserDetailsScreen
+    //   navigation.navigate('UserDetailsScreen', {matchesUserData});
+    // };
+
+    const handlePress = items => {
       const matchesUserData = {
-        userAllImage,
-        profileImage,
-        birthTime,
-        currentCity,
-        JobTittle,
-        currentCountry,
-        age,
-        gender: item?.gender,
-        height: item?.height,
-        cast: item?.cast,
-        firstName: item?.firstName,
-        lastName: item?.lastName,
-        motherTongue: item?.motherTongue,
-        about: item?.writeBoutYourSelf,
-        religion: item?.religion,
-        dateOfBirth: item?.dateOfBirth,
-        currentResidenceAddress: item?.address?.currentResidenceAddress,
-        originResidenceAddress: item?.address?.originResidenceAddress,
-        originCountry: item?.address?.originCountry,
-        originCity: item?.address?.originCity,
-        mobileNumber: item?.mobileNumber,
-        homeMobileNumber: item?.homeMobileNumber,
-        email: item?.email,
-        degree: item?.userEducation?.degree,
-        collage: item?.userEducation?.collage,
-        educationCity: item?.userEducation?.city,
-        educationState: item?.userEducation?.state,
-        educationCountry: item?.userEducation?.country,
-        Designation: item?.userProfessional?.jobTitle,
-        companyName: item?.userProfessional?.companyName,
-        jobType: item?.userProfessional?.jobType,
-        currentSalary: item?.userProfessional?.currentSalary,
-        workCity: item?.userProfessional?.workCity,
-        workCountry: item?.userProfessional?.workCountry,
-        hobbies: item?.hobbies,
-        matchPercentage: item?.matchPercentage,
-        userLikeDetails: item?.userLikeDetails,
+        firstName: items.name,
+        id: items?._id,
       };
-
-      // console.log('User Data:', matchesUserData);
-
-      // Navigate to UserDetailsScreen
-      navigation.navigate('UserDetailsScreen', {matchesUserData});
+      // console.log(' === var ===> ', matchesUserData);
+      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      // navigation.navigate('Abc', {matchesUserData});
     };
 
     const isLiked = item?.userLikeDetails?.isLike; // Access the isLike property
@@ -360,7 +368,10 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       <TouchableOpacity
         style={styles.itemContainer}
         activeOpacity={0.6}
-        onPress={handlePress}>
+        // onPress={handlePress}
+        onPress={() => {
+          handlePress(item);
+        }}>
         <View
           style={{
             height: hp(225),

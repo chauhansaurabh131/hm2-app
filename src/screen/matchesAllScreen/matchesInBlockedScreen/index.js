@@ -407,10 +407,20 @@ const MatchesInBlockedScreen = () => {
   //   );
   // }
 
-  const renderBlockedUser = ({item}) => {
-    const profileImage = item?.user?.profilePic;
+  const handlePress = items => {
+    const matchesUserData = {
+      firstName: items?.friend?.name,
+      id: items?.friend?._id,
+      userData: items,
+    };
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    console.log(' === var ===> ', items?.friend?.name);
+  };
 
-    const uniqueId = item?.user?.userUniqueId;
+  const renderBlockedUser = ({item}) => {
+    const profileImage = item?.friend?.profilePic;
+
+    const uniqueId = item?.friend?.userUniqueId;
 
     const FriendID = item?.friend?._id;
 
@@ -423,27 +433,27 @@ const MatchesInBlockedScreen = () => {
       return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
 
-    const name = item?.user?.name;
-    const firstName = item?.user?.firstName;
-    const lastName = item?.user?.lastName;
-    const age = calculateAge(item?.user?.dateOfBirth);
-    const height = item?.user?.height;
-    const jobTitle = item?.user?.userProfessional?.jobTitle;
-    const currentCity = item?.user?.address?.currentCity
-      ? item?.user?.address?.currentCity.charAt(0).toUpperCase() +
-        item?.user?.address?.currentCity.slice(1).toLowerCase()
+    const name = item?.friend?.name;
+    const firstName = item?.friend?.firstName;
+    const lastName = item?.friend?.lastName;
+    const age = calculateAge(item?.friend?.dateOfBirth);
+    const height = item?.friend?.height;
+    const jobTitle = item?.friend?.userProfessional?.jobTitle;
+    const currentCity = item?.friend?.address?.currentCity
+      ? item?.friend?.address?.currentCity.charAt(0).toUpperCase() +
+        item?.friend?.address?.currentCity.slice(1).toLowerCase()
       : '';
-    const currentCountry = item?.user?.address?.currentCountry
-      ? item?.user?.address?.currentCountry.charAt(0).toUpperCase() +
-        item?.user?.address?.currentCountry.slice(1).toLowerCase()
+    const currentCountry = item?.friend?.address?.currentCountry
+      ? item?.friend?.address?.currentCountry.charAt(0).toUpperCase() +
+        item?.friend?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
-    const imageCount = Array.isArray(item?.user?.userProfilePic)
-      ? item?.user?.userProfilePic.length
+    const imageCount = Array.isArray(item?.friend?.userProfilePic)
+      ? item?.friend?.userProfilePic.length
       : 0;
 
-    const userAllImage = Array.isArray(item?.user?.userProfilePic)
-      ? item?.user?.userProfilePic.map(pic => pic.url)
+    const userAllImage = Array.isArray(item?.friend?.userProfilePic)
+      ? item?.friend?.userProfilePic.map(pic => pic.url)
       : [];
 
     const userAllImageShare = () => {
@@ -491,36 +501,41 @@ const MatchesInBlockedScreen = () => {
                   <Text style={style.bodyTextStyle}>Online</Text>
                 </View>
 
-                <Text style={style.userNameTextStyle}>
-                  {firstName || name} {lastName}
-                </Text>
-
-                <View
-                  style={[
-                    style.userDetailsDescriptionContainer,
-                    {marginTop: 3},
-                  ]}>
-                  <Text style={style.userDetailsTextStyle}>
-                    {age || 'N/A'} yrs,
+                <TouchableOpacity
+                  onPress={() => {
+                    handlePress(item);
+                  }}>
+                  <Text style={style.userNameTextStyle}>
+                    {firstName || name} {lastName}
                   </Text>
-                  <Text style={style.userDetailsTextStyle}> {height}</Text>
 
-                  <View style={style.verticalLineStyle} />
+                  <View
+                    style={[
+                      style.userDetailsDescriptionContainer,
+                      {marginTop: 3},
+                    ]}>
+                    <Text style={style.userDetailsTextStyle}>
+                      {age || 'N/A'} yrs,
+                    </Text>
+                    <Text style={style.userDetailsTextStyle}> {height}</Text>
 
-                  <Text style={style.userDetailsTextStyle}>
-                    {' '}
-                    {jobTitle || 'N/A'}
-                  </Text>
-                </View>
+                    <View style={style.verticalLineStyle} />
 
-                <View style={style.userDetailsDescriptionContainer}>
-                  <Text style={style.userDetailsTextStyle}>
-                    {currentCity},{' '}
-                  </Text>
-                  <Text style={style.userDetailsTextStyle}>
-                    {currentCountry || 'N/A'}
-                  </Text>
-                </View>
+                    <Text style={style.userDetailsTextStyle}>
+                      {' '}
+                      {jobTitle || 'N/A'}
+                    </Text>
+                  </View>
+
+                  <View style={style.userDetailsDescriptionContainer}>
+                    <Text style={style.userDetailsTextStyle}>
+                      {currentCity},{' '}
+                    </Text>
+                    <Text style={style.userDetailsTextStyle}>
+                      {currentCountry || 'N/A'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
 
                 <View style={style.renderBottomContainer}>
                   <Image

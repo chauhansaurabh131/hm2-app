@@ -28,6 +28,7 @@ import DropdownMenu from '../message';
 import ChatThreeDotComponent from '../../components/chatThreeDotComponent';
 import {accepted_Decline_Request} from '../../actions/homeActions';
 import LinearGradient from 'react-native-linear-gradient';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -43,7 +44,7 @@ const formatTime = timestamp => {
 const ChatUserScreen = ({route}) => {
   const {userData} = route.params;
 
-  console.log(' === ChatUserScreen___ ===> ', userData);
+  // console.log(' === ChatUserScreen___ ===> ', userData);
 
   const blockUserId = userData?.lastInitiatorUser;
   const blockReqId = userData?._id;
@@ -70,6 +71,8 @@ const ChatUserScreen = ({route}) => {
   const [fullscreenVideoUri, setFullscreenVideoUri] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
+
+  const threeDotBottomSheetRef = useRef();
 
   const {user} = useSelector(state => state.auth);
   const userImage = userData?.userList?.profilePic;
@@ -465,6 +468,18 @@ const ChatUserScreen = ({route}) => {
     toggleModal();
   };
 
+  const onViewProfilePress = () => {
+    threeDotBottomSheetRef.current.close();
+
+    const matchesUserData = {
+      firstName: userData?.friendList?.firstName,
+      id: userData?.friendList?._id,
+      userData: userData,
+    };
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // console.log(' === onViewProfilePress ===> ', userData);
+  };
+
   const renderItem = ({item, index}) => {
     const previousItem = messages[index - 1];
     const dateHeader = getDateHeader(item, previousItem);
@@ -746,19 +761,157 @@ const ChatUserScreen = ({route}) => {
               </Text>
             </View>
             {/*<TouchableOpacity activeOpacity={0.5}>*/}
-            {/*  <Image source={icons.three_dots_icon} style={style.threeDotIcon} />*/}
+            {/*  <Image*/}
+            {/*    source={icons.three_dots_icon}*/}
+            {/*    style={style.threeDotIcon}*/}
+            {/*  />*/}
             {/*</TouchableOpacity>*/}
 
-            <View>
-              <ChatThreeDotComponent
-                onViewProfilePress={() => {
-                  navigation.navigate('UserDetailsScreen', {userData});
-                }}
-                onBlockProfilePress={handleBlockProfilePress}
+            {/*<View>*/}
+            {/*  <ChatThreeDotComponent*/}
+            {/*    onViewProfilePress={() => {*/}
+            {/*      navigation.navigate('UserDetailsScreen', {userData});*/}
+            {/*    }}*/}
+            {/*    onBlockProfilePress={handleBlockProfilePress}*/}
+            {/*  />*/}
+            {/*</View>*/}
+
+            <TouchableOpacity
+              onPress={() => {
+                threeDotBottomSheetRef.current.open();
+              }}
+              style={{
+                width: hp(30),
+                height: hp(30),
+                alignItems: 'center',
+              }}>
+              <Image
+                source={icons.three_dots_icon}
+                style={{width: hp(15), height: hp(25)}}
               />
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
+
+        <RBSheet
+          ref={threeDotBottomSheetRef}
+          closeOnDragDown={true} // Allows drag to close
+          closeOnPressMask={true} // Allows closing when clicking outside the sheet
+          height={hp(170)} // Adjust height of Bottom Sheet
+          customStyles={{
+            container: {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            },
+          }}>
+          <View
+            style={{
+              flex: 1,
+              marginHorizontal: 17,
+              marginTop: 10,
+            }}>
+            <TouchableOpacity
+              // onPress={() => {
+              //   threeDotBottomSheetRef.current.close();
+              //   navigation.navigate('NewUserDetailsScreen', {
+              //     matchesUserData: userData?.friendList?._id,
+              //   });
+              // }}
+
+              onPress={() => {
+                onViewProfilePress();
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  width: hp(30),
+                  height: hp(30),
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.view_profile_icon}
+                  style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
+                />
+              </View>
+              <Text
+                style={{
+                  color: colors.black,
+                  marginLeft: wp(5),
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                  textAlign: 'center',
+                }}>
+                View Profile
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                threeDotBottomSheetRef.current.close();
+                handleBlockProfilePress();
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(10),
+              }}>
+              <View
+                style={{
+                  width: hp(30),
+                  height: hp(30),
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.block_icon}
+                  style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
+                />
+              </View>
+              <Text
+                style={{
+                  color: colors.black,
+                  marginLeft: wp(5),
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Block
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(10),
+              }}>
+              <View
+                style={{
+                  width: hp(30),
+                  height: hp(30),
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.report_icon}
+                  style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
+                />
+              </View>
+              <Text
+                style={{
+                  color: colors.black,
+                  marginLeft: wp(5),
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Report
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </RBSheet>
 
         {/* Modal for Block Confirmation */}
         <Modal

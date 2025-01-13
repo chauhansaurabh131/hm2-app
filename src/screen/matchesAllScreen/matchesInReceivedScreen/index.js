@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -19,7 +19,7 @@ import {icons, images} from '../../../assets';
 import LinearGradient from 'react-native-linear-gradient';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import {colors} from '../../../utils/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   accepted_Decline_Request,
   non_friend_Blocked,
@@ -115,9 +115,28 @@ const MatchesInReceivedScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setData([]);
+      setLoading(true);
+      setPage(1); // Reset page to 1
+      setHasMoreData(true); // Reset to ensure fetching more data on next load
+      fetchData(1); // Fetch the first page of data
+    }, []),
+  );
+
+  // useEffect(() => {
+  //   // Reset state when entering the screen again (if needed)
+  //   setData([]);
+  //   setLoading(true);
+  //   setPage(1); // Reset page to 1
+  //   setHasMoreData(true); // Reset to ensure fetching more data on next load
+  //   fetchData(1); // Fetch the first page of data
+  // }, []);
 
   const loadMoreData = () => {
     if (!isFetchingMore && hasMoreData) {
@@ -508,6 +527,18 @@ const MatchesInReceivedScreen = () => {
     }
   };
 
+  const handlePress = items => {
+    const matchesUserData = {
+      firstName: items?.user?.name,
+      id: items?.user?._id,
+      userData: items,
+    };
+
+    // console.log(' === var ===> ', matchesUserData);
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('Abc', {matchesUserData});
+  };
+
   const renderAcceptedUserItem = ({item}) => {
     // console.log(' === var ===> ', item?.user?._id);
 
@@ -614,7 +645,7 @@ const MatchesInReceivedScreen = () => {
 
                 <TouchableOpacity
                   onPress={() => {
-                    // navigation.navigate('UserDetailsScreen');
+                    handlePress(item);
                   }}>
                   <Text style={style.userNameTextStyle}>
                     {firstName || name} {lastName}

@@ -15,16 +15,25 @@ const UserEducationDetail = (...params) => {
   };
 
   const degree = capitalizeFirstLetter(
-    MatchesScreenData?.degree || UserData?.userEducation?.degree,
+    MatchesScreenData?.userEducation?.degree || UserData?.userEducation?.degree,
   );
+
   const college = capitalizeFirstLetter(
-    MatchesScreenData?.collage || UserData?.userEducation?.collage,
+    MatchesScreenData?.userEducation?.collage ||
+      UserData?.userEducation?.collage,
   );
+
+  const educationCity = capitalizeFirstLetter(
+    MatchesScreenData?.userEducation?.city || UserData?.userEducation?.city,
+  );
+
   const educationState = capitalizeFirstLetter(
-    MatchesScreenData?.educationState || UserData?.userEducation?.city,
+    MatchesScreenData?.userEducation?.state || UserData?.userEducation?.city,
   );
+
   const educationCountry = capitalizeFirstLetter(
-    MatchesScreenData?.educationCountry || UserData?.userEducation?.country,
+    MatchesScreenData?.userEducation?.country ||
+      UserData?.userEducation?.country,
   );
 
   return (
@@ -46,14 +55,13 @@ const UserEducationDetail = (...params) => {
         <Text style={style.detailsTittleTextStyle}>City</Text>
         <Text style={style.detailSubTittleText}>
           {/*Noida*/}
-          {educationState || 'N/A'}
+          {educationCity || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>State</Text>
-        <Text style={style.detailSubTittleText}>Delhi</Text>
+        <Text style={style.detailSubTittleText}>{educationState || 'N/A'}</Text>
 
         <Text style={style.detailsTittleTextStyle}>Country</Text>
-
         <Text style={style.detailSubTittleText}>
           {/*India*/}
           {educationCountry || 'N/A'}

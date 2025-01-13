@@ -1,0 +1,201 @@
+import {StyleSheet} from 'react-native';
+import {colors} from '../../utils/colors';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
+
+export const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  centered: {
+    flex: 1,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: hp(14),
+  },
+  customHeaderLogo: {
+    width: wp(96),
+    height: hp(24),
+    marginLeft: wp(17),
+    resizeMode: 'contain',
+  },
+  profileLogoStyle: {
+    width: hp(24),
+    height: hp(24),
+    borderRadius: 50,
+    marginRight: wp(17),
+    resizeMode: 'cover',
+  },
+  userStoryContainer: {
+    marginTop: hp(15),
+    marginHorizontal: wp(17),
+    height: hp(60),
+  },
+  UserDetailsContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '90%',
+    marginRight: wp(17),
+    marginHorizontal: wp(17),
+  },
+  onlineBodyStyle: {
+    width: wp(34),
+    height: hp(12),
+    borderRadius: 5,
+    backgroundColor: '#24FF00A8',
+  },
+  bodyTextStyle: {
+    color: colors.black,
+    fontSize: fontSize(9),
+    lineHeight: hp(12),
+    textAlign: 'center',
+  },
+  userNameTextStyle: {
+    color: colors.white,
+    fontSize: fontSize(24),
+    lineHeight: hp(36),
+    fontFamily: fontFamily.poppins700,
+  },
+  userDetailsDescriptionContainer: {
+    flexDirection: 'row',
+  },
+  userDetailsTextStyle: {
+    color: colors.white,
+    fontSize: fontSize(11),
+    lineHeight: hp(17),
+    fontFamily: fontFamily.poppins400,
+    marginRight: wp(2),
+  },
+  verticalLineStyle: {
+    width: hp(1.5),
+    height: '90%',
+    backgroundColor: colors.gray,
+    marginHorizontal: wp(5),
+  },
+  bottomImageContainer: {
+    flexDirection: 'row',
+    marginTop: hp(10),
+    alignItems: 'center',
+  },
+  matchesText: {
+    fontSize: fontSize(10),
+    lineHeight: hp(15),
+    fontFamily: fontFamily.poppins600,
+    color: colors.white,
+  },
+  imageBottomShadow: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 150,
+  },
+  imageBottomContainer: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+  },
+  bottomImagesContainer: {
+    marginTop: hp(15),
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gradientImageContainer: {
+    width: wp(105),
+    height: hp(30),
+    resizeMode: 'stretch',
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
+  gradientImageBody: {
+    position: 'absolute',
+    left: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  coupleImage: {
+    width: hp(16),
+    height: hp(14),
+    resizeMode: 'contain',
+    tintColor: 'white',
+  },
+  percentageText: {
+    color: 'white',
+    marginLeft: 9,
+    fontSize: fontSize(10),
+    lineHeight: hp(15),
+    fontFamily: fontFamily.poppins600,
+    top: 1,
+  },
+  bottomSecondImagesContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    right: -5,
+  },
+  cameraImageContainer: {
+    width: hp(60),
+    height: hp(30),
+    backgroundColor: '#282727',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginRight: 10,
+  },
+  cameraIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    marginRight: wp(10),
+  },
+  starIconContainer: {
+    width: hp(30),
+    height: hp(30),
+    backgroundColor: '#282727',
+    borderRadius: 50,
+    marginRight: 10,
+  },
+  starIcon: {
+    width: hp(30),
+    height: hp(30),
+    resizeMode: 'contain',
+  },
+  threeDotImageContainer: {
+    width: hp(30),
+    height: hp(30),
+    backgroundColor: '#282727',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginHorizontal: 5,
+  },
+  threeDotImage: {
+    width: 4,
+    height: 14,
+    tintColor: colors.white,
+  },
+  bodyMiddleContainer: {
+    marginHorizontal: wp(17),
+    marginTop: hp(18),
+  },
+  BodyContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 15,
+    marginTop: 5,
+  },
+  sendRequestIcon: {
+    width: hp(180),
+    height: hp(40),
+    resizeMode: 'contain',
+    marginRight: 20,
+  },
+  likeIcon: {
+    width: hp(63),
+    height: hp(40),
+    resizeMode: 'contain',
+  },
+});

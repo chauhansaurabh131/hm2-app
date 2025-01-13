@@ -15,22 +15,27 @@ const UserProfessionalsDetails = (...params) => {
   };
 
   const Designation = capitalizeFirstLetter(
-    MatchesScreenData?.Designation || UserData?.userProfessional?.jobTitle,
+    MatchesScreenData?.userProfessional?.jobTitle ||
+      UserData?.userProfessional?.jobTitle,
   );
   const jobType = capitalizeFirstLetter(
-    MatchesScreenData?.jobType || UserData?.userProfessional?.jobType,
+    MatchesScreenData?.userProfessional?.jobType ||
+      UserData?.userProfessional?.jobType,
   );
   const companyName = capitalizeFirstLetter(
-    MatchesScreenData?.companyName || UserData?.userProfessional?.companyName,
+    MatchesScreenData?.userProfessional?.companyName ||
+      UserData?.userProfessional?.companyName,
   );
   const workCity = capitalizeFirstLetter(
-    MatchesScreenData?.workCity || UserData?.userProfessional?.workCity,
+    MatchesScreenData?.userProfessional?.workCity ||
+      UserData?.userProfessional?.workCity,
   );
   const workCountry = capitalizeFirstLetter(
-    MatchesScreenData?.workCountry || UserData?.userProfessional?.workCountry,
+    MatchesScreenData?.userProfessional?.workCountry ||
+      UserData?.userProfessional?.workCountry,
   );
   const currentSalary =
-    MatchesScreenData?.currentSalary ||
+    MatchesScreenData?.userProfessional?.currentSalary ||
     UserData?.userProfessional?.currentSalary;
 
   return (
@@ -60,7 +65,7 @@ const UserProfessionalsDetails = (...params) => {
 
         <Text style={style.detailSubTittleText}>
           {/*INR 6-8 Lacs*/}
-          {currentSalary}
+          {currentSalary} Lakhs
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>Work in City</Text>

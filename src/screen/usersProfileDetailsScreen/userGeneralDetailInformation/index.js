@@ -6,6 +6,8 @@ import {style} from './style';
 const UserGeneralDetailInformation = (...params) => {
   const UserData = params[0]?.friendList;
 
+  // console.log(' === UserGeneralDetailInformation ===> ', UserData);
+
   const MatchesScreenData = params[0];
 
   const capitalizeFirstLetter = string => {
@@ -28,18 +30,18 @@ const UserGeneralDetailInformation = (...params) => {
     capitalizeFirstLetter(MatchesScreenData?.religion);
 
   const Cast =
-    capitalizeFirstLetter(UserData?.cast) ||
-    capitalizeFirstLetter(MatchesScreenData?.cast);
+    capitalizeFirstLetter(UserData?.caste) ||
+    capitalizeFirstLetter(MatchesScreenData?.caste);
 
   const SubCast = capitalizeFirstLetter(UserData?.community);
 
   const CurrentCity =
     capitalizeFirstLetter(UserData?.address?.currentCity) ||
-    capitalizeFirstLetter(MatchesScreenData?.currentCity);
+    capitalizeFirstLetter(MatchesScreenData?.address?.currentCity);
 
   const CurrentCountry =
     capitalizeFirstLetter(UserData?.address?.currentCountry) ||
-    capitalizeFirstLetter(MatchesScreenData?.currentCountry);
+    capitalizeFirstLetter(MatchesScreenData?.address?.currentCountry);
 
   return (
     <SafeAreaView style={style.container}>
@@ -48,42 +50,42 @@ const UserGeneralDetailInformation = (...params) => {
 
         <Text style={style.DetailsAnswerText}>
           {/*02.03.1986*/}
-          {dateOfBirth}
+          {dateOfBirth || 'N/A'}
         </Text>
 
         <Text style={style.DetailTittleSecondText}>Birth of Time</Text>
 
         <Text style={style.DetailsAnswerText}>
           {/*10:01:20 AM*/}
-          {formattedTime}
+          {formattedTime || 'N/A'}
         </Text>
 
         <Text style={style.DetailTittleSecondText}>Religion</Text>
 
         <Text style={style.DetailsAnswerText}>
           {/*Hindu*/}
-          {Religion}
+          {Religion || 'N/A'}
         </Text>
 
         <Text style={style.DetailTittleSecondText}>Caste/Sub Caste</Text>
 
         <Text style={style.DetailsAnswerText}>
           {/*Patel, Kadva Patidar*/}
-          {Cast}, {SubCast}
+          {Cast || 'N/A'} {SubCast}
         </Text>
 
         <Text style={style.DetailTittleSecondText}>Current City</Text>
 
         <Text style={style.DetailsAnswerText}>
           {/*New York*/}
-          {CurrentCity}
+          {CurrentCity || 'N/A'}
         </Text>
 
         <Text style={style.DetailTittleSecondText}>Country of Living</Text>
 
         <Text style={style.DetailsAnswerText}>
           {/*United States of America*/}
-          {CurrentCountry}
+          {CurrentCountry || 'N/A'}
         </Text>
       </View>
     </SafeAreaView>

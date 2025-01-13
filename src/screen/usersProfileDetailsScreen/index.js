@@ -85,8 +85,8 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
           style={{
-            height: hp(48),
-            width: hp(48),
+            height: hp(44),
+            width: hp(44),
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 50,
@@ -105,8 +105,8 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
         // Non-active icon with default background
         <View
           style={{
-            height: hp(48),
-            width: hp(48),
+            height: hp(44),
+            width: hp(44),
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 50,

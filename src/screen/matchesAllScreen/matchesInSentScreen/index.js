@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -19,7 +19,7 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../../utils/colors';
 
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -118,9 +118,19 @@ const MatchesInSentScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setData([]);
+      setLoading(true);
+      setPage(1); // Reset page to 1
+      setHasMoreData(true); // Reset to ensure fetching more data on next load
+      fetchData(1); // Fetch the first page of data
+    }, []),
+  );
 
   const loadMoreData = () => {
     if (!isFetchingMore && hasMoreData) {
@@ -471,6 +481,17 @@ const MatchesInSentScreen = () => {
     setAboutText('');
   };
 
+  const handlePress = items => {
+    const matchesUserData = {
+      firstName: items?.friend?.name,
+      id: items?.friend?._id,
+      userData: items,
+      screen: 'SendScreen',
+    };
+    console.log(' === var ===> ', matchesUserData);
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+  };
+
   const renderItem = ({item}) => {
     // console.log(' === var ===> ', item?.friend?._id);
 
@@ -609,8 +630,9 @@ const MatchesInSentScreen = () => {
               </View>
 
               <TouchableOpacity
-              // onPress={handlePress}
-              >
+                onPress={() => {
+                  handlePress(item);
+                }}>
                 <Text
                   style={{
                     color: colors.white,

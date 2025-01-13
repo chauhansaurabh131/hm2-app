@@ -25,7 +25,7 @@ const style = StyleSheet.create({
     width: hp(24),
     height: hp(24),
     borderRadius: 50,
-    resizeMode: 'stretch',
+    // resizeMode: 'stretch',
     marginRight: wp(2),
   },
   userDetailsContainer: {
@@ -42,6 +42,7 @@ const style = StyleSheet.create({
   },
   detailsContainer: {
     flex: 1,
+    top: 8,
   },
   userNameTextStyle: {
     fontSize: fontSize(14),

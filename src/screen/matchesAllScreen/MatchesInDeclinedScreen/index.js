@@ -459,6 +459,15 @@ const MatchesInDeclinedScreen = () => {
     }
   };
 
+  const handlePress = items => {
+    const matchesUserData = {
+      firstName: items?.user?.name,
+      id: items?.user?._id,
+      userData: items,
+    };
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+  };
+
   const renderAcceptedUserItem = ({item}) => {
     // console.log(' === var ===> ', item?.user?._id);
 
@@ -565,7 +574,7 @@ const MatchesInDeclinedScreen = () => {
 
                 <TouchableOpacity
                   onPress={() => {
-                    // navigation.navigate('UserDetailsScreen');
+                    handlePress(item);
                   }}>
                   <Text style={style.userNameTextStyle}>
                     {firstName || name} {lastName}
@@ -880,6 +889,42 @@ const MatchesInDeclinedScreen = () => {
             isFetchingMore ? (
               <View style={{alignItems: 'center', marginVertical: 10}}>
                 <Text style={{color: 'black'}}>Loading Data..</Text>
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            !loading && !isFetchingMore ? (
+              <View
+                style={{
+                  padding: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    marginTop: hp(250),
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.no_Profile_Found_img}
+                    style={{
+                      width: hp(44),
+                      height: hp(44),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colors.black,
+                      fontSize: fontSize(18),
+                      lineHeight: hp(27),
+                      fontFamily: fontFamily.poppins400,
+                      marginTop: hp(12),
+                    }}>
+                    No Profiles Found
+                  </Text>
+                </View>
               </View>
             ) : null
           }

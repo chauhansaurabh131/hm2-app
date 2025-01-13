@@ -7,9 +7,11 @@ import {styles} from './style';
 const UserHobbiesAndInterest = (...params) => {
   const UserData = params[0]?.friendList;
 
-  console.log(' === UserData.... ===> ', UserData?.hobbies);
+  // console.log(' === UserData.... ===> ', UserData?.hobbies);
 
   const MatchesScreenData = params[0];
+
+  // console.log(' === var ===> ', MatchesScreenData);
 
   const hobbies = MatchesScreenData?.hobbies || UserData?.hobbies;
 

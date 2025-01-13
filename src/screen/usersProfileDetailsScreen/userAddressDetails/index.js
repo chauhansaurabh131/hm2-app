@@ -15,16 +15,17 @@ const UserAddressDetails = (...params) => {
   };
 
   const currentResidenceAddress = capitalizeFirstLetter(
-    MatchesScreenData?.currentResidenceAddress ||
+    MatchesScreenData?.address?.currentResidenceAddress ||
       UserData?.address?.currentResidenceAddress,
   );
 
   const currentCity = capitalizeFirstLetter(
-    MatchesScreenData?.currentCity || UserData?.address?.currentCity,
+    MatchesScreenData?.address?.currentCity || UserData?.address?.currentCity,
   );
 
   const currentCountry = capitalizeFirstLetter(
-    MatchesScreenData?.currentCountry || UserData?.address?.currentCountry,
+    MatchesScreenData?.address?.currentCountry ||
+      UserData?.address?.currentCountry,
   );
 
   const originCountry = capitalizeFirstLetter(
@@ -46,15 +47,14 @@ const UserAddressDetails = (...params) => {
 
         <Text style={style.detailSubTittleText}>
           {/*01-02, Delhi Street, Delhi, India*/}
-          {currentResidenceAddress}, {currentCity}, {currentCountry},{' '}
-          {originCountry}
+          {currentResidenceAddress || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>Current City</Text>
 
         <Text style={style.detailSubTittleText}>
           {/*Delhi*/}
-          {currentCity}
+          {currentCity || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>
@@ -63,15 +63,17 @@ const UserAddressDetails = (...params) => {
 
         <Text style={style.detailSubTittleText}>
           {/*India*/}
-          {originCountry || 'N/A'}
+          {currentCountry || 'N/A'}
         </Text>
 
         <Text style={style.detailsTittleTextStyle}>Permanent Address</Text>
 
         <Text style={style.detailSubTittleText}>
           {/*01-02, Delhi Street, Delhi, India*/}
-          {originResidenceAddress || 'N/A'}, {originCity || 'N/A'},{' '}
-          {originCountry || 'N/A'}
+          {/*{originResidenceAddress || 'N/A'}, {originCity || 'N/A'},{' '}*/}
+          {/*{originCountry || 'N/A'}*/}
+          {currentCity || 'N/A'}, {currentResidenceAddress || 'N/A'},{' '}
+          {currentCountry || 'N/A'}
         </Text>
       </View>
     </SafeAreaView>
