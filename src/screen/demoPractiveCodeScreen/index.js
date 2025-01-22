@@ -8,6 +8,8 @@ import {
   TextInput,
   FlatList,
   Modal,
+  KeyboardAvoidingView,
+  Pressable,
 } from 'react-native';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
@@ -26,6 +28,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {MenuProvider} from 'react-native-popup-menu';
 import DropdownMenu from '../message';
 import ChatThreeDotComponent from '../../components/chatThreeDotComponent';
+import EmojiSelector from 'react-native-emoji-selector';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -53,8 +56,8 @@ const DemoPractiveCodeScreen = ({route}) => {
   const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
   const [durationTimer, setDurationTimer] = useState(null);
   const [playingAudio, setPlayingAudio] = useState(null);
-  const [typing, setTyping] = useState(false);
   const [audioProgress, setAudioProgress] = useState({});
+  const [typing, setTyping] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [playbackPosition, setPlaybackPosition] = useState(0); // dont remove
@@ -62,6 +65,8 @@ const DemoPractiveCodeScreen = ({route}) => {
   const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
   const [fullscreenVideoUri, setFullscreenVideoUri] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
+  const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const [caption, setCaption] = useState('');
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.userProfilePic?.[0]?.url;
@@ -72,7 +77,7 @@ const DemoPractiveCodeScreen = ({route}) => {
 
   useEffect(() => {
     if (accessToken) {
-      const socket = io('https://happymilan.tech', {
+      const socket = io('https://stag.mntech.website', {
         path: '/api/socket.io',
         query: {
           token: accessToken,
@@ -139,6 +144,7 @@ const DemoPractiveCodeScreen = ({route}) => {
               RNBlobUtil.wrap(data.data.result.key),
             );
 
+            const imagesMessage = data.data.chatMessage.message;
             const Types = data.data.chatMessage.type;
             console.log(' === Types ===> ', data.data.chatMessage.type);
             const isAudio = data.data.chatMessage.type === 'audio';
@@ -148,10 +154,9 @@ const DemoPractiveCodeScreen = ({route}) => {
               to: userData?.friendList?._id,
               // message: 'image',
               // message: isAudio ? '' : 'image',
-              message: Types,
+              message: imagesMessage,
               fileUrl: imageUrl,
               // type: 'image',
-              // type: isAudio ? 'audio' : 'image',
               // type: isAudio ? 'audio' : 'image',
               type: Types,
               sendAt: new Date().toISOString(),
@@ -203,6 +208,10 @@ const DemoPractiveCodeScreen = ({route}) => {
     }
   }, [accessToken, userData]);
 
+  const handleEmojiSelect = emoji => {
+    setMessage(message + emoji);
+  };
+
   const handleSendMessage = async () => {
     const trimmedMessage = message?.trim();
 
@@ -214,7 +223,8 @@ const DemoPractiveCodeScreen = ({route}) => {
       const chatContent = {
         from: userData?.userList?._id,
         to: userData?.friendList?._id,
-        message: mediaType === 'image' ? 'image' : 'video',
+        // message: mediaType === 'image' ? 'image' : 'video',
+        message: trimmedMessage,
         fileName: selectedImage,
         type: mediaType,
       };
@@ -256,21 +266,20 @@ const DemoPractiveCodeScreen = ({route}) => {
     try {
       const result = await audioRecorderPlayer.startRecorder();
       audioRecorderPlayer.addRecordBackListener(e => {
-        setRecordingDuration(formatDuration(e.currentPosition));
+        const durationInMilliseconds = e.currentPosition;
+        const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
+        const minutes = Math.floor(durationInSeconds / 60);
+        const seconds = durationInSeconds % 60;
+
+        const formattedDuration = `${minutes}:${String(seconds).padStart(
+          2,
+          '0',
+        )}`;
+        setRecordingDuration(formattedDuration); // Update live recording duration
         return;
       });
       setRecording(true);
       console.log('Recording started:', result);
-
-      const timer = setInterval(() => {
-        setRecordingDuration(prevDuration =>
-          formatDuration(
-            parseInt(prevDuration.split(':')[1] || '0', 10) + 1000,
-          ),
-        );
-      }, 1000);
-
-      setDurationTimer(timer);
     } catch (err) {
       console.log('Error starting recording:', err);
     }
@@ -297,9 +306,36 @@ const DemoPractiveCodeScreen = ({route}) => {
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
+  // const onStartPlay = async uri => {
+  //   try {
+  //     setPlayingAudio(uri);
+  //     const msg = await audioRecorderPlayer.startPlayer(uri);
+  //     console.log(msg);
+  //
+  //     audioRecorderPlayer.addPlayBackListener(e => {
+  //       setAudioProgress(prevProgress => ({
+  //         ...prevProgress,
+  //         [uri]: {
+  //           currentTime: formatDuration(e.currentPosition),
+  //           duration: formatDuration(e.duration),
+  //           progress: e.currentPosition / e.duration,
+  //         },
+  //       }));
+  //
+  //       if (e.currentPosition === e.duration) {
+  //         // Audio playback finished
+  //         setPlayingAudio(null);
+  //       }
+  //       return;
+  //     });
+  //   } catch (err) {
+  //     console.log('Error starting playback:', err);
+  //   }
+  // };
+
   const onStartPlay = async uri => {
     try {
-      setPlayingAudio(uri);
+      setPlayingAudio(uri); // Set the currently playing audio
       const msg = await audioRecorderPlayer.startPlayer(uri);
       console.log(msg);
 
@@ -315,7 +351,7 @@ const DemoPractiveCodeScreen = ({route}) => {
 
         if (e.currentPosition === e.duration) {
           // Audio playback finished
-          setPlayingAudio(null);
+          onPlaybackComplete(uri);
         }
         return;
       });
@@ -324,21 +360,42 @@ const DemoPractiveCodeScreen = ({route}) => {
     }
   };
 
+  // const onStopPlay = async () => {
+  //   try {
+  //     await audioRecorderPlayer.stopPlayer();
+  //     setPlayingAudio(null); // Reset playback state
+  //     setAudioProgress(prevProgress => ({
+  //       ...prevProgress,
+  //       [playingAudio]: {
+  //         ...prevProgress[playingAudio],
+  //         progress: 0,
+  //         currentTime: '00:00',
+  //       },
+  //     }));
+  //   } catch (err) {
+  //     console.log('Error stopping playback:', err);
+  //   }
+  // };
+
   const onStopPlay = async () => {
     try {
       await audioRecorderPlayer.stopPlayer();
-      setPlayingAudio(null); // Reset playback state
-      setAudioProgress(prevProgress => ({
-        ...prevProgress,
-        [playingAudio]: {
-          ...prevProgress[playingAudio],
-          progress: 0,
-          currentTime: '00:00',
-        },
-      }));
+      onPlaybackComplete(playingAudio); // Handle reset on stop
     } catch (err) {
       console.log('Error stopping playback:', err);
     }
+  };
+
+  const onPlaybackComplete = uri => {
+    setPlayingAudio(null); // Reset playing state
+    setAudioProgress(prevProgress => ({
+      ...prevProgress,
+      [uri]: {
+        ...prevProgress[uri],
+        progress: 0,
+        currentTime: '00:00',
+      },
+    }));
   };
 
   const handleMicIconPressIn = () => {
@@ -420,6 +477,8 @@ const DemoPractiveCodeScreen = ({route}) => {
   };
 
   const renderItem = ({item, index}) => {
+    // console.log(' === renderItem ===> ', item.fileUrl);
+
     const previousItem = messages[index - 1];
     const dateHeader = getDateHeader(item, previousItem);
 
@@ -497,15 +556,16 @@ const DemoPractiveCodeScreen = ({route}) => {
             )}
 
             {item.type === 'audio' && item.fileUrl.split('?')[0] && (
-              <View style={{position: 'relative'}}>
+              <View
+                style={{
+                  position: 'relative',
+                  // backgroundColor: 'orange',
+                  height: 40,
+                }}>
                 <TouchableOpacity
                   style={{
                     width: wp(219),
-                    // height: hp(-15),
                     borderRadius: 10,
-                    // justifyContent: 'center',
-                    // backgroundColor: 'red',
-                    // marginTop: '20%',
                   }}
                   onPress={() => {
                     if (playingAudio === item.fileUrl.split('?')[0]) {
@@ -535,8 +595,8 @@ const DemoPractiveCodeScreen = ({route}) => {
 
                 <Progress.Bar
                   progress={
-                    audioProgress[item.fileUrl]
-                      ? audioProgress[item.fileUrl].progress
+                    audioProgress[item.fileUrl.split('?')[0]]
+                      ? audioProgress[item.fileUrl.split('?')[0]].progress
                       : 0
                   }
                   width={200}
@@ -564,18 +624,20 @@ const DemoPractiveCodeScreen = ({route}) => {
                       marginBottom: -10,
                       marginTop: 10,
                     }}>
-                    {audioProgress[item.fileUrl]
-                      ? audioProgress[item.fileUrl].currentTime
+                    {audioProgress[item.fileUrl.split('?')[0]]
+                      ? audioProgress[item.fileUrl.split('?')[0]].currentTime
                       : '00:00'}
                   </Text>
 
-                  <Text style={{marginTop: 10}}>{formatTime(item.sendAt)}</Text>
+                  <Text style={{marginTop: 10, color: 'black'}}>
+                    {formatTime(item.sendAt)}
+                  </Text>
                 </View>
               </View>
             )}
 
             <Text style={{fontSize: fontSize(14), color: 'black'}}>
-              {item.message}
+              {item.type !== 'audio' && item.message}
             </Text>
 
             {item.type !== 'audio' && (
@@ -623,280 +685,355 @@ const DemoPractiveCodeScreen = ({route}) => {
   return (
     <MenuProvider>
       <SafeAreaView style={style.container}>
-        <View style={style.headerContainer}>
-          <View style={style.headerImageAndIconStyle}>
-            <Image
-              source={images.happyMilanColorLogo}
-              style={style.logoStyle}
-            />
-            <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
-              {userImage ? (
-                <Image source={{uri: userImage}} style={style.profileIcon} />
-              ) : (
+        <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          <View style={style.headerContainer}>
+            <View style={style.headerImageAndIconStyle}>
+              <Image
+                source={images.happyMilanColorLogo}
+                style={style.logoStyle}
+              />
+              <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+                {userImage ? (
+                  <Image source={{uri: userImage}} style={style.profileIcon} />
+                ) : (
+                  <Image
+                    source={images.profileDisplayImage}
+                    style={style.profileIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+            <View style={style.userDetailsContainer}>
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{
+                  width: hp(24),
+                  height: hp(24),
+                  marginTop: -5,
+                  marginRight: wp(13),
+                }}>
                 <Image
-                  source={images.profileDisplayImage}
-                  style={style.profileIcon}
+                  source={icons.back_arrow_icon}
+                  style={{
+                    width: hp(14),
+                    height: hp(14),
+                    resizeMode: 'contain',
+
+                    top: 4,
+                  }}
+                />
+              </TouchableOpacity>
+
+              {userData && (
+                <Image
+                  source={{uri: userData.friendList?.profilePic}}
+                  style={style.userProfileIcon}
                 />
               )}
-            </TouchableOpacity>
+              <View style={style.detailsContainer}>
+                <Text style={style.userNameTextStyle}>
+                  {userData
+                    ? `${userData.friendList?.firstName} ${userData.friendList?.lastName}`
+                    : ''}
+                </Text>
+
+                <Text
+                  style={{
+                    fontStyle: 'italic',
+                    color: onlineStatusColor,
+                    fontSize: hp(10),
+                  }}>
+                  {typing ? 'Typing...' : onlineStatusText}
+                </Text>
+                <Text style={{color: 'black'}}>
+                  {userData?.friendList?.isOnline}
+                </Text>
+              </View>
+              {/*<TouchableOpacity activeOpacity={0.5}>*/}
+              {/*  <Image source={icons.three_dots_icon} style={style.threeDotIcon} />*/}
+              {/*</TouchableOpacity>*/}
+
+              <View>
+                <ChatThreeDotComponent />
+              </View>
+            </View>
           </View>
-          <View style={style.userDetailsContainer}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
+
+          <HomeTopSheetComponent
+            isVisible={topModalVisible}
+            onBackdropPress={toggleModal}
+            onBackButtonPress={toggleModal}
+          />
+
+          <FlatList
+            ref={flatListRef}
+            data={messages.filter(msg => !msg.isTemporary)}
+            renderItem={renderItem}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'flex-end',
+              paddingHorizontal: wp(17),
+            }}
+            onContentSizeChange={() =>
+              flatListRef.current.scrollToEnd({animated: true})
+            }
+            onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
+          />
+
+          <View style={{height: isEmojiPickerOpen ? '40%' : 'auto'}}>
+            <View
               style={{
-                width: hp(24),
-                height: hp(24),
-                marginTop: -5,
-                marginRight: wp(13),
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 17,
+                marginBottom: hp(16),
               }}>
-              <Image
-                source={icons.back_arrow_icon}
+              <View
                 style={{
-                  width: hp(14),
-                  height: hp(14),
-                  resizeMode: 'contain',
-
-                  top: 4,
-                }}
-              />
-            </TouchableOpacity>
-
-            {userData && (
-              <Image
-                source={{uri: userData.friendList?.profilePic}}
-                style={style.userProfileIcon}
-              />
-            )}
-            <View style={style.detailsContainer}>
-              <Text style={style.userNameTextStyle}>
-                {userData
-                  ? `${userData.friendList?.firstName} ${userData.friendList?.lastName}`
-                  : ''}
-              </Text>
-
-              <Text
-                style={{
-                  fontStyle: 'italic',
-                  color: onlineStatusColor,
-                  fontSize: hp(10),
+                  width: wp(320),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  borderColor: '#DDDDDD',
+                  borderRadius: 25,
+                  borderWidth: 1,
+                  paddingHorizontal: 10,
                 }}>
-                {typing ? 'Typing...' : onlineStatusText}
-              </Text>
-              <Text style={{color: 'black'}}>
-                {userData?.friendList?.isOnline}
-              </Text>
-            </View>
-            {/*<TouchableOpacity activeOpacity={0.5}>*/}
-            {/*  <Image source={icons.three_dots_icon} style={style.threeDotIcon} />*/}
-            {/*</TouchableOpacity>*/}
-
-            <View>
-              <ChatThreeDotComponent />
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!recordingDuration) {
+                      // console.log('Clicked smile_emoji_icon');
+                      // Add any additional actions here if needed
+                      setEmojiPickerOpen(true);
+                    }
+                  }}>
+                  <Image
+                    source={
+                      recordingDuration
+                        ? icons.red_mic_icon
+                        : icons.smile_emoji_icon
+                    }
+                    style={{
+                      width: hp(18),
+                      height: hp(18),
+                      marginLeft: 8,
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </TouchableOpacity>
+                <View
+                  style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
+                  {selectedImage && (
+                    <View
+                      style={{
+                        width: 55,
+                        height: 50,
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        source={{uri: selectedImage}}
+                        style={{
+                          width: hp(40),
+                          height: hp(40),
+                          borderRadius: 5,
+                          marginRight: 5,
+                          marginLeft: 5,
+                        }}
+                      />
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedImage(null);
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: isIOS ? 7 : 8,
+                          right: isIOS ? 8 : 12,
+                        }}>
+                        <Image
+                          source={icons.x_cancel_icon}
+                          style={{
+                            width: wp(10),
+                            height: hp(8),
+                            tintColor: colors.white,
+                            resizeMode: 'contain',
+                          }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  <TextInput
+                    style={{flex: 1, height: 50, color: 'black', padding: 10}}
+                    placeholder="Message"
+                    placeholderTextColor={'black'}
+                    multiline={true}
+                    numberOfLines={4}
+                    value={message || recordingDuration}
+                    editable={!recordingDuration} // Disable editing when recording
+                    onChangeText={text => {
+                      setMessage(text);
+                      handleTyping(text);
+                    }}
+                    onBlur={handleStopTyping}
+                    onFocus={() => handleTyping(message)}
+                  />
+                </View>
+                {recordingDuration ? (
+                  // Display "X" button when recording
+                  <TouchableOpacity
+                    style={{
+                      width: hp(20),
+                      height: hp(20),
+                      // borderWidth: 1,
+                      borderRadius: 50,
+                      marginRight: 15,
+                      backgroundColor: 'red',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => {
+                      setRecordingDuration(null); // Clear recording
+                      setMessage(''); // Clear the TextInput
+                      setSelectedImage(null); // Clear selected image if any
+                      setRecordedAudio(null); // Clear recorded audio if any
+                    }}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                      }}>
+                      X
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  // Show camera icon when not recording
+                  <TouchableOpacity onPress={handleSelectImage}>
+                    <Image
+                      source={icons.simple_camera_icon}
+                      style={{
+                        width: 22.5,
+                        height: 20,
+                        marginLeft: 10,
+                        resizeMode: 'contain',
+                        tintColor: colors.black,
+                        marginRight: 5,
+                      }}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+              <TouchableOpacity
+                onPressIn={handleMicIconPressIn}
+                onPressOut={handleMicIconPressOut}
+                onPress={handleIconPress}
+                style={{
+                  width: 50,
+                  height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={
+                    message.trim() || selectedImage || recordedAudio
+                      ? icons.send_icon
+                      : icons.mic_icon
+                  }
+                  style={{width: hp(26), height: hp(26), resizeMode: 'contain'}}
+                />
+              </TouchableOpacity>
             </View>
           </View>
-        </View>
 
-        <HomeTopSheetComponent
-          isVisible={topModalVisible}
-          onBackdropPress={toggleModal}
-          onBackButtonPress={toggleModal}
-        />
-
-        <FlatList
-          ref={flatListRef}
-          data={messages.filter(msg => !msg.isTemporary)}
-          renderItem={renderItem}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-            paddingHorizontal: wp(17),
-          }}
-          onContentSizeChange={() =>
-            flatListRef.current.scrollToEnd({animated: true})
-          }
-          onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
-        />
-        <Modal
-          visible={isModalVisible}
-          transparent={true}
-          animationType="none"
-          onRequestClose={() => setIsModalVisible(false)}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'black',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image
-              source={{uri: fullScreenImage}}
-              style={{width: '90%', height: '90%', resizeMode: 'contain'}}
-            />
-          </View>
-        </Modal>
-
-        <Modal
-          visible={isVideoModalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => {
-            setIsVideoModalVisible(false);
-            setFullscreenVideoUri(null);
-          }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'black',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            {fullscreenVideoUri && (
-              <Video
-                source={{uri: fullscreenVideoUri}}
-                style={{width: '100%', height: '100%'}}
-                resizeMode="contain"
-                controls={true} // This adds video controls (play, pause, etc.)
-              />
-            )}
-            <TouchableOpacity
-              onPress={() => {
-                setIsVideoModalVisible(false);
-                setFullscreenVideoUri(null);
-              }}
+          <Modal
+            visible={isModalVisible}
+            transparent={true}
+            animationType="none"
+            onRequestClose={() => setIsModalVisible(false)}>
+            <View
               style={{
-                position: 'absolute',
-                top: 40,
-                right: 20,
-                width: 30,
-                height: 30,
+                flex: 1,
+                backgroundColor: 'black',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               <Image
-                source={icons.x_cancel_icon}
-                style={{width: 30, height: 30, tintColor: 'white'}}
-              />
-            </TouchableOpacity>
-          </View>
-        </Modal>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 17,
-            marginBottom: hp(16),
-          }}>
-          <View
-            style={{
-              width: wp(320),
-              flexDirection: 'row',
-              alignItems: 'center',
-              borderColor: '#DDDDDD',
-              borderRadius: 25,
-              borderWidth: 1,
-              paddingHorizontal: 10,
-            }}>
-            <TouchableOpacity>
-              <Image
-                // source={icons.smile_emoji_icon}
-                source={recording ? icons.red_mic_icon : icons.smile_emoji_icon}
-                style={{
-                  width: hp(18),
-                  height: hp(18),
-                  marginLeft: 8,
-                  resizeMode: 'contain',
-                }}
-              />
-            </TouchableOpacity>
-            <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
-              {selectedImage && (
-                <View
-                  style={{
-                    width: 55,
-                    height: 50,
-                    justifyContent: 'center',
-                  }}>
-                  <Image
-                    source={{uri: selectedImage}}
-                    style={{
-                      width: hp(40),
-                      height: hp(40),
-                      borderRadius: 5,
-                      marginRight: 5,
-                      marginLeft: 5,
-                    }}
-                  />
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedImage(null);
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: isIOS ? 7 : 8,
-                      right: isIOS ? 8 : 12,
-                    }}>
-                    <Image
-                      source={icons.x_cancel_icon}
-                      style={{
-                        width: wp(10),
-                        height: hp(8),
-                        tintColor: colors.white,
-                        resizeMode: 'contain',
-                      }}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-              <TextInput
-                style={{flex: 1, height: 50, color: 'black', padding: 10}}
-                placeholder="Message"
-                placeholderTextColor={'black'}
-                multiline={true}
-                numberOfLines={4}
-                value={message || recordingDuration}
-                // onChangeText={text => setMessage(text)}
-                onChangeText={text => {
-                  setMessage(text);
-                  handleTyping(text);
-                }}
-                onBlur={handleStopTyping}
-                onFocus={() => handleTyping(message)}
+                source={{uri: fullScreenImage}}
+                style={{width: '90%', height: '90%', resizeMode: 'contain'}}
               />
             </View>
-            <TouchableOpacity onPress={handleSelectImage}>
-              <Image
-                source={icons.simple_camera_icon}
-                style={{
-                  width: 22.5,
-                  height: 20,
-                  marginLeft: 10,
-                  resizeMode: 'contain',
-                  tintColor: colors.black,
-                  marginRight: 5,
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            onPressIn={handleMicIconPressIn}
-            onPressOut={handleMicIconPressOut}
-            onPress={handleIconPress}
-            style={{
-              width: 50,
-              height: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
+          </Modal>
+
+          <Modal
+            visible={isVideoModalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => {
+              setIsVideoModalVisible(false);
+              setFullscreenVideoUri(null);
             }}>
-            <Image
-              source={
-                message.trim() || selectedImage || recordedAudio
-                  ? icons.send_icon
-                  : icons.mic_icon
-              }
-              style={{width: hp(26), height: hp(26), resizeMode: 'contain'}}
-            />
-          </TouchableOpacity>
-        </View>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'black',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {fullscreenVideoUri && (
+                <Video
+                  source={{uri: fullscreenVideoUri}}
+                  style={{width: '100%', height: '100%'}}
+                  resizeMode="contain"
+                  controls={true} // This adds video controls (play, pause, etc.)
+                />
+              )}
+              <TouchableOpacity
+                onPress={() => {
+                  setIsVideoModalVisible(false);
+                  setFullscreenVideoUri(null);
+                }}
+                style={{
+                  position: 'absolute',
+                  top: 40,
+                  right: 20,
+                  width: 30,
+                  height: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={icons.x_cancel_icon}
+                  style={{width: 30, height: 30, tintColor: 'white'}}
+                />
+              </TouchableOpacity>
+            </View>
+          </Modal>
+
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isEmojiPickerOpen}
+            onRequestClose={() => setEmojiPickerOpen(false)}>
+            <Pressable
+              style={{flex: 1, justifyContent: 'flex-end'}}
+              onPress={() => setEmojiPickerOpen(false)}>
+              <View
+                style={{
+                  height: hp(245),
+                  width: '100%',
+                  backgroundColor: 'silver',
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                }}>
+                <Pressable style={{flex: 1}} onPress={() => {}}>
+                  <EmojiSelector
+                    onEmojiSelected={handleEmojiSelect}
+                    showSearchBar={false}
+                    columns={8}
+                  />
+                </Pressable>
+              </View>
+            </Pressable>
+          </Modal>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </MenuProvider>
   );

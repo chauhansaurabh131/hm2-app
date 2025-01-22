@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -20,7 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../../utils/colors';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {non_friend_Blocked} from '../../../actions/homeActions';
 import Toast from 'react-native-toast-message';
@@ -95,9 +95,19 @@ const MatchesInBlockedScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setData([]);
+      setLoading(true);
+      setPage(1); // Reset page to 1
+      setHasMoreData(true); // Reset to ensure fetching more data on next load
+      fetchData(1); // Fetch the first page of data
+    }, []),
+  );
 
   const loadMoreData = () => {
     if (!isFetchingMore && hasMoreData) {
@@ -408,13 +418,14 @@ const MatchesInBlockedScreen = () => {
   // }
 
   const handlePress = items => {
+    // console.log(' === handlePress__ ===> ', items);
     const matchesUserData = {
       firstName: items?.friend?.name,
       id: items?.friend?._id,
       userData: items,
     };
     navigation.navigate('NewUserDetailsScreen', {matchesUserData});
-    console.log(' === var ===> ', items?.friend?.name);
+    // Alert.alert('Error', 'User Are Blocked.');
   };
 
   const renderBlockedUser = ({item}) => {

@@ -5,6 +5,8 @@ import {style} from './style';
 const UserProfessionalsDetails = (...params) => {
   const UserData = params[0]?.friendList;
 
+  console.log(' === 123 ===> ', UserData);
+
   const MatchesScreenData = params[0];
 
   const capitalizeFirstLetter = string => {

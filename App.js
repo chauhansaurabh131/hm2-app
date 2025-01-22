@@ -670,6 +670,68 @@
 //
 // export default App;
 
+// import React, {useEffect} from 'react';
+// import {SafeAreaProvider} from 'react-native-safe-area-context';
+// import MainNavigator from './src/navigations';
+// import {LogBox, Platform, PermissionsAndroid} from 'react-native';
+// import {Provider} from 'react-redux';
+// import {persistor, store} from './src/reducer/store';
+// import {RequestUserPermission} from './src/service/pushNotification';
+// import {PersistGate} from 'redux-persist/integration/react';
+// import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+//
+// LogBox.ignoreAllLogs();
+//
+// const App = () => {
+//   useEffect(() => {
+//     RequestUserPermission();
+//     requestPermissions();
+//   }, []);
+//
+//   const requestPermissions = async () => {
+//     if (Platform.OS === 'ios') {
+//       const photoPermission = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+//       if (photoPermission !== RESULTS.GRANTED) {
+//         const result = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+//         if (result !== RESULTS.GRANTED) {
+//           console.warn('Photo library access denied');
+//         }
+//       }
+//     } else if (Platform.OS === 'android') {
+//       const photoPermission = await PermissionsAndroid.check(
+//         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+//       );
+//       if (!photoPermission) {
+//         const result = await PermissionsAndroid.request(
+//           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+//           {
+//             title: 'Photo Library Access',
+//             message: 'This app needs access to your photo library',
+//             buttonNeutral: 'Ask Me Later',
+//             buttonNegative: 'Cancel',
+//             buttonPositive: 'OK',
+//           },
+//         );
+//         if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+//           console.warn('Photo library access denied');
+//         }
+//       }
+//     }
+//   };
+//
+//   return (
+//     <SafeAreaProvider>
+//       <Provider store={store}>
+//         <PersistGate loading={null} persistor={persistor}>
+//           <MainNavigator />
+//         </PersistGate>
+//       </Provider>
+//     </SafeAreaProvider>
+//   );
+// };
+//
+// export default App;
+
 import React, {useEffect} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNavigator from './src/navigations';
@@ -689,6 +751,7 @@ const App = () => {
   }, []);
 
   const requestPermissions = async () => {
+    // Request photo library permission
     if (Platform.OS === 'ios') {
       const photoPermission = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
       if (photoPermission !== RESULTS.GRANTED) {
@@ -697,7 +760,17 @@ const App = () => {
           console.warn('Photo library access denied');
         }
       }
+
+      // Request microphone permission
+      const audioPermission = await check(PERMISSIONS.IOS.MICROPHONE);
+      if (audioPermission !== RESULTS.GRANTED) {
+        const result = await request(PERMISSIONS.IOS.MICROPHONE);
+        if (result !== RESULTS.GRANTED) {
+          console.warn('Microphone access denied');
+        }
+      }
     } else if (Platform.OS === 'android') {
+      // Request photo library permission
       const photoPermission = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
       );
@@ -714,6 +787,27 @@ const App = () => {
         );
         if (result !== PermissionsAndroid.RESULTS.GRANTED) {
           console.warn('Photo library access denied');
+        }
+      }
+
+      // Request microphone permission
+      const audioPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      );
+      if (!audioPermission) {
+        const result = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Microphone Access',
+            message:
+              'This app needs access to your microphone for audio recording',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.warn('Microphone access denied');
         }
       }
     }

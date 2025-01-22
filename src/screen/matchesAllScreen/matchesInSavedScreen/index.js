@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -18,7 +18,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
 import LinearGradient from 'react-native-linear-gradient';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -58,6 +58,12 @@ const MatchesInSavedScreen = () => {
   const ReportBottomSheetRef = useRef();
 
   // console.log(' === userId ===> ', user?.user);
+
+  // const status = userDetails?.friendsDetails?.status;
+  //
+  // // console.log(' === onThreeDotPress__ ===> ', status);
+  //
+  // if (status === 'accepted') {
 
   // Function to open the bottom sheet
   const openBottomSheet = () => {
@@ -116,9 +122,19 @@ const MatchesInSavedScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setData([]);
+      setLoading(true);
+      setPage(1); // Reset page to 1
+      setHasMoreData(true); // Reset to ensure fetching more data on next load
+      fetchData(1); // Fetch the first page of data
+    }, []),
+  );
 
   const loadMoreData = () => {
     if (!isFetchingMore && hasMoreData) {

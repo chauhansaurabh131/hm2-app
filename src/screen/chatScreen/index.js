@@ -129,10 +129,14 @@ const ChatScreen = ({navigation}) => {
 
     const handleItemPress = userData => {
       // console.log(' === handleItemPress_chatScreen ===> ', userData);
-
+      //
       navigation.navigate('ChatUserScreen', {
         userData,
       });
+
+      // navigation.navigate('DemoPractiveCodeScreen', {
+      //   userData,
+      // });
     };
 
     return (

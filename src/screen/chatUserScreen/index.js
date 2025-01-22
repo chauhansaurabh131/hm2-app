@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  KeyboardAvoidingView,
   Modal,
+  Pressable,
 } from 'react-native';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
@@ -29,6 +31,8 @@ import ChatThreeDotComponent from '../../components/chatThreeDotComponent';
 import {accepted_Decline_Request} from '../../actions/homeActions';
 import LinearGradient from 'react-native-linear-gradient';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import EmojiSelector from 'react-native-emoji-selector';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -71,8 +75,14 @@ const ChatUserScreen = ({route}) => {
   const [fullscreenVideoUri, setFullscreenVideoUri] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
+  const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const threeDotBottomSheetRef = useRef();
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const {user} = useSelector(state => state.auth);
   const userImage = userData?.userList?.profilePic;
@@ -188,6 +198,7 @@ const ChatUserScreen = ({route}) => {
               RNBlobUtil.wrap(data.data.result.key),
             );
 
+            const imagesMessage = data.data.chatMessage.message;
             const Types = data.data.chatMessage.type;
             console.log(' === Types ===> ', data.data.chatMessage.type);
             const isAudio = data.data.chatMessage.type === 'audio';
@@ -197,7 +208,7 @@ const ChatUserScreen = ({route}) => {
               to: userData?.friendList?._id || userData?.friendList[0]?._id,
               // message: 'image',
               // message: isAudio ? '' : 'image',
-              message: Types,
+              message: imagesMessage,
               fileUrl: imageUrl,
               // type: 'image',
               // type: isAudio ? 'audio' : 'image',
@@ -252,6 +263,10 @@ const ChatUserScreen = ({route}) => {
     }
   }, [accessToken, userData]);
 
+  const handleEmojiSelect = emoji => {
+    setMessage(message + emoji);
+  };
+
   const handleSendMessage = async () => {
     const trimmedMessage = message?.trim();
 
@@ -263,7 +278,8 @@ const ChatUserScreen = ({route}) => {
       const chatContent = {
         from: userData?.userList?._id,
         to: userData?.friendList?._id || userData?.friendList[0]._id,
-        message: mediaType === 'image' ? 'image' : 'video',
+        // message: mediaType === 'image' ? 'image' : 'video',
+        message: trimmedMessage,
         fileName: selectedImage,
         type: mediaType,
       };
@@ -301,25 +317,48 @@ const ChatUserScreen = ({route}) => {
     setRecordingDuration(''); // Clear recording duration
   };
 
+  // const onStartRecord = async () => {
+  //   try {
+  //     const result = await audioRecorderPlayer.startRecorder();
+  //     audioRecorderPlayer.addRecordBackListener(e => {
+  //       setRecordingDuration(formatDuration(e.currentPosition));
+  //       return;
+  //     });
+  //     setRecording(true);
+  //     console.log('Recording started:', result);
+  //
+  //     const timer = setInterval(() => {
+  //       setRecordingDuration(prevDuration =>
+  //         formatDuration(
+  //           parseInt(prevDuration.split(':')[1] || '0', 10) + 1000,
+  //         ),
+  //       );
+  //     }, 1000);
+  //
+  //     setDurationTimer(timer);
+  //   } catch (err) {
+  //     console.log('Error starting recording:', err);
+  //   }
+  // };
+
   const onStartRecord = async () => {
     try {
       const result = await audioRecorderPlayer.startRecorder();
       audioRecorderPlayer.addRecordBackListener(e => {
-        setRecordingDuration(formatDuration(e.currentPosition));
+        const durationInMilliseconds = e.currentPosition;
+        const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
+        const minutes = Math.floor(durationInSeconds / 60);
+        const seconds = durationInSeconds % 60;
+
+        const formattedDuration = `${minutes}:${String(seconds).padStart(
+          2,
+          '0',
+        )}`;
+        setRecordingDuration(formattedDuration); // Update live recording duration
         return;
       });
       setRecording(true);
       console.log('Recording started:', result);
-
-      const timer = setInterval(() => {
-        setRecordingDuration(prevDuration =>
-          formatDuration(
-            parseInt(prevDuration.split(':')[1] || '0', 10) + 1000,
-          ),
-        );
-      }, 1000);
-
-      setDurationTimer(timer);
     } catch (err) {
       console.log('Error starting recording:', err);
     }
@@ -348,7 +387,7 @@ const ChatUserScreen = ({route}) => {
 
   const onStartPlay = async uri => {
     try {
-      setPlayingAudio(uri);
+      setPlayingAudio(uri); // Set the currently playing audio
       const msg = await audioRecorderPlayer.startPlayer(uri);
       console.log(msg);
 
@@ -364,7 +403,7 @@ const ChatUserScreen = ({route}) => {
 
         if (e.currentPosition === e.duration) {
           // Audio playback finished
-          setPlayingAudio(null);
+          onPlaybackComplete(uri);
         }
         return;
       });
@@ -376,18 +415,22 @@ const ChatUserScreen = ({route}) => {
   const onStopPlay = async () => {
     try {
       await audioRecorderPlayer.stopPlayer();
-      setPlayingAudio(null); // Reset playback state
-      setAudioProgress(prevProgress => ({
-        ...prevProgress,
-        [playingAudio]: {
-          ...prevProgress[playingAudio],
-          progress: 0,
-          currentTime: '00:00',
-        },
-      }));
+      onPlaybackComplete(playingAudio); // Handle reset on stop
     } catch (err) {
       console.log('Error stopping playback:', err);
     }
+  };
+
+  const onPlaybackComplete = uri => {
+    setPlayingAudio(null); // Reset playing state
+    setAudioProgress(prevProgress => ({
+      ...prevProgress,
+      [uri]: {
+        ...prevProgress[uri],
+        progress: 0,
+        currentTime: '00:00',
+      },
+    }));
   };
 
   const handleMicIconPressIn = () => {
@@ -558,15 +601,11 @@ const ChatUserScreen = ({route}) => {
             )}
 
             {item.type === 'audio' && item.fileUrl.split('?')[0] && (
-              <View style={{position: 'relative'}}>
+              <View style={{position: 'relative', height: 30}}>
                 <TouchableOpacity
                   style={{
                     width: wp(219),
-                    // height: hp(-15),
                     borderRadius: 10,
-                    // justifyContent: 'center',
-                    // backgroundColor: 'red',
-                    // marginTop: '20%',
                   }}
                   onPress={() => {
                     if (playingAudio === item.fileUrl.split('?')[0]) {
@@ -588,22 +627,37 @@ const ChatUserScreen = ({route}) => {
                         tintColor: 'black',
                         resizeMode: 'contain',
                         marginLeft: 5,
-                        marginTop: '90%',
+                        // marginTop: '50%',
+                        marginTop: 9,
                       }}
                     />
                   </View>
                 </TouchableOpacity>
 
+                {/*  progress={*/}
+                {/*  audioProgress[item.fileUrl]*/}
+                {/*    ? audioProgress[item.fileUrl].progress*/}
+                {/*    : 0*/}
+                {/*}*/}
+
+                {/*  progress={*/}
+                {/*  audioProgress[item.fileUrl.split('?')[0]]*/}
+                {/*    ? audioProgress[item.fileUrl.split('?')[0]].progress*/}
+                {/*    : 0*/}
+                {/*}*/}
+
                 <Progress.Bar
                   progress={
                     audioProgress[item.fileUrl]
                       ? audioProgress[item.fileUrl].progress
+                      : audioProgress[item.fileUrl.split('?')[0]]
+                      ? audioProgress[item.fileUrl.split('?')[0]].progress
                       : 0
                   }
                   width={200}
                   style={{
                     marginLeft: 20,
-                    marginTop: 20,
+                    marginTop: 10,
                     height: 5,
                     backgroundColor: '#E1E1E1',
                     padding: 0.5,
@@ -625,12 +679,14 @@ const ChatUserScreen = ({route}) => {
                       marginBottom: -10,
                       marginTop: 10,
                     }}>
-                    {audioProgress[item.fileUrl]
-                      ? audioProgress[item.fileUrl].currentTime
+                    {audioProgress[item.fileUrl.split('?')[0]]
+                      ? audioProgress[item.fileUrl.split('?')[0]].currentTime
                       : '00:00'}
                   </Text>
 
-                  <Text style={{marginTop: 10}}>{formatTime(item.sendAt)}</Text>
+                  <Text style={{marginTop: 10, color: '#B4B4B4'}}>
+                    {formatTime(item.sendAt)}
+                  </Text>
                 </View>
               </View>
             )}
@@ -683,552 +739,650 @@ const ChatUserScreen = ({route}) => {
       ? 'Online'
       : 'Offline';
 
+  const capitalizeFirstLetter = string => {
+    if (!string) {
+      return '';
+    } // Handle null or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <MenuProvider>
       <SafeAreaView style={style.container}>
-        <View style={style.headerContainer}>
-          <View style={style.headerImageAndIconStyle}>
-            <Image
-              source={images.happyMilanColorLogo}
-              style={style.logoStyle}
-            />
-            <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
-              {userImage ? (
-                <Image source={{uri: userImage}} style={style.profileIcon} />
-              ) : (
+        <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+          <View style={style.headerContainer}>
+            <View style={style.headerImageAndIconStyle}>
+              <Image
+                source={images.happyMilanColorLogo}
+                style={style.logoStyle}
+              />
+              <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
+                {userImage ? (
+                  <Image source={{uri: userImage}} style={style.profileIcon} />
+                ) : (
+                  <Image
+                    source={images.profileDisplayImage}
+                    style={style.profileIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+
+            <View style={style.userDetailsContainer}>
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                style={{
+                  width: hp(24),
+                  height: hp(24),
+                  marginTop: -5,
+                  marginRight: wp(13),
+                }}>
                 <Image
-                  source={images.profileDisplayImage}
-                  style={style.profileIcon}
+                  source={icons.back_arrow_icon}
+                  style={{
+                    width: hp(14),
+                    height: hp(14),
+                    resizeMode: 'contain',
+
+                    top: 4,
+                  }}
+                />
+              </TouchableOpacity>
+
+              {userData && (
+                <Image
+                  source={{
+                    uri:
+                      userData?.friendList?.profilePic ||
+                      userData?.friendList[0]?.profilePic,
+                  }}
+                  style={style.userProfileIcon}
                 />
               )}
-            </TouchableOpacity>
-          </View>
-          <View style={style.userDetailsContainer}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{
-                width: hp(24),
-                height: hp(24),
-                marginTop: -5,
-                marginRight: wp(13),
-              }}>
-              <Image
-                source={icons.back_arrow_icon}
-                style={{
-                  width: hp(14),
-                  height: hp(14),
-                  resizeMode: 'contain',
+              <View style={style.detailsContainer}>
+                <Text style={style.userNameTextStyle}>
+                  {userData
+                    ? `${capitalizeFirstLetter(
+                        userData?.friendList?.firstName ||
+                          userData?.friendList[0]?.firstName ||
+                          '',
+                      )} ${capitalizeFirstLetter(
+                        userData?.friendList?.lastName ||
+                          userData?.friendList[0]?.lastName ||
+                          '',
+                      )}`
+                    : ''}
+                </Text>
 
-                  top: 4,
+                <Text
+                  style={{
+                    fontStyle: 'italic',
+                    color: onlineStatusColor,
+                    fontSize: hp(10),
+                  }}>
+                  {typing ? 'Typing...' : onlineStatusText}
+                </Text>
+                <Text style={{color: 'black'}}>
+                  {userData?.friendList?.isOnline ||
+                    userData?.friendList[0]?.isOnline}
+                </Text>
+              </View>
+              {/*<TouchableOpacity activeOpacity={0.5}>*/}
+              {/*  <Image*/}
+              {/*    source={icons.three_dots_icon}*/}
+              {/*    style={style.threeDotIcon}*/}
+              {/*  />*/}
+              {/*</TouchableOpacity>*/}
+
+              {/*<View>*/}
+              {/*  <ChatThreeDotComponent*/}
+              {/*    onViewProfilePress={() => {*/}
+              {/*      navigation.navigate('UserDetailsScreen', {userData});*/}
+              {/*    }}*/}
+              {/*    onBlockProfilePress={handleBlockProfilePress}*/}
+              {/*  />*/}
+              {/*</View>*/}
+
+              <TouchableOpacity
+                onPress={() => {
+                  threeDotBottomSheetRef.current.open();
                 }}
-              />
-            </TouchableOpacity>
-
-            {userData && (
-              <Image
-                source={{
-                  uri:
-                    userData?.friendList?.profilePic ||
-                    userData?.friendList[0]?.profilePic,
-                }}
-                style={style.userProfileIcon}
-              />
-            )}
-            <View style={style.detailsContainer}>
-              <Text style={style.userNameTextStyle}>
-                {userData
-                  ? `${
-                      userData?.friendList?.firstName ||
-                      userData?.friendList[0]?.firstName
-                    } ${
-                      userData?.friendList?.lastName ||
-                      userData?.friendList[0]?.lastName
-                    }`
-                  : ''}
-              </Text>
-
-              <Text
                 style={{
-                  fontStyle: 'italic',
-                  color: onlineStatusColor,
-                  fontSize: hp(10),
+                  width: hp(30),
+                  height: hp(30),
+                  alignItems: 'center',
                 }}>
-                {typing ? 'Typing...' : onlineStatusText}
-              </Text>
-              <Text style={{color: 'black'}}>
-                {userData?.friendList?.isOnline ||
-                  userData?.friendList[0]?.isOnline}
-              </Text>
+                <Image
+                  source={icons.three_dots_icon}
+                  style={{width: hp(15), height: hp(25)}}
+                />
+              </TouchableOpacity>
             </View>
-            {/*<TouchableOpacity activeOpacity={0.5}>*/}
-            {/*  <Image*/}
-            {/*    source={icons.three_dots_icon}*/}
-            {/*    style={style.threeDotIcon}*/}
-            {/*  />*/}
-            {/*</TouchableOpacity>*/}
-
-            {/*<View>*/}
-            {/*  <ChatThreeDotComponent*/}
-            {/*    onViewProfilePress={() => {*/}
-            {/*      navigation.navigate('UserDetailsScreen', {userData});*/}
-            {/*    }}*/}
-            {/*    onBlockProfilePress={handleBlockProfilePress}*/}
-            {/*  />*/}
-            {/*</View>*/}
-
-            <TouchableOpacity
-              onPress={() => {
-                threeDotBottomSheetRef.current.open();
-              }}
-              style={{
-                width: hp(30),
-                height: hp(30),
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.three_dots_icon}
-                style={{width: hp(15), height: hp(25)}}
-              />
-            </TouchableOpacity>
           </View>
-        </View>
 
-        <RBSheet
-          ref={threeDotBottomSheetRef}
-          closeOnDragDown={true} // Allows drag to close
-          closeOnPressMask={true} // Allows closing when clicking outside the sheet
-          height={hp(170)} // Adjust height of Bottom Sheet
-          customStyles={{
-            container: {
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            },
-          }}>
-          <View
-            style={{
-              flex: 1,
-              marginHorizontal: 17,
-              marginTop: 10,
-            }}>
-            <TouchableOpacity
-              // onPress={() => {
-              //   threeDotBottomSheetRef.current.close();
-              //   navigation.navigate('NewUserDetailsScreen', {
-              //     matchesUserData: userData?.friendList?._id,
-              //   });
-              // }}
-
-              onPress={() => {
-                onViewProfilePress();
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: hp(30),
-                  height: hp(30),
-                  justifyContent: 'center',
-                }}>
-                <Image
-                  source={icons.view_profile_icon}
-                  style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
-                />
-              </View>
-              <Text
-                style={{
-                  color: colors.black,
-                  marginLeft: wp(5),
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                  textAlign: 'center',
-                }}>
-                View Profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                threeDotBottomSheetRef.current.close();
-                handleBlockProfilePress();
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(10),
-              }}>
-              <View
-                style={{
-                  width: hp(30),
-                  height: hp(30),
-                  justifyContent: 'center',
-                }}>
-                <Image
-                  source={icons.block_icon}
-                  style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
-                />
-              </View>
-              <Text
-                style={{
-                  color: colors.black,
-                  marginLeft: wp(5),
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Block
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(10),
-              }}>
-              <View
-                style={{
-                  width: hp(30),
-                  height: hp(30),
-                  justifyContent: 'center',
-                }}>
-                <Image
-                  source={icons.report_icon}
-                  style={{width: hp(16), height: hp(16), resizeMode: 'contain'}}
-                />
-              </View>
-              <Text
-                style={{
-                  color: colors.black,
-                  marginLeft: wp(5),
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Report
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </RBSheet>
-
-        {/* Modal for Block Confirmation */}
-        <Modal
-          visible={isBlockModalVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setIsBlockModalVisible(false)}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          <RBSheet
+            ref={threeDotBottomSheetRef}
+            closeOnDragDown={true} // Allows drag to close
+            closeOnPressMask={true} // Allows closing when clicking outside the sheet
+            height={hp(130)} // Adjust height of Bottom Sheet
+            customStyles={{
+              container: {
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+              },
             }}>
             <View
               style={{
-                width: wp(350),
-                padding: 20,
-                backgroundColor: 'white',
-                borderRadius: 10,
-                alignItems: 'center',
+                flex: 1,
+                marginHorizontal: 17,
+                marginTop: 10,
               }}>
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  color: 'black',
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  marginTop: 20,
-                }}>
-                Are you sure you want to
-              </Text>
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  color: 'black',
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Block This User?
-              </Text>
+              <TouchableOpacity
+                // onPress={() => {
+                //   threeDotBottomSheetRef.current.close();
+                //   navigation.navigate('NewUserDetailsScreen', {
+                //     matchesUserData: userData?.friendList?._id,
+                //   });
+                // }}
 
-              <View
+                onPress={() => {
+                  onViewProfilePress();
+                }}
                 style={{
                   flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: hp(30),
+                  alignItems: 'center',
                 }}>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={handleConfirmBlock}>
-                  <LinearGradient
-                    colors={['#2D46B9', '#8D1D8D']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
+                <View
+                  style={{
+                    width: hp(30),
+                    height: hp(30),
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.view_profile_icon}
                     style={{
-                      width: hp(122),
-                      height: hp(50),
-                      borderRadius: 50,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: 20,
-                    }}>
-                    <Text
-                      style={{
-                        color: colors.white,
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Yes
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
+                      width: hp(16),
+                      height: hp(16),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </View>
+                <Text
+                  style={{
+                    color: colors.black,
+                    marginLeft: wp(5),
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                    textAlign: 'center',
+                  }}>
+                  View Profile
+                </Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={handleCancelBlock}>
-                  <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
+              <TouchableOpacity
+                onPress={() => {
+                  threeDotBottomSheetRef.current.close();
+                  handleBlockProfilePress();
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: hp(10),
+                }}>
+                <View
+                  style={{
+                    width: hp(30),
+                    height: hp(30),
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.block_icon}
                     style={{
-                      width: wp(122),
-                      height: hp(50),
-                      borderRadius: 50,
-                      borderWidth: 1,
-                      justifyContent: 'center',
-                      borderColor: 'transparent', // Set border color to transparent
-                    }}>
-                    <View
+                      width: hp(16),
+                      height: hp(16),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </View>
+                <Text
+                  style={{
+                    color: colors.black,
+                    marginLeft: wp(5),
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Block
+                </Text>
+              </TouchableOpacity>
+
+              {/*<TouchableOpacity*/}
+              {/*  style={{*/}
+              {/*    flexDirection: 'row',*/}
+              {/*    alignItems: 'center',*/}
+              {/*    marginTop: hp(10),*/}
+              {/*  }}>*/}
+              {/*  <View*/}
+              {/*    style={{*/}
+              {/*      width: hp(30),*/}
+              {/*      height: hp(30),*/}
+              {/*      justifyContent: 'center',*/}
+              {/*    }}>*/}
+              {/*    <Image*/}
+              {/*      source={icons.report_icon}*/}
+              {/*      style={{*/}
+              {/*        width: hp(16),*/}
+              {/*        height: hp(16),*/}
+              {/*        resizeMode: 'contain',*/}
+              {/*      }}*/}
+              {/*    />*/}
+              {/*  </View>*/}
+              {/*  <Text*/}
+              {/*    style={{*/}
+              {/*      color: colors.black,*/}
+              {/*      marginLeft: wp(5),*/}
+              {/*      fontSize: fontSize(14),*/}
+              {/*      lineHeight: hp(21),*/}
+              {/*      fontFamily: fontFamily.poppins400,*/}
+              {/*    }}>*/}
+              {/*    Report*/}
+              {/*  </Text>*/}
+              {/*</TouchableOpacity>*/}
+            </View>
+          </RBSheet>
+
+          {/* Modal for Block Confirmation */}
+          <Modal
+            visible={isBlockModalVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setIsBlockModalVisible(false)}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              }}>
+              <View
+                style={{
+                  width: wp(350),
+                  padding: 20,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    color: 'black',
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    marginTop: 20,
+                  }}>
+                  Are you sure you want to
+                </Text>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    color: 'black',
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Block This User?
+                </Text>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: hp(30),
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={handleConfirmBlock}>
+                    <LinearGradient
+                      colors={['#2D46B9', '#8D1D8D']}
+                      start={{x: 0, y: 0}}
+                      end={{x: 1, y: 1}}
                       style={{
-                        borderRadius: 50, // <-- Inner Border Radius
-                        flex: 1,
-                        backgroundColor: colors.white,
+                        width: hp(122),
+                        height: hp(50),
+                        borderRadius: 50,
+                        alignItems: 'center',
                         justifyContent: 'center',
-                        margin: isIOS ? 0 : 1,
+                        marginRight: 20,
                       }}>
                       <Text
                         style={{
-                          textAlign: 'center',
-                          backgroundColor: 'transparent',
-                          color: colors.black,
-                          margin: 10,
+                          color: colors.white,
                           fontSize: fontSize(16),
                           lineHeight: hp(24),
                           fontFamily: fontFamily.poppins400,
                         }}>
-                        No
+                        Yes
                       </Text>
-                    </View>
-                  </LinearGradient>
-                </TouchableOpacity>
+                    </LinearGradient>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={handleCancelBlock}>
+                    <LinearGradient
+                      colors={['#0D4EB3', '#9413D0']}
+                      style={{
+                        width: wp(122),
+                        height: hp(50),
+                        borderRadius: 50,
+                        borderWidth: 1,
+                        justifyContent: 'center',
+                        borderColor: 'transparent', // Set border color to transparent
+                      }}>
+                      <View
+                        style={{
+                          borderRadius: 50, // <-- Inner Border Radius
+                          flex: 1,
+                          backgroundColor: colors.white,
+                          justifyContent: 'center',
+                          margin: isIOS ? 0 : 1,
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            backgroundColor: 'transparent',
+                            color: colors.black,
+                            margin: 10,
+                            fontSize: fontSize(16),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          No
+                        </Text>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
 
-        <HomeTopSheetComponent
-          isVisible={topModalVisible}
-          onBackdropPress={toggleModal}
-          onBackButtonPress={toggleModal}
-        />
+          <HomeTopSheetComponent
+            isVisible={topModalVisible}
+            onBackdropPress={toggleModal}
+            onBackButtonPress={toggleModal}
+          />
 
-        <FlatList
-          ref={flatListRef}
-          data={messages.filter(msg => !msg.isTemporary)}
-          renderItem={renderItem}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-            paddingHorizontal: wp(17),
-          }}
-          onContentSizeChange={() =>
-            flatListRef.current.scrollToEnd({animated: true})
-          }
-          onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
-        />
-        <Modal
-          visible={isModalVisible}
-          transparent={true}
-          animationType="none"
-          onRequestClose={() => setIsModalVisible(false)}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'black',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image
-              source={{uri: fullScreenImage}}
-              style={{width: '90%', height: '90%', resizeMode: 'contain'}}
-            />
-          </View>
-        </Modal>
-
-        <Modal
-          visible={isVideoModalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => {
-            setIsVideoModalVisible(false);
-            setFullscreenVideoUri(null);
-          }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'black',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            {fullscreenVideoUri && (
-              <Video
-                source={{uri: fullscreenVideoUri}}
-                style={{width: '100%', height: '100%'}}
-                resizeMode="contain"
-                controls={true} // This adds video controls (play, pause, etc.)
-              />
-            )}
-            <TouchableOpacity
-              onPress={() => {
-                setIsVideoModalVisible(false);
-                setFullscreenVideoUri(null);
-              }}
+          <FlatList
+            ref={flatListRef}
+            data={messages.filter(msg => !msg.isTemporary)}
+            renderItem={renderItem}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'flex-end',
+              paddingHorizontal: wp(17),
+            }}
+            onContentSizeChange={() =>
+              flatListRef.current.scrollToEnd({animated: true})
+            }
+            onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
+          />
+          <Modal
+            visible={isModalVisible}
+            transparent={true}
+            animationType="none"
+            onRequestClose={() => setIsModalVisible(false)}>
+            <View
               style={{
-                position: 'absolute',
-                top: 40,
-                right: 20,
-                width: 30,
-                height: 30,
+                flex: 1,
+                backgroundColor: 'black',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               <Image
-                source={icons.x_cancel_icon}
-                style={{width: 30, height: 30, tintColor: 'white'}}
+                source={{uri: fullScreenImage}}
+                style={{width: '90%', height: '90%', resizeMode: 'contain'}}
               />
-            </TouchableOpacity>
-          </View>
-        </Modal>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 17,
-            marginBottom: hp(16),
-          }}>
-          <View
-            style={{
-              width: wp(320),
-              flexDirection: 'row',
-              alignItems: 'center',
-              borderColor: '#DDDDDD',
-              borderRadius: 25,
-              borderWidth: 1,
-              paddingHorizontal: 10,
+            </View>
+          </Modal>
+
+          <Modal
+            visible={isVideoModalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => {
+              setIsVideoModalVisible(false);
+              setFullscreenVideoUri(null);
             }}>
-            <TouchableOpacity>
-              <Image
-                // source={icons.smile_emoji_icon}
-                source={recording ? icons.red_mic_icon : icons.smile_emoji_icon}
-                style={{
-                  width: hp(18),
-                  height: hp(18),
-                  marginLeft: 8,
-                  resizeMode: 'contain',
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'black',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {fullscreenVideoUri && (
+                <Video
+                  source={{uri: fullscreenVideoUri}}
+                  style={{width: '100%', height: '100%'}}
+                  resizeMode="contain"
+                  controls={true} // This adds video controls (play, pause, etc.)
+                />
+              )}
+              <TouchableOpacity
+                onPress={() => {
+                  setIsVideoModalVisible(false);
+                  setFullscreenVideoUri(null);
                 }}
-              />
-            </TouchableOpacity>
-            <View style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
-              {selectedImage && (
-                <View
-                  style={{
-                    width: 55,
-                    height: 50,
-                    justifyContent: 'center',
+                style={{
+                  position: 'absolute',
+                  top: 40,
+                  right: 20,
+                  width: 30,
+                  height: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={icons.x_cancel_icon}
+                  style={{width: 30, height: 30, tintColor: 'white'}}
+                />
+              </TouchableOpacity>
+            </View>
+          </Modal>
+
+          <View style={{height: isEmojiPickerOpen ? '40%' : 'auto'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: 17,
+                marginBottom: hp(16),
+              }}>
+              <View
+                style={{
+                  width: wp(320),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  borderColor: '#DDDDDD',
+                  borderRadius: 25,
+                  borderWidth: 1,
+                  paddingHorizontal: 10,
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!recordingDuration) {
+                      // console.log('Clicked smile_emoji_icon');
+                      // Add any additional actions here if needed
+                      setEmojiPickerOpen(true);
+                    }
                   }}>
                   <Image
-                    source={{uri: selectedImage}}
+                    source={
+                      recordingDuration
+                        ? icons.red_mic_icon
+                        : icons.smile_emoji_icon
+                    }
                     style={{
-                      width: hp(40),
-                      height: hp(40),
-                      borderRadius: 5,
-                      marginRight: 5,
-                      marginLeft: 5,
+                      width: hp(18),
+                      height: hp(18),
+                      marginLeft: 8,
+                      resizeMode: 'contain',
                     }}
                   />
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedImage(null);
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: isIOS ? 7 : 8,
-                      right: isIOS ? 8 : 12,
-                    }}>
-                    <Image
-                      source={icons.x_cancel_icon}
+                </TouchableOpacity>
+                <View
+                  style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
+                  {selectedImage && (
+                    <View
                       style={{
-                        width: wp(10),
-                        height: hp(8),
-                        tintColor: colors.white,
+                        width: 55,
+                        height: 50,
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        source={{uri: selectedImage}}
+                        style={{
+                          width: hp(40),
+                          height: hp(40),
+                          borderRadius: 5,
+                          marginRight: 5,
+                          marginLeft: 5,
+                        }}
+                      />
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedImage(null);
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: isIOS ? 7 : 8,
+                          right: isIOS ? 8 : 12,
+                        }}>
+                        <Image
+                          source={icons.x_cancel_icon}
+                          style={{
+                            width: wp(10),
+                            height: hp(8),
+                            tintColor: colors.white,
+                            resizeMode: 'contain',
+                          }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  <TextInput
+                    style={{flex: 1, height: 50, color: 'black', padding: 10}}
+                    placeholder="Message"
+                    placeholderTextColor={'black'}
+                    multiline={true}
+                    numberOfLines={4}
+                    value={message || recordingDuration}
+                    editable={!recordingDuration} // Disable editing when recording
+                    onChangeText={text => {
+                      setMessage(text);
+                      handleTyping(text);
+                    }}
+                    onBlur={handleStopTyping}
+                    onFocus={() => handleTyping(message)}
+                  />
+                </View>
+                {recordingDuration ? (
+                  // Display "X" button when recording
+                  <TouchableOpacity
+                    style={{
+                      width: hp(20),
+                      height: hp(20),
+                      // borderWidth: 1,
+                      borderRadius: 50,
+                      marginRight: 15,
+                      backgroundColor: 'red',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => {
+                      setRecordingDuration(null); // Clear recording
+                      setMessage(''); // Clear the TextInput
+                      setSelectedImage(null); // Clear selected image if any
+                      setRecordedAudio(null); // Clear recorded audio if any
+                    }}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 12,
+                        fontWeight: 'bold',
+                      }}>
+                      X
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  // Show camera icon when not recording
+                  <TouchableOpacity onPress={handleSelectImage}>
+                    <Image
+                      source={icons.simple_camera_icon}
+                      style={{
+                        width: 22.5,
+                        height: 20,
+                        marginLeft: 10,
                         resizeMode: 'contain',
+                        tintColor: colors.black,
+                        marginRight: 5,
                       }}
                     />
                   </TouchableOpacity>
-                </View>
-              )}
-              <TextInput
-                style={{flex: 1, height: 50, color: 'black', padding: 10}}
-                placeholder="Message"
-                placeholderTextColor={'black'}
-                multiline={true}
-                numberOfLines={4}
-                value={message || recordingDuration}
-                // onChangeText={text => setMessage(text)}
-                onChangeText={text => {
-                  setMessage(text);
-                  handleTyping(text);
-                }}
-                onBlur={handleStopTyping}
-                onFocus={() => handleTyping(message)}
-              />
-            </View>
-            <TouchableOpacity onPress={handleSelectImage}>
-              <Image
-                source={icons.simple_camera_icon}
+                )}
+              </View>
+              <TouchableOpacity
+                onPressIn={handleMicIconPressIn}
+                onPressOut={handleMicIconPressOut}
+                onPress={handleIconPress}
                 style={{
-                  width: 22.5,
-                  height: 20,
-                  marginLeft: 10,
-                  resizeMode: 'contain',
-                  tintColor: colors.black,
-                  marginRight: 5,
-                }}
-              />
-            </TouchableOpacity>
+                  width: 50,
+                  height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={
+                    message.trim() || selectedImage || recordedAudio
+                      ? icons.send_icon
+                      : icons.mic_icon
+                  }
+                  style={{width: hp(26), height: hp(26), resizeMode: 'contain'}}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity
-            onPressIn={handleMicIconPressIn}
-            onPressOut={handleMicIconPressOut}
-            onPress={handleIconPress}
-            style={{
-              width: 50,
-              height: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image
-              source={
-                message.trim() || selectedImage || recordedAudio
-                  ? icons.send_icon
-                  : icons.mic_icon
-              }
-              style={{width: hp(26), height: hp(26), resizeMode: 'contain'}}
-            />
-          </TouchableOpacity>
-        </View>
+
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isEmojiPickerOpen}
+            onRequestClose={() => setEmojiPickerOpen(false)}>
+            <Pressable
+              style={{flex: 1, justifyContent: 'flex-end'}}
+              onPress={() => setEmojiPickerOpen(false)}>
+              <View
+                style={{
+                  height: hp(245),
+                  width: '100%',
+                  backgroundColor: 'silver',
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                }}>
+                <Pressable style={{flex: 1}} onPress={() => {}}>
+                  <EmojiSelector
+                    onEmojiSelected={handleEmojiSelect}
+                    showSearchBar={false}
+                    columns={8}
+                  />
+                </Pressable>
+              </View>
+            </Pressable>
+          </Modal>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </MenuProvider>
   );

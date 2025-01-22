@@ -11,20 +11,66 @@ const formatList = list => {
 
 const UserPartnerPreferenceScreen = (...params) => {
   const UserData = params[0]?.friendList;
+  const userData = params[0];
+
+  console.log(' === 123 ===> ', userData?.userPartner);
 
   const MatchesScreenData = params[0];
 
-  const minAge = MatchesScreenData?.userPartnerDetails?.age?.min || [];
-  const maxAge = MatchesScreenData?.userPartnerDetails?.age?.max || [];
-  const minHeight = MatchesScreenData?.userPartnerDetails?.height?.min || [];
-  const maxHeight = MatchesScreenData?.userPartnerDetails?.height?.max || [];
-  const city = MatchesScreenData?.userPartnerDetails?.city || [];
-  const states = MatchesScreenData?.userPartnerDetails?.state || [];
-  const country = MatchesScreenData?.userPartnerDetails?.country || [];
-  const minIncome = MatchesScreenData?.userPartnerDetails?.income?.min || [];
-  const maxIncome = MatchesScreenData?.userPartnerDetails?.income?.max || [];
-  const diet = MatchesScreenData?.userPartnerDetails?.diet || [];
-  const hobbies = MatchesScreenData?.userPartnerDetails?.hobbies || [];
+  const minAge =
+    MatchesScreenData?.userPartnerDetails?.age?.min ||
+    userData?.userPartner?.age?.min ||
+    [];
+
+  const maxAge =
+    MatchesScreenData?.userPartnerDetails?.age?.max ||
+    userData?.userPartner?.age?.max ||
+    [];
+
+  const minHeight =
+    MatchesScreenData?.userPartnerDetails?.height?.min ||
+    userData?.userPartner?.height?.min ||
+    [];
+
+  const maxHeight =
+    MatchesScreenData?.userPartnerDetails?.height?.max ||
+    userData?.userPartner?.height?.max ||
+    [];
+
+  const city =
+    MatchesScreenData?.userPartnerDetails?.city ||
+    userData?.userPartner?.city ||
+    [];
+
+  const states =
+    MatchesScreenData?.userPartnerDetails?.state ||
+    userData?.userPartner?.state ||
+    [];
+
+  const country =
+    MatchesScreenData?.userPartnerDetails?.country ||
+    userData?.userPartner?.country ||
+    [];
+
+  const minIncome =
+    MatchesScreenData?.userPartnerDetails?.income?.min ||
+    userData?.userPartner?.income?.min ||
+    [];
+
+  const maxIncome =
+    MatchesScreenData?.userPartnerDetails?.income?.max ||
+    userData?.userPartner?.income?.max ||
+    [];
+
+  const diet =
+    MatchesScreenData?.userPartnerDetails?.diet ||
+    userData?.userPartner?.diet ||
+    [];
+
+  const hobbies =
+    MatchesScreenData?.userPartnerDetails?.hobbies ||
+    userData?.userPartner?.hobbies ||
+    [];
 
   const formattedStates = formatList(states);
   const formattedCity = formatList(city);
