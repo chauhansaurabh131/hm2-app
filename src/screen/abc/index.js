@@ -31,6 +31,10 @@ const Abc = () => {
           },
         }}>
         <Text>This is the content of the Bottom Sheet</Text>
+        <Text>
+          this is my demo for proper project working or not that why i commit a
+          code and run to my real project
+        </Text>
       </RBSheet>
     </SafeAreaView>
   );
