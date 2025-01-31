@@ -5,7 +5,7 @@ import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import CheckBoxComponent from '../../components/checkBoxComponent ';
+import CheckBoxComponent from '../../components/checkBoxComponent';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import ProfileCheckboxGroup from '../../components/profileCheckBox';
