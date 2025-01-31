@@ -8,7 +8,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 // import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent';
 import {hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent ';
+import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent';
 
 const UserProfileUploadImageFullScreen = () => {
   const navigation = useNavigation();

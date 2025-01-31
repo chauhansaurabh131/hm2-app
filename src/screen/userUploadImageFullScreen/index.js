@@ -5,7 +5,7 @@ import {icons, images} from '../../assets';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent ';
+import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent';
 
 const UserUploadImageFullScreen = () => {
   const route = useRoute();
