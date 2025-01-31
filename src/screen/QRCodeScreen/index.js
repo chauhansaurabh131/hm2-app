@@ -222,7 +222,7 @@ const QRCodeScreen = () => {
   const triggerLogin = async (channel, token) => {
     try {
       const response = await fetch(
-        'https://happymilan.tech/api/v1/user/auth/trigger-login',
+        'https://stag.mntech.website/api/v1/user/auth/trigger-login',
         {
           method: 'POST',
           headers: {

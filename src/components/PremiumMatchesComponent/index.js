@@ -237,7 +237,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    // console.log(' === var ===> ', item?.friendsDetails);
+    console.log(' === renderItem ===> ', item?.defaultFields);
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
@@ -249,14 +249,14 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
         item.lastName.slice(1).toLowerCase()
       : '';
 
-    const currentCity = item.address?.currentCity
-      ? item.address.currentCity.charAt(0).toUpperCase() +
-        item.address.currentCity.slice(1).toLowerCase()
+    const currentCity = item?.defaultFields?.address?.currentCity
+      ? item?.defaultFields?.address.currentCity.charAt(0).toUpperCase() +
+        item?.defaultFields?.address.currentCity.slice(1).toLowerCase()
       : '';
 
-    const currentCountry = item.address?.currentCountry
-      ? item.address.currentCountry.charAt(0).toUpperCase() +
-        item.address.currentCountry.slice(1).toLowerCase()
+    const currentCountry = item?.defaultFields?.address?.currentCountry
+      ? item?.defaultFields?.address.currentCountry.charAt(0).toUpperCase() +
+        item?.defaultFields?.address.currentCountry.slice(1).toLowerCase()
       : '';
 
     const userAllImage = Array.isArray(item?.userProfilePic)
@@ -290,52 +290,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
     };
 
     const age = calculateAge(item.dateOfBirth);
-
-    // const handlePress = () => {
-    //   console.log(' === item........... ===> ', item);
-    //   const matchesUserData = {
-    //     userAllImage,
-    //     profileImage,
-    //     birthTime,
-    //     currentCity,
-    //     JobTittle,
-    //     currentCountry,
-    //     age,
-    //     gender: item?.gender,
-    //     height: item?.height,
-    //     cast: item?.cast,
-    //     firstName: item?.firstName,
-    //     lastName: item?.lastName,
-    //     motherTongue: item?.motherTongue,
-    //     about: item?.writeBoutYourSelf,
-    //     religion: item?.religion,
-    //     dateOfBirth: item?.dateOfBirth,
-    //     currentResidenceAddress: item?.address?.currentResidenceAddress,
-    //     originResidenceAddress: item?.address?.originResidenceAddress,
-    //     originCountry: item?.address?.originCountry,
-    //     originCity: item?.address?.originCity,
-    //     mobileNumber: item?.mobileNumber,
-    //     homeMobileNumber: item?.homeMobileNumber,
-    //     email: item?.email,
-    //     degree: item?.userEducation?.degree,
-    //     collage: item?.userEducation?.collage,
-    //     educationCity: item?.userEducation?.city,
-    //     educationState: item?.userEducation?.state,
-    //     educationCountry: item?.userEducation?.country,
-    //     Designation: item?.userProfessional?.jobTitle,
-    //     companyName: item?.userProfessional?.companyName,
-    //     jobType: item?.userProfessional?.jobType,
-    //     currentSalary: item?.userProfessional?.currentSalary,
-    //     workCity: item?.userProfessional?.workCity,
-    //     workCountry: item?.userProfessional?.workCountry,
-    //     hobbies: item?.hobbies,
-    //     matchPercentage: item?.matchPercentage,
-    //     userLikeDetails: item?.userLikeDetails,
-    //   };
-    //
-    //   // Navigate to UserDetailsScreen
-    //   navigation.navigate('UserDetailsScreen', {matchesUserData});
-    // };
 
     const handlePress = items => {
       const matchesUserData = {
@@ -413,8 +367,13 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             </Text>
 
             <View style={{flexDirection: 'row'}}>
-              <Text style={styles.nameDetailTextStyle}>{item?.age} yrs,</Text>
-              <Text style={styles.nameDetailTextStyle}> {item?.height}</Text>
+              <Text style={styles.nameDetailTextStyle}>
+                {item?.defaultFields?.age} yrs,
+              </Text>
+              <Text style={styles.nameDetailTextStyle}>
+                {' '}
+                {item?.defaultFields?.height}
+              </Text>
             </View>
 
             <Text style={styles.nameDetailTextStyle}>

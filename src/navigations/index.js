@@ -77,6 +77,15 @@ import VerifyIdentityScreen from '../screen/verifyIdentityScreen';
 import SearchFilterScreen from '../screen/searchFilterScreen';
 import SearchUserDataScreen from '../screen/searchUserDataScreen';
 import NewUserDetailsScreen from '../screen/newUserDetailsScreen';
+import RemainingDataUiScreen from '../screen/editRemainingFillUpData/remainingDataUiScreen';
+import GeneralInformationDetailsScreen from '../screen/generalInformationDetailsScreen';
+import EditGeneralScreen from '../screen/editRemainingFillUpData/editGeneralScreen';
+import EditLocationScreen from '../screen/editRemainingFillUpData/editLocationScreen';
+import EditContactScreen from '../screen/editRemainingFillUpData/editContactScreen';
+import EditEducationScreen from '../screen/editRemainingFillUpData/editEducationScreen';
+import EditProfessionalScreen from '../screen/editRemainingFillUpData/editProfessionalScreen';
+import EditHobbiesScreen from '../screen/editRemainingFillUpData/editHobbiesScreen';
+import EditPartnerPreferencesScreen from '../screen/editRemainingFillUpData/editPartnerPreferencesScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -462,6 +471,46 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'NewUserDetailsScreen'}
           component={NewUserDetailsScreen}
+        />
+
+        <Stack.Screen
+          name={'RemainingDataUiScreen'}
+          component={RemainingDataUiScreen}
+        />
+
+        <Stack.Screen
+          name={'EditGeneralScreen'}
+          component={EditGeneralScreen}
+        />
+
+        <Stack.Screen
+          name={'EditLocationScreen'}
+          component={EditLocationScreen}
+        />
+
+        <Stack.Screen
+          name={'EditContactScreen'}
+          component={EditContactScreen}
+        />
+
+        <Stack.Screen
+          name={'EditEducationScreen'}
+          component={EditEducationScreen}
+        />
+
+        <Stack.Screen
+          name={'EditProfessionalScreen'}
+          component={EditProfessionalScreen}
+        />
+
+        <Stack.Screen
+          name={'EditHobbiesScreen'}
+          component={EditHobbiesScreen}
+        />
+
+        <Stack.Screen
+          name={'EditPartnerPreferencesScreen'}
+          component={EditPartnerPreferencesScreen}
         />
       </Stack.Navigator>
     );

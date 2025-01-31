@@ -32,6 +32,7 @@ import NewAddStoryScreen from '../newAddStoryScreen';
 import {RequestUserPermission} from '../../service/pushNotification';
 import NewPremiumMatchesComponent from '../../components/newPremiumMatchesComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import RemainingDataUiScreen from '../editRemainingFillUpData/remainingDataUiScreen';
 
 const HomeScreen = ({route}) => {
   const [showMeAllStories, setShowMeAllStories] = useState(false);
@@ -685,6 +686,29 @@ const HomeScreen = ({route}) => {
         </TouchableHighlight>
 
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
+
+        <View style={{marginHorizontal: 17, marginTop: hp(22)}}>
+          <Text
+            style={{
+              color: colors.black,
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins500,
+            }}>
+            Add Details for Better Matches
+          </Text>
+
+          <RemainingDataUiScreen />
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 4,
+            backgroundColor: '#F8F8F8',
+            marginTop: hp(25),
+          }}
+        />
 
         <View style={{marginHorizontal: 17}}>
           <View style={[style.premiumTextContainer, {marginTop: 28}]}>
