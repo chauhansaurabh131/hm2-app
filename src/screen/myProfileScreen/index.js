@@ -24,22 +24,23 @@ import {colors} from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const MyProfileScreen = () => {
+  const {user} = useSelector(state => state.auth);
+  const userData = user.user;
+
+  // console.log(' === userData.... ===> ', userData?.writeBoutYourSelf);
+
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageRotation, setImageRotation] = useState('90deg');
   const [isEditing, setIsEditing] = useState(false);
-  const [description, setDescription] = useState(
-    "I'd describe myself as someone who's reliable, trendy, smart and someone who always has a smile on the face. I am a big Nature & Animal lover. I have lived in different parts of India and appreciate all cultures & customs.... I'd describe myself as someone who's reliable, trendy, smart and someone who always has a smile on the face. I am a big Nature & Animal lover. I have lived in different parts of India and appreciate all cultures & customs.",
-  );
+  const [description, setDescription] = useState('Write about yourself...');
+  const displayText = userData?.writeBoutYourSelf || description;
   const [editedDescription, setEditedDescription] = useState(description);
 
   const bottomSheetRef = useRef(null);
 
   const navigation = useNavigation();
   const topModalBottomSheetRef = useRef(null);
-
-  const {user} = useSelector(state => state.auth);
-  const userData = user.user;
 
   // const imageUrls = userData?.userProfilePic.map(pic => pic.url);
 
@@ -126,9 +127,9 @@ const MyProfileScreen = () => {
     setImageRotation(showFullDescription ? '90deg' : '-90deg');
   };
 
-  const handleEditDescription = () => {
+  const handleEditDescription = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
 
   const handleSaveDescription = () => {
     setDescription(editedDescription);
@@ -415,7 +416,7 @@ const MyProfileScreen = () => {
             <Text
               numberOfLines={showFullDescription ? undefined : 4}
               style={style.descriptionBodyText}>
-              {description}
+              {displayText}
             </Text>
           )}
 

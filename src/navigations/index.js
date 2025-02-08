@@ -86,6 +86,7 @@ import EditEducationScreen from '../screen/editRemainingFillUpData/editEducation
 import EditProfessionalScreen from '../screen/editRemainingFillUpData/editProfessionalScreen';
 import EditHobbiesScreen from '../screen/editRemainingFillUpData/editHobbiesScreen';
 import EditPartnerPreferencesScreen from '../screen/editRemainingFillUpData/editPartnerPreferencesScreen';
+import ChangeNameRequestScreen from '../screen/changeNameRequestScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -359,7 +360,7 @@ const MainNavigator = () => {
     return (
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName={'Abc'}>
+        initialRouteName={'HomeTabs'}>
         <Stack.Screen
           name="AddSetStoryImageComponent"
           component={AddSetStoryImageComponent}
@@ -511,6 +512,11 @@ const MainNavigator = () => {
         <Stack.Screen
           name={'EditPartnerPreferencesScreen'}
           component={EditPartnerPreferencesScreen}
+        />
+
+        <Stack.Screen
+          name={'ChangeNameRequestScreen'}
+          component={ChangeNameRequestScreen}
         />
       </Stack.Navigator>
     );

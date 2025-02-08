@@ -109,7 +109,7 @@ const HomeScreen = ({route}) => {
 
   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
 
-  console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+  // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
 
   useEffect(() => {
     if (userProfileCompleted) {

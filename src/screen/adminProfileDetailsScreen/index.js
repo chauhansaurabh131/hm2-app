@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from 'react';
+import React, {memo, useReducer, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -193,7 +193,7 @@ const AdminProfileDetailsScreen = ({onEditButtonPress, userData}) => {
             lineHeight: hp(26),
             fontFamily: fontFamily.poppins500,
           }}>
-          {AdminDetailsProfile[activeIndex].phaseName}
+          {/*{AdminDetailsProfile[activeIndex].phaseName}*/}
         </Text>
       </View>
 
@@ -212,4 +212,4 @@ const AdminProfileDetailsScreen = ({onEditButtonPress, userData}) => {
   );
 };
 
-export default AdminProfileDetailsScreen;
+export default memo(AdminProfileDetailsScreen);

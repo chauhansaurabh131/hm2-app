@@ -30,6 +30,7 @@
     "aws-sdk": "^2.1658.0",
     "axios": "^1.6.8",
     "blob-util": "^2.0.2",
+    "date-fns": "^4.1.0",
     "deprecated-react-native-prop-types": "^5.0.0",
     "form-data": "^4.0.1",
     "formik": "^2.4.5",

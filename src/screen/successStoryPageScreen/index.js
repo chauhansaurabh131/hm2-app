@@ -23,6 +23,8 @@ import {useSelector} from 'react-redux';
 const SuccessStoryPageScreen = ({route}) => {
   const {story} = route.params;
 
+  console.log(' === story____ ===> ', story);
+
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [likeData, setLikeData] = useState(null); // For storing response data
   const [likesList, setLikesList] = useState([]); // Store the likes list

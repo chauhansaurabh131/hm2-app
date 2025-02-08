@@ -237,7 +237,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    console.log(' === renderItem ===> ', item?.defaultFields);
+    // console.log(' === renderItem ===> ', item?.defaultFields);
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
