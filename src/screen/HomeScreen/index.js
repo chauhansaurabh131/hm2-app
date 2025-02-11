@@ -36,7 +36,7 @@ import RemainingDataUiScreen from '../editRemainingFillUpData/remainingDataUiScr
 
 const HomeScreen = ({route}) => {
   const [showMeAllStories, setShowMeAllStories] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
     useState(false);
@@ -50,6 +50,8 @@ const HomeScreen = ({route}) => {
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
+
+  // console.log(' === user____ ===> ', user?.user);
 
   useEffect(() => {
     RequestUserPermission();
@@ -109,13 +111,77 @@ const HomeScreen = ({route}) => {
 
   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
 
-  // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+  console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+
+  console.log(' === userPartnerPreCompleted ===> ', userPartnerPreCompleted);
 
   useEffect(() => {
-    if (userProfileCompleted) {
+    if (userPartnerPreCompleted === false) {
+      setShowModal(true);
+    } else {
       setShowModal(false);
     }
-  }, [userProfileCompleted]);
+  }, [userPartnerPreCompleted]);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // This will hide the modal when the screen is focused
+  //     setShowModal(true);
+  //   }, []),
+  // );
+
+  const handleButtonClick = () => {
+    if (activeLine === 3) {
+      setShowModal(false);
+      setActiveLine(1); // Reset the active line
+      // navigation.navigate('GeneralInformationScreen');
+      // navigation.navigate('CreatingProfileScreen');
+
+      if (!userProfileCompleted) {
+        // Navigate to CreatingProfileScreen if user profile is not completed
+        navigation.navigate('CreatingProfileScreen');
+      } else if (!userPartnerPreCompleted) {
+        // Navigate to Abc if partner pre-profile is not completed
+        navigation.navigate('PartnerPreferencesScreen');
+      } else {
+        // If both conditions are true, don't display modal and proceed with existing logic
+        setShowModal(false);
+      }
+    } else {
+      setActiveLine(prev => prev + 1);
+    }
+  };
+
+  // const handleButtonClick = () => {
+  //   const userProfileCompleted = user?.user?.userProfileCompleted;
+  //   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
+  //
+  //   if (!userProfileCompleted) {
+  //     // Navigate to CreatingProfileScreen if user profile is not completed
+  //     navigation.navigate('CreatingProfileScreen');
+  //   } else if (!userPartnerPreCompleted) {
+  //     // Navigate to Abc if partner pre-profile is not completed
+  //     navigation.navigate('Abc');
+  //   } else {
+  //     // If both conditions are true, don't display modal and proceed with existing logic
+  //     setShowModal(false);
+  //   }
+  //
+  //   if (activeLine === 3) {
+  //     setActiveLine(1); // Reset the active line
+  //   } else {
+  //     setActiveLine(prev => prev + 1);
+  //   }
+  // };
+
+  useFocusEffect(
+    useCallback(() => {
+      // This will hide the modal when the screen is focused
+      if (!(userProfileCompleted && userPartnerPreCompleted)) {
+        setShowModal(true); // Show modal only if conditions are false
+      }
+    }, [userProfileCompleted, userPartnerPreCompleted]),
+  );
 
   const capitalizeFirstLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -128,17 +194,6 @@ const HomeScreen = ({route}) => {
   const name = capitalizeFirstLetter(user?.user?.name || '');
   const profilePicUrl = user?.user?.profilePic;
   const UserUniqueId = user?.user?.userUniqueId;
-
-  const handleButtonClick = () => {
-    if (activeLine === 3) {
-      setShowModal(false);
-      setActiveLine(1); // Reset the active line
-      // navigation.navigate('GeneralInformationScreen');
-      navigation.navigate('CreatingProfileScreen');
-    } else {
-      setActiveLine(prev => prev + 1);
-    }
-  };
 
   const getDisplayText = () => {
     switch (activeLine) {
@@ -211,12 +266,6 @@ const HomeScreen = ({route}) => {
     // console.log(' === toggleModal ===> ', topModalVisible);
     setTopModalVisible(!topModalVisible);
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      setTopModalVisible(false);
-    }, []),
-  );
 
   const verificationModalToggle = () => {
     setCompleteModalModalVisible(false);
@@ -395,51 +444,6 @@ const HomeScreen = ({route}) => {
         <View style={{marginTop: hp(15)}}>
           <NewAddStoryScreen />
         </View>
-
-        {/*<Modal*/}
-        {/*  visible={showModal}*/}
-        {/*  animationType="none"*/}
-        {/*  transparent*/}
-        {/*  presentationStyle="overFullScreen"*/}
-        {/*  onRequestClose={closeWelcomeModal}>*/}
-        {/*  <View style={style.modalContainer}>*/}
-        {/*    <View style={style.modalBodyContainer}>*/}
-        {/*      <GradientText style={style.modalHeadingText}>*/}
-        {/*        Congratulations*/}
-        {/*      </GradientText>*/}
-
-        {/*      <View*/}
-        {/*        style={{*/}
-        {/*          marginTop: 34,*/}
-        {/*          alignItems: 'center',*/}
-        {/*        }}>*/}
-        {/*        <Text style={style.modalSubTitleTextStyle}>*/}
-        {/*          "New Beginnings, New Possibilities!*/}
-        {/*        </Text>*/}
-        {/*        <Text style={style.modalSubTitleTextStyle}>*/}
-        {/*          Congratulations on Registering with*/}
-        {/*        </Text>*/}
-        {/*        <Text style={style.modalSubTitleTextStyle}>HappyMilan</Text>*/}
-        {/*      </View>*/}
-
-        {/*      <FastImage*/}
-        {/*        source={gif.congrats_modal}*/}
-        {/*        style={{width: 180, height: 150, marginTop: -130}}*/}
-        {/*        resizeMode={'contain'}*/}
-        {/*      />*/}
-
-        {/*      <CommonGradientButton*/}
-        {/*        buttonName={'Start Exploring'}*/}
-        {/*        onPress={closeWelcomeModal}*/}
-        {/*        containerStyle={{*/}
-        {/*          width: wp(280),*/}
-        {/*          height: hp(50),*/}
-        {/*          marginTop: hp(30),*/}
-        {/*        }}*/}
-        {/*      />*/}
-        {/*    </View>*/}
-        {/*  </View>*/}
-        {/*</Modal>*/}
 
         <Modal
           animationType="none"
@@ -687,28 +691,29 @@ const HomeScreen = ({route}) => {
 
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
-        <View style={{marginHorizontal: 17, marginTop: hp(22)}}>
-          <Text
-            style={{
-              color: colors.black,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins500,
-            }}>
-            Add Details for Better Matches
-          </Text>
+        {/*<View style={{marginHorizontal: 17, marginTop: hp(22)}}>*/}
+        <View>
+          {/*<Text*/}
+          {/*  style={{*/}
+          {/*    color: colors.black,*/}
+          {/*    fontSize: fontSize(16),*/}
+          {/*    lineHeight: hp(24),*/}
+          {/*    fontFamily: fontFamily.poppins500,*/}
+          {/*  }}>*/}
+          {/*  Add Details for Better Matches*/}
+          {/*</Text>*/}
 
           <RemainingDataUiScreen />
         </View>
 
-        <View
-          style={{
-            width: '100%',
-            height: 4,
-            backgroundColor: '#F8F8F8',
-            marginTop: hp(25),
-          }}
-        />
+        {/*<View*/}
+        {/*  style={{*/}
+        {/*    width: '100%',*/}
+        {/*    height: 4,*/}
+        {/*    backgroundColor: '#F8F8F8',*/}
+        {/*    marginTop: hp(25),*/}
+        {/*  }}*/}
+        {/*/>*/}
 
         <View style={{marginHorizontal: 17}}>
           <View style={[style.premiumTextContainer, {marginTop: 28}]}>

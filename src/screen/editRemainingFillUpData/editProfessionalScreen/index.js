@@ -1,16 +1,25 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import NewDropDownTextInput from '../../../components/newDropdownTextinput';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {professionalDetail} from '../../../actions/homeActions';
 
 const EditProfessionalScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === var ===> ', user?.user?.userProfessional?.currentSalary);
+  // console.log(' === var ===> ', user?.user?.userProfessional?.currentSalary);
+
+  const apiDispatch = useDispatch();
 
   const [jobTitle, setJobTitle] = useState('');
   const [jobType, setJobType] = useState('');
@@ -18,6 +27,7 @@ const EditProfessionalScreen = ({navigation}) => {
   const [salary, setSalary] = useState('');
   const [workInCity, setWorkInCity] = useState('');
   const [workInCountry, setWorkInCountry] = useState('');
+  const [loading, setLoading] = useState(false); // Loader state
 
   const jobTypeDropdownData = ['Part-Time', 'Full-Time'];
   const jobWorkCityDropdownData = ['Surat', 'Ahmadabad', 'Navsari', 'Bardoli'];
@@ -69,7 +79,29 @@ const EditProfessionalScreen = ({navigation}) => {
   ]);
 
   const onSubmitPress = () => {
-    navigation.goBack();
+    setLoading(true);
+
+    const numericSalary = salary
+      ? parseInt(String(salary).replace(/\D/g, ''), 10)
+      : 0;
+    console.log(' === salary ===> ', numericSalary);
+
+    apiDispatch(
+      professionalDetail(
+        {
+          jobTitle: jobTitle,
+          jobType: jobType,
+          companyName: companyName,
+          currentSalary: numericSalary,
+          workCity: workInCity,
+          workCountry: workInCountry,
+        },
+        () => {
+          setLoading(false);
+          navigation.goBack();
+        },
+      ),
+    );
   };
 
   const onBackPress = () => {
@@ -200,15 +232,20 @@ const EditProfessionalScreen = ({navigation}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text
-                style={{
-                  color: colors.white,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Submit
-              </Text>
+              {loading ? (
+                // Show loader if loading is true
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Submit
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

@@ -1,22 +1,32 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import NewDropDownTextInput from '../../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {educationDetails} from '../../../actions/homeActions';
 
 const EditEducationScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
 
   console.log(' === var ===> ', user?.user?.userEducation?.country);
 
+  const apiDispatch = useDispatch();
+
   const [degree, setDegree] = useState('');
   const [collage, setCollage] = useState('');
   const [collageCity, setCollageCity] = useState('');
   const [collageState, setCollageState] = useState('');
   const [collageCountry, setCollageCountry] = useState('');
+  const [loading, setLoading] = useState(false); // Loader state
 
   const degreeDropdownData = [
     'BCA',
@@ -81,7 +91,22 @@ const EditEducationScreen = ({navigation}) => {
   ]);
 
   const onSubmitPress = () => {
-    navigation.goBack();
+    setLoading(true);
+    apiDispatch(
+      educationDetails(
+        {
+          degree: degree,
+          collage: collage,
+          // city: city,
+          // state: state,
+          // country: country,
+        },
+        () => {
+          setLoading(false);
+          navigation.goBack();
+        },
+      ),
+    );
   };
 
   const onBackPress = () => {
@@ -129,35 +154,35 @@ const EditEducationScreen = ({navigation}) => {
           />
         </View>
 
-        <View style={{marginTop: 37}}>
-          <NewDropDownTextInput
-            placeholder="City"
-            dropdownData={educationCityDropdownData}
-            onValueChange={setCollageCity}
-            value={capitalizeFirstLetter(collageCity)}
-            bottomSheetHeight={getDropdownHeight('City')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: 37}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="City"*/}
+        {/*    dropdownData={educationCityDropdownData}*/}
+        {/*    onValueChange={setCollageCity}*/}
+        {/*    value={capitalizeFirstLetter(collageCity)}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('City')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: 37}}>
-          <NewDropDownTextInput
-            placeholder="State"
-            dropdownData={educationStateDropdownData}
-            onValueChange={setCollageState}
-            value={capitalizeFirstLetter(collageState)}
-            bottomSheetHeight={getDropdownHeight('State')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: 37}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="State"*/}
+        {/*    dropdownData={educationStateDropdownData}*/}
+        {/*    onValueChange={setCollageState}*/}
+        {/*    value={capitalizeFirstLetter(collageState)}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('State')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: 37}}>
-          <NewDropDownTextInput
-            placeholder="Country"
-            dropdownData={educationCountryDropdownData}
-            onValueChange={setCollageCountry}
-            value={capitalizeFirstLetter(collageCountry)}
-            bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: 37}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="Country"*/}
+        {/*    dropdownData={educationCountryDropdownData}*/}
+        {/*    onValueChange={setCollageCountry}*/}
+        {/*    value={capitalizeFirstLetter(collageCountry)}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
 
         <View
           style={{
@@ -204,15 +229,20 @@ const EditEducationScreen = ({navigation}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text
-                style={{
-                  color: colors.white,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Submit
-              </Text>
+              {loading ? (
+                // Show loader if loading is true
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Submit
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

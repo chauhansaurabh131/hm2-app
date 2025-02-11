@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, View} from 'react-native';
+import {SafeAreaView, ScrollView, Text, View} from 'react-native';
 import {style} from './style';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
@@ -13,8 +13,9 @@ const GeneralInformationDetailsScreen = ({
   setUserHeight,
   setUserWeight,
   userHeight,
-
   userWeight,
+  about,
+  setAbout,
 }) => {
   const genderDropdownData = ['Male', 'Female'];
   const maritalDropdownData = ['Single', 'Never-married', 'Married'];
@@ -90,6 +91,16 @@ const GeneralInformationDetailsScreen = ({
                 showUnit={true}
               />
             </View>
+
+            <View style={{marginTop: hp(37)}}>
+              <FloatingLabelInput
+                label="About Yourself"
+                value={about}
+                onChangeText={setAbout}
+              />
+            </View>
+
+            <View style={{height: hp(100)}} />
           </View>
         </View>
       </ScrollView>

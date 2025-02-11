@@ -152,12 +152,12 @@ const DemoCode = () => {
         prevData.map(user =>
           user._id === item._id
             ? {
-                ...user,
-                userLikeDetails: {
-                  ...user.userLikeDetails,
-                  isLike: success, // Toggle the like state in the UI
-                },
-              }
+              ...user,
+              userLikeDetails: {
+                ...user.userLikeDetails,
+                isLike: success, // Toggle the like state in the UI
+              },
+            }
             : user,
         ),
       );
@@ -189,12 +189,12 @@ const DemoCode = () => {
           prevData.map(userItem =>
             userItem._id === item._id
               ? {
-                  ...userItem,
-                  friendsDetails: {
-                    ...userItem.friendsDetails,
-                    status: 'none', // Update status locally to reflect removal
-                  },
-                }
+                ...userItem,
+                friendsDetails: {
+                  ...userItem.friendsDetails,
+                  status: 'none', // Update status locally to reflect removal
+                },
+              }
               : userItem,
           ),
         );
@@ -221,12 +221,12 @@ const DemoCode = () => {
           prevData.map(userItem =>
             userItem._id === item._id
               ? {
-                  ...userItem,
-                  friendsDetails: {
-                    ...userItem.friendsDetails,
-                    status: 'none', // Update status locally to reflect rejection
-                  },
-                }
+                ...userItem,
+                friendsDetails: {
+                  ...userItem.friendsDetails,
+                  status: 'none', // Update status locally to reflect rejection
+                },
+              }
               : userItem,
           ),
         );
@@ -249,12 +249,12 @@ const DemoCode = () => {
           prevData.map(userItem =>
             userItem._id === item._id
               ? {
-                  ...userItem,
-                  friendsDetails: {
-                    ...userItem.friendsDetails,
-                    status: 'requested', // Update the status locally
-                  },
-                }
+                ...userItem,
+                friendsDetails: {
+                  ...userItem.friendsDetails,
+                  status: 'requested', // Update the status locally
+                },
+              }
               : userItem,
           ),
         );
@@ -281,8 +281,8 @@ const DemoCode = () => {
       friendStatus === 'accepted'
         ? icons.new_user_send_icon // Request already accepted
         : friendStatus === 'requested'
-        ? icons.new_user_send_icon // Request already sent, allow for rejection
-        : icons.new_send_icon; // No request sent, allow sending a request
+          ? icons.new_user_send_icon // Request already sent, allow for rejection
+          : icons.new_send_icon; // No request sent, allow sending a request
 
     const shortlistIconSource = item.userShortListDetails
       ? icons.upgradeIcon

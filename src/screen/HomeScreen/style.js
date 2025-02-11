@@ -181,7 +181,7 @@ const style = StyleSheet.create({
     textAlign: 'center',
     fontSize: fontSize(14),
     lineHeight: hp(16),
-    fontWeight: fontFamily.poppins500,
+    fontFamily: fontFamily.poppins500,
     justifyContent: 'center',
   },
 

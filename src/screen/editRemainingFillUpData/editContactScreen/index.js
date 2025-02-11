@@ -1,17 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDetails} from '../../../actions/homeActions';
 
 const EditContactScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
-
   const [mobileNumber, setMobileNumber] = useState('');
   const [homeNumber, setHomeNumber] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [loading, setLoading] = useState(false); // Loader state
+
+  const apiDispatch = useDispatch();
 
   useEffect(() => {
     if (user?.user?.mobileNumber) {
@@ -30,7 +39,20 @@ const EditContactScreen = ({navigation}) => {
   ]);
 
   const onSubmitPress = () => {
-    navigation.goBack();
+    setLoading(true);
+    apiDispatch(
+      updateDetails(
+        {
+          mobileNumber: mobileNumber,
+          homeMobileNumber: homeNumber,
+          email: userEmail,
+        },
+        () => {
+          setLoading(false);
+          navigation.goBack();
+        },
+      ),
+    );
   };
 
   const onBackPress = () => {
@@ -114,6 +136,7 @@ const EditContactScreen = ({navigation}) => {
               </Text>
             </TouchableOpacity>
 
+            {/* Submit Button */}
             <TouchableOpacity
               onPress={onSubmitPress}
               style={{
@@ -124,15 +147,20 @@ const EditContactScreen = ({navigation}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text
-                style={{
-                  color: colors.white,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Submit
-              </Text>
+              {loading ? (
+                // Show loader if loading is true
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Submit
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

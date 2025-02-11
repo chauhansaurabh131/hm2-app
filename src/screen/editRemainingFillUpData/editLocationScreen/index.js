@@ -1,21 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import NewDropDownTextInput from '../../../components/newDropdownTextinput';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {addressDetails} from '../../../actions/homeActions';
 
 const EditLocationScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === var ===> ', user?.user?.address?.currentCity);
+  // console.log(' === var ===> ', user?.user?.address?.currentCity);
 
-  const [currentAddress, setCurrentAddress] = useState('');
+  const apiDispatch = useDispatch();
+
+  // const [currentAddress, setCurrentAddress] = useState('');
   const [currentCountry, setCurrentCountry] = useState('');
   const [currentState, setCurrentState] = useState('');
   const [selectCurrentCity, setSelectCurrentCity] = useState('');
+  const [loading, setLoading] = useState(false); // Loader state
 
   const currentCountryDropDown = [
     'India',
@@ -47,9 +57,9 @@ const EditLocationScreen = ({navigation}) => {
   ];
 
   useEffect(() => {
-    if (user?.user?.address?.currentResidenceAddress) {
-      setCurrentAddress(user?.user?.address?.currentResidenceAddress);
-    }
+    // if (user?.user?.address?.currentResidenceAddress) {
+    //   setCurrentAddress(user?.user?.address?.currentResidenceAddress);
+    // }
     if (user?.user?.address?.currentCountry) {
       setCurrentCountry(user?.user?.address?.currentCountry);
     }
@@ -60,14 +70,28 @@ const EditLocationScreen = ({navigation}) => {
       setSelectCurrentCity(user?.user?.address?.currentCity);
     }
   }, [
-    user?.user?.address?.currentResidenceAddress,
+    // user?.user?.address?.currentResidenceAddress,
     user?.user?.address?.currentCountry,
     user?.user?.address?.currentState,
     user?.user?.address?.currentCity,
   ]);
 
   const onSubmitPress = () => {
-    navigation.goBack();
+    setLoading(true);
+    apiDispatch(
+      addressDetails(
+        {
+          // currentResidenceAddress: residingAddress,
+          currentCountry: currentCountry,
+          currentState: currentState,
+          currentCity: selectCurrentCity,
+        },
+        () => {
+          setLoading(false);
+          navigation.goBack();
+        },
+      ),
+    );
   };
 
   const onBackPress = () => {
@@ -97,15 +121,15 @@ const EditLocationScreen = ({navigation}) => {
           Location Details
         </Text>
 
-        <View style={{marginTop: 30}}>
-          <FloatingLabelInput
-            label="Current Address"
-            value={currentAddress}
-            onChangeText={setCurrentAddress}
-          />
-        </View>
+        {/*<View style={{marginTop: 30}}>*/}
+        {/*  <FloatingLabelInput*/}
+        {/*    label="Current Address"*/}
+        {/*    value={currentAddress}*/}
+        {/*    onChangeText={setCurrentAddress}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: hp(37)}}>
+        <View style={{marginTop: hp(30)}}>
           <NewDropDownTextInput
             placeholder="Country"
             dropdownData={currentCountryDropDown}
@@ -177,15 +201,20 @@ const EditLocationScreen = ({navigation}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text
-                style={{
-                  color: colors.white,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Submit
-              </Text>
+              {loading ? (
+                // Show loader if loading is true
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Submit
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

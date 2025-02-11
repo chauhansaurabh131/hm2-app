@@ -54,15 +54,15 @@ const AddressDetailsScreen = ({
   return (
     <SafeAreaView style={style.container}>
       <View style={{marginHorizontal: wp(17)}}>
-        <View style={{marginTop: 30}}>
-          <FloatingLabelInput
-            label="Current Address"
-            value={currentAddress}
-            onChangeText={setCurrentAddress}
-          />
-        </View>
+        {/*<View style={{marginTop: 30}}>*/}
+        {/*  <FloatingLabelInput*/}
+        {/*    label="Current Address"*/}
+        {/*    value={currentAddress}*/}
+        {/*    onChangeText={setCurrentAddress}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: hp(37)}}>
+        <View style={{marginTop: hp(30)}}>
           <NewDropDownTextInput
             placeholder="Country"
             dropdownData={currentCountryDropDown}

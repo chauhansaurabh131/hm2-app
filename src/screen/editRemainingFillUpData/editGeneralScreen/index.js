@@ -1,16 +1,31 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import NewDropDownTextInput from '../../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {style} from '../../adminProfileDetailsScreen/adminGeneralInformationScreen/style';
+import LinearGradient from 'react-native-linear-gradient';
+import {icons} from '../../../assets';
+import {updateDetails} from '../../../actions/homeActions';
 
 const EditGeneralScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === var ===> ', user?.user?.height);
+  console.log(' === var ===> ', user?.user?.writeBoutYourSelf);
+
+  const apiDispatch = useDispatch();
 
   const [genderSelectedOption, genderSetSelectedOption] = useState('');
   const [maritalSelectedOption, maritalSetSelectedOption] = useState('');
@@ -18,6 +33,10 @@ const EditGeneralScreen = ({navigation}) => {
   const [selectReligion, setSelectReligion] = useState('');
   const [userHeight, setUserHeight] = useState('');
   const [userWeight, setUserWeight] = useState('');
+
+  const [aboutText, setAboutText] = useState(
+    user?.user?.writeBoutYourSelf || 'N/A',
+  );
 
   const genderDropdownData = ['Male', 'Female'];
   const maritalDropdownData = ['Single', 'Never-married', 'Married'];
@@ -43,6 +62,9 @@ const EditGeneralScreen = ({navigation}) => {
     if (user?.user?.weight) {
       setUserWeight(user?.user?.weight);
     }
+    if (user?.user?.writeBoutYourSelf) {
+      setAboutText(user?.user?.writeBoutYourSelf);
+    }
   }, [
     user?.user?.gender,
     user?.user?.maritalStatus,
@@ -50,7 +72,10 @@ const EditGeneralScreen = ({navigation}) => {
     user?.user?.religion,
     user?.user?.height,
     user?.user?.weight,
+    user?.user?.writeBoutYourSelf,
   ]);
+
+  const aboutBottomSheetRef = useRef();
 
   // console.log(' === userHeight ===> ', userHeight);
 
@@ -71,6 +96,25 @@ const EditGeneralScreen = ({navigation}) => {
 
   const onSubmitPress = () => {
     navigation.goBack();
+
+    apiDispatch(
+      updateDetails(
+        {
+          writeBoutYourSelf: aboutText,
+          // creatingProfileFor: creatingProfileFor,
+          // gender: gender,
+          // dateOfBirth: formattedDates,
+          // birthTime: birthTime,
+          // religion: religion,
+          // height: height,
+          // weight: weight,
+          // maritalStatus: maritalStatus,
+        },
+        () => {
+          navigation.goBack();
+        },
+      ),
+    );
   };
 
   const onBackPress = () => {
@@ -84,6 +128,23 @@ const EditGeneralScreen = ({navigation}) => {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
+  const handleAboutTextChange = text => {
+    setAboutText(text);
+    // aboutBottomSheetRef.current.open();
+  };
+
+  // const handleAboutTextChange = text => {
+  //   // Count words in the input text
+  //   const wordArray = text.trim().split(/\s+/); // Split by spaces and handle multiple spaces
+  //   const wordLimit = 150;
+  //
+  //   // Check if the word count is less than or equal to the limit
+  //   if (wordArray.length <= wordLimit) {
+  //     setAboutText(text); // Update text if the word count is within the limit
+  //     // setWordCount(wordArray.length); // Update word count
+  //   }
+  // };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: 17, flex: 1}}>
@@ -96,69 +157,224 @@ const EditGeneralScreen = ({navigation}) => {
             fontFamily: fontFamily.poppins600,
             textAlign: 'center',
             marginTop: 10,
+            marginBottom: 20,
           }}>
           General Details
         </Text>
 
-        <View style={{marginTop: 30}}>
-          <NewDropDownTextInput
-            placeholder="Gender"
-            dropdownData={genderDropdownData}
-            onValueChange={genderSetSelectedOption}
-            value={capitalizeFirstLetter(genderSelectedOption)}
-            bottomSheetHeight={getDropdownHeight('gender')} // Dynamic height
-          />
-
-          <View style={{marginTop: hp(37)}}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{marginTop: 10}}>
             <NewDropDownTextInput
-              placeholder="Marital Status"
-              dropdownData={maritalDropdownData}
-              onValueChange={maritalSetSelectedOption}
-              value={capitalizeFirstLetter(maritalSelectedOption)}
-              bottomSheetHeight={getDropdownHeight('marital')} // Dynamic height
+              placeholder="Gender"
+              dropdownData={genderDropdownData}
+              onValueChange={genderSetSelectedOption}
+              value={capitalizeFirstLetter(genderSelectedOption)}
+              bottomSheetHeight={getDropdownHeight('gender')} // Dynamic height
             />
-          </View>
 
-          <View style={{marginTop: hp(37)}}>
-            <NewDropDownTextInput
-              placeholder="Caste"
-              dropdownData={casteDropdownData}
-              onValueChange={setSelectCaste}
-              value={capitalizeFirstLetter(selectCaste)}
-              bottomSheetHeight={getDropdownHeight('caste')} // Dynamic height
-            />
-          </View>
+            <View style={{marginTop: hp(37)}}>
+              <NewDropDownTextInput
+                placeholder="Marital Status"
+                dropdownData={maritalDropdownData}
+                onValueChange={maritalSetSelectedOption}
+                value={capitalizeFirstLetter(maritalSelectedOption)}
+                bottomSheetHeight={getDropdownHeight('marital')} // Dynamic height
+              />
+            </View>
 
-          <View style={{marginTop: hp(37)}}>
-            <NewDropDownTextInput
-              placeholder="Religion"
-              dropdownData={religionDropdownData}
-              onValueChange={setSelectReligion}
-              value={capitalizeFirstLetter(selectReligion)}
-              bottomSheetHeight={getDropdownHeight('Religion')} // Dynamic height
-            />
-          </View>
+            <View style={{marginTop: hp(37)}}>
+              <NewDropDownTextInput
+                placeholder="Caste"
+                dropdownData={casteDropdownData}
+                onValueChange={setSelectCaste}
+                value={capitalizeFirstLetter(selectCaste)}
+                bottomSheetHeight={getDropdownHeight('caste')} // Dynamic height
+              />
+            </View>
 
-          <View style={{marginTop: hp(37)}}>
-            <FloatingLabelInput
-              label="Height"
-              value={userHeight.toString()}
-              onChangeText={setUserHeight}
-              showUnitText={'(ft/cm)'}
-              showUnit={true}
-            />
-          </View>
+            <View style={{marginTop: hp(37)}}>
+              <NewDropDownTextInput
+                placeholder="Religion"
+                dropdownData={religionDropdownData}
+                onValueChange={setSelectReligion}
+                value={capitalizeFirstLetter(selectReligion)}
+                bottomSheetHeight={getDropdownHeight('Religion')} // Dynamic height
+              />
+            </View>
 
-          <View style={{marginTop: hp(37)}}>
-            <FloatingLabelInput
-              label="Weight"
-              value={userWeight.toString()}
-              onChangeText={setUserWeight}
-              showUnitText={'(kg)'}
-              showUnit={true}
+            <View style={{marginTop: hp(37)}}>
+              <FloatingLabelInput
+                label="Height"
+                value={userHeight.toString()}
+                onChangeText={setUserHeight}
+                showUnitText={'(ft/cm)'}
+                showUnit={true}
+              />
+            </View>
+
+            <View style={{marginTop: hp(37)}}>
+              <FloatingLabelInput
+                label="Weight"
+                value={userWeight.toString()}
+                onChangeText={setUserWeight}
+                showUnitText={'(kg)'}
+                showUnit={true}
+              />
+            </View>
+
+            <View style={{marginTop: hp(37)}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+
+                  marginBottom: 5,
+                }}>
+                <Text
+                  style={{
+                    color: 'About Yourself',
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  About Yourself
+                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={{
+                    width: hp(6),
+                    height: hp(10),
+                    resizeMode: 'contain',
+                    marginRight: 15,
+                    top: 30,
+                  }}
+                />
+              </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  aboutBottomSheetRef.current.open();
+                }}>
+                <Text
+                  style={{
+                    justifyContent: 'center',
+                    fontSize: fontSize(20),
+                    marginBottom: 10,
+                    color: colors.black,
+                    lineHeight: 30,
+                    fontFamily: 'poppins_medium',
+                  }}>
+                  {aboutText?.split(' ').slice(0, 5).join(' ') +
+                    (aboutText?.split(' ').length > 5 ? '...' : '') ||
+                    'Write about yourself...'}
+                </Text>
+
+                <View
+                  style={{
+                    width: '100%',
+                    height: 1.2,
+                    backgroundColor: '#C0C0C0',
+                    // backgroundColor: 'black',
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{height: 150}} />
+          </View>
+        </ScrollView>
+
+        {/*ABOUT US BOTTOM SHEET*/}
+        <RBSheet
+          ref={aboutBottomSheetRef}
+          closeOnDragDown={true} // Allows drag to close
+          closeOnPressMask={true} // Allows closing when clicking outside the sheet
+          height={hp(400)} // Adjust height of Bottom Sheet
+          customStyles={{
+            draggableIcon: {
+              backgroundColor: colors.gray,
+            },
+            container: {
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+            },
+          }}>
+          <Text
+            style={{
+              marginHorizontal: 31,
+              color: colors.black,
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins500,
+              marginTop: hp(5),
+            }}>
+            Write About Yourself
+          </Text>
+
+          <View style={{backgroundColor: '#F7F7F7', marginTop: hp(15)}}>
+            <TextInput
+              value={aboutText}
+              onChangeText={handleAboutTextChange} // Use handleAboutTextChange to limit word count
+              multiline
+              // editable={isEditing} // Disable editing when isEditing is false
+              style={{
+                marginHorizontal: 31,
+                marginTop: hp(15),
+                height: hp(200),
+                textAlignVertical: 'top',
+                marginBottom: 15,
+                color: 'black',
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+              }}
+              placeholder="Type about yourself..."
+              placeholderTextColor={colors.gray}
             />
           </View>
-        </View>
+          {/*<Text*/}
+          {/*  style={{*/}
+          {/*    textAlign: 'right',*/}
+          {/*    marginRight: hp(15),*/}
+          {/*    marginTop: hp(18),*/}
+          {/*    fontSize: fontSize(12),*/}
+          {/*    lineHeight: hp(18),*/}
+          {/*    fontFamily: fontFamily.poppins400,*/}
+          {/*    color: colors.black,*/}
+          {/*  }}>*/}
+          {/*  150 Words*/}
+          {/*</Text>*/}
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              aboutBottomSheetRef.current.close();
+            }}>
+            <LinearGradient
+              colors={['#2D46B9', '#8D1D8D']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              style={{
+                width: hp(122),
+                height: hp(44),
+                borderRadius: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+                marginTop: hp(32),
+              }}>
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Add
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </RBSheet>
 
         <View
           style={{
@@ -166,11 +382,14 @@ const EditGeneralScreen = ({navigation}) => {
             position: 'absolute',
             bottom: 15,
             width: '100%',
+            backgroundColor: 'white',
+            height: 70,
           }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              marginTop: 15,
             }}>
             <TouchableOpacity
               onPress={onBackPress}

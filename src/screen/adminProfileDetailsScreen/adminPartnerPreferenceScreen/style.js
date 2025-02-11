@@ -63,7 +63,7 @@ export const style = StyleSheet.create({
     marginTop: hp(2),
   },
   subTittleContainer: {
-    marginTop: hp(20),
+    marginTop: hp(27),
   },
   subTittleContainerStyle: {
     flexDirection: 'row',

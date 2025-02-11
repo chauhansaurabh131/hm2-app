@@ -1,17 +1,26 @@
 import React, {useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import NewBottomSheetMultipleValueSelect from '../../../components/newBottomSheetMultipleValueSelect';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDetails} from '../../../actions/homeActions';
 
 const EditHobbiesScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
+  const apiDispatch = useDispatch();
 
   console.log(' === var ===> ', user?.user?.hobbies);
 
   const [selectedItems, setSelectedItems] = useState([]);
+  const [loading, setLoading] = useState(false); // Loader state
 
   const options = [
     'Writing',
@@ -28,7 +37,13 @@ const EditHobbiesScreen = ({navigation}) => {
   };
 
   const onSubmitPress = () => {
-    navigation.goBack();
+    setLoading(true);
+    apiDispatch(
+      updateDetails({hobbies: selectedItems}, () => {
+        setLoading(false);
+        navigation.goBack();
+      }),
+    );
   };
 
   const onBackPress = () => {
@@ -104,15 +119,20 @@ const EditHobbiesScreen = ({navigation}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text
-                style={{
-                  color: colors.white,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Submit
-              </Text>
+              {loading ? (
+                // Show loader if loading is true
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Submit
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

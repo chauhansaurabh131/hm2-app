@@ -135,6 +135,7 @@ const AddPersonalInfo = ({navigation}) => {
   const [selectReligion, setSelectReligion] = useState('');
   const [userHeight, setUserHeight] = useState('');
   const [userWeight, setUserWeight] = useState('');
+  const [about, setAbout] = useState('');
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -318,6 +319,7 @@ const AddPersonalInfo = ({navigation}) => {
             religion: selectReligion.toLowerCase(),
             height: userHeight,
             weight: userWeight,
+            writeBoutYourSelf: about,
 
             // firstName: firstName,
             // lastName: lastName,
@@ -344,7 +346,7 @@ const AddPersonalInfo = ({navigation}) => {
       apiDispatch(
         addressDetails(
           {
-            currentResidenceAddress: currentAddress,
+            // currentResidenceAddress: currentAddress,
             currentCountry: formattedCountry,
             currentState: formattedState,
             currentCity: formattedCity,
@@ -378,9 +380,9 @@ const AddPersonalInfo = ({navigation}) => {
           {
             degree: convertFirstLetterToLowerCase(degree),
             collage: convertFirstLetterToLowerCase(collage),
-            city: convertFirstLetterToLowerCase(collageCity),
-            state: convertFirstLetterToLowerCase(collageState),
-            country: convertFirstLetterToLowerCase(collageCountry),
+            // city: convertFirstLetterToLowerCase(collageCity),
+            // state: convertFirstLetterToLowerCase(collageState),
+            // country: convertFirstLetterToLowerCase(collageCountry),
           },
           () => dispatch({type: NEXT_SCREEN}),
         ),
@@ -534,6 +536,8 @@ const AddPersonalInfo = ({navigation}) => {
           setUserHeight={setUserHeight}
           userWeight={userWeight}
           setUserWeight={setUserWeight}
+          about={about}
+          setAbout={setAbout}
           // OLD
           firstName={firstName}
           setFirstName={setFirstName}

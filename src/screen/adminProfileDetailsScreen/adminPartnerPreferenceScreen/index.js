@@ -360,20 +360,41 @@ const AdminPartnerPreferenceScreen = (...params) => {
 
       <View style={style.bodyContainer}>
         {!isEditing ? (
-          <View style={style.bodyContainerStyle}>
-            <Text style={style.tittleText}>Select Age Range</Text>
-            <Text style={style.subTittleText}>
-              {minAge} - {maxAge}
-            </Text>
+          // <View style={style.bodyContainerStyle}>
+          <View>
+            <View style={{marginHorizontal: 17, marginTop: 5}}>
+              <Text style={style.tittleText}>Select Age Range</Text>
+              <Text style={style.subTittleText}>
+                {minAge} - {maxAge}
+              </Text>
+            </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(25),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleText}>Select Height Range</Text>
               <Text style={style.subTittleText}>
                 {minPreferHeight} - {maxPreferHeight}
               </Text>
             </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(25),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleTexts}>Select Prefer Country</Text>
 
               <View
@@ -410,7 +431,16 @@ const AdminPartnerPreferenceScreen = (...params) => {
               </View>
             </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(15),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleTexts}>Select Prefer State</Text>
 
               <View
@@ -447,7 +477,16 @@ const AdminPartnerPreferenceScreen = (...params) => {
               </View>
             </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(15),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleTexts}>Select Prefer City</Text>
 
               <View
@@ -484,19 +523,46 @@ const AdminPartnerPreferenceScreen = (...params) => {
               </View>
             </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(15),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleText}>Prefer Diet</Text>
               <Text style={style.subTittleText}>{preferDiet} </Text>
             </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(15),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleText}>Select Annual Income</Text>
               <Text style={style.subTittleText}>
                 {minAnnualIncome} - {maxAnnualIncome} Lacs
               </Text>
             </View>
 
-            <View style={style.subTittleContainer}>
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EFEFEF',
+                marginTop: hp(15),
+              }}
+            />
+
+            <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleTexts}>Select Hobbies</Text>
 
               <View
@@ -535,987 +601,1081 @@ const AdminPartnerPreferenceScreen = (...params) => {
             </View>
           </View>
         ) : (
-          <View style={style.bodyContainerStyle}>
-            <Text style={style.tittleText}>Select Age Range</Text>
-            <TouchableOpacity
-              onPress={() => {
-                ageRefRBSheet.current.open();
-              }}
-              style={style.subTittleContainerStyle}>
-              <Text style={style.subTittleText}>
-                {minAge} - {maxAge}
-              </Text>
+          <View>
+            {/*<View style={style.bodyContainerStyle}>*/}
+            <View>
+              <View style={{marginHorizontal: 17}}>
+                <Text style={style.tittleText}>Select Age Range</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    ageRefRBSheet.current.open();
+                  }}
+                  style={style.subTittleContainerStyle}>
+                  <Text style={style.subTittleText}>
+                    {minAge} - {maxAge}
+                  </Text>
 
-              <Image source={icons.rightSideIcon} style={style.rightSideIcon} />
-            </TouchableOpacity>
-
-            <View style={style.subTittleContainer}>
-              <Text style={style.tittleText}>Select Height Range</Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  heightRefRBSheet.current.open();
-                }}
-                style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>
-                  {minPreferHeight} - {maxPreferHeight}
-                </Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={style.subTittleContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  countryRBSheet.current.open();
-                }}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={style.tittleTexts}>Select Prefer Country</Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: hp(15),
-                }}>
-                {country.map((countries, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => toggleCountry(countries)} // Remove hobby on press
-                    style={{
-                      borderColor: '#DEDEDE',
-                      borderWidth: 1,
-                      borderRadius: 25,
-                      paddingHorizontal: wp(15),
-                      paddingVertical: hp(10),
-                      marginRight: wp(10),
-                      marginBottom: hp(10),
-                      backgroundColor: colors.white,
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        fontFamily: fontFamily.poppins500,
-                        color: colors.black,
-                        lineHeight: hp(24),
-                      }}>
-                      {countries.charAt(0).toUpperCase() + countries.slice(1)}
-                    </Text>
-
-                    <View
-                      style={{
-                        marginLeft: 15,
-                        width: hp(16),
-                        height: hp(16),
-                        backgroundColor: '#5F6368',
-                        borderRadius: 50,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 9,
-                          fontWeight: 'bold',
-                        }}>
-                        X
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
               </View>
-            </View>
-
-            <View style={style.subTittleContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  StateRefRBSheet.current.open();
-                }}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={style.tittleTexts}>Select Prefer State</Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: hp(15),
-                }}>
-                {state.map((states, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => toggleState(states)} // Remove hobby on press
-                    style={{
-                      borderColor: '#DEDEDE',
-                      borderWidth: 1,
-                      borderRadius: 25,
-                      paddingHorizontal: wp(15),
-                      paddingVertical: hp(10),
-                      marginRight: wp(10),
-                      marginBottom: hp(10),
-                      backgroundColor: colors.white,
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        fontFamily: fontFamily.poppins500,
-                        color: colors.black,
-                        lineHeight: hp(24),
-                      }}>
-                      {states.charAt(0).toUpperCase() + states.slice(1)}
-                    </Text>
-
-                    <View
-                      style={{
-                        marginLeft: 15,
-                        width: hp(16),
-                        height: hp(16),
-                        backgroundColor: '#5F6368',
-                        borderRadius: 50,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 9,
-                          fontWeight: 'bold',
-                        }}>
-                        X
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View style={style.subTittleContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  CityRefRBSheet.current.open();
-                }}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={style.tittleTexts}>Select Prefer City</Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: hp(15),
-                }}>
-                {city.map((cites, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => toggleCity(cites)} // Remove hobby on press
-                    style={{
-                      borderColor: '#DEDEDE',
-                      borderWidth: 1,
-                      borderRadius: 25,
-                      paddingHorizontal: wp(15),
-                      paddingVertical: hp(10),
-                      marginRight: wp(10),
-                      marginBottom: hp(10),
-                      backgroundColor: colors.white,
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        fontFamily: fontFamily.poppins500,
-                        color: colors.black,
-                        lineHeight: hp(24),
-                      }}>
-                      {cites.charAt(0).toUpperCase() + cites.slice(1)}
-                    </Text>
-
-                    <View
-                      style={{
-                        marginLeft: 15,
-                        width: hp(16),
-                        height: hp(16),
-                        backgroundColor: '#5F6368',
-                        borderRadius: 50,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 9,
-                          fontWeight: 'bold',
-                        }}>
-                        X
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View style={style.subTittleContainer}>
-              <Text style={style.tittleText}>Prefer Diet</Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  DietRefRBSheet.current.open();
-                }}
-                style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>{preferDiet}</Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={[style.subTittleContainer, {marginTop: hp(26)}]}>
-              <Text style={style.tittleText}>Select Annual Income</Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  IncomeRefRBSheet.current.open();
-                }}
-                style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>
-                  {minAnnualIncome} - {maxAnnualIncome} Lacs
-                </Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={[style.subTittleContainer, {marginTop: hp(26)}]}>
-              <TouchableOpacity
-                onPress={() => {
-                  HobbiesRefRBSheet.current.open();
-                }}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={style.tittleTexts}>Select Hobbies</Text>
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: hp(15),
-                }}>
-                {hobbies.map((hobby, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => toggleHobby(hobby)} // Remove hobby on press
-                    style={{
-                      borderColor: '#DEDEDE',
-                      borderWidth: 1,
-                      borderRadius: 25,
-                      paddingHorizontal: wp(15),
-                      paddingVertical: hp(10),
-                      marginRight: wp(10),
-                      marginBottom: hp(10),
-                      backgroundColor: colors.white,
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        fontFamily: fontFamily.poppins500,
-                        color: colors.black,
-                        lineHeight: hp(24),
-                      }}>
-                      {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
-                    </Text>
-
-                    <View
-                      style={{
-                        marginLeft: 15,
-                        width: hp(16),
-                        height: hp(16),
-                        backgroundColor: '#5F6368',
-                        borderRadius: 50,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 9,
-                          fontWeight: 'bold',
-                        }}>
-                        X
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            {/* AGE Bottom Sheet */}
-            <RBSheet
-              ref={ageRefRBSheet}
-              height={300}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              {/* Bottom Sheet Content */}
-
-              <Text
-                style={{
-                  marginHorizontal: 17,
-                  color: colors.black,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins500,
-                  marginTop: hp(5),
-                }}>
-                Select Age Range
-              </Text>
 
               <View
                 style={{
                   width: '100%',
                   height: 1,
-                  backgroundColor: '#E7E7E7',
-                  marginTop: hp(15),
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(25),
                 }}
               />
 
-              <View style={{marginTop: 15, marginHorizontal: 17}}>
-                <View style={{alignItems: 'center', marginTop: hp(37)}}>
-                  <AgeRangeSlider
-                    initialRange={ageRange}
-                    onSubmitRange={handleAgeRangeSubmit}
-                    tittleLabelText={'Select Age Range'}
-                    min={18}
-                    max={50}
-                    containerStyle={{width: '100%'}}
-                    labelContainerStyle={{
-                      marginHorizontal: 3,
-                      marginBottom: 5,
-                    }}
-                    rangeLabel={{
-                      fontsize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins600,
-                      marginTop: 10,
-                    }}
-                    tittleLabel={{
-                      fontsize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: '#9A9A9A',
-                      marginTop: 10,
-                    }}
-                    trackStyle={{height: 3}}
-                  />
-                </View>
-              </View>
+              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                <Text style={style.tittleText}>Select Height Range</Text>
 
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  ageRefRBSheet.current.close();
-                }}>
-                <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1}}
-                  style={{
-                    width: hp(162),
-                    height: hp(44),
-                    borderRadius: 50,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    marginTop: hp(32),
-                  }}>
-                  <Text
-                    style={{
-                      color: colors.white,
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                    }}>
-                    Add
+                <TouchableOpacity
+                  onPress={() => {
+                    heightRefRBSheet.current.open();
+                  }}
+                  style={style.subTittleContainerStyle}>
+                  <Text style={style.subTittleText}>
+                    {minPreferHeight} - {maxPreferHeight}
                   </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </RBSheet>
-
-            {/* HEIGHT Bottom Sheet */}
-            <RBSheet
-              ref={heightRefRBSheet}
-              height={300}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  // paddingHorizontal: 20,
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              {/* Bottom Sheet Content */}
-
-              <Text
-                style={{
-                  marginHorizontal: 17,
-                  color: colors.black,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins500,
-                  marginTop: hp(5),
-                }}>
-                Select Height Range
-              </Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
+              </View>
 
               <View
                 style={{
                   width: '100%',
                   height: 1,
-                  backgroundColor: '#E7E7E7',
-                  marginTop: hp(15),
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(25),
                 }}
               />
 
-              <View style={{marginTop: 15, marginHorizontal: 17}}>
-                <View style={{alignItems: 'center', marginTop: hp(37)}}>
-                  <HeightRangeSlider
-                    initialRange={heightRange}
-                    onSubmitRange={handleHeightRangeSubmit}
-                    tittleLabelText={'Select Height Range'}
-                    containerStyle={{width: '100%'}}
-                    labelContainerStyle={{
-                      marginHorizontal: 3,
-                      marginBottom: 5,
-                    }}
-                    rangeLabel={{
-                      fontsize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins600,
-                    }}
-                    tittleLabel={{
-                      fontsize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: '#9A9A9A',
-                    }}
-                    trackStyle={{height: 3}}
-                  />
-                </View>
-              </View>
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  heightRefRBSheet.current.close();
-                }}>
-                <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1}}
+              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    countryRBSheet.current.open();
+                  }}
                   style={{
-                    width: hp(162),
-                    height: hp(44),
-                    borderRadius: 50,
+                    flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    marginTop: hp(32),
+                    justifyContent: 'space-between',
                   }}>
-                  <Text
-                    style={{
-                      color: colors.white,
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                    }}>
-                    Add
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </RBSheet>
+                  <Text style={style.tittleTexts}>Select Prefer Country</Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
 
-            {/*COUNTRY BOTTOM SHEET*/}
-            <RBSheet
-              ref={countryRBSheet}
-              height={hp(380)}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  paddingHorizontal: wp(5),
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontSize: fontSize(16),
-                    fontFamily: fontFamily.poppins500,
-                    marginBottom: hp(10),
-                    color: colors.black,
-                    marginHorizontal: 17,
-                  }}>
-                  Select Country
-                </Text>
                 <View
                   style={{
-                    width: '100%',
-                    height: 0.7,
-                    backgroundColor: '#E7E7E7',
-                  }}
-                />
-
-                <View style={{marginHorizontal: 17, marginTop: 5}}>
-                  {availableCountry.map((countries, index) => (
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: hp(15),
+                  }}>
+                  {country.map((countries, index) => (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => toggleCountry(countries)} // Add/remove hobby on press
+                      onPress={() => toggleCountry(countries)} // Remove hobby on press
                       style={{
-                        marginTop: 10,
-                        flexDirection: 'row',
+                        borderColor: '#DEDEDE',
+                        borderWidth: 1,
+                        borderRadius: 25,
+                        paddingHorizontal: wp(15),
+                        paddingVertical: hp(10),
+                        marginRight: wp(10),
+                        marginBottom: hp(10),
+                        backgroundColor: colors.white,
                         alignItems: 'center',
+                        flexDirection: 'row',
                       }}>
                       <Text
                         style={{
                           fontSize: fontSize(16),
-                          marginRight: wp(5),
+                          fontFamily: fontFamily.poppins500,
+                          color: colors.black,
                           lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins400,
-                          color: country.includes(countries)
-                            ? colors.gray
-                            : colors.black,
                         }}>
                         {countries.charAt(0).toUpperCase() + countries.slice(1)}
                       </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </RBSheet>
 
-            {/*STATE BOTTOM SHEET*/}
-            <RBSheet
-              ref={StateRefRBSheet}
-              height={hp(380)}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  paddingHorizontal: wp(5),
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontSize: fontSize(16),
-                    fontFamily: fontFamily.poppins500,
-                    marginBottom: hp(10),
-                    color: colors.black,
-                    marginHorizontal: 17,
-                  }}>
-                  Select State
-                </Text>
-                <View
-                  style={{
-                    width: '100%',
-                    height: 0.7,
-                    backgroundColor: '#E7E7E7',
-                  }}
-                />
-
-                <View style={{marginHorizontal: 17, marginTop: 5}}>
-                  {availableState.map((states, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => toggleState(states)} // Add/remove hobby on press
-                      style={{
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Text
+                      <View
                         style={{
-                          fontSize: fontSize(16),
-                          marginRight: wp(5),
-                          lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins400,
-                          color: state.includes(states)
-                            ? colors.gray
-                            : colors.black,
+                          marginLeft: 15,
+                          width: hp(16),
+                          height: hp(16),
+                          backgroundColor: '#5F6368',
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}>
-                        {states.charAt(0).toUpperCase() + states.slice(1)}
-                      </Text>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 9,
+                            fontWeight: 'bold',
+                          }}>
+                          X
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   ))}
                 </View>
               </View>
-            </RBSheet>
-
-            {/*CITY BOTTOM SHEET*/}
-            <RBSheet
-              ref={CityRefRBSheet}
-              height={hp(380)}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  paddingHorizontal: wp(5),
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontSize: fontSize(16),
-                    fontFamily: fontFamily.poppins500,
-                    marginBottom: hp(10),
-                    color: colors.black,
-                    marginHorizontal: 17,
-                  }}>
-                  Select City
-                </Text>
-                <View
-                  style={{
-                    width: '100%',
-                    height: 0.7,
-                    backgroundColor: '#E7E7E7',
-                  }}
-                />
-
-                <View style={{marginHorizontal: 17}}>
-                  {availableCity.map((cites, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => toggleCity(cites)} // Add/remove hobby on press
-                      style={{
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: fontSize(16),
-                          marginRight: wp(5),
-                          lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins400,
-                          color: city.includes(cites)
-                            ? colors.gray
-                            : colors.black,
-                        }}>
-                        {cites.charAt(0).toUpperCase() + cites.slice(1)}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </RBSheet>
-
-            {/*DIET BOTTOM SHEET*/}
-            <RBSheet
-              ref={DietRefRBSheet}
-              closeOnDragDown={true} // Allows drag to close
-              closeOnPressMask={true} // Allows closing when clicking outside the sheet
-              height={hp(170)} // Adjust height of Bottom Sheet
-              customStyles={{
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                },
-              }}>
-              <Text style={style.bottomSheetTittleText}>
-                Select Prefer Diet{' '}
-              </Text>
-
-              <View style={style.bottomSheetUnderLine} />
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectDiet('Vegetarian')}>
-                <Text style={style.bottomSheetOptionText}>Vegetarian</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectDiet('Non_vegetarian')}>
-                <Text style={style.bottomSheetOptionText}>Non_vegetarian</Text>
-              </TouchableOpacity>
-            </RBSheet>
-
-            {/*ANNUAL INCOME BOTTOM SHEET */}
-            <RBSheet
-              ref={IncomeRefRBSheet}
-              height={300}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  // paddingHorizontal: 20,
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              {/* Bottom Sheet Content */}
-
-              <Text
-                style={{
-                  marginHorizontal: 17,
-                  color: colors.black,
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins500,
-                  marginTop: hp(5),
-                }}>
-                Select Annual Income
-              </Text>
 
               <View
                 style={{
                   width: '100%',
                   height: 1,
-                  backgroundColor: '#E7E7E7',
+                  backgroundColor: '#EFEFEF',
                   marginTop: hp(15),
                 }}
               />
 
-              <View style={{marginTop: 15, marginHorizontal: 17}}>
-                <View style={{alignItems: 'center', marginTop: hp(37)}}>
-                  <AgeRangeSlider
-                    initialRange={annualIncomeRange}
-                    onSubmitRange={handleIncomeRangeSubmit}
-                    tittleLabelText={'Annual Income'}
-                    rangeDatalabel={' Lacs'}
-                    min={5}
-                    max={30}
-                    containerStyle={{width: '100%'}}
-                    labelContainerStyle={{
-                      marginHorizontal: 3,
-                      marginBottom: 5,
-                    }}
-                    rangeLabel={{
-                      fontsize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins600,
-                      marginTop: 10,
-                    }}
-                    tittleLabel={{
-                      fontsize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: '#9A9A9A',
-                      marginTop: 10,
-                    }}
-                    trackStyle={{height: 3}}
+              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    StateRefRBSheet.current.open();
+                  }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={style.tittleTexts}>Select Prefer State</Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
                   />
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: hp(15),
+                  }}>
+                  {state.map((states, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => toggleState(states)} // Remove hobby on press
+                      style={{
+                        borderColor: '#DEDEDE',
+                        borderWidth: 1,
+                        borderRadius: 25,
+                        paddingHorizontal: wp(15),
+                        paddingVertical: hp(10),
+                        marginRight: wp(10),
+                        marginBottom: hp(10),
+                        backgroundColor: colors.white,
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(16),
+                          fontFamily: fontFamily.poppins500,
+                          color: colors.black,
+                          lineHeight: hp(24),
+                        }}>
+                        {states.charAt(0).toUpperCase() + states.slice(1)}
+                      </Text>
+
+                      <View
+                        style={{
+                          marginLeft: 15,
+                          width: hp(16),
+                          height: hp(16),
+                          backgroundColor: '#5F6368',
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 9,
+                            fontWeight: 'bold',
+                          }}>
+                          X
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
                 </View>
               </View>
 
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(15),
+                }}
+              />
+
+              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    CityRefRBSheet.current.open();
+                  }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={style.tittleTexts}>Select Prefer City</Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: hp(15),
+                  }}>
+                  {city.map((cites, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => toggleCity(cites)} // Remove hobby on press
+                      style={{
+                        borderColor: '#DEDEDE',
+                        borderWidth: 1,
+                        borderRadius: 25,
+                        paddingHorizontal: wp(15),
+                        paddingVertical: hp(10),
+                        marginRight: wp(10),
+                        marginBottom: hp(10),
+                        backgroundColor: colors.white,
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(16),
+                          fontFamily: fontFamily.poppins500,
+                          color: colors.black,
+                          lineHeight: hp(24),
+                        }}>
+                        {cites.charAt(0).toUpperCase() + cites.slice(1)}
+                      </Text>
+
+                      <View
+                        style={{
+                          marginLeft: 15,
+                          width: hp(16),
+                          height: hp(16),
+                          backgroundColor: '#5F6368',
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 9,
+                            fontWeight: 'bold',
+                          }}>
+                          X
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(15),
+                }}
+              />
+
+              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                <Text style={style.tittleText}>Prefer Diet</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    DietRefRBSheet.current.open();
+                  }}
+                  style={style.subTittleContainerStyle}>
+                  <Text style={style.subTittleText}>{preferDiet}</Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(15),
+                }}
+              />
+
+              <View
+                style={[
+                  style.subTittleContainer,
+                  {marginTop: hp(26), marginHorizontal: 17},
+                ]}>
+                <Text style={style.tittleText}>Select Annual Income</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    IncomeRefRBSheet.current.open();
+                  }}
+                  style={style.subTittleContainerStyle}>
+                  <Text style={style.subTittleText}>
+                    {minAnnualIncome} - {maxAnnualIncome} Lacs
+                  </Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(15),
+                }}
+              />
+
+              <View
+                style={[
+                  style.subTittleContainer,
+                  {marginTop: hp(26), marginHorizontal: 17},
+                ]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    HobbiesRefRBSheet.current.open();
+                  }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={style.tittleTexts}>Select Hobbies</Text>
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.rightSideIcon}
+                  />
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: hp(15),
+                  }}>
+                  {hobbies.map((hobby, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => toggleHobby(hobby)} // Remove hobby on press
+                      style={{
+                        borderColor: '#DEDEDE',
+                        borderWidth: 1,
+                        borderRadius: 25,
+                        paddingHorizontal: wp(15),
+                        paddingVertical: hp(10),
+                        marginRight: wp(10),
+                        marginBottom: hp(10),
+                        backgroundColor: colors.white,
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(16),
+                          fontFamily: fontFamily.poppins500,
+                          color: colors.black,
+                          lineHeight: hp(24),
+                        }}>
+                        {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                      </Text>
+
+                      <View
+                        style={{
+                          marginLeft: 15,
+                          width: hp(16),
+                          height: hp(16),
+                          backgroundColor: '#5F6368',
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 9,
+                            fontWeight: 'bold',
+                          }}>
+                          X
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(15),
+                }}
+              />
+
+              {/* AGE Bottom Sheet */}
+              <RBSheet
+                ref={ageRefRBSheet}
+                height={300}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                {/* Bottom Sheet Content */}
+
+                <Text
+                  style={{
+                    marginHorizontal: 17,
+                    color: colors.black,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins500,
+                    marginTop: hp(5),
+                  }}>
+                  Select Age Range
+                </Text>
+
+                <View
+                  style={{
+                    width: '100%',
+                    height: 1,
+                    backgroundColor: '#E7E7E7',
+                    marginTop: hp(15),
+                  }}
+                />
+
+                <View style={{marginTop: 15, marginHorizontal: 17}}>
+                  <View style={{alignItems: 'center', marginTop: hp(37)}}>
+                    <AgeRangeSlider
+                      initialRange={ageRange}
+                      onSubmitRange={handleAgeRangeSubmit}
+                      tittleLabelText={'Select Age Range'}
+                      min={18}
+                      max={50}
+                      containerStyle={{width: '100%'}}
+                      labelContainerStyle={{
+                        marginHorizontal: 3,
+                        marginBottom: 5,
+                      }}
+                      rangeLabel={{
+                        fontsize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins600,
+                        marginTop: 10,
+                      }}
+                      tittleLabel={{
+                        fontsize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: '#9A9A9A',
+                        marginTop: 10,
+                      }}
+                      trackStyle={{height: 3}}
+                    />
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    ageRefRBSheet.current.close();
+                  }}>
+                  <LinearGradient
+                    colors={['#2D46B9', '#8D1D8D']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
+                    style={{
+                      width: hp(162),
+                      height: hp(44),
+                      borderRadius: 50,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      marginTop: hp(32),
+                    }}>
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Add
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </RBSheet>
+
+              {/* HEIGHT Bottom Sheet */}
+              <RBSheet
+                ref={heightRefRBSheet}
+                height={300}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    // paddingHorizontal: 20,
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                {/* Bottom Sheet Content */}
+
+                <Text
+                  style={{
+                    marginHorizontal: 17,
+                    color: colors.black,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins500,
+                    marginTop: hp(5),
+                  }}>
+                  Select Height Range
+                </Text>
+
+                <View
+                  style={{
+                    width: '100%',
+                    height: 1,
+                    backgroundColor: '#E7E7E7',
+                    marginTop: hp(15),
+                  }}
+                />
+
+                <View style={{marginTop: 15, marginHorizontal: 17}}>
+                  <View style={{alignItems: 'center', marginTop: hp(37)}}>
+                    <HeightRangeSlider
+                      initialRange={heightRange}
+                      onSubmitRange={handleHeightRangeSubmit}
+                      tittleLabelText={'Select Height Range'}
+                      containerStyle={{width: '100%'}}
+                      labelContainerStyle={{
+                        marginHorizontal: 3,
+                        marginBottom: 5,
+                      }}
+                      rangeLabel={{
+                        fontsize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins600,
+                      }}
+                      tittleLabel={{
+                        fontsize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: '#9A9A9A',
+                      }}
+                      trackStyle={{height: 3}}
+                    />
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    heightRefRBSheet.current.close();
+                  }}>
+                  <LinearGradient
+                    colors={['#2D46B9', '#8D1D8D']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
+                    style={{
+                      width: hp(162),
+                      height: hp(44),
+                      borderRadius: 50,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      marginTop: hp(32),
+                    }}>
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Add
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </RBSheet>
+
+              {/*COUNTRY BOTTOM SHEET*/}
+              <RBSheet
+                ref={countryRBSheet}
+                height={hp(380)}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingHorizontal: wp(5),
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      fontFamily: fontFamily.poppins500,
+                      marginBottom: hp(10),
+                      color: colors.black,
+                      marginHorizontal: 17,
+                    }}>
+                    Select Country
+                  </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                    }}
+                  />
+
+                  <View style={{marginHorizontal: 17, marginTop: 5}}>
+                    {availableCountry.map((countries, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => toggleCountry(countries)} // Add/remove hobby on press
+                        style={{
+                          marginTop: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: fontSize(16),
+                            marginRight: wp(5),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                            color: country.includes(countries)
+                              ? colors.gray
+                              : colors.black,
+                          }}>
+                          {countries.charAt(0).toUpperCase() +
+                            countries.slice(1)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </RBSheet>
+
+              {/*STATE BOTTOM SHEET*/}
+              <RBSheet
+                ref={StateRefRBSheet}
+                height={hp(380)}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingHorizontal: wp(5),
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      fontFamily: fontFamily.poppins500,
+                      marginBottom: hp(10),
+                      color: colors.black,
+                      marginHorizontal: 17,
+                    }}>
+                    Select State
+                  </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                    }}
+                  />
+
+                  <View style={{marginHorizontal: 17, marginTop: 5}}>
+                    {availableState.map((states, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => toggleState(states)} // Add/remove hobby on press
+                        style={{
+                          marginTop: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: fontSize(16),
+                            marginRight: wp(5),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                            color: state.includes(states)
+                              ? colors.gray
+                              : colors.black,
+                          }}>
+                          {states.charAt(0).toUpperCase() + states.slice(1)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </RBSheet>
+
+              {/*CITY BOTTOM SHEET*/}
+              <RBSheet
+                ref={CityRefRBSheet}
+                height={hp(380)}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingHorizontal: wp(5),
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      fontFamily: fontFamily.poppins500,
+                      marginBottom: hp(10),
+                      color: colors.black,
+                      marginHorizontal: 17,
+                    }}>
+                    Select City
+                  </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                    }}
+                  />
+
+                  <View style={{marginHorizontal: 17}}>
+                    {availableCity.map((cites, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => toggleCity(cites)} // Add/remove hobby on press
+                        style={{
+                          marginTop: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: fontSize(16),
+                            marginRight: wp(5),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                            color: city.includes(cites)
+                              ? colors.gray
+                              : colors.black,
+                          }}>
+                          {cites.charAt(0).toUpperCase() + cites.slice(1)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </RBSheet>
+
+              {/*DIET BOTTOM SHEET*/}
+              <RBSheet
+                ref={DietRefRBSheet}
+                closeOnDragDown={true} // Allows drag to close
+                closeOnPressMask={true} // Allows closing when clicking outside the sheet
+                height={hp(170)} // Adjust height of Bottom Sheet
+                customStyles={{
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                  },
+                }}>
+                <Text style={style.bottomSheetTittleText}>
+                  Select Prefer Diet{' '}
+                </Text>
+
+                <View style={style.bottomSheetUnderLine} />
+
+                <TouchableOpacity
+                  style={{marginTop: hp(15)}}
+                  onPress={() => handleSelectDiet('Vegetarian')}>
+                  <Text style={style.bottomSheetOptionText}>Vegetarian</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{marginTop: hp(15)}}
+                  onPress={() => handleSelectDiet('Non_vegetarian')}>
+                  <Text style={style.bottomSheetOptionText}>
+                    Non_vegetarian
+                  </Text>
+                </TouchableOpacity>
+              </RBSheet>
+
+              {/*ANNUAL INCOME BOTTOM SHEET */}
+              <RBSheet
+                ref={IncomeRefRBSheet}
+                height={300}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    // paddingHorizontal: 20,
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                {/* Bottom Sheet Content */}
+
+                <Text
+                  style={{
+                    marginHorizontal: 17,
+                    color: colors.black,
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins500,
+                    marginTop: hp(5),
+                  }}>
+                  Select Annual Income
+                </Text>
+
+                <View
+                  style={{
+                    width: '100%',
+                    height: 1,
+                    backgroundColor: '#E7E7E7',
+                    marginTop: hp(15),
+                  }}
+                />
+
+                <View style={{marginTop: 15, marginHorizontal: 17}}>
+                  <View style={{alignItems: 'center', marginTop: hp(37)}}>
+                    <AgeRangeSlider
+                      initialRange={annualIncomeRange}
+                      onSubmitRange={handleIncomeRangeSubmit}
+                      tittleLabelText={'Annual Income'}
+                      rangeDatalabel={' Lacs'}
+                      min={5}
+                      max={30}
+                      containerStyle={{width: '100%'}}
+                      labelContainerStyle={{
+                        marginHorizontal: 3,
+                        marginBottom: 5,
+                      }}
+                      rangeLabel={{
+                        fontsize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins600,
+                        marginTop: 10,
+                      }}
+                      tittleLabel={{
+                        fontsize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: '#9A9A9A',
+                        marginTop: 10,
+                      }}
+                      trackStyle={{height: 3}}
+                    />
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    IncomeRefRBSheet.current.close();
+                  }}>
+                  <LinearGradient
+                    colors={['#2D46B9', '#8D1D8D']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
+                    style={{
+                      width: hp(162),
+                      height: hp(44),
+                      borderRadius: 50,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      marginTop: hp(32),
+                    }}>
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Add
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </RBSheet>
+
+              {/*HOBBIES BOTTOM SHEET*/}
+              <RBSheet
+                ref={HobbiesRefRBSheet}
+                height={hp(390)}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                // onClose={() => setIsEditing(false)} // Close editing mode when bottom sheet closes
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingHorizontal: wp(5),
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      fontFamily: fontFamily.poppins500,
+                      marginBottom: hp(10),
+                      color: colors.black,
+                      marginHorizontal: 17,
+                    }}>
+                    Edit Hobbies
+                  </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                    }}
+                  />
+
+                  <View style={{marginHorizontal: 17}}>
+                    {availableHobbies.map((hobby, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => toggleHobby(hobby)} // Add/remove hobby on press
+                        style={{
+                          marginTop: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: fontSize(16),
+                            marginRight: wp(5),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                            color: hobbies.includes(hobby)
+                              ? colors.gray
+                              : colors.black,
+                          }}>
+                          {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </RBSheet>
+
               <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => {
-                  IncomeRefRBSheet.current.close();
-                }}>
+                onPress={handleSave}
+                style={{marginHorizontal: 17}}>
                 <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
+                  colors={['#0F52BA', '#8225AF']}
                   start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1}}
+                  end={{x: 1, y: 0.5}}
                   style={{
-                    width: hp(162),
+                    width: '100%',
                     height: hp(44),
                     borderRadius: 50,
                     alignItems: 'center',
                     justifyContent: 'center',
                     alignSelf: 'center',
                     marginTop: hp(32),
+                    marginBottom: hp(25),
                   }}>
-                  <Text
-                    style={{
-                      color: colors.white,
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                    }}>
-                    Add
-                  </Text>
+                  {loading ? (
+                    <ActivityIndicator size="large" color={colors.white} />
+                  ) : (
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Save Changes
+                    </Text>
+                  )}
                 </LinearGradient>
               </TouchableOpacity>
-            </RBSheet>
-
-            {/*HOBBIES BOTTOM SHEET*/}
-            <RBSheet
-              ref={HobbiesRefRBSheet}
-              height={hp(390)}
-              openDuration={250}
-              closeOnDragDown={true}
-              closeOnPressMask={true}
-              // onClose={() => setIsEditing(false)} // Close editing mode when bottom sheet closes
-              customStyles={{
-                container: {
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
-                  paddingHorizontal: wp(5),
-                },
-                draggableIcon: {
-                  backgroundColor: colors.gray,
-                },
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontSize: fontSize(16),
-                    fontFamily: fontFamily.poppins500,
-                    marginBottom: hp(10),
-                    color: colors.black,
-                    marginHorizontal: 17,
-                  }}>
-                  Edit Hobbies
-                </Text>
-                <View
-                  style={{
-                    width: '100%',
-                    height: 0.7,
-                    backgroundColor: '#E7E7E7',
-                  }}
-                />
-
-                <View style={{marginHorizontal: 17}}>
-                  {availableHobbies.map((hobby, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => toggleHobby(hobby)} // Add/remove hobby on press
-                      style={{
-                        marginTop: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: fontSize(16),
-                          marginRight: wp(5),
-                          lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins400,
-                          color: hobbies.includes(hobby)
-                            ? colors.gray
-                            : colors.black,
-                        }}>
-                        {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </RBSheet>
-
-            <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
-              <LinearGradient
-                colors={['#0F52BA', '#8225AF']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0.5}}
-                style={{
-                  width: '100%',
-                  height: hp(44),
-                  borderRadius: 50,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                  marginTop: hp(32),
-                  marginBottom: hp(25),
-                }}>
-                {loading ? (
-                  <ActivityIndicator size="large" color={colors.white} />
-                ) : (
-                  <Text
-                    style={{
-                      color: colors.white,
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                    }}>
-                    Save Changes
-                  </Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
+            </View>
           </View>
         )}
       </View>

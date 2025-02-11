@@ -78,32 +78,32 @@ const EducationDetailsScreen = ({
           />
         </View>
 
-        <View style={{marginTop: 37}}>
-          <NewDropDownTextInput
-            placeholder="City"
-            dropdownData={educationCityDropdownData}
-            onValueChange={setCollageCity}
-            bottomSheetHeight={getDropdownHeight('City')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: 37}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="City"*/}
+        {/*    dropdownData={educationCityDropdownData}*/}
+        {/*    onValueChange={setCollageCity}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('City')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: 37}}>
-          <NewDropDownTextInput
-            placeholder="State"
-            dropdownData={educationStateDropdownData}
-            onValueChange={setCollageState}
-            bottomSheetHeight={getDropdownHeight('State')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: 37}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="State"*/}
+        {/*    dropdownData={educationStateDropdownData}*/}
+        {/*    onValueChange={setCollageState}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('State')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: 37}}>
-          <NewDropDownTextInput
-            placeholder="Country"
-            dropdownData={educationCountryDropdownData}
-            onValueChange={setCollageCountry}
-            bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: 37}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="Country"*/}
+        {/*    dropdownData={educationCountryDropdownData}*/}
+        {/*    onValueChange={setCollageCountry}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
       </View>
     </SafeAreaView>
   );
