@@ -19,10 +19,10 @@ export const style = StyleSheet.create({
     marginTop: hp(75),
   },
   bodyHeightStyle: {
-    marginTop: hp(80),
+    marginTop: hp(60),
   },
   bodySpaceStyle: {
-    marginTop: hp(37),
+    marginTop: hp(30),
   },
   startButtonContainer: {
     width: '100%',
@@ -31,6 +31,7 @@ export const style = StyleSheet.create({
     backgroundColor: 'black',
     marginTop: hp(50),
     justifyContent: 'center',
+    marginBottom: 50,
   },
   buttonText: {
     color: 'white',

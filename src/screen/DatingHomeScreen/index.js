@@ -37,12 +37,15 @@ const DatingHomeScreen = () => {
   const [initialCards, setInitialCards] = useState([]); // State to hold the initial cards
   const [resetKey, setResetKey] = useState(0); // State to handle resetting the swiper
   const [swipedAllCards, setSwipedAllCards] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const RBSheetRef = useRef();
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
+
+  console.log(' === user ===> ', user?.user);
 
   const topModalBottomSheetRef = useRef(null);
   const openBottomSheet = () => {
@@ -118,6 +121,18 @@ const DatingHomeScreen = () => {
     }
   };
 
+  const userImage = user?.user?.profilePic;
+
+  const userProfileCompleted = user?.user?.userProfileCompleted;
+  const userPartnerFormPreCompleted = user?.user?.userPartnerPreCompleted;
+
+  console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+
+  console.log(
+    ' === userPartnerFormPreCompleted ===> ',
+    userPartnerFormPreCompleted,
+  );
+
   const handleButtonClick = () => {
     if (activeLine === 3) {
       setShowModal(false);
@@ -128,15 +143,28 @@ const DatingHomeScreen = () => {
     }
   };
 
-  const userImage = user?.user?.profilePic;
-
-  const userProfileCompleted = user?.user?.userProfileCompleted;
+  const handleCompleteButtonClick = () => {
+    setModalVisible(false);
+    navigation.navigate('DatingPartnerPreferenceScreen');
+  };
 
   useEffect(() => {
     if (userProfileCompleted) {
       setShowModal(false);
     }
   }, [userProfileCompleted]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!userProfileCompleted) {
+        // If userProfileCompleted is false, show the modal
+        setShowModal(true);
+      } else if (userProfileCompleted && !userPartnerFormPreCompleted) {
+        // If userProfileCompleted is true and userPartnerFormPreCompleted is false, show the modal
+        setModalVisible(true);
+      }
+    }, [userProfileCompleted, userPartnerFormPreCompleted]),
+  );
 
   const openTopSheetModal = () => {
     // Call toggleModal to show the top modal
@@ -282,43 +310,6 @@ const DatingHomeScreen = () => {
       </View>
 
       <View style={{backgroundColor: 'green', marginTop: -40}}>
-        {/*<Swiper*/}
-        {/*  cards={cards}*/}
-        {/*  renderCard={renderCard}*/}
-        {/*  onSwipedAll={onSwipedAll}*/}
-        {/*  onSwiped={onSwiped} // Handle card swipe event*/}
-        {/*  stackSize={2}*/}
-        {/*  backgroundColor="white"*/}
-        {/*  cardIndex={0}*/}
-        {/*  animateOverlayLabelsOpacity*/}
-        {/*  verticalSwipe={false}*/}
-        {/*  horizontalSwipe={true}*/}
-        {/*/>*/}
-
-        {/*{user?.user?.userProfileCompleted === true ? (*/}
-        {/*  <DatingSwipeDataComponent />*/}
-        {/*) : (*/}
-        {/*  <Text>No data</Text>*/}
-        {/*)}*/}
-
-        {/*{cards.length > 0 ? (*/}
-        {/*  <Swiper*/}
-        {/*    key={resetKey} // Add a key to reset the swiper*/}
-        {/*    cards={cards}*/}
-        {/*    renderCard={renderCard}*/}
-        {/*    onSwipedAll={onSwipedAll}*/}
-        {/*    onSwiped={onSwiped}*/}
-        {/*    stackSize={2}*/}
-        {/*    backgroundColor="white"*/}
-        {/*    cardIndex={0}*/}
-        {/*    animateOverlayLabelsOpacity*/}
-        {/*    verticalSwipe={false}*/}
-        {/*    horizontalSwipe={true}*/}
-        {/*  />*/}
-        {/*) : (*/}
-        {/*  <Text>Loading...</Text>*/}
-        {/*)}*/}
-
         <DatingSwipeDataComponent />
       </View>
 
@@ -367,6 +358,106 @@ const DatingHomeScreen = () => {
                 end={{x: 1, y: 0.5}}
                 style={style.modalButtonGradient}>
                 <Text style={style.modalButtonText}>{getButtpnText()}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal Component */}
+      <Modal
+        // animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+          <View
+            style={{
+              width: wp(340),
+              height: hp(420),
+              backgroundColor: 'white',
+              borderRadius: 14,
+              alignItems: 'center',
+            }}>
+            <Image source={images.modal_top_img} style={{width: '100%'}} />
+
+            <Text
+              style={{
+                fontSize: fontSize(20),
+                lineHeight: hp(30),
+                fontFamily: fontFamily.poppins600,
+                color: colors.white,
+                marginTop: -60,
+              }}>
+              Congratulations
+            </Text>
+
+            <View style={{marginTop: 70, alignItems: 'center'}}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(24),
+                  lineHeight: hp(36),
+                  fontFamily: fontFamily.poppins600,
+                }}>
+                Complete Your Profile
+              </Text>
+
+              <Text
+                style={{
+                  marginHorizontal: wp(31),
+                  fontFamily: fontFamily.poppins400,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  color: colors.black,
+                  textAlign: 'center',
+                  marginTop: hp(27),
+                }}>
+                Your privacy is our priority. Take{'\n'}advantage of our
+                security features,{'\n'}and be assured that your information is
+                {'\n'}in safe hands
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleCompleteButtonClick}
+              // onPress={() => {
+              //   setModalVisible(false);
+              // }}
+              style={{
+                // backgroundColor: 'red',
+                flex: 1,
+                position: 'absolute',
+                bottom: 50,
+              }}>
+              <LinearGradient
+                colors={['#0F52BA', '#BA0FA9']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 2}}
+                style={{
+                  marginTop: hp(50),
+                  width: wp(176),
+                  height: hp(50),
+                  borderRadius: 25,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    textAlign: 'center',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(26),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  Let’s do it
+                </Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>

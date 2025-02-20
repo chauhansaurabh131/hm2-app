@@ -6,6 +6,7 @@ import {fontSize, hp, wp} from '../../../utils/helpers';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 
 import DatingTextInputMultipleSelect from '../../../components/datingTextInputMultipleSelect';
+import NewBottomSheetMultipleValueSelect from '../../../components/newBottomSheetMultipleValueSelect';
 const DatingGeneralDetailsScreen = ({
   genderSetSelectedOption,
   userHeight,
@@ -17,9 +18,9 @@ const DatingGeneralDetailsScreen = ({
   setBio,
   bio,
 }) => {
-  const genderDropdownData = ['male', 'female'];
-  const ReligionData = ['hindu', 'muslim', 'sikh'];
-  const Language = ['hindi', 'english', 'gujarati'];
+  const genderDropdownData = ['Male', 'Female'];
+  const ReligionData = ['Hindu', 'Muslim', 'Sikh'];
+  const Language = ['Hindi', 'English', 'Gujarati'];
   const EthnicityData = ['AAA', 'BBB', 'CCC'];
 
   const handleOptionSelect = option => {
@@ -32,6 +33,10 @@ const DatingGeneralDetailsScreen = ({
     setLanguageSpoken(languageSpoken.filter(value => value !== option));
   };
 
+  const handleSelect = selectedValue => {
+    setLanguageSpoken(selectedValue);
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17)}}>
@@ -42,6 +47,7 @@ const DatingGeneralDetailsScreen = ({
               placeholder="Gender"
               dropdownData={genderDropdownData}
               onValueChange={genderSetSelectedOption}
+              bottomSheetHeight={hp(150)}
             />
 
             <View style={{marginTop: hp(37)}}>
@@ -54,21 +60,21 @@ const DatingGeneralDetailsScreen = ({
               />
             </View>
 
-            <View style={{marginTop: hp(37)}}>
-              <DatingTextInputMultipleSelect
+            <View style={{marginTop: hp(30)}}>
+              <NewBottomSheetMultipleValueSelect
+                label="Langauge Spoken"
                 options={Language}
-                selectedValues={languageSpoken}
-                onOptionSelect={handleOptionSelect}
-                onRemoveValue={handleRemoveValue}
-                placeholder="Langauge Spoken"
+                onSelect={handleSelect} // Pass the onSelect handler to capture selected values
+                bottomSheetHeight={hp(170)}
               />
             </View>
 
-            <View style={{marginTop: hp(30)}}>
+            <View style={{marginTop: hp(10)}}>
               <NewDropDownTextInput
                 placeholder="Religion"
                 dropdownData={ReligionData}
                 onValueChange={SetReligionSelectedOption}
+                bottomSheetHeight={hp(170)}
               />
             </View>
 
@@ -77,6 +83,7 @@ const DatingGeneralDetailsScreen = ({
                 placeholder="Ethnicity"
                 dropdownData={EthnicityData}
                 onValueChange={SetEthnicityData}
+                bottomSheetHeight={hp(170)}
               />
             </View>
 

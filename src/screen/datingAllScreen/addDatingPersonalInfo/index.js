@@ -1,5 +1,6 @@
 import React, {useReducer, useState} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
@@ -52,12 +53,12 @@ const AddDatingPersonalInfo = ({navigation}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === AddDatingPersonalInfo ===> ', user?.user);
+  // console.log(' === AddDatingPersonalInfo ===> ', user?.user);
 
-  console.log(
-    ' === interestedIn ===> ',
-    user?.user?.datingData[0]?.interestedIn,
-  );
+  // console.log(
+  //   ' === interestedIn ===> ',
+  //   user?.user?.datingData[0]?.interestedIn,
+  // );
 
   const [{activeIndex}, dispatch] = useReducer(
     phaseReducer,
@@ -97,6 +98,9 @@ const AddDatingPersonalInfo = ({navigation}) => {
   const [occupation, setOccupation] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [annualIncome, setAnnualIncome] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // console.log(' === loading ===> ', loading);
 
   const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
     const tintColor = () => (index <= activeIndex ? '#000000' : '#B0B0B0');
@@ -155,17 +159,11 @@ const AddDatingPersonalInfo = ({navigation}) => {
   };
 
   const navigateToNext = () => {
-    console.log(' === activeIndex ===> ', activeIndex);
-    // if (activeIndex === PersonalInfoPhases.length - 1) {
-    //   console.log(
-    //     ' === PersonalInfoPhases.length ===> ',
-    //     PersonalInfoPhases.length,
-    //   );
-    //   // openGallery();
-    //   navigation.navigate('HomeTabs');
-    // } else {
+    // console.log(' === activeIndex ===> ', activeIndex);
+
+    setLoading(true);
+
     if (activeIndex === 0) {
-      console.log(' === activeIndex ===> ', activeIndex);
       const motherTongueString = languageSpoken.join(', ');
 
       const updatedDatingData = {
@@ -176,14 +174,15 @@ const AddDatingPersonalInfo = ({navigation}) => {
       apiDispatch(
         updateDetails(
           {
-            gender: genderSelectedOption,
+            gender: genderSelectedOption.toLowerCase(),
             height: userHeight,
             motherTongue: motherTongueString,
-            religion: religionSelectedOption,
+            religion: religionSelectedOption.toLowerCase(),
             datingData: [updatedDatingData],
             writeBoutYourSelf: bio,
+            userProfileCompleted: true,
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
 
@@ -202,32 +201,22 @@ const AddDatingPersonalInfo = ({navigation}) => {
           {
             mobileNumber: mobileNumber,
             datingData: [updatedDatingData],
-            userProfileCompleted: true,
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 2) {
-      // console.log(
-      //   ' === Hobbies ===> ',
-      //   selectedItems.map(item => item.label),
-      // );
-      //
-      // dispatch({type: NEXT_SCREEN});
-      // navigation.navigate('HomeTabs');
-
       apiDispatch(
         updateDetails(
           {
-            hobbies: selectedItems.map(item => item.label),
+            // hobbies: selectedItems.map(item => item.label),
+            hobbies: selectedItems,
           },
           // () => navigation.navigate('SetProfilePictureScreen'),
-          () => openGallery(),
+          () => setLoading(false),
+          openGallery(),
         ),
       );
-    } else {
-      // Just navigate to the next screen for other phases
-      dispatch({type: NEXT_SCREEN});
     }
     // }
   };
@@ -356,16 +345,20 @@ const AddDatingPersonalInfo = ({navigation}) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text
-            style={{
-              color: colors.white,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-            }}>
-            Continue
-            {/*{activeIndex === 2 ? 'Add Photos' : 'Continue'}*/}
-          </Text>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.white} />
+          ) : (
+            <Text
+              style={{
+                color: colors.white,
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins400,
+              }}>
+              {/*Continue*/}
+              {activeIndex === 2 ? 'Add Photos' : 'Continue'}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       <Toast ref={ref => Toast.setRef(ref)} />

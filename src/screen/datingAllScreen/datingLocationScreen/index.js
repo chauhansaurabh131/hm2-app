@@ -62,6 +62,7 @@ const DatingLocationScreen = ({
               placeholder="Currently Living"
               dropdownData={CurrentLivingData}
               onValueChange={setCurrentLiving}
+              bottomSheetHeight={hp(210)}
             />
           </View>
 
@@ -70,6 +71,7 @@ const DatingLocationScreen = ({
               placeholder="Education Level"
               dropdownData={EducationLevelData}
               onValueChange={setEducationLevel}
+              bottomSheetHeight={hp(260)}
             />
           </View>
 
@@ -78,6 +80,7 @@ const DatingLocationScreen = ({
               placeholder="Occupation"
               dropdownData={OccupationData}
               onValueChange={setOccupation}
+              bottomSheetHeight={hp(170)}
             />
           </View>
 
@@ -86,6 +89,7 @@ const DatingLocationScreen = ({
               placeholder="Annual Income"
               dropdownData={Annual_Income}
               onValueChange={setAnnualIncome}
+              bottomSheetHeight={hp(230)}
             />
           </View>
 

@@ -103,7 +103,7 @@ const isDisLikeDetails = async data => {
 };
 
 const datingPartnerReferencesApi = async data => {
-  return put('/api/v1/user/dating-partner/', data, true);
+  return post('/api/v1/user/dating-partner/', data, true);
 };
 
 const datingGetAllRequested = async data => {

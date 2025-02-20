@@ -138,7 +138,7 @@ const DatingCreatingProfile = () => {
         <View style={style.bodyHeightStyle}>
           <DropDownMutipleValueComponent
             data={dropdownData}
-            height={50}
+            height={35}
             searchPlaceholder={'Search Option'}
             placeholder={'Select Interested In'}
             selectedItems={datingSelectedOption}

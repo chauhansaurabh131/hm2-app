@@ -1,31 +1,33 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, TouchableOpacity, Text, Image} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, {useState, useRef} from 'react';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Image,
+  ScrollView,
+} from 'react-native';
+import RBSheet from 'react-native-raw-bottom-sheet'; // Import RBSheet
 import {colors} from '../../utils/colors';
-import {fontSize, hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons} from '../../assets';
 
 const DropdownComponent = ({
-  dropdownStyle,
-  placeholderStyle,
-  selectedTextStyle,
-  inputSearchStyle,
-  iconStyle,
   placeholder,
-  searchPlaceholder,
   data,
   width,
   height,
-  search,
   selectedItems,
   setSelectedItems,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
+  const bottomSheetRef = useRef(null); // Reference for the bottom sheet
 
   const handleDropdownChange = item => {
     const index = selectedItems.indexOf(item.value);
     if (index === -1) {
       setSelectedItems([...selectedItems, item.value]); // Select if not already selected
+      bottomSheetRef.current.close();
     } else {
       const newSelectedItems = [...selectedItems];
       newSelectedItems.splice(index, 1); // Deselect if already selected
@@ -57,41 +59,51 @@ const DropdownComponent = ({
 
   const renderItem = item => {
     return (
-      <View style={styles.item}>
-        <Text style={styles.textItem}>{item.label}</Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => handleDropdownChange(item)}
+        style={styles.item}>
+        <View style={{marginHorizontal: 17}}>
+          <Text style={styles.textItem}>{item.label}</Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Dropdown
-        style={[
-          styles.dropdown,
-          {width: width, height: height},
-          isFocus && {...styles.dropdownFocused, ...dropdownStyle},
-        ]}
-        placeholderStyle={[styles.placeholderStyle, placeholderStyle]}
-        selectedTextStyle={[styles.selectedTextStyle, selectedTextStyle]}
-        inputSearchStyle={[styles.inputSearchStyle, inputSearchStyle]}
-        data={data}
-        search={search}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={placeholder}
-        searchPlaceholder={searchPlaceholder}
-        value={null} // Ensure TextInput stays empty
-        onFocus={() => setIsFocus(true)}
-        onBlur={() => setIsFocus(false)}
-        onChange={handleDropdownChange}
-        multiselect
-        nestedScrollEnabled={true}
-        renderItem={renderItem}
-        renderRightIcon={() => (
-          <Image source={icons.drooDownLogo} style={styles.iconStyle} />
-        )}
-      />
+      {/* Your TextInput styled area to open bottom sheet */}
+      <TouchableOpacity
+        activeOpacity={0.6}
+        onPress={() => bottomSheetRef.current.open()}
+        style={styles.dropdownWrapper}>
+        <View style={[styles.dropdown, {width: width, height: height}]}>
+          <Text style={styles.placeholderStyle}>{placeholder}</Text>
+        </View>
+        <Image
+          source={icons.rightSideIcon} // Make sure to import your right-side icon
+          style={styles.iconStyle}
+        />
+      </TouchableOpacity>
+
+      {/* Bottom Sheet */}
+      <RBSheet
+        ref={bottomSheetRef}
+        height={300} // Set the height of the bottom sheet
+        closeOnDragDown={true}
+        customStyles={{
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            // padding: 20,
+          },
+        }}>
+        {/* Dropdown inside the Bottom Sheet */}
+        <ScrollView style={{flex: 1, marginTop: hp(10)}}>
+          {data.map(item => renderItem(item))}
+        </ScrollView>
+      </RBSheet>
+
+      {/* Render selected items below */}
       <View style={styles.selectedItemsContainer}>{renderSelectedItems()}</View>
     </View>
   );
@@ -101,43 +113,38 @@ export default DropdownComponent;
 
 const styles = StyleSheet.create({
   container: {},
+  dropdownWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   dropdown: {
     height: hp(50),
-    width: wp(339),
-    // borderColor: colors.lightGreyBorder,
     borderColor: '#C0C0C0',
     borderWidth: 0,
     borderBottomWidth: 1,
     borderRadius: 0,
-    // paddingHorizontal: 8,
+    flex: 1,
   },
-  dropdownFocused: {},
   placeholderStyle: {
-    fontSize: 16,
     color: colors.black,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: colors.black,
+    fontSize: fontSize(18),
+    lineHeight: hp(27),
+    fontFamily: fontFamily.poppins500,
   },
   iconStyle: {
-    width: hp(12),
-    height: hp(18),
+    width: hp(8),
+    height: hp(11),
     resizeMode: 'contain',
-    marginRight: 9,
-    tintColor: '#5F6368',
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-    color: colors.black,
+    right: 15,
+    top: -5,
   },
   selectedItemsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 8,
-    borderRadius: 10, // Optional: Add border radius here for selected items
-    overflow: 'hidden', // Ensure the border radius is respected
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   selectedItem: {
     flexDirection: 'row',
@@ -169,8 +176,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   textItem: {
-    fontSize: 16,
-    padding: 20,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
+    padding: 10,
     color: 'black',
   },
 });

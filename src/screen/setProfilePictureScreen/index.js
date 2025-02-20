@@ -8,6 +8,7 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
@@ -24,6 +25,7 @@ const SetProfilePictureScreen = ({route}) => {
   const {selectedImages, setSelectedImages} = route.params;
   const [images, setImages] = useState(selectedImages);
   const [selectedImageUri, setSelectedImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const apiDispatch = useDispatch();
@@ -41,6 +43,8 @@ const SetProfilePictureScreen = ({route}) => {
   }, [selectedImages]);
 
   const onAddPress = () => {
+    setLoading(true);
+
     const allImages = selectedImages;
 
     console.log(' === allImages ===> ', allImages);
@@ -84,6 +88,7 @@ const SetProfilePictureScreen = ({route}) => {
         // navigation.navigate('HomeTabs');
         // Optionally navigate or perform other actions
         AAA();
+        // setLoading(false);
       } catch (err) {
         console.log(' === err ===> ', err);
       }
@@ -140,7 +145,7 @@ const SetProfilePictureScreen = ({route}) => {
 
           console.log(' === contentType ===> ', contentType);
           console.log('File uploaded successfully:', data);
-
+          setLoading(false);
           {
             appUsesType === 'dating'
               ? navigation.navigate('DatingPartnerPreferenceScreen')
@@ -330,7 +335,11 @@ const SetProfilePictureScreen = ({route}) => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onAddPress} style={styles.addButton}>
-          <Text style={styles.addButtonText}>Add</Text>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.white} />
+          ) : (
+            <Text style={styles.addButtonText}>Add</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

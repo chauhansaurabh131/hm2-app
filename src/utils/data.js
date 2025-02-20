@@ -42,15 +42,25 @@ export const COUNTRY_LIST = [
   {label: 'pakistan', value: '9'},
 ];
 
+//  const Dating_List = [
+//   {label: 'Meet New Friends', value: '1'},
+//   {label: 'Looking for Love', value: '2'},
+//   {label: 'Movie Date', value: '3'},
+//   {label: 'Foodies', value: '4'},
+//   {label: 'Travel Buddies', value: '5'},
+//   {label: 'Game Lover', value: '6'},
+//   {label: 'Chit-Chat', value: '7'},
+//   {label: 'Adventurous', value: '8'},
+// ];
+
 export const Dating_List = [
-  {label: 'Meet New Friends', value: '1'},
-  {label: 'Looking for Love', value: '2'},
-  {label: 'Movie Date', value: '3'},
-  {label: 'Foodies', value: '4'},
-  {label: 'Travel Buddies', value: '5'},
-  {label: 'Game Lover', value: '6'},
-  {label: 'Chit-Chat', value: '7'},
-  {label: 'Adventurous', value: '8'},
+  'Looking for Love',
+  'Movie Date',
+  'Foodies',
+  'Travel Buddies',
+  'Game Lover',
+  'Chit-Chat',
+  'Adventurous',
 ];
 
 export const Language = [
