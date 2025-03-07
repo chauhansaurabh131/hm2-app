@@ -87,6 +87,8 @@ import EditProfessionalScreen from '../screen/editRemainingFillUpData/editProfes
 import EditHobbiesScreen from '../screen/editRemainingFillUpData/editHobbiesScreen';
 import EditPartnerPreferencesScreen from '../screen/editRemainingFillUpData/editPartnerPreferencesScreen';
 import ChangeNameRequestScreen from '../screen/changeNameRequestScreen';
+import MeetNewFriendsScreen from '../screen/datingExploreAllScreen/meetNewFriendsScreen';
+import DatingSearchFilterScreen from '../screen/datingAllScreen/datingSearchFilterScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -518,6 +520,11 @@ const MainNavigator = () => {
           name={'ChangeNameRequestScreen'}
           component={ChangeNameRequestScreen}
         />
+
+        {/*<Stack.Screen*/}
+        {/*  name={'DatingSearchFilterScreen'}*/}
+        {/*  component={DatingSearchFilterScreen}*/}
+        {/*/>*/}
       </Stack.Navigator>
     );
   };
@@ -735,11 +742,18 @@ const MainNavigator = () => {
           component={SuccessStoryPageScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
-        {/*<Tab.Screen*/}
-        {/*  name="Abc"*/}
-        {/*  component={Abc}*/}
-        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
-        {/*/>*/}
+
+        <Tab.Screen
+          name="MeetNewFriendsScreen"
+          component={MeetNewFriendsScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="DatingSearchFilterScreen"
+          component={DatingSearchFilterScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
       </Tab.Navigator>
     );
   };

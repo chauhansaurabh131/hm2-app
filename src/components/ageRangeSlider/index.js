@@ -19,6 +19,7 @@ const AgeRangeSlider = ({
   rangeDatalabel,
   min,
   max,
+  hideRangeLabel,
 }) => {
   const [ranges, setRanges] = useState(initialRange); // Default range values from parent
 
@@ -47,10 +48,12 @@ const AgeRangeSlider = ({
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.labelContainer, labelContainerStyle]}>
         <Text style={[styles.label, tittleLabel]}>{tittleLabelText}</Text>
-        <Text style={[styles.label, rangeLabel]}>
-          {ranges[0]} - {ranges[1]}
-          {rangeDatalabel}
-        </Text>
+        {!hideRangeLabel && ( // Condition to show/hide range label
+          <Text style={[styles.label, rangeLabel]}>
+            {ranges[0]} - {ranges[1]}
+            {rangeDatalabel}
+          </Text>
+        )}
       </View>
       <View style={{paddingHorizontal: 0, marginTop: -10}}>
         <MultiSlider

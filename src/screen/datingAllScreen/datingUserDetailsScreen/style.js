@@ -80,12 +80,13 @@ export const style = StyleSheet.create({
   },
   iconsContainer: {
     marginHorizontal: 17,
-    marginTop: hp(26),
+    // marginTop: hp(26),
   },
   iconsBodyContainer: {
     flexDirection: 'row',
     // backgroundColor: 'silver',
     justifyContent: 'center',
+    marginTop: hp(26),
   },
   imagesContainer: {
     width: hp(63),
@@ -95,7 +96,7 @@ export const style = StyleSheet.create({
     borderColor: '#E5E5E5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 7,
+    marginRight: hp(15),
   },
   disLikeIcon: {
     width: hp(20),
@@ -103,8 +104,8 @@ export const style = StyleSheet.create({
     resizeMode: 'contain',
   },
   cancelIcon: {
-    width: hp(15),
-    height: hp(15),
+    width: hp(14),
+    height: hp(21),
     resizeMode: 'contain',
   },
   likeIcon: {
@@ -129,7 +130,8 @@ export const style = StyleSheet.create({
     height: hp(20),
   },
   descriptionText: {
-    marginTop: hp(34),
+    // marginTop: hp(34),
+    marginTop: hp(20),
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins400,

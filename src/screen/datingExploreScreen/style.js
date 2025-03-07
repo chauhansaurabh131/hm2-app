@@ -70,14 +70,16 @@ export const style = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
-    margin: 3,
+    margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    // backgroundColor: 'orange',
   },
   image: {
-    width: wp(167),
+    width: wp(172),
     height: wp(160),
     resizeMode: 'contain',
+    marginTop: 2,
   },
   textContainer: {
     position: 'absolute',
@@ -110,18 +112,23 @@ export const style = StyleSheet.create({
   },
   requestRenderContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: hp(10),
+    // alignItems: 'center',
+    // marginBottom: hp(10),
+    // backgroundColor: 'silver',
+    marginTop: 10,
+    // height: 'auto',
   },
   renderUserProfileImage: {
-    width: hp(47),
-    height: hp(47),
+    width: hp(50),
+    height: hp(50),
     borderRadius: 25,
     marginRight: wp(16),
+    marginTop: hp(5),
   },
   requestRenderBodyContainer: {
     flex: 1,
-    marginTop: hp(30),
+    marginTop: hp(10),
+    // backgroundColor: 'orange',
   },
   requestRenderNameContainer: {
     flexDirection: 'row',
@@ -129,7 +136,7 @@ export const style = StyleSheet.create({
     flex: 1,
   },
   requestRenderName: {
-    fontSize: fontSize(16),
+    fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins600,
     color: colors.black,
@@ -141,10 +148,12 @@ export const style = StyleSheet.create({
     color: '#BEBDBD',
   },
   requestRenderOccupation: {
-    fontSize: fontSize(10),
-    lineHeight: hp(12),
+    fontSize: fontSize(12),
+    lineHeight: hp(18),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
+    top: 2,
+    // backgroundColor: 'green',
   },
   requestRenderButtonContainer: {
     flexDirection: 'row',

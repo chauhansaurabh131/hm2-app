@@ -16,7 +16,7 @@ export const style = StyleSheet.create({
     width: hp(24),
     height: hp(24),
     borderRadius: 50,
-    resizeMode: 'contain',
+    resizeMode: 'stretch',
     marginTop: hp(15),
   },
   bodyContainer: {
@@ -133,11 +133,11 @@ export const style = StyleSheet.create({
   },
   interestBody: {
     backgroundColor: '#F3F3F3',
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     paddingVertical: 10,
     marginRight: 8,
     marginBottom: 8,
-    borderRadius: 20,
+    borderRadius: 25,
   },
   interestText: {
     fontSize: fontSize(16),

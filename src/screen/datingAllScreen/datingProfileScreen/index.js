@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -15,12 +15,41 @@ import ImagePaginationComponent from '../../../components/imagePaginationCompone
 import {style} from './style';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import {useNavigation} from '@react-navigation/native';
+import NewProfileBottomSheet from '../../../components/newProfileBottomSheet';
 
 const DatingProfileScreen = () => {
   const navigation = useNavigation();
   const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
+  const accessToken = user?.tokens?.access?.token;
 
-  console.log(' === user... ===> ', user?.user?.datingData[0]?.annualIncome);
+  const [statusCount, setStatusCount] = useState(null);
+
+  useEffect(() => {
+    if (accessToken) {
+      // API call to fetch status count
+      fetch('https://stag.mntech.website/api/v1/user/user/getStatusCount', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+          setStatusCount(data);
+        })
+        .catch(err => {
+          console.log(' === err ===> ', err);
+        });
+    }
+  }, [accessToken]); // Only call API when accessToken changes
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const calculateAge = dateOfBirth => {
     const dob = new Date(dateOfBirth); // Parse the date of birth string into a Date object
@@ -79,12 +108,21 @@ const DatingProfileScreen = () => {
     <SafeAreaView style={style.container}>
       <View style={style.headingTittleContainer}>
         <AppColorLogo />
-        <TouchableOpacity activeOpacity={0.7}>
-          <Image
-            source={images.profileDisplayImage}
-            style={style.profileLogoStyle}
-          />
+
+        <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
+          {userImage ? (
+            <Image source={{uri: userImage}} style={style.profileLogoStyle} />
+          ) : (
+            <Image
+              source={images.empty_male_Image}
+              style={style.profileLogoStyle}
+            />
+          )}
         </TouchableOpacity>
+      </View>
+
+      <View>
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
       </View>
 
       <TouchableOpacity
@@ -102,7 +140,7 @@ const DatingProfileScreen = () => {
         <Image source={icons.edit_gradient_icon} style={style.editButton} />
       </TouchableOpacity>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={style.bodyContainer}>
           <ImagePaginationComponent imageUrls={imageUrls} />
           <View style={style.imageTextContainer}>
@@ -125,7 +163,9 @@ const DatingProfileScreen = () => {
                 style={style.likeProfileIcon}
               />
               <View>
-                <Text style={style.TittleTextStyle}>1200</Text>
+                <Text style={style.TittleTextStyle}>
+                  {statusCount?.totalLikes || '0'}
+                </Text>
                 <Text style={style.subTittleTextStyle}>Likes</Text>
               </View>
             </View>
@@ -136,7 +176,9 @@ const DatingProfileScreen = () => {
                 style={style.upArrowIcon}
               />
               <View>
-                <Text style={style.TittleTextStyle}>50</Text>
+                <Text style={style.TittleTextStyle}>
+                  {statusCount?.totalRequestsSent || '0'}
+                </Text>
                 <Text style={style.subTittleTextStyle}>Sent</Text>
               </View>
             </View>
@@ -147,7 +189,9 @@ const DatingProfileScreen = () => {
                 style={style.downArrowIcon}
               />
               <View>
-                <Text style={style.TittleTextStyle}>180</Text>
+                <Text style={style.TittleTextStyle}>
+                  {statusCount?.totalAcceptedRequests || '0'}
+                </Text>
                 <Text style={style.subTittleTextStyle}>Received</Text>
               </View>
             </View>
@@ -164,13 +208,6 @@ const DatingProfileScreen = () => {
         <View style={style.purposeContainer}>
           <View style={style.purposeContainerStyle}>
             <Text style={style.purposeTextStyle}>Purpose</Text>
-
-            {/*<TouchableOpacity activeOpacity={0.7}>*/}
-            {/*  <Image*/}
-            {/*    source={icons.edit_gradient_icon}*/}
-            {/*    style={style.editButton}*/}
-            {/*  />*/}
-            {/*</TouchableOpacity>*/}
           </View>
 
           <View style={style.interestContainer}>
@@ -192,18 +229,18 @@ const DatingProfileScreen = () => {
           <Text style={style.basicInfoText}>Basic Info</Text>
 
           <Text style={style.subTittleText}>Date of Birth</Text>
-          <Text style={style.TittleText}>{birthDate}</Text>
+          <Text style={style.TittleText}>{birthDate || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Currently Living</Text>
           <Text style={style.TittleText}>{currentlyLiving || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Language Spoken</Text>
 
-          <View style={style.interestContainer}>
+          <View style={[style.interestContainer, {marginTop: hp(10)}]}>
             {motherTongue.length > 0 ? (
               motherTongue.map((language, index) => (
-                <View key={index} style={style.languageContainer}>
-                  <Text style={style.TittleText}>
+                <View key={index} style={style.interestBody}>
+                  <Text style={style.interestText}>
                     {capitalizeFirstLetter(language)}
                   </Text>
                 </View>
@@ -214,10 +251,10 @@ const DatingProfileScreen = () => {
           </View>
 
           <Text style={style.subTittleText}>Religion</Text>
-          <Text style={style.TittleText}>{religion}</Text>
+          <Text style={style.TittleText}>{religion || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Ethnicity</Text>
-          <Text style={style.TittleText}>{ethnicity}</Text>
+          <Text style={style.TittleText}>{ethnicity || 'N/A'}</Text>
         </View>
 
         <View style={[style.backGroundSpace, {marginTop: 10}]} />
@@ -226,13 +263,13 @@ const DatingProfileScreen = () => {
           <Text style={style.basicInfoText}>Professional Details</Text>
 
           <Text style={style.subTittleText}>Education Level</Text>
-          <Text style={style.TittleText}>{educationLevel}</Text>
+          <Text style={style.TittleText}>{educationLevel || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Occupation</Text>
-          <Text style={style.TittleText}>{Occupation}</Text>
+          <Text style={style.TittleText}>{Occupation || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Annual Income</Text>
-          <Text style={style.TittleText}>{annualIncome}</Text>
+          <Text style={style.TittleText}>{annualIncome || 'N/A'}</Text>
         </View>
 
         <View style={[style.backGroundSpace, {marginTop: 20}]} />
@@ -240,17 +277,19 @@ const DatingProfileScreen = () => {
         <View style={style.purposeContainer}>
           <Text style={style.basicInfoText}>Hobbies & Interest</Text>
 
-          <View style={style.interestContainer}>
+          <View style={[style.interestContainer, {marginTop: hp(10)}]}>
             {hobbies.length > 0 ? (
               hobbies.map((hobby, index) => (
-                <View key={index} style={style.languageContainer}>
-                  <Text style={style.TittleText}>
+                <View key={index} style={style.interestBody}>
+                  <Text style={style.interestText}>
                     {capitalizeFirstLetter(hobby)}
                   </Text>
                 </View>
               ))
             ) : (
-              <Text>No mother tongue available</Text>
+              <Text style={{color: 'black'}}>
+                No Hobby & Interest available
+              </Text>
             )}
           </View>
           <View style={{height: hp(50)}} />

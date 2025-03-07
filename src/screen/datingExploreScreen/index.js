@@ -1,8 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  Clipboard,
   FlatList,
   Image,
+  Modal,
   SafeAreaView,
+  Share,
   StyleSheet,
   Text,
   TextInput,
@@ -14,15 +17,18 @@ import {colors} from '../../utils/colors';
 import {icons, images} from '../../assets';
 import LinearGradient from 'react-native-linear-gradient';
 import {style} from './style';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   getAllRequestedDating,
   getAllAcceptedDating,
+  non_friend_Blocked,
 } from '../../actions/homeActions';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import {useNavigation} from '@react-navigation/native';
+
+import axios from 'axios';
 
 const imageData = [
   {id: '1', source: images.meet_new_friends_img, title: 'Meet New Friends'},
@@ -35,65 +41,27 @@ const imageData = [
   {id: '8', source: images.adventurous_img, title: 'Adventurous'},
 ];
 
-const imageDatas = [
-  {
-    id: '1',
-    source: images.meet_new_friends_img,
-    title: 'Rishikesh Shah',
-    labelOnline: 'online',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '2',
-    source: images.looking_love_img,
-    title: 'Ronit Kumar',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '3',
-    source: images.movie_date_img,
-    title: 'Priyal Mehta',
-    labelOnline: 'online',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '4',
-    source: images.foodies_img,
-    title: 'Ritik Gajjar',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '5',
-    source: images.travel_Buddies_img,
-    title: 'Meet Patel',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '6',
-    source: images.game_lover_img,
-    title: 'Niketan Sharma',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '7',
-    source: images.chit_chat_img,
-    title: 'Chit-Chat',
-    occupation: 'Software Designer',
-  },
-  {
-    id: '8',
-    source: images.adventurous_img,
-    title: 'Rahul Mistry',
-    occupation: 'Software Designer',
-  },
-];
-
 const DatingExploreScreen = () => {
   const [selectedText, setSelectedText] = useState('Category');
   const bottomSheetRef = useRef(null); // Create a ref for the bottom sheet
   const [selectedUser, setSelectedUser] = useState(null); //
   const [searchText, setSearchText] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [clickedUsers, setClickedUsers] = useState({});
+  const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
+  const [selectedFirstName, setSelectedFirstName] = useState('');
+  const [selectedFrinedId, setSelectedFriendId] = useState('');
+  const [selectFriendRequestedId, setSelectFriendRequestId] = useState('');
+  const [userFullDetails, setUserFullDetails] = useState('');
+  const [selectedUniqueId, setSelectedUniqueId] = useState('');
+  const [reportReasons, setReportReasons] = useState([]);
+  const [isAboutClicked, setIsAboutClicked] = useState(false);
+  const [questionText, setQuestionText] = useState(
+    'Why are you reporting this?',
+  );
+  const [aboutText, setAboutText] = useState('');
+  const [isReportModalVisible, setReportModalVisible] = useState(false);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -105,10 +73,14 @@ const DatingExploreScreen = () => {
   const {user} = useSelector(state => state.auth);
   const {getAllRequest, getAllAccepted} = useSelector(state => state.home);
   const users = getAllRequest?.data?.results || [];
+
+  const userId = user?.user?.id;
+  const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
   const acceptedUsers = getAllAccepted?.data?.results || [];
 
   const topModalBottomSheetRef = useRef(null);
+  const ReportBottomSheetRef = useRef();
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
   };
@@ -128,35 +100,85 @@ const DatingExploreScreen = () => {
 
   const handleImagePress = title => {
     console.log('Image clicked:', title);
+
+    let categoryString = '';
+
+    if (title === 'Meet New Friends') {
+      categoryString = 'meet-new-friends';
+    } else if (title === 'Looking for Love') {
+      categoryString = 'looking-for-love';
+    } else if (title === 'Movie Date') {
+      categoryString = 'movie-date';
+    } else if (title === 'Foodies') {
+      categoryString = 'foodies';
+    } else if (title === 'Travel Buddies') {
+      categoryString = 'travel-buddies';
+    } else if (title === 'Game Lover') {
+      categoryString = 'game-lover';
+    } else if (title === 'Chit-Chat') {
+      categoryString = 'chit-chat';
+    } else if (title === 'Adventurous') {
+      categoryString = 'adventurous';
+    }
+
+    // navigation.navigate('Abc', {category: categoryString});
+    navigation.navigate('MeetNewFriendsScreen', {category: categoryString});
+
+    // if (title === 'Meet New Friends') {
+    //   // navigation.navigate('MeetNewFriendsScreen'); // Navigate to Abc screen
+    //   // navigation.navigate('Abc'); // Navigate to Abc screen
+    // } else if (title === 'Looking for Love') {
+    //   // navigation.navigate('DemoScreen'); // Navigate to DemoScreen
+    // }
   };
 
-  const renderItem = ({item}) => (
-    <TouchableOpacity
-      activeOpacity={0.5}
-      onPress={() => handleImagePress(item.title)}>
-      <View style={style.imageContainer}>
-        <Image source={item.source} style={style.image} />
-        <View style={style.textContainer}>
-          <Text style={style.text}>{item.title}</Text>
+  const renderItem = ({item}) => {
+    // console.log(' === var ===> ', item);
+    return (
+      <TouchableOpacity
+        activeOpacity={0.5}
+        onPress={() => handleImagePress(item.title)}>
+        <View style={style.imageContainer}>
+          <Image source={item.source} style={style.image} />
+          <View style={style.textContainer}>
+            <Text style={style.text}>{item.title}</Text>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const renderAcceptedItem = ({item}) => {
-    // console.log(' === var ===> ', item?.friendList?.datingData[0]?.Occupation);
     const user = item.friendList || [];
     const profilePic = user?.profilePic;
     const name = user?.name || 'No Name';
     const Occupation = item?.friendList?.datingData[0]?.Occupation;
+    const selectedId = user?._id;
+    const friendRequestedId = item?._id;
+    const userDetails = item;
+    const usersUniqueId = user?.userUniqueId;
+
+    // console.log(' === var ===> ', user?.userUniqueId);
+
+    const onThreeDotPress = () => {
+      bottomSheetRef.current.open();
+      setSelectedFirstName(name);
+      setSelectedFriendId(selectedId);
+      setSelectFriendRequestId(friendRequestedId);
+      setUserFullDetails(userDetails);
+      setSelectedUniqueId(usersUniqueId);
+    };
 
     return (
       <TouchableHighlight
         activeOpacity={0.6}
         underlayColor="#F9FBFF"
         onPress={() => {
-          // console.log(' === item ===> ', user);
-          navigation.navigate('DatingUserDetailsScreen', {userData: user});
+          navigation.navigate('DatingUserDetailsScreen', {
+            userData: user,
+            item,
+          });
+          // navigation.navigate('Abc', {userData: user});
         }}>
         <View
           style={{
@@ -230,10 +252,12 @@ const DatingExploreScreen = () => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            onPress={() => {
-              setSelectedUser(item.title); // Set the selected user's name
-              bottomSheetRef.current.open(); // Open the bottom sheet
-            }}>
+            // onPress={() => {
+            //   setSelectedUser(item.title); // Set the selected user's name
+            //   bottomSheetRef.current.open(); // Open the bottom sheet
+            //   console.log(' === item.title ===> ', user);
+            // }}
+            onPress={onThreeDotPress}>
             <Image
               source={icons.three_dots_icon}
               style={{width: 20, height: 20, resizeMode: 'contain'}}
@@ -253,64 +277,516 @@ const DatingExploreScreen = () => {
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7); // 7 days = 1 week
+    const months = Math.floor(days / 30); // Approximate 30 days as 1 month
+    const years = Math.floor(days / 365); // Approximate 365 days as 1 year
 
     if (seconds < 60) {
       return 'just now';
     }
     if (minutes < 60) {
-      return `${minutes} min ago`;
+      return `${minutes === 1 ? '1 min' : `${minutes} mins`} ago`;
     }
     if (hours < 24) {
-      return `${hours}h${hours > 1 ? '' : ''} ago`;
+      return `${hours === 1 ? '1h' : `${hours} hours`} ago`;
     }
-    return `${days}d${days > 1 ? '' : ''} ago`;
+    if (days < 7) {
+      return `${days === 1 ? '1d' : `${days} days`} ago`;
+    }
+    if (weeks < 4) {
+      return `${weeks === 1 ? '1 week' : `${weeks} weeks`} ago`;
+    }
+    if (months < 12) {
+      return `${months === 1 ? '1 month' : `${months} months`} ago`;
+    }
+    return `${years === 1 ? '1 year' : `${years} years`} ago`;
   };
 
   const requestRenderItem = ({item}) => {
     const user = item.user; // Assuming `user` contains name, profilePic, and datingData
     const occupation = user?.datingData?.[0]?.Occupation;
-    const relativeTime = timeAgo(item?.createdAt);
+    const relativeTime = timeAgo(item?.updatedAt);
     const profilePic = user?.profilePic;
 
-    // console.log(' === var ===> ', user?.profilePic);
+    const isDeclined = clickedUsers[item._id]?.declined;
+    const isAccepted = clickedUsers[item._id]?.accepted;
+
+    const capitalizeFirstLetter = str =>
+      str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+
+    const handleCancelClick = async () => {
+      try {
+        // Make the API call to reject the request
+        const response = await axios.post(
+          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          {
+            user: userId, // Assuming you want to reject for the logged-in user
+            request: item._id, // Assuming item._id is the request id
+            status: 'rejected',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Add the token dynamically from state
+            },
+          },
+        );
+
+        console.log('API Response:', response.data);
+
+        // Only update the state if the API call was successful
+        if (response.status === 200) {
+          // Mark as declined when the cancel button is clicked and API is successful
+          setClickedUsers(prev => ({
+            ...prev,
+            [item._id]: {declined: true, accepted: false},
+          }));
+        }
+      } catch (error) {
+        console.error('Error rejecting friend request:', error);
+        // Handle the error (e.g., show an error message)
+      }
+    };
+
+    const handleAcceptClick = async () => {
+      // Mark as accepted when check button is clicked
+      // setClickedUsers(prev => ({
+      //   ...prev,
+      //   [item._id]: {declined: false, accepted: true},
+      // }));
+
+      try {
+        // Make the API call to reject the request
+        const response = await axios.post(
+          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          {
+            user: userId, // Assuming you want to reject for the logged-in user
+            request: item._id, // Assuming item._id is the request id
+            status: 'accepted',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Add the token dynamically from state
+            },
+          },
+        );
+
+        console.log('API Response:', response.data);
+
+        // Only update the state if the API call was successful
+        if (response.status === 200) {
+          // Mark as declined when the cancel button is clicked and API is successful
+          setClickedUsers(prev => ({
+            ...prev,
+            [item._id]: {declined: false, accepted: true},
+          }));
+        }
+      } catch (error) {
+        console.error('Error rejecting friend request:', error);
+        // Handle the error (e.g., show an error message)
+      }
+    };
+
+    const onClicked = () => {
+      // console.log(' === onClicked ===> ', user);
+      navigation.navigate('DatingUserDetailsScreen', {userData: user});
+      // navigation.navigate('Abc', {userData: user});
+    };
 
     return (
       <View style={style.requestRenderContainer}>
-        <Image
-          source={profilePic ? {uri: profilePic} : images.empty_male_Image}
-          style={style.renderUserProfileImage}
-        />
+        <TouchableOpacity activeOpacity={0.6} onPress={onClicked}>
+          <Image
+            source={profilePic ? {uri: profilePic} : images.empty_male_Image}
+            style={style.renderUserProfileImage}
+          />
+        </TouchableOpacity>
+
         <View style={style.requestRenderBodyContainer}>
-          <View style={style.requestRenderNameContainer}>
-            <Text style={style.requestRenderName}>
-              {user?.name || 'No Name'}
-            </Text>
+          <TouchableOpacity activeOpacity={0.6} onPress={onClicked}>
+            <View style={style.requestRenderNameContainer}>
+              <Text style={style.requestRenderName}>
+                {capitalizeFirstLetter(user?.name) || 'No Name'}
+              </Text>
 
-            <Text style={style.requestRenderRelative}>{relativeTime}</Text>
-          </View>
+              <Text style={style.requestRenderRelative}>{relativeTime}</Text>
+            </View>
 
-          <Text style={style.requestRenderOccupation}>
-            {occupation || 'No Occupation'}
-          </Text>
+            {/*<Text style={style.requestRenderOccupation}>*/}
+            {/*  Sent you a request*/}
+            {/*</Text>*/}
 
-          <View style={style.requestRenderButtonContainer}>
-            <TouchableOpacity>
-              <Image
-                source={icons.dating_cancel_icon}
-                style={[style.requestRenderButton, {marginRight: hp(12)}]}
-              />
-            </TouchableOpacity>
+            {!isAccepted && !isDeclined && (
+              <Text style={style.requestRenderOccupation}>
+                Sent you a request
+              </Text>
+            )}
 
-            <TouchableOpacity>
-              <Image
-                source={icons.dating_check_icon}
-                style={style.requestRenderButton}
-              />
-            </TouchableOpacity>
+            {isDeclined && (
+              <Text style={style.requestRenderOccupation}>Declined</Text>
+            )}
+
+            {/* Show "Accepted" if isAccepted is true */}
+            {isAccepted && (
+              <Text style={style.requestRenderOccupation}>Accepted</Text>
+            )}
+          </TouchableOpacity>
+
+          {/*{isDeclined ? (*/}
+          {/*  <Text style={style.requestRenderOccupation}>Declined</Text>*/}
+          {/*) : isAccepted ? (*/}
+          {/*  <Text style={style.requestRenderOccupation}>Accepted</Text>*/}
+          {/*) : (*/}
+          {/*  <View style={{flexDirection: 'row', top: 10}}>*/}
+          {/*    <TouchableOpacity onPress={handleCancelClick}>*/}
+          {/*      <Image*/}
+          {/*        source={icons.dating_cancel_icon}*/}
+          {/*        style={[style.requestRenderButton, {marginRight: hp(12)}]}*/}
+          {/*      />*/}
+          {/*    </TouchableOpacity>*/}
+
+          {/*    <TouchableOpacity onPress={handleAcceptClick}>*/}
+          {/*      <Image*/}
+          {/*        source={icons.dating_check_icon}*/}
+          {/*        style={style.requestRenderButton}*/}
+          {/*      />*/}
+          {/*    </TouchableOpacity>*/}
+          {/*  </View>*/}
+          {/*)}*/}
+
+          {/*{!isAccepted && !isDeclined && (*/}
+          {/*  <Text style={style.requestRenderOccupation}>*/}
+          {/*    Sent you a request*/}
+          {/*  </Text>*/}
+          {/*)}*/}
+
+          {/* Show "Declined" if isDeclined is true */}
+
+          {/* If neither is accepted nor declined, show the action buttons */}
+          <View style={{marginBottom: 10, marginTop: hp(13)}}>
+            {!isAccepted && !isDeclined && (
+              <View style={{flexDirection: 'row'}}>
+                {/*<TouchableOpacity onPress={handleCancelClick}>*/}
+                {/*  <Image*/}
+                {/*    source={icons.dating_cancel_icon}*/}
+                {/*    style={[style.requestRenderButton, {marginRight: hp(12)}]}*/}
+                {/*  />*/}
+                {/*</TouchableOpacity>*/}
+
+                <TouchableOpacity
+                  onPress={handleCancelClick}
+                  activeOpacity={0.5}
+                  style={{
+                    backgroundColor: '#EEEEEE',
+                    borderRadius: 20,
+                    width: hp(96),
+                    height: hp(40),
+                    justifyContent: 'center',
+                    marginRight: 14,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      textAlign: 'center',
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    Decline
+                  </Text>
+                </TouchableOpacity>
+
+                {/*<TouchableOpacity onPress={handleAcceptClick}>*/}
+                {/*  <Image*/}
+                {/*    source={icons.dating_check_icon}*/}
+                {/*    style={style.requestRenderButton}*/}
+                {/*  />*/}
+                {/*</TouchableOpacity>*/}
+
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={handleAcceptClick}>
+                  <LinearGradient
+                    colors={['#9413D0', '#0D4EB3']}
+                    start={{x: 1, y: 0}}
+                    end={{x: 0, y: 0}}
+                    style={{
+                      borderRadius: 20,
+                      justifyContent: 'center',
+                      width: hp(96),
+                      height: hp(40),
+                    }}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        textAlign: 'center',
+                        fontSize: fontSize(14),
+                        lineHeight: hp(21),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Accept
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </View>
     );
+  };
+
+  const onAcceptedPress = () => {
+    setSelectedText('Accepted');
+    dispatch(getAllAcceptedDating());
+  };
+
+  const onRequestedPress = () => {
+    setSelectedText('Requests');
+    dispatch(getAllRequestedDating());
+  };
+
+  const handleConfirmBlock = async () => {
+    try {
+      setIsBlockModalVisible(false);
+
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            user: userId,
+            request: selectFriendRequestedId,
+            status: 'removed',
+          }),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('API Response:', data);
+        dispatch(getAllAcceptedDating());
+        setIsBlockModalVisible(false);
+        // Handle the successful response
+      } else {
+        console.error('Error:', response.statusText);
+        // Handle the error response
+      }
+    } catch (error) {
+      console.error('Request failed', error);
+      setIsBlockModalVisible(false);
+      // Handle error if request fails
+    }
+  };
+
+  const onSendMessagePress = userData => {
+    bottomSheetRef.current.close();
+    navigation.navigate('ChatUserScreen', {
+      userData,
+    });
+  };
+
+  const handleShare = async () => {
+    // Close the bottom sheet before sharing
+    bottomSheetRef.current.close();
+
+    try {
+      // You can add a slight delay to allow the bottom sheet to close first if necessary
+      await new Promise(resolve => setTimeout(resolve, 50)); // Adjust delay as needed
+
+      // Now trigger the Share dialog
+      const result = await Share.share({
+        // message: 'Happy Milan App', // Message to share
+        message: selectedFirstName, // Message to share
+        // title: selectedFirstName,
+      });
+
+      if (result.action === Share.sharedAction) {
+        console.log('Content shared successfully');
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.error('Error sharing content:', error);
+    }
+  };
+
+  const onCopyIdPress = async selectedUniqueId => {
+    console.log(' === selectedUniqueId ===> ', selectedUniqueId);
+    await Clipboard.setString(selectedUniqueId);
+    bottomSheetRef.current.close();
+  };
+
+  const handleBackArrow = () => {
+    setReportReasons([]);
+    setQuestionText('Why are you reporting this?'); // Reset question text when going back
+    setIsAboutClicked(false); // Reset "About" state
+  };
+
+  // Handler when "Inappropriate content" is clicked
+  const handleInappropriateContent = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Hate Speech or Discrimination',
+      'Harmful Language',
+      'Misinformation',
+      'Spam or Irrelevant Content',
+    ]);
+    setQuestionText('How is it Inappropriate content?');
+  };
+
+  // Handler when "Harassment or bullying" is clicked
+  const handleHarassmentOrBullying = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Threats or Intimidation',
+      'Hate Speech',
+      'Sexual Harassment',
+      'Discriminatory Harassment',
+    ]);
+    setQuestionText('How is it harassment or bullying?'); // Change question text after selecting this option
+  };
+
+  // Handler when "Fake Misleading Profile" is clicked
+  const handleFakeMisleadingProfile = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Fake Identity',
+      'Suspicious Behavior',
+      'Inactive or Duplicate Account',
+      'Age Misrepresentation',
+    ]);
+    setQuestionText('How is it Fake or misleading profile?'); // Change question text after selecting this option
+  };
+
+  // Handler when "Spam or promotional content." is clicked
+  const handleSpamPromotionalContent = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Unsolicited Advertising',
+      'Malware or Harmful Content',
+      'Phishing or Fraudulent Links',
+      'Irrelevant Promotional Content',
+    ]);
+    setQuestionText('How is it Spam or promotional content?'); // Change question text after selecting this option
+  };
+
+  // Handler when "Scams or fraudulent activity" is clicked
+  const handleScamsFraudulentActivity = () => {
+    setReportReasons(prevReasons => [
+      ...prevReasons,
+      'Romance Scams',
+      'Phishing Attempts',
+      'Job or Employment Scams',
+      'Counterfeit Products',
+    ]);
+    setQuestionText('How is it Scams or fraudulent activity?'); // Change question text after selecting this option
+  };
+
+  const handleReportReasonClick = (reason, category) => {
+    // Remove "How is it " from the category string
+    const cleanedCategory = category.replace(/^How is it /, '').trim();
+
+    console.log(
+      `Selected Report Reason: ${reason}, Category: ${cleanedCategory}`,
+    );
+
+    // Close the bottom sheet
+    ReportBottomSheetRef.current.close();
+
+    // Call the API to submit the report
+    const submitReport = async () => {
+      try {
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/spam/create-spam?appUsesType=dating',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Access token from Redux or state
+            },
+            body: JSON.stringify({
+              spamUserId: selectedFrinedId, // Example spam user ID, update with actual ID if needed
+              reason: cleanedCategory, // Use cleaned category as reason
+              remark: reason, // Use the specific report reason (like "Hate Speech") as remark
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('Report submitted successfully:', data);
+          // Alert.alert('success', 'Report to User success.');
+          setReportModalVisible(true);
+        } else {
+          console.error('Failed to submit report:', data);
+        }
+      } catch (error) {
+        console.error('Error submitting report:', error);
+      }
+    };
+
+    submitReport();
+
+    // Optionally, reset or clear the report reasons state
+    resetBottomSheet(); // Reset everything to the initial state when closing the bottom sheet
+  };
+
+  const handleSubmit = () => {
+    console.log('About Text Submitted:', aboutText);
+    // Close the bottom sheet after submission
+    ReportBottomSheetRef.current.close();
+
+    // Call the API to submit the report
+    const submitReport = async () => {
+      try {
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/spam/create-spam?appUsesType=dating',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Access token from Redux or state
+            },
+            body: JSON.stringify({
+              spamUserId: selectedFrinedId, // Example spam user ID, update with actual ID if needed
+              reason: 'About', // Use cleaned category as reason
+              remark: aboutText, // Use the specific report reason (like "Hate Speech") as remark
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('Report submitted successfully:', data);
+          // Alert.alert('success', 'Report to User success.');
+          setReportModalVisible(true);
+        } else {
+          console.error('Failed to submit report:', data);
+        }
+      } catch (error) {
+        console.error('Error submitting report:', error);
+      }
+    };
+
+    submitReport();
+
+    // Reset the bottom sheet state
+    resetBottomSheet();
+  };
+
+  const resetBottomSheet = () => {
+    setReportReasons([]);
+    setQuestionText('Why are you reporting this?');
+    setIsAboutClicked(false);
+    setAboutText('');
   };
 
   return (
@@ -331,7 +807,9 @@ const DatingExploreScreen = () => {
         </View>
       </View>
 
-      <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+      <View>
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+      </View>
 
       {/* Category / Paired Buttons */}
       <View style={style.bodyContainer}>
@@ -354,7 +832,9 @@ const DatingExploreScreen = () => {
           </TouchableOpacity>
 
           {/* Paired Button */}
-          <TouchableOpacity onPress={() => setSelectedText('Accepted')}>
+
+          {/*<TouchableOpacity onPress={() => setSelectedText('Accepted')}>*/}
+          <TouchableOpacity onPress={onAcceptedPress}>
             {selectedText === 'Accepted' ? (
               <LinearGradient
                 colors={['#8225AF', '#0F52BA']}
@@ -370,7 +850,8 @@ const DatingExploreScreen = () => {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setSelectedText('Requests')}>
+          {/*<TouchableOpacity onPress={() => setSelectedText('Requests')}>*/}
+          <TouchableOpacity onPress={onRequestedPress}>
             {selectedText === 'Requests' ? (
               <LinearGradient
                 colors={['#8225AF', '#0F52BA']}
@@ -462,9 +943,14 @@ const DatingExploreScreen = () => {
               )}
               <RBSheet
                 ref={bottomSheetRef}
-                height={270} // Adjust height as needed
-                openDuration={250}
+                height={hp(270)} // Adjust height as needed
+                // openDuration={250}
+                closeOnDragDown={true} // Allows drag to close
+                closeOnPressMask={true} // Allows closing when clicking outside the sheet
                 customStyles={{
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
                   container: {
                     borderTopLeftRadius: 20,
                     borderTopRightRadius: 20,
@@ -474,20 +960,22 @@ const DatingExploreScreen = () => {
                   style={{
                     flex: 1,
                     marginHorizontal: wp(20),
-                    marginTop: hp(29),
+                    marginTop: hp(10),
                   }}>
                   <TouchableOpacity
                     activeOpacity={0.5}
-                    onPress={() => {
-                      bottomSheetRef.current.close(); // Use close() instead of Close()
-                    }}
-                    style={{flexDirection: 'row', alignItems: 'center'}}>
+                    onPress={handleShare}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
                     <Image
                       source={icons.share_icon}
                       style={{
-                        width: hp(13),
+                        width: hp(20),
                         height: hp(14),
                         resizeMode: 'contain',
+                        tintColor: 'black',
                       }}
                     />
                     <Text
@@ -506,36 +994,8 @@ const DatingExploreScreen = () => {
                     activeOpacity={0.5}
                     onPress={() => {
                       bottomSheetRef.current.close(); // Use close() instead of Close()
-                    }}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: hp(21),
-                    }}>
-                    <Image
-                      source={icons.block_icon}
-                      style={{
-                        width: hp(13),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: colors.black,
-                        marginLeft: wp(20),
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Block {selectedUser}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => {
-                      bottomSheetRef.current.close(); // Use close() instead of Close()
+                      // setIsBlockModalVisible(true);
+                      ReportBottomSheetRef.current.open();
                     }}
                     style={{
                       flexDirection: 'row',
@@ -545,7 +1005,7 @@ const DatingExploreScreen = () => {
                     <Image
                       source={icons.report_icon}
                       style={{
-                        width: hp(13),
+                        width: hp(20),
                         height: hp(14),
                         resizeMode: 'contain',
                       }}
@@ -564,8 +1024,12 @@ const DatingExploreScreen = () => {
 
                   <TouchableOpacity
                     activeOpacity={0.5}
+                    // onPress={() => {
+                    //   bottomSheetRef.current.close();
+                    //
+                    // }}
                     onPress={() => {
-                      bottomSheetRef.current.close(); // Use close() instead of Close()
+                      onCopyIdPress(selectedUniqueId);
                     }}
                     style={{
                       flexDirection: 'row',
@@ -575,7 +1039,7 @@ const DatingExploreScreen = () => {
                     <Image
                       source={icons.copy_icon}
                       style={{
-                        width: hp(13),
+                        width: hp(20),
                         height: hp(14),
                         resizeMode: 'contain',
                       }}
@@ -588,7 +1052,7 @@ const DatingExploreScreen = () => {
                         lineHeight: hp(24),
                         fontFamily: fontFamily.poppins400,
                       }}>
-                      Copy URL
+                      Copy ID : {selectedUniqueId}
                     </Text>
                   </TouchableOpacity>
 
@@ -596,6 +1060,7 @@ const DatingExploreScreen = () => {
                     activeOpacity={0.5}
                     onPress={() => {
                       bottomSheetRef.current.close(); // Use close() instead of Close()
+                      setIsBlockModalVisible(true);
                     }}
                     style={{
                       flexDirection: 'row',
@@ -603,9 +1068,9 @@ const DatingExploreScreen = () => {
                       marginTop: hp(21),
                     }}>
                     <Image
-                      source={icons.copy_icon}
+                      source={icons.unFriend_icon}
                       style={{
-                        width: hp(13),
+                        width: hp(20),
                         height: hp(14),
                         resizeMode: 'contain',
                       }}
@@ -621,8 +1086,508 @@ const DatingExploreScreen = () => {
                       Unfriend
                     </Text>
                   </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      onSendMessagePress(userFullDetails);
+                    }}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: hp(21),
+                    }}>
+                    <Image
+                      source={icons.send_message_icon}
+                      style={{
+                        width: hp(14),
+                        height: hp(14),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: colors.black,
+                        marginLeft: wp(20),
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Send Message
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </RBSheet>
+
+              {/*//BLOCK MODAL */}
+              <Modal
+                visible={isBlockModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setIsBlockModalVisible(false)}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  }}>
+                  <View
+                    style={{
+                      width: wp(350),
+                      padding: 20,
+                      backgroundColor: 'white',
+                      borderRadius: 10,
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        color: 'black',
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins500,
+                        marginTop: 20,
+                        marginBottom: 10,
+                      }}>
+                      Are yor sure want to unfriend?
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginTop: hp(30),
+                        marginBottom: hp(15),
+                      }}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={handleConfirmBlock}>
+                        <LinearGradient
+                          colors={['#2D46B9', '#8D1D8D']}
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 1}}
+                          style={{
+                            width: hp(122),
+                            height: hp(50),
+                            borderRadius: 50,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: 20,
+                          }}>
+                          <Text
+                            style={{
+                              color: colors.white,
+                              fontSize: fontSize(16),
+                              lineHeight: hp(24),
+                              fontFamily: fontFamily.poppins400,
+                            }}>
+                            Yes
+                          </Text>
+                        </LinearGradient>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          setIsBlockModalVisible(false);
+                        }}>
+                        <LinearGradient
+                          colors={['#0D4EB3', '#9413D0']}
+                          style={{
+                            width: wp(122),
+                            height: hp(50),
+                            borderRadius: 50,
+                            borderWidth: 1,
+                            justifyContent: 'center',
+                            borderColor: 'transparent',
+                          }}>
+                          <View
+                            style={{
+                              borderRadius: 50, // <-- Inner Border Radius
+                              flex: 1,
+                              backgroundColor: colors.white,
+                              justifyContent: 'center',
+                              margin: isIOS ? 0 : 1,
+                            }}>
+                            <Text
+                              style={{
+                                textAlign: 'center',
+                                backgroundColor: 'transparent',
+                                color: colors.black,
+                                margin: 10,
+                                fontSize: fontSize(16),
+                                lineHeight: hp(24),
+                                fontFamily: fontFamily.poppins400,
+                              }}>
+                              No
+                            </Text>
+                          </View>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </Modal>
+
+              {/*// REPORT BOTTOM SHEET*/}
+              <RBSheet
+                ref={ReportBottomSheetRef} // Attach the ref to control its visibility
+                closeOnPressMask={true} // Allows closing the bottom sheet by clicking outside of it
+                height={hp(500)} // Set the height of the bottom sheet
+                customStyles={{
+                  container: {
+                    backgroundColor: 'white', // Background color of the bottom sheet
+                    borderTopLeftRadius: 20, // Optional: Rounded top corners
+                    borderTopRightRadius: 20, // Optional: Rounded top corners
+                  },
+                }}>
+                {/* Content inside the bottom sheet */}
+                <View style={{flex: 1}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      marginTop: hp(24),
+                      alignItems: 'center',
+                      marginHorizontal: 17,
+                    }}>
+                    {(reportReasons.length > 0 || isAboutClicked) && (
+                      <TouchableOpacity
+                        onPress={handleBackArrow}
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                        }}>
+                        <Image
+                          source={icons.back_arrow_icon}
+                          style={{width: hp(18), height: hp(18)}}
+                        />
+                      </TouchableOpacity>
+                    )}
+
+                    <Text
+                      style={{
+                        color: colors.black,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins500,
+                      }}>
+                      Report
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                      marginTop: hp(20),
+                    }}
+                  />
+
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      marginTop: hp(15),
+                      color: colors.black,
+                      fontSize: fontSize(16),
+                      lineHeight: hp(24),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    {questionText}
+                  </Text>
+
+                  {reportReasons.length < 1 && !isAboutClicked && (
+                    <View style={{alignItems: 'center', marginTop: hp(9)}}>
+                      <Text
+                        style={{
+                          color: '#8F8F8F',
+                          fontSize: fontSize(16),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        Your identity will remain anonymous to the
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#8F8F8F',
+                          fontSize: fontSize(16),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        reported user.
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Show the list of reasons if there are any */}
+                  {isAboutClicked ? (
+                    // If "About" is clicked, show the TextInput and Submit button
+                    <View style={{marginTop: hp(28), marginHorizontal: 17}}>
+                      <TextInput
+                        style={{
+                          borderWidth: 1,
+                          borderColor: colors.black,
+                          padding: 10,
+                          marginBottom: 20,
+                          borderRadius: 10,
+                          height: hp(120),
+                          textAlignVertical: 'top',
+                        }}
+                        placeholder="Please provide details..."
+                        value={aboutText}
+                        onChangeText={setAboutText}
+                        multiline={true} // Enable multiline
+                      />
+
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{marginTop: hp(9)}}
+                        onPress={handleSubmit}>
+                        <LinearGradient
+                          colors={['#0D4EB3', '#9413D0']}
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 1.5}}
+                          style={{
+                            width: '100%',
+                            height: hp(50),
+                            borderRadius: 50,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              color: colors.white,
+                              marginLeft: hp(20),
+                              fontSize: fontSize(16),
+                              lineHeight: hp(21),
+                              fontFamily: fontFamily.poppins500,
+                            }}>
+                            Submit Report
+                          </Text>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
+                  ) : reportReasons.length > 0 ? (
+                    reportReasons.map((reason, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        // style={styles.reportReasonTouchable}
+                        onPress={() =>
+                          handleReportReasonClick(reason, questionText)
+                        } // Close the bottom sheet when clicked
+                      >
+                        <Text
+                          style={{
+                            marginTop: hp(25),
+                            marginHorizontal: 17,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                            color: colors.black,
+                          }}>
+                          {reason}
+                        </Text>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <View
+                      style={{
+                        marginTop: hp(26),
+                        marginHorizontal: 17,
+                      }}>
+                      <TouchableOpacity onPress={handleInappropriateContent}>
+                        <Text
+                          style={{
+                            color: colors.black,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Inappropriate content
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          marginTop: hp(28),
+                        }}
+                        onPress={handleHarassmentOrBullying}>
+                        <Text
+                          style={{
+                            color: colors.black,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Harassment or bullying.
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          marginTop: hp(28),
+                        }}
+                        onPress={handleFakeMisleadingProfile}>
+                        <Text
+                          style={{
+                            color: colors.black,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Fake or misleading profile.
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          marginTop: hp(28),
+                        }}
+                        onPress={handleSpamPromotionalContent}>
+                        <Text
+                          style={{
+                            color: colors.black,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Spam or promotional content.
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          marginTop: hp(28),
+                        }}
+                        onPress={handleScamsFraudulentActivity}>
+                        <Text
+                          style={{
+                            color: colors.black,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Scams or fraudulent activity.
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          marginTop: hp(28),
+                        }}
+                        onPress={() => setIsAboutClicked(true)} // Handle About click
+                      >
+                        <Text
+                          style={{
+                            color: colors.black,
+                            fontSize: fontSize(14),
+                            lineHeight: hp(21),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Others
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              </RBSheet>
+
+              {/* Modal for success message */}
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={isReportModalVisible}
+                onRequestClose={() => {
+                  setReportModalVisible(false);
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: 'white',
+                      borderRadius: 10,
+                      alignItems: 'center',
+                      width: '85%',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins600,
+                        color: colors.black,
+                        textAlign: 'center',
+                        marginTop: hp(43),
+                      }}>
+                      Thank you for your report.
+                    </Text>
+
+                    <View
+                      style={{
+                        marginTop: hp(38),
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins400,
+                          color: colors.black,
+                        }}>
+                        We’ll review it soon to help keep
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          fontSize: fontSize(14),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins400,
+                          color: colors.black,
+                        }}>
+                        our community safe.
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      style={{
+                        marginTop: hp(38),
+                        marginBottom: hp(43),
+                      }}
+                      onPress={() => {
+                        setReportModalVisible(false);
+                      }}>
+                      <LinearGradient
+                        colors={['#0D4EB3', '#9413D0']}
+                        start={{x: 0, y: 0}}
+                        end={{x: 1, y: 1.5}}
+                        style={{
+                          width: hp(131),
+                          height: hp(50),
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            color: colors.white,
+                            fontSize: fontSize(16),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Okay
+                        </Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
             </>
           )}
           {selectedText === 'Requests' && (

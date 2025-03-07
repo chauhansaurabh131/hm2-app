@@ -182,6 +182,10 @@ export const icons = {
   copy_id_card_icon: require('./icons/copy_id_card_icon.png'),
   new_request_sent_icon: require('./icons/new_request_sent_icon.png'),
   new_send_message_icon: require('./icons/new_send_message_icon.png'),
+  dating_white_heart: require('./icons/dating_white_heart.png'),
+  date_white_send_icon: require('./icons/date_white_send_icon.png'),
+  date_boost_icon: require('./icons/date_boost_icon.png'),
+  date_white_boost_icon: require('./icons/date_white_boost_icon.png'),
 };
 
 export const gif = {
