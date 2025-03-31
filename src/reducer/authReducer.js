@@ -1,5 +1,13 @@
 import * as TYPES from '../actions/actionTypes';
 import {SET_LOADING} from '../store/type/types';
+import {
+  RESEND_OTP,
+  RESEND_OTP_FAILED,
+  RESEND_OTP_SUCCESS,
+  SET_2FA_AUTO,
+  SET_2FA_AUTO_FAILED,
+  SET_2FA_AUTO_SUCCESS,
+} from '../actions/actionTypes';
 
 const initialState = {
   isLoggedIn: false,
@@ -28,6 +36,8 @@ export default (state = initialState, action) => {
     case TYPES.SET_PASSWORD_SUCCESS:
     case TYPES.REGISTER_FAILED:
     case TYPES.LOGIN_FAILED:
+      return {...state, loading: false};
+
     case TYPES.VERIFY_OTP_FAILED:
     case TYPES.SET_PASSWORD_FAILED:
       return {...state, loading: false};

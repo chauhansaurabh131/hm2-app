@@ -21,15 +21,84 @@ import {useNavigation} from '@react-navigation/native';
 const NewLogInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const {loading} = useSelector(state => state.auth);
 
+  const successCallback = () => {
+    dispatch(changeStack());
+  };
+
+  const failureCallback = (otpType, otpEmail, otpMobileNumber) => {
+    navigation.navigate('LoginAuthenticationCodeScreen', {
+      email, // pass the email
+      password, // pass the password
+      otpType, // pass the method data
+      otpEmail,
+      otpMobileNumber,
+    });
+  };
+
   const onPressLogin = () => {
     Keyboard.dismiss();
-    dispatch(login({email, password}, () => dispatch(changeStack())));
+    const trimmedEmail = email.trim();
+    // dispatch(login({email, password}, () => dispatch(changeStack())));
+
+    // Check if the email or mobile number is valid
+    const isEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+      trimmedEmail,
+    );
+    let loginPayload = {};
+
+    if (isEmail) {
+      console.log('Logging in with Email:', trimmedEmail);
+      loginPayload = {email: trimmedEmail, password};
+    } else {
+      // Handle mobile number, ensuring it is 10 digits and no '+' sign
+      const mobileNumber = trimmedEmail.replace(/\D/g, ''); // Removes all non-digit characters
+      const isMobile = mobileNumber.length === 10;
+
+      if (isMobile) {
+        console.log('Logging in with Mobile Number:', mobileNumber);
+        loginPayload = {
+          countryCodeId: '67d2698641c89038f51512a2', // You can dynamically handle this based on user's region
+          mobileNumber: mobileNumber, // Only 10 digits will be passed
+          password,
+        };
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid Mobile Number',
+          text2: 'Please enter a valid 10-digit mobile number',
+        });
+        console.log('Invalid Mobile Number');
+        return; // Return early if number is not valid
+      }
+    }
+
+    // dispatch(login({email, password}, successCallback, failureCallback));
+    // dispatch(
+    //   login({
+    //     ...loginPayload,
+    //     successCallback,
+    //     failureCallback,
+    //   }),
+    // );
+    dispatch(login({...loginPayload}, successCallback, failureCallback));
+    setEmail('');
+    setPassword('');
   };
+
+  // const onPressLogin = () => {
+  //   Keyboard.dismiss();
+  //   // dispatch(login({email, password}, () => dispatch(changeStack())));
+  //   dispatch(login({email, password}, successCallback, failureCallback));
+  //   setEmail('');
+  //   setPassword('');
+  // };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
@@ -232,7 +301,8 @@ const NewLogInScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <Toast ref={ref => Toast.setRef(ref)} />
+        {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
+        <Toast />
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

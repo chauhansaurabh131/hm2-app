@@ -7,6 +7,9 @@ import {auth} from '../apis/authApi';
 import {setAsyncStorageData} from '../utils/global';
 import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
 import navigations from '../navigations';
+import {SET_2FA_AUTO} from '../actions/actionTypes';
+import {authOtpVerifyFail, authOtpVerifySuccess} from '../actions/authActions';
+import {AsyncStorage} from 'react-native';
 
 // Register saga
 function* register(action) {
@@ -27,8 +30,6 @@ function* login(action) {
     const response = yield call(auth.login, action.data.payload);
     yield put(authAction.loginSuccess(response.data?.data));
 
-    console.log(' === login ===> ', response.data.data);
-
     yield setAsyncStorageData(
       TOKEN,
       `Bearer ${response?.data?.data?.tokens?.access?.token}`,
@@ -38,10 +39,23 @@ function* login(action) {
       REFRESH_TOKEN,
       `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
     );
-    if (action.data.callback) {
-      action.data.callback();
-    }
+
+    action.data?.successCallback();
   } catch (error) {
+    // console.log(' === error____ ===> ', error);
+    const errorMessage = error?.response?.data?.message || 'An error occurred.';
+    const otpType = error?.response?.data?.otpType;
+    const otpEmail = error?.response?.data?.email;
+    const otpMobileNumber = error?.response?.data?.mobileNumber;
+
+    console.log(' === error?.response ===> ', error?.response?.data?.method);
+
+    if (errorMessage !== 'Incorrect email or password') {
+      // action.data?.failureCallback();
+      action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
+    }
+    // action.data?.failureCallback();
+
     yield put(authAction.loginFail());
   }
 }

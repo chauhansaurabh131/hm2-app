@@ -11,12 +11,12 @@ const ProfileCheckboxGroup = ({
   checkboxRowContainer,
   outerCircle,
   label,
+  defaultText,
 }) => {
   const [checkedId, setCheckedId] = useState(selectedId);
 
   const handleCheckboxChange = id => {
     setCheckedId(id);
-    // Call the onChange callback with the selected item
     const selectedItem = data.find(item => item.id === id);
     if (onChange) {
       onChange(selectedItem.label);
@@ -25,7 +25,7 @@ const ProfileCheckboxGroup = ({
 
   return (
     <View>
-      {data.map(item => (
+      {data.map((item, index) => (
         <View key={item.id} style={[styles.row, containerRow]}>
           <TouchableOpacity
             onPress={() => handleCheckboxChange(item.id)}
@@ -36,12 +36,17 @@ const ProfileCheckboxGroup = ({
               </View>
             </View>
             <View style={styles.textContainer}>
-              <Text style={[styles.label, label]}>{item.label}</Text>
-              <View>
-                {item.subTitle && (
-                  <Text style={styles.subTitle}>{item.subTitle}</Text>
+              <View style={styles.labelRow}>
+                <Text style={[styles.label, label]}>{item.label}</Text>
+                {index === 0 && (
+                  <View style={styles.defaultTag}>
+                    <Text style={{color: 'black', top: -1}}>{defaultText}</Text>
+                  </View>
                 )}
               </View>
+              {item.subTitle && (
+                <Text style={styles.subTitle}>{item.subTitle}</Text>
+              )}
             </View>
           </TouchableOpacity>
         </View>
@@ -56,8 +61,6 @@ const styles = StyleSheet.create({
   },
   checkboxRowContainer: {
     flexDirection: 'row',
-    // alignItems: 'center',
-    // backgroundColor: 'orange',
   },
   checkboxContainer: {
     marginRight: 10,
@@ -80,11 +83,27 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   label: {
     fontSize: fontSize(16),
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
+  },
+  defaultTag: {
+    marginLeft: 8,
+    // fontSize: fontSize(12),
+    paddingVertical: 2,
+    paddingHorizontal: 15,
+    backgroundColor: '#ECECEC',
+    borderRadius: 25,
+    // color: colors.black,
+    // fontFamily: fontFamily.poppins400,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   subTitle: {
     fontSize: fontSize(12),

@@ -51,7 +51,7 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user____ ===> ', user?.user);
+  // console.log(' === user____ ===> ', user);
 
   useEffect(() => {
     RequestUserPermission();

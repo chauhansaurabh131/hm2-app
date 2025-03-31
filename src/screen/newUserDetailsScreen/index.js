@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -30,6 +31,7 @@ import {
 } from '../../actions/homeActions';
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -64,12 +66,15 @@ const NewUserDetailsScreen = () => {
   const friendBottomSheetRef = useRef(null);
   const ReportBottomSheetRef = useRef();
 
-  console.log(
-    ' === _________userDetails_________ ===> ',
-    matchesUserData?.userData?.friend,
-  );
+  // console.log(
+  //   ' === _________userDetails_________ ===> ',
+  //   matchesUserData?.userData?.friend,
+  // );
 
-  // console.log(' === userDetails?.dateOfBirth ===> ', userDetails?.dateOfBirth);
+  console.log(
+    ' === var ===> ',
+    userDetails?.privacySettingCustom?.profilePhotoPrivacy,
+  );
 
   const openBottomSheet = () => {
     friendBottomSheetRef.current.close();
@@ -1105,14 +1110,52 @@ const NewUserDetailsScreen = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
-          <Image
-            source={
-              userDetails.profilePic
-                ? {uri: userDetails.profilePic}
-                : images.empty_male_Image
-            }
-            style={{width: '100%', height: hp(449), resizeMode: 'cover'}}
-          />
+          {/*<Image*/}
+          {/*  source={*/}
+          {/*    userDetails.profilePic*/}
+          {/*      ? {uri: userDetails.profilePic}*/}
+          {/*      : images.empty_male_Image*/}
+          {/*  }*/}
+          {/*  style={{width: '100%', height: hp(449), resizeMode: 'cover'}}*/}
+          {/*/>*/}
+
+          <View
+            style={{
+              width: '100%',
+              height: hp(449),
+              resizeMode: 'cover',
+            }}>
+            {userDetails?.privacySettingCustom?.profilePhotoPrivacy ===
+              'private' && userDetails.profilePic ? (
+              <ImageBackground
+                source={{uri: userDetails.profilePic}}
+                style={{
+                  width: '110%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                }}
+                blurRadius={10} // Add blur effect with a specific radius (adjust as needed)
+              />
+            ) : userDetails?.privacySettingCustom?.profilePhotoPrivacy ===
+                'public' && userDetails.profilePic ? (
+              <Image
+                source={{uri: userDetails.profilePic}}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                }}
+              />
+            ) : (
+              // Fallback to ProfileAvatar when no image is available
+              <ProfileAvatar firstName={firstName} lastName={lastName} />
+            )}
+          </View>
+
           <LinearGradient
             colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
             style={style.imageBottomShadow}
@@ -1169,17 +1212,19 @@ const NewUserDetailsScreen = () => {
                 </TouchableOpacity>
 
                 <View style={style.bottomSecondImagesContainer}>
-                  <TouchableOpacity
-                    style={style.cameraImageContainer}
-                    activeOpacity={0.5}
-                    onPress={userAllImageShare}>
-                    <Image
-                      source={icons.new_camera_icon}
-                      style={style.cameraIcon}
-                    />
-
-                    <Text style={{color: colors.white}}>{imageCount}</Text>
-                  </TouchableOpacity>
+                  {userDetails?.privacySettingCustom?.profilePhotoPrivacy ===
+                    'public' && (
+                    <TouchableOpacity
+                      style={style.cameraImageContainer}
+                      activeOpacity={0.5}
+                      onPress={userAllImageShare}>
+                      <Image
+                        source={icons.new_camera_icon}
+                        style={style.cameraIcon}
+                      />
+                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                    </TouchableOpacity>
+                  )}
 
                   {matchesUserData?.userData?.status !== 'blocked' && (
                     <TouchableOpacity

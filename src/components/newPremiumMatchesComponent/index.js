@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ImageBackground,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -26,6 +27,8 @@ import Toast from 'react-native-toast-message';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import Abc from '../../screen/abc';
+import {BlurView} from '@react-native-community/blur';
+import ProfileAvatar from '../letterProfileComponent';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const NewPremiumMatchesComponent = ({toastConfigs}) => {
@@ -232,7 +235,12 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    // console.log(' === var ===> ', item);
+    // console.log(
+    //   ' === var ===> ',
+    //   item?.privacySettingCustom?.profilePhotoPrivacy,
+    // );
+
+    const profilePhotoPrivacy = item?.privacySettingCustom?.profilePhotoPrivacy;
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
@@ -286,54 +294,6 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
     const age = calculateAge(item.dateOfBirth);
 
-    // const handlePress = () => {
-    //   console.log(' === item........... ===> ', item);
-    //   const matchesUserData = {
-    //     userAllImage,
-    //     profileImage,
-    //     birthTime,
-    //     currentCity,
-    //     JobTittle,
-    //     currentCountry,
-    //     age,
-    //     gender: item?.gender,
-    //     height: item?.height,
-    //     cast: item?.cast,
-    //     firstName: item?.firstName,
-    //     lastName: item?.lastName,
-    //     motherTongue: item?.motherTongue,
-    //     about: item?.writeBoutYourSelf,
-    //     religion: item?.religion,
-    //     dateOfBirth: item?.dateOfBirth,
-    //     currentResidenceAddress: item?.address?.currentResidenceAddress,
-    //     originResidenceAddress: item?.address?.originResidenceAddress,
-    //     originCountry: item?.address?.originCountry,
-    //     originCity: item?.address?.originCity,
-    //     mobileNumber: item?.mobileNumber,
-    //     homeMobileNumber: item?.homeMobileNumber,
-    //     email: item?.email,
-    //     degree: item?.userEducation?.degree,
-    //     collage: item?.userEducation?.collage,
-    //     educationCity: item?.userEducation?.city,
-    //     educationState: item?.userEducation?.state,
-    //     educationCountry: item?.userEducation?.country,
-    //     Designation: item?.userProfessional?.jobTitle,
-    //     companyName: item?.userProfessional?.companyName,
-    //     jobType: item?.userProfessional?.jobType,
-    //     currentSalary: item?.userProfessional?.currentSalary,
-    //     workCity: item?.userProfessional?.workCity,
-    //     workCountry: item?.userProfessional?.workCountry,
-    //     hobbies: item?.hobbies,
-    //     matchPercentage: item?.matchPercentage,
-    //     userLikeDetails: item?.userLikeDetails,
-    //   };
-    //
-    //   // console.log('User Data:', matchesUserData);
-    //
-    //   // Navigate to UserDetailsScreen
-    //   navigation.navigate('`UserDetailsScreen`', {matchesUserData});
-    // };
-
     const handlePress = items => {
       const matchesUserData = {
         firstName: items.name,
@@ -377,16 +337,94 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
             borderWidth: 1,
             borderColor: '#EFEFEF',
           }}>
-          <Image
-            style={
-              item.profilePic
-                ? styles.image
-                : [styles.image, styles.imageWithBorder]
-            }
-            source={
-              item.profilePic ? {uri: item.profilePic} : images.empty_male_Image
-            }
-          />
+          {/*<Image*/}
+          {/*  style={*/}
+          {/*    item.profilePic*/}
+          {/*      ? styles.image*/}
+          {/*      : [styles.image, styles.imageWithBorder]*/}
+          {/*  }*/}
+          {/*  source={*/}
+          {/*    item.profilePic ? {uri: item.profilePic} : images.empty_male_Image*/}
+          {/*  }*/}
+          {/*/>*/}
+
+          <View
+            style={{
+              width: hp(110),
+              height: hp(136),
+              justifyContent: 'center',
+              borderRadius: 10,
+              overflow: 'hidden',
+              marginBottom: 10,
+            }}>
+            {profilePhotoPrivacy === 'private' && item.profilePic ? (
+              <ImageBackground
+                source={{uri: item.profilePic}}
+                style={{
+                  width: '110%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                }}
+                blurRadius={10} // Add blur effect with a specific radius (adjust as needed)
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    position: 'absolute',
+                    bottom: 10, // Position the view at the bottom
+                    left: '50%', // Center the view horizontally
+                    transform: [{translateX: -35}], // Use a pixel value for translateX (approximately half the width)
+                    backgroundColor: '#000000CC',
+                    padding: 4,
+                    borderRadius: 50,
+                    paddingHorizontal: 10,
+                    alignItems: 'center', // Center the content vertically within the row
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                  }}>
+                  <Image
+                    source={icons.privacy_icon}
+                    style={{
+                      width: 7,
+                      height: 9,
+                      tintColor: 'white',
+                      resizeMode: 'contain',
+                      marginRight: 6,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: fontSize(7),
+                      lineHeight: hp(12),
+                      fontFamily: fontFamily.poppins600,
+                      top: 1,
+                    }}>
+                    Private
+                  </Text>
+                </View>
+              </ImageBackground>
+            ) : profilePhotoPrivacy === 'public' && item.profilePic ? (
+              <Image
+                source={{uri: item.profilePic}}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                }}
+              />
+            ) : (
+              // Fallback to ProfileAvatar when no image is available
+              <ProfileAvatar
+                firstName={item.firstName}
+                lastName={item.lastName}
+              />
+            )}
+          </View>
 
           <View style={styles.overlayContainer}>
             <TouchableOpacity
@@ -603,10 +641,17 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   image: {
-    width: wp(110),
-    height: hp(136),
-    borderRadius: 6,
-    marginBottom: 8,
+    // width: wp(110),
+    // height: hp(136),
+    // borderRadius: 6,
+    // marginBottom: 8,
+
+    width: 110,
+    height: 136,
+    justifyContent: 'center',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 10,
   },
   imageWithBorder: {
     borderWidth: 0.5,

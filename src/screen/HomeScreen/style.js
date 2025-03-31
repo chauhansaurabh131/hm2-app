@@ -175,6 +175,7 @@ const style = StyleSheet.create({
   PremiumMatchesTextContainer: {
     marginTop: hp(10),
     // marginLeft: wp(16),
+    flex: 1,
   },
   showMeAllTextStyle: {
     color: colors.black,

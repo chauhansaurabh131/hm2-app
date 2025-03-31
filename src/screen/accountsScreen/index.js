@@ -375,6 +375,41 @@ const AccountsScreen = ({navigation}) => {
         </TouchableHighlight>
         <View style={style.descriptionBodyUnderlineStyle} />
 
+        <TouchableHighlight
+          activeOpacity={0.6}
+          underlayColor="#F9FBFF"
+          onPress={() => {
+            navigation.navigate('TwoFactorAuthenticationScreen', {kycData});
+          }}>
+          <View style={{marginHorizontal: 17, marginBottom: 15}}>
+            <View style={{marginTop: hp(16)}}>
+              <View style={style.bodyDescription}>
+                <View style={{width: 25}}>
+                  <Image
+                    source={icons.two_factor_icon}
+                    style={style.emailSmsIconStyle}
+                  />
+                </View>
+
+                <Image
+                  source={icons.rightSideIcon}
+                  style={style.sideArrowImageStyle}
+                />
+                <View style={style.credentialTittleContainer}>
+                  <Text style={style.credentialTittleText}>
+                    Two Factor Authentication
+                  </Text>
+                  <Text style={style.credentialDescriptionTextStyle}>
+                    Let’s get you setup using two-factor{'\n'}authentication.
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableHighlight>
+
+        <View style={style.descriptionBodyUnderlineStyle} />
+
         <View style={{height: 50}} />
         {/*</View>*/}
       </ScrollView>

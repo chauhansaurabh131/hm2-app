@@ -186,6 +186,11 @@ export const icons = {
   date_white_send_icon: require('./icons/date_white_send_icon.png'),
   date_boost_icon: require('./icons/date_boost_icon.png'),
   date_white_boost_icon: require('./icons/date_white_boost_icon.png'),
+  white_tran_check_box: require('./icons/white_tran_check_box.png'),
+  QR_Code_icon: require('./icons/QRCode_icon.png'),
+  two_factor_icon: require('./icons/two_factor_icon.png'),
+  google_play_icon: require('./icons/google_play_icon.png'),
+  app_store_icon: require('./icons/app_store_icon.png'),
 };
 
 export const gif = {

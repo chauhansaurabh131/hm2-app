@@ -12,6 +12,8 @@ export const getAsyncStorageData = async key => {
   try {
     const jsonString = await AsyncStorage.getItem(key);
 
+    console.log(' === jsonString ===> ', jsonString);
+
     if (jsonString) {
       return JSON.parse(jsonString);
     } else {

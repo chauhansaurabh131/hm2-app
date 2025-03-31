@@ -1,497 +1,94 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
-import {
-  Image,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
-import Swiper from 'react-native-deck-swiper';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
-import LinearGradient from 'react-native-linear-gradient';
-import {colors} from '../../utils/colors';
-import {icons} from '../../assets';
-import axios from 'axios';
+import React, {useState, useEffect} from 'react';
+import {SafeAreaView, Text, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
-import {useFocusEffect} from '@react-navigation/native';
+import axios from 'axios'; // Import axios
 
-const DatingSwipeDataComponent = () => {
-  const [cards, setCards] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page for pagination
-  const [loading, setLoading] = useState(false); // Track loading state
-  const [resetKey, setResetKey] = useState(0); // Reset swiper key
+const Abc = () => {
+  const [seconds, setSeconds] = useState(120); // 120 seconds (2 minutes)
+  const [timerActive, setTimerActive] = useState(true);
 
   const {user} = useSelector(state => state.auth);
-  const accessToken = user?.tokens?.access?.token;
-  const userId = user?.user?.id;
-  const swiperRef = useRef(null);
+  const accessToken = user?.tokens?.access?.token; // Get the access token from Redux
 
-  const fetchData = async page => {
-    if (accessToken && !loading) {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `https://stag.mntech.website/api/v1/user/user/getUserByGenderDating?page=${page}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
-        );
+  // Start the timer when the component mounts
+  useEffect(() => {
+    let interval;
 
-        const responseData = response.data?.data[0]?.paginatedResults || [];
-
-        if (responseData.length > 0) {
-          setCards(prevCards => [...prevCards, ...responseData]); // Append new data
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
-      }
-      setLoading(false);
+    if (timerActive && seconds > 0) {
+      interval = setInterval(() => {
+        setSeconds(prevSeconds => prevSeconds - 1);
+      }, 1000); // Decrease by 1 second every second
+    } else if (seconds === 0) {
+      setTimerActive(false); // Stop the timer when it reaches 0
     }
+
+    // Clear the interval when the component is unmounted or timer is inactive
+    return () => clearInterval(interval);
+  }, [timerActive, seconds]);
+
+  // Format the seconds to MM:SS
+  const formatTime = time => {
+    const minutes = Math.floor(time / 60);
+    const remainingSeconds = time % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(
+      remainingSeconds,
+    ).padStart(2, '0')}`;
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      setCards([]); // Reset cards on screen focus
-      setCurrentPage(1); // Reset page number
-      fetchData(1); // Fetch first page
-    }, []),
-  );
-
-  const handleSend = async card => {
-    const requestedId = card?.friendsDetails[0]?._id; // Retrieve stored request ID
-
-    console.log('=== requestedId ===> ', requestedId);
-
-    if (card?.friendsDetails[0]?.status !== 'requested') {
-      // Sending friend request
-      try {
-        const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
-          {
-            friend: card._id, // Friend's ID
-            user: userId, // Logged-in user's ID
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        console.log('API Response for create-friend:', response?.data);
-
-        if (response?.data?.status === 'Success') {
-          const requestId = response?.data?.data?.id; // Extract the request ID
-
-          if (!requestId) {
-            console.error('Friend request ID is missing from API response.');
-            return;
-          }
-
-          // Update the card with the request ID and status
-          const updatedCards = cards.map(item =>
-            item._id === card._id
-              ? {
-                  ...item,
-                  friendsDetails: [
-                    {
-                      ...item.friendsDetails[0],
-                      _id: requestId, // Store request ID
-                      status: 'requested',
-                    },
-                  ],
-                }
-              : item,
-          );
-          setCards(updatedCards);
-        } else {
-          console.log('Unable to send friend request. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error with create-friend API:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
-      }
+  // Format the display based on time remaining
+  const formatDisplay = seconds => {
+    if (seconds >= 60) {
+      // If more than 60 seconds, display MM:SS Min
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes}:${String(remainingSeconds).padStart(2, '0')} Min`;
     } else {
-      console.log('Friend request already sent, now removing the request');
-
-      if (!requestedId) {
-        console.error('Requested ID is missing. Cannot remove friend request.');
-        return;
-      }
-
-      // Removing friend request
-      try {
-        const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
-          {
-            user: card._id, // Friend's ID
-            request: requestedId, // Use stored request ID
-            status: 'removed', // Mark request as removed
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        console.log('API Response for remove-friend-request:', response?.data);
-
-        if (response?.data?.success === true) {
-          // Update the card to reflect the removal
-          const updatedCards = cards.map(item =>
-            item._id === card._id
-              ? {
-                  ...item,
-                  friendsDetails: [
-                    {
-                      ...item.friendsDetails[0],
-                      _id: null, // Remove request ID
-                      status: 'removed',
-                    },
-                  ],
-                }
-              : item,
-          );
-          setCards(updatedCards);
-        } else {
-          console.log('Unable to remove friend request. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error with remove-friend-request API:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
-      }
+      // If less than 60 seconds, display SS Sec
+      return `${String(seconds).padStart(2, '0')} Sec`;
     }
   };
 
-  const OnLikePress = async card => {
-    const {userLikeDetails} = card;
-    const likedUserId = card._id;
-    const currentLikeStatus = userLikeDetails[0]?.isLike;
-    const currentLikeStatusId = userLikeDetails[0]?._id;
-
+  // Handle Resend Click
+  const handleResend = async () => {
     try {
-      if (currentLikeStatus) {
-        // Unlike user
-        const response = await axios.put(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentLikeStatusId}`,
-          {
-            likedUserId: likedUserId,
-            isLike: false,
+      // Make the API request to send OTP
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/2fa/send-otp',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Use the access token from Redux store
           },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        console.log('API Response for unlike:', response?.data);
-
-        if (response?.data?.status === 'Success') {
-          const updatedCards = cards.map(item =>
-            item._id === likedUserId
-              ? {
-                  ...item,
-                  userLikeDetails: [
-                    {
-                      ...item.userLikeDetails[0], // Spread existing details
-                      isLike: false, // Update isLike to false
-                    },
-                  ],
-                }
-              : item,
-          );
-
-          setCards(updatedCards); // Update the state
-        } else {
-          Alert.alert('Error', 'Unable to unlike the user. Please try again.');
-        }
+        },
+      );
+      if (response.status === 200) {
+        console.log('OTP resend successful:', response.data);
+        // Reset the timer and start again
+        setSeconds(120); // Reset the timer to 2 minutes
+        setTimerActive(true); // Start the timer again
       } else {
-        // Like user
-        const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/like/create-like?appUsesType=dating',
-          {
-            likedUserId: likedUserId,
-            isLike: true,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-
-        console.log('API Response for like:', response?.data);
-
-        if (response?.data?.status === 'Success') {
-          const updatedCards = cards.map(item =>
-            item._id === likedUserId
-              ? {
-                  ...item,
-                  userLikeDetails: [
-                    {
-                      _id: response?.data?.data?.id, // Use new ID from response
-                      isLike: true, // Update isLike to true
-                    },
-                  ],
-                }
-              : item,
-          );
-
-          setCards(updatedCards); // Update the state
-        } else {
-          Alert.alert('Error', 'Unable to like the user. Please try again.');
-        }
+        console.error('Failed to resend OTP:', response.data);
       }
     } catch (error) {
-      console.error('Error with like/unlike operation:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      console.error('Error resending OTP:', error.message);
     }
-  };
-
-  const onSwipePress = card => {
-    console.log(' === onSwipePress ===> ');
-    // Simulate swipe on the card by calling swipeLeft or swipeRight
-    if (swiperRef.current) {
-      // For example, swipe right
-      swiperRef.current.swipeRight();
-    }
-  };
-
-  const renderCard = card => {
-    // console.log(' === card ===> ', card?.userLikeDetails);
-
-    return (
-      <View
-        style={{
-          justifyContent: 'center',
-          borderRadius: 20,
-          borderWidth: 2,
-          borderColor: '#E8E8E8',
-          backgroundColor: '#FFF',
-          shadowColor: '#000',
-          shadowOffset: {width: 0, height: 1},
-          shadowOpacity: 0.2,
-          shadowRadius: 1.41,
-          elevation: 2,
-          height: hp(530),
-        }}>
-        <Image
-          source={{uri: card.profilePic}}
-          style={{width: '100%', height: '100%', borderRadius: 20}}
-          resizeMode="cover"
-        />
-        <LinearGradient
-          colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-          style={{
-            position: 'absolute',
-            bottom: -20,
-            left: 0,
-            right: 0,
-            borderRadius: 10,
-            width: '100%',
-            height: '40%',
-            marginBottom: hp(13),
-          }}
-        />
-        <View style={{position: 'absolute', bottom: 90, left: 20}}>
-          <Text
-            style={{
-              color: colors.white,
-              fontSize: fontSize(24),
-              lineHeight: hp(36),
-              fontFamily: fontFamily.poppins700,
-            }}>
-            {card.name.charAt(0).toUpperCase() + card.name.slice(1)},{' '}
-            {card.age || 'N.A'}
-          </Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text
-              style={{
-                color: colors.white,
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
-              }}>
-              {card.occupation || 'N.A'} | {card.currentlyLiving || 'N.A'}
-            </Text>
-          </View>
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 5,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 17,
-            flex: 1,
-          }}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity
-              style={{
-                width: hp(70),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.date_Dislike_icon}
-                style={{width: hp(19), height: hp(17)}}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                onSwipePress(card);
-              }}
-              style={{
-                width: hp(70),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.date_Star_icon}
-                style={{width: hp(19), height: hp(17)}}
-              />
-            </TouchableOpacity>
-
-            {card?.userLikeDetails[0]?.isLike ? (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: hp(70),
-                  height: hp(40),
-                  backgroundColor: '#9E28D7',
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Image
-                  source={icons.dating_white_heart}
-                  style={{width: hp(19), height: hp(17), tintColor: 'white'}}
-                />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: hp(70),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Image
-                  source={icons.date_like_icon}
-                  style={{width: hp(19), height: hp(17)}}
-                />
-              </TouchableOpacity>
-            )}
-
-            {card?.friendsDetails[0]?.status === 'requested' ? (
-              <TouchableOpacity
-                style={{
-                  width: hp(70),
-                  height: hp(40),
-                  backgroundColor: '#7045EB',
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                onPress={() => handleSend(card)}>
-                <Image
-                  // source={icons.date_send_icon}
-                  source={icons.date_white_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
-                />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={{
-                  width: hp(70),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                onPress={() => handleSend(card)}>
-                <Image
-                  // source={icons.date_send_icon}
-                  source={icons.date_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
-                />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </View>
-    );
-  };
-
-  const onSwiped = cardIndex => {
-    if (cardIndex === cards.length - 1 && !loading) {
-      setCurrentPage(prevPage => {
-        const nextPage = prevPage + 1;
-        fetchData(nextPage);
-        return nextPage;
-      });
-    }
-  };
-
-  const onSwipedAll = () => {
-    console.log('All cards swiped');
-    setCards([]); // Reset cards
-    setCurrentPage(1); // Reset page
-    setResetKey(prevKey => prevKey + 1); // Force re-render
-    fetchData(1);
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      {cards.length === 0 ? (
-        // <Text style={{color: 'black', marginTop: 50}}>Loading...</Text>
-        <View style={{flex: 1, justifyContent: 'center'}}>
-          <ActivityIndicator size="large" color={colors.blue} />
-        </View>
-      ) : (
-        <Swiper
-          key={resetKey}
-          cards={cards}
-          renderCard={renderCard}
-          onSwipedAll={onSwipedAll}
-          onSwiped={onSwiped}
-          stackSize={2}
-          backgroundColor="white"
-          cardIndex={0}
-          animateOverlayLabelsOpacity
-          verticalSwipe={false}
-          horizontalSwipe={true}
-        />
+    <SafeAreaView>
+      <Text style={{marginTop: 50, textAlign: 'center'}}>
+        {timerActive ? `Resend in ${formatDisplay(seconds)}` : null}
+      </Text>
+
+      {!timerActive && (
+        <TouchableOpacity onPress={handleResend}>
+          <Text style={{textAlign: 'center', color: 'blue', marginTop: 20}}>
+            Resend
+          </Text>
+        </TouchableOpacity>
       )}
     </SafeAreaView>
   );
 };
 
-export default DatingSwipeDataComponent;
+export default Abc;

@@ -1,5 +1,5 @@
-import {SET_LOADING} from './actionTypes';
 import * as TYPES from './actionTypes';
+import {SET_LOADING} from './actionTypes';
 
 /* ------------- REGISTER ------------- */
 export const register = (payload, callback) => ({
@@ -16,9 +16,9 @@ export const registerFail = () => ({
 });
 
 /* ------------- LOGIN ------------- */
-export const login = (payload, callback) => ({
+export const login = (payload, successCallback, failureCallback) => ({
   type: TYPES.LOGIN,
-  data: {payload, callback},
+  data: {payload, successCallback, failureCallback},
 });
 
 export const loginSuccess = data => ({

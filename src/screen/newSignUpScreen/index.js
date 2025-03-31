@@ -28,7 +28,18 @@ const NewSignUpScreen = () => {
 
   const {loading} = useSelector(state => state.auth);
 
-  console.log(' === loading ===> ', loading);
+  // const validateName = () => {
+  //   if (name.length < 3) {
+  //     setNameError('Name must be at least 3 characters');
+  //     return false;
+  //   } else if (name.length > 15) {
+  //     setNameError('Name must be less than 15 characters');
+  //     return false;
+  //   } else {
+  //     setNameError('');
+  //     return true;
+  //   }
+  // };
 
   const validateName = () => {
     if (name.length < 3) {
@@ -43,25 +54,87 @@ const NewSignUpScreen = () => {
     }
   };
 
-  const validateEmail = () => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setEmailError('Invalid E-mail Address or Mobile Number');
-      return false;
-    } else {
+  // const validateEmail = () => {
+  //   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!emailPattern.test(email)) {
+  //     setEmailError('Invalid E-mail Address or Mobile Number');
+  //     return false;
+  //   } else {
+  //     setEmailError('');
+  //     return true;
+  //   }
+  // };
+
+  // Validate Email or Mobile
+  const validateEmailOrMobile = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email regex pattern
+    const mobilePattern = /^[0-9]{10}$/; // Mobile number regex (10 digits)
+
+    // Check if it's an email
+    if (emailPattern.test(email)) {
       setEmailError('');
-      return true;
+      return 'email';
     }
+
+    // Check if it's a valid mobile number (10 digits)
+    if (mobilePattern.test(email)) {
+      setEmailError('');
+      return 'mobile';
+    }
+
+    // Invalid email or mobile
+    setEmailError('Invalid E-mail Address or Mobile Number');
+    return false;
   };
 
-  const handleSignUp = async () => {
+  // const handleSignUp = async () => {
+  //   const isNameValid = validateName();
+  //   const isEmailValid = validateEmail();
+  //   if (isNameValid && isEmailValid) {
+  //     dispatch(
+  //       register({name, email}, () => {
+  //         navigation.navigate('VerifyEmailOtpScreen', {name, email});
+  //       }),
+  //     );
+  //   }
+  // };
+
+  const handleSignUp = () => {
+    // Validate both name and email/mobile input before proceeding
     const isNameValid = validateName();
-    const isEmailValid = validateEmail();
-    if (isNameValid && isEmailValid) {
+    const emailOrMobileValid = validateEmailOrMobile();
+
+    // If either validation fails, return early
+    if (!isNameValid || !emailOrMobileValid) {
+      return;
+    }
+
+    console.log(' === onPressLogin ===> ', name, email);
+
+    // Now we make the API call after validation
+    if (emailOrMobileValid === 'email') {
+      // Proceed with registration using email
       dispatch(
-        register({name, email}, () => {
-          navigation.navigate('VerifyEmailOtpScreen', {name, email});
-        }),
+        register(
+          {name, email, countryCodeId: '67d2698641c89038f51512a2'},
+          () => {
+            navigation.navigate('VerifyEmailOtpScreen', {name, email});
+          },
+        ),
+      );
+    } else if (emailOrMobileValid === 'mobile') {
+      // Proceed with registration using mobile number
+      dispatch(
+        register(
+          {
+            name,
+            mobileNumber: email,
+            countryCodeId: '67d2698641c89038f51512a2',
+          },
+          () => {
+            navigation.navigate('VerifyMobileOtpScreen', {name, email});
+          },
+        ),
       );
     }
   };

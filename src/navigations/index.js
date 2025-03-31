@@ -89,6 +89,11 @@ import EditPartnerPreferencesScreen from '../screen/editRemainingFillUpData/edit
 import ChangeNameRequestScreen from '../screen/changeNameRequestScreen';
 import MeetNewFriendsScreen from '../screen/datingExploreAllScreen/meetNewFriendsScreen';
 import DatingSearchFilterScreen from '../screen/datingAllScreen/datingSearchFilterScreen';
+import TwoFactorAuthenticationScreen from '../screen/twoFactorAuthenticationScreen';
+import StepForAuthenticationOnScreen from '../screen/stepForAuthenticationOnScreen';
+import EmailNumberAuthenticationNumber from '../screen/emailNumberAuthenticationNumber';
+import LoginAuthenticationCodeScreen from '../screen/loginAuthenticationCodeScreen';
+import AuthenticationEnterOtpScreen from '../screen/authenticationEnterOtpScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -113,8 +118,8 @@ const MainNavigator = () => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="NewMainScreen">
-      <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
+      <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
       <Stack.Screen name="NewSignUpScreen" component={NewSignUpScreen} />
       <Stack.Screen name="NewLogInScreen" component={NewLogInScreen} />
@@ -123,6 +128,12 @@ const MainNavigator = () => {
         name="VerifyEmailOtpScreen"
         component={VerifyEmailOtpScreen}
       />
+
+      <Stack.Screen
+        name="LoginAuthenticationCodeScreen"
+        component={LoginAuthenticationCodeScreen}
+      />
+
       <Stack.Screen
         name="NewSetPasswordScreen"
         component={NewSetPasswordScreen}
@@ -253,6 +264,30 @@ const MainNavigator = () => {
         <ExtraStack.Screen
           name="KycDetailsScreen"
           component={KycDetailsScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="TwoFactorAuthenticationScreen"
+          component={TwoFactorAuthenticationScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="StepForAuthenticationOnScreen"
+          component={StepForAuthenticationOnScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="EmailNumberAuthenticationNumber"
+          component={EmailNumberAuthenticationNumber}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="AuthenticationEnterOtpScreen"
+          component={AuthenticationEnterOtpScreen}
           options={{headerShown: false}}
         />
       </ExtraStack.Navigator>
