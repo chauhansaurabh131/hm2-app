@@ -25,6 +25,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {non_friend_Blocked} from '../../../actions/homeActions';
 import Toast from 'react-native-toast-message';
 import {style} from './style';
+import ProfileAvatar from '../../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -154,6 +155,9 @@ const MatchesInBlockedScreen = () => {
   };
 
   const handleConfirmBlock = async () => {
+    console.log(' === user ===> ', selectFriendId);
+    console.log(' === request ===> ', blockedFriendId);
+
     try {
       const response = await fetch(
         'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
@@ -429,6 +433,15 @@ const MatchesInBlockedScreen = () => {
   };
 
   const renderBlockedUser = ({item}) => {
+    const hasValidImage =
+      item?.friend?.profilePic &&
+      item?.friend?.profilePic !== 'null' &&
+      item?.friend?.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item?.friend?.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item?.friend?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
     const profileImage = item?.friend?.profilePic;
 
     const uniqueId = item?.friend?.userUniqueId;
@@ -495,13 +508,45 @@ const MatchesInBlockedScreen = () => {
               /* navigation.navigate('UserDetailsScreen'); */
             }}>
             <View>
-              <Image
-                source={
-                  profileImage ? {uri: profileImage} : images.empty_male_Image
-                }
-                style={style.userImageStyle}
-                resizeMode={'cover'}
-              />
+              {/*<Image*/}
+              {/*  source={*/}
+              {/*    profileImage ? {uri: profileImage} : images.empty_male_Image*/}
+              {/*  }*/}
+              {/*  style={style.userImageStyle}*/}
+              {/*  resizeMode={'cover'}*/}
+              {/*/>*/}
+
+              {hasValidImage ? (
+                <>
+                  <Image
+                    source={{uri: item?.friend?.profilePic}}
+                    style={style.userImageStyle}
+                  />
+                  {profilePrivacy && (
+                    <Image
+                      source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                      style={{
+                        position: 'absolute',
+                        tintColor: '#fff',
+                        resizeMode: 'contain',
+                        width: hp(33),
+                        height: hp(44),
+                        alignSelf: 'center',
+                        marginTop: hp(200),
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <ProfileAvatar
+                    firstName={item?.friend?.firstName || item?.friend?.name}
+                    lastName={item?.friend?.lastName}
+                    textStyle={style.userImageStyle}
+                    profileTexts={{fontSize: fontSize(60), marginTop: -80}}
+                  />
+                </>
+              )}
               <LinearGradient
                 colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
                 style={style.gradient}
@@ -567,17 +612,19 @@ const MatchesInBlockedScreen = () => {
                   </TouchableOpacity>
 
                   <View style={style.imageAndThreeDotContainer}>
-                    <TouchableOpacity
-                      style={style.ImagesContainer}
-                      activeOpacity={0.5}
-                      onPress={userAllImageShare}>
-                      <Image
-                        source={icons.new_camera_icon}
-                        style={style.cameraIcon}
-                      />
+                    {!profilePrivacy && (
+                      <TouchableOpacity
+                        style={style.ImagesContainer}
+                        activeOpacity={0.5}
+                        onPress={userAllImageShare}>
+                        <Image
+                          source={icons.new_camera_icon}
+                          style={style.cameraIcon}
+                        />
 
-                      <Text style={{color: colors.white}}>{imageCount}</Text>
-                    </TouchableOpacity>
+                        <Text style={{color: colors.white}}>{imageCount}</Text>
+                      </TouchableOpacity>
+                    )}
 
                     <TouchableOpacity
                       onPress={onThreeDotPress}
@@ -695,7 +742,7 @@ const MatchesInBlockedScreen = () => {
       {/* Bottom Sheet */}
       <RBSheet
         ref={sheetRef}
-        height={hp(240)} // Height of the bottom sheet
+        height={hp(300)} // Height of the bottom sheet
         // openDuration={250} // Duration of the opening animation
         closeOnDragDown={true} // Allow closing the sheet by dragging it down
         customStyles={{
@@ -716,24 +763,6 @@ const MatchesInBlockedScreen = () => {
 
             <TouchableOpacity
               onPress={() => {
-                handleBlockProfilePress(blockedFriendId);
-              }}
-              style={style.TDBBodySecondContainer}>
-              <Image source={icons.block_icon} style={style.TDBImages} />
-              <Text style={style.TDBTittleText}>
-                Unblock {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={openBottomSheet}
-              style={style.TDBBodySecondContainer}>
-              <Image source={icons.report_icon} style={style.TDBImages} />
-              <Text style={style.TDBTittleText}>Report this profile</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
               style={style.TDBBodySecondContainer}>
@@ -741,6 +770,65 @@ const MatchesInBlockedScreen = () => {
               <Text style={style.TDBTittleText}>
                 Copy ID : {selectedUniqueId}
               </Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={style.TDBBodySecondContainer}>
+              <Image
+                source={icons.new_report_icon}
+                style={[style.TDBImages, {top: -8}]}
+              />
+
+              <View>
+                <Text style={style.TDBTittleText}>Report</Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handleBlockProfilePress(blockedFriendId);
+              }}
+              style={style.TDBBodySecondContainer}>
+              <Image
+                source={icons.block_icon}
+                style={[style.TDBImages, {top: -8}]}
+              />
+
+              <View>
+                <Text style={style.TDBTittleText}>
+                  Unblock {selectedFirstName}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  You contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>

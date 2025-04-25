@@ -562,4 +562,46 @@ export const style = StyleSheet.create({
     height: 14,
     tintColor: colors.white,
   },
+  renderContainer: {
+    marginHorizontal: 17,
+  },
+  logoImg: {
+    position: 'absolute',
+    tintColor: '#fff',
+    resizeMode: 'contain',
+    width: hp(33),
+    height: hp(44),
+    alignSelf: 'center',
+    marginTop: hp(200),
+  },
+  profileAvatarText: {
+    fontSize: fontSize(60),
+    marginTop: -80,
+  },
+  renderNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  subPlanCon: {
+    height: 22,
+    backgroundColor: 'orange',
+    marginLeft: 11,
+    borderRadius: 50,
+    flexDirection: 'row',
+    paddingHorizontal: 7,
+  },
+  crownImg: {
+    width: hp(11),
+    height: hp(11),
+    tintColor: 'white',
+    alignSelf: 'center',
+    resizeMode: 'contain',
+  },
+  planNameText: {
+    color: 'white',
+    fontSize: fontSize(12),
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    marginLeft: 3,
+  },
 });

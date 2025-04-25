@@ -13,6 +13,8 @@ import {UserDetailsProfile, UserDetailsProfile1} from '../../utils/constants';
 import {colors} from '../../utils/colors';
 import * as Progress from 'react-native-progress';
 import LinearGradient from 'react-native-linear-gradient';
+import {icons} from '../../assets';
+import {useNavigation} from '@react-navigation/native';
 
 const NEXT_SCREEN = 'NEXT_SCREEN';
 const NUMBER_SCREEN = 'NUMBER_SCREEN';
@@ -128,10 +130,20 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
 };
 
 const UsersProfileDetailsScreen = ({userData}) => {
-  // console.log(' === userData///// ===> ', userData);
+  // console.log(' === userData///// ===> ', userData?.friendsDetails?.status);
+
+  const navigation = useNavigation();
+
   const phaseReducerInitialState = {
     activeIndex: 0,
   };
+
+  // console.log(
+  //   ' === SubscriptionDetails Status ===> ',
+  //   userData?.subscriptionDetails?.status,
+  // );
+
+  // console.log(' === privacySetting ===> ', userData?.privacySetting);
 
   const [{activeIndex}, dispatch] = useReducer(
     phaseReducer,
@@ -189,9 +201,246 @@ const UsersProfileDetailsScreen = ({userData}) => {
 
         {/*<Text>svksnvkl</Text>*/}
       </View>
-      <View style={{width: '100%', borderWidth: 0.7, borderColor: '#E8E8E8'}} />
 
-      <RenderComp />
+      {/*<View style={{width: '100%', borderWidth: 0.7, borderColor: '#E8E8E8'}} />*/}
+
+      {/*<RenderComp />*/}
+
+      {/*{userData?.subscriptionDetails?.status === 'active' ? (*/}
+      {/*  <View style={{marginHorizontal: 17}}>*/}
+      {/*    <LinearGradient*/}
+      {/*      colors={['#0F52BA', '#8225AF']}*/}
+      {/*      start={{x: 0, y: 0}}*/}
+      {/*      end={{x: 1, y: 1}}*/}
+      {/*      style={{*/}
+      {/*        width: '100%',*/}
+      {/*        height: 244,*/}
+      {/*        justifyContent: 'center',*/}
+      {/*        alignItems: 'center',*/}
+      {/*        borderRadius: 19,*/}
+      {/*        marginTop: 5,*/}
+      {/*      }}>*/}
+      {/*      <Text*/}
+      {/*        style={{*/}
+      {/*          color: colors.white, // change to white for better contrast*/}
+      {/*          fontSize: fontSize(18),*/}
+      {/*          lineHeight: hp(26),*/}
+      {/*          fontFamily: fontFamily.poppins500,*/}
+      {/*        }}>*/}
+      {/*        Premium Members Only*/}
+      {/*      </Text>*/}
+      {/*      <Text*/}
+      {/*        style={{*/}
+      {/*          color: colors.white, // change to white for better contrast*/}
+      {/*          fontSize: fontSize(13),*/}
+      {/*          lineHeight: hp(24),*/}
+      {/*          fontFamily: fontFamily.poppins400,*/}
+      {/*          marginTop: 2,*/}
+      {/*        }}>*/}
+      {/*        Upgrade to send a request.*/}
+      {/*      </Text>*/}
+
+      {/*      <TouchableOpacity*/}
+      {/*        onPress={() => {*/}
+      {/*          navigation.navigate('Upgrader');*/}
+      {/*        }}*/}
+      {/*        activeOpacity={0.6}*/}
+      {/*        style={{*/}
+      {/*          marginTop: hp(34),*/}
+      {/*          width: hp(123),*/}
+      {/*          height: hp(44),*/}
+      {/*          backgroundColor: colors.white,*/}
+      {/*          borderRadius: 22,*/}
+      {/*          justifyContent: 'center',*/}
+      {/*          alignItems: 'center',*/}
+      {/*          flexDirection: 'row',*/}
+      {/*        }}>*/}
+      {/*        <Text*/}
+      {/*          style={{*/}
+      {/*            fontSize: fontSize(14),*/}
+      {/*            lineHeight: hp(24),*/}
+      {/*            fontFamily: fontFamily.poppins500,*/}
+      {/*            color: colors.black,*/}
+      {/*          }}>*/}
+      {/*          Upgrade*/}
+      {/*        </Text>*/}
+
+      {/*        <Image*/}
+      {/*          source={icons.crownIcon}*/}
+      {/*          style={{*/}
+      {/*            width: hp(18),*/}
+      {/*            height: hp(18),*/}
+      {/*            resizeMode: 'contain',*/}
+      {/*            marginLeft: hp(8),*/}
+      {/*            top: -2,*/}
+      {/*          }}*/}
+      {/*        />*/}
+      {/*      </TouchableOpacity>*/}
+      {/*    </LinearGradient>*/}
+      {/*  </View>*/}
+      {/*) : userData?.privacySetting === 'privateProfile' ? (*/}
+      {/*  <View style={{marginHorizontal: 17}}>*/}
+      {/*    <View*/}
+      {/*      style={{*/}
+      {/*        width: '100%',*/}
+      {/*        height: 244,*/}
+      {/*        backgroundColor: '#F7F7F7',*/}
+      {/*        justifyContent: 'center',*/}
+      {/*        alignItems: 'center',*/}
+      {/*        borderRadius: 19,*/}
+      {/*        marginTop: 5,*/}
+      {/*      }}>*/}
+      {/*      <Text*/}
+      {/*        style={{*/}
+      {/*          color: colors.black,*/}
+      {/*          fontSize: fontSize(18),*/}
+      {/*          lineHeight: hp(26),*/}
+      {/*          fontFamily: fontFamily.poppins500,*/}
+      {/*        }}>*/}
+      {/*        Private Profile*/}
+      {/*      </Text>*/}
+      {/*      <Text*/}
+      {/*        style={{*/}
+      {/*          color: colors.black,*/}
+      {/*          fontSize: fontSize(14),*/}
+      {/*          lineHeight: hp(24),*/}
+      {/*          fontFamily: fontFamily.poppins400,*/}
+      {/*          marginTop: 2,*/}
+      {/*        }}>*/}
+      {/*        Send a request and wait for approval*/}
+      {/*      </Text>*/}
+      {/*    </View>*/}
+      {/*  </View>*/}
+      {/*) : (*/}
+      {/*  <>*/}
+      {/*    <View*/}
+      {/*      style={{width: '100%', borderWidth: 0.7, borderColor: '#E8E8E8'}}*/}
+      {/*    />*/}
+      {/*    <RenderComp />*/}
+      {/*  </>*/}
+      {/*)}*/}
+
+      {userData?.friendsDetails?.status === 'accepted' ? (
+        <>
+          <View
+            style={{width: '100%', borderWidth: 0.7, borderColor: '#E8E8E8'}}
+          />
+          <RenderComp />
+        </>
+      ) : userData?.subscriptionDetails?.status === 'active' ? (
+        <View style={{marginHorizontal: 17}}>
+          <LinearGradient
+            colors={['#0F52BA', '#8225AF']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            style={{
+              width: '100%',
+              height: 244,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 19,
+              marginTop: 5,
+            }}>
+            <Text
+              style={{
+                color: colors.white,
+                fontSize: fontSize(18),
+                lineHeight: hp(26),
+                fontFamily: fontFamily.poppins500,
+              }}>
+              Premium Members Only
+            </Text>
+            <Text
+              style={{
+                color: colors.white,
+                fontSize: fontSize(13),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins400,
+                marginTop: 2,
+              }}>
+              Upgrade to send a request.
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Upgrader');
+              }}
+              activeOpacity={0.6}
+              style={{
+                marginTop: hp(34),
+                width: hp(123),
+                height: hp(44),
+                backgroundColor: colors.white,
+                borderRadius: 22,
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(14),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                }}>
+                Upgrade
+              </Text>
+
+              <Image
+                source={icons.crownIcon}
+                style={{
+                  width: hp(18),
+                  height: hp(18),
+                  resizeMode: 'contain',
+                  marginLeft: hp(8),
+                  top: -2,
+                }}
+              />
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
+      ) : userData?.privacySetting === 'privateProfile' ? (
+        <View style={{marginHorizontal: 17}}>
+          <View
+            style={{
+              width: '100%',
+              height: 244,
+              backgroundColor: '#F7F7F7',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 19,
+              marginTop: 5,
+            }}>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: fontSize(18),
+                lineHeight: hp(26),
+                fontFamily: fontFamily.poppins500,
+              }}>
+              Private Profile
+            </Text>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: fontSize(14),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins400,
+                marginTop: 2,
+              }}>
+              Send a request and wait for approval
+            </Text>
+          </View>
+        </View>
+      ) : (
+        <>
+          <View
+            style={{width: '100%', borderWidth: 0.7, borderColor: '#E8E8E8'}}
+          />
+          <RenderComp />
+        </>
+      )}
+
       {/*{UserDetailsProfile[activeIndex].component({name: 1})}*/}
     </SafeAreaView>
   );

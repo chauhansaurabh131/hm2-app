@@ -22,6 +22,8 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import {colors} from '../../../utils/colors';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import ProfileAvatar from '../../../components/letterProfileComponent';
+import axios from 'axios';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const MatchesInDeclinedScreen = () => {
@@ -369,93 +371,165 @@ const MatchesInDeclinedScreen = () => {
     setAboutText('');
   };
 
-  const handleShortListPress = async item => {
-    const shortlistId = item?.shortlistData?._id ?? item?.shortlistData?._id;
-    const userId = item?.user?._id; // Ensure you're using the correct ID
+  // const handleShortListPress = async item => {
+  //   const shortlistId = item?.shortlistData?._id ?? item?.shortlistData?._id;
+  //   const userId = item?.user?._id; // Ensure you're using the correct ID
+  //
+  //   // console.log(' === var ===> ', {item, shortlistId});
+  //
+  //   if (shortlistId) {
+  //     // If the item is already shortlisted, remove it from the shortlist
+  //     try {
+  //       const response = await fetch(
+  //         `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+  //         {
+  //           method: 'DELETE',
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         },
+  //       );
+  //
+  //       const result = await response.json();
+  //
+  //       if (response.ok) {
+  //         // Successfully removed from shortlist
+  //         // Alert.alert('Success', 'Removed from shortlist');
+  //         RemoveShortlisted();
+  //
+  //         // Update the data by removing the shortlistData
+  //         setData(prevData => {
+  //           return prevData.map(dataItem => {
+  //             // console.log(
+  //             //   ' === 111 ===> ',
+  //             //   dataItem.shortlistData?._id,
+  //             //   shortlistId,
+  //             // );
+  //             return dataItem.shortlistData?._id === shortlistId
+  //               ? {...dataItem, shortlistData: null} // Remove shortlistData
+  //               : dataItem;
+  //           });
+  //         });
+  //       } else {
+  //         Alert.alert('Error', 'Failed to remove from shortlist');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error removing from shortlist:', error);
+  //       Alert.alert('Error', 'Failed to remove from shortlist');
+  //     }
+  //   } else {
+  //     // If the item is not shortlisted, create a new shortlist
+  //     try {
+  //       const response = await fetch(
+  //         'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //           body: JSON.stringify({
+  //             shortlistId: userId, // Correctly passing the userId
+  //           }),
+  //         },
+  //       );
+  //
+  //       const result = await response.json();
+  //
+  //       if (response.ok) {
+  //         // Successfully added to shortlist
+  //         // Alert.alert('Success', 'Added to shortlist');
+  //         ShowToast();
+  //         // Update the data with the new shortlist data
+  //         setData(prevData => {
+  //           return prevData.map(dataItem => {
+  //             return dataItem.user?._id === userId
+  //               ? {
+  //                   ...dataItem,
+  //                   shortlistData: {_id: result?.data?.id, ...result.data},
+  //                 } // Add the shortlistData
+  //               : dataItem;
+  //           });
+  //         });
+  //       } else {
+  //         Alert.alert('Error', 'Failed to add to shortlist');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error adding to shortlist:', error);
+  //       Alert.alert('Error', 'Failed to add to shortlist');
+  //     }
+  //   }
+  // };
 
-    // console.log(' === var ===> ', {item, shortlistId});
-
-    if (shortlistId) {
-      // If the item is already shortlisted, remove it from the shortlist
-      try {
-        const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+  const addToShortlist = async shortlistId => {
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        {shortlistId},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
           },
+        },
+      );
+      console.log('Shortlist created successfully:', response.data);
+
+      // Update the state immutably and ensure the new shortlist data is associated with the user
+      setData(prevData => {
+        return prevData.map(user =>
+          user?.user?._id === shortlistId
+            ? {
+                ...user,
+                user: {
+                  ...user.user,
+                  userShortListDetails: response.data.data, // Updated shortlist details
+                },
+              }
+            : user,
         );
+      });
 
-        const result = await response.json();
+      ShowToast();
+    } catch (error) {
+      console.error('Error adding to shortlist:', error);
+      Alert.alert('Error', 'Failed to add to shortlist.');
+    }
+  };
 
-        if (response.ok) {
-          // Successfully removed from shortlist
-          // Alert.alert('Success', 'Removed from shortlist');
-          RemoveShortlisted();
-
-          // Update the data by removing the shortlistData
-          setData(prevData => {
-            return prevData.map(dataItem => {
-              // console.log(
-              //   ' === 111 ===> ',
-              //   dataItem.shortlistData?._id,
-              //   shortlistId,
-              // );
-              return dataItem.shortlistData?._id === shortlistId
-                ? {...dataItem, shortlistData: null} // Remove shortlistData
-                : dataItem;
-            });
-          });
-        } else {
-          Alert.alert('Error', 'Failed to remove from shortlist');
-        }
-      } catch (error) {
-        console.error('Error removing from shortlist:', error);
-        Alert.alert('Error', 'Failed to remove from shortlist');
-      }
-    } else {
-      // If the item is not shortlisted, create a new shortlist
-      try {
-        const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-              shortlistId: userId, // Correctly passing the userId
-            }),
+  const removeFromShortlist = async shortlistId => {
+    try {
+      // Call the remove from shortlist API
+      const response = await axios.delete(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
+        },
+      );
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      // Directly update the state to remove the shortlist details without re-fetching data
+      setData(prevData => {
+        return prevData.map(user =>
+          // Ensure you are checking for the correct ID
+          user?.user?.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                user: {
+                  ...user?.user,
+                  userShortListDetails: {}, // Set to null after removal
+                },
+              }
+            : user,
         );
-
-        const result = await response.json();
-
-        if (response.ok) {
-          // Successfully added to shortlist
-          // Alert.alert('Success', 'Added to shortlist');
-          ShowToast();
-          // Update the data with the new shortlist data
-          setData(prevData => {
-            return prevData.map(dataItem => {
-              return dataItem.user?._id === userId
-                ? {
-                    ...dataItem,
-                    shortlistData: {_id: result?.data?.id, ...result.data},
-                  } // Add the shortlistData
-                : dataItem;
-            });
-          });
-        } else {
-          Alert.alert('Error', 'Failed to add to shortlist');
-        }
-      } catch (error) {
-        console.error('Error adding to shortlist:', error);
-        Alert.alert('Error', 'Failed to add to shortlist');
-      }
+      });
+      RemoveShortlisted();
+    } catch (error) {
+      console.error('Error removing from shortlist:', error);
+      Alert.alert('Error', 'Failed to remove from shortlist.');
     }
   };
 
@@ -469,7 +543,33 @@ const MatchesInDeclinedScreen = () => {
   };
 
   const renderAcceptedUserItem = ({item}) => {
-    // console.log(' === var ===> ', item?.user?._id);
+    console.log(
+      ' === var ===> ',
+      item?.user?.subscriptionDetails?.selectedPlan,
+    );
+
+    const planName = item?.user?.subscriptionDetails?.selectedPlan
+      ? item?.user?.subscriptionDetails?.selectedPlan.charAt(0).toUpperCase() +
+        item?.user?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
+      : '';
+
+    const hasValidImage =
+      item?.user?.profilePic &&
+      item?.user?.profilePic !== 'null' &&
+      item?.user?.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item?.user?.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const {selectedPlan, status} = item?.user?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
 
     const profilePic = item?.user?.profilePic;
 
@@ -529,9 +629,9 @@ const MatchesInDeclinedScreen = () => {
       ? item?.user?.userProfilePic.map(pic => pic.url)
       : [];
 
-    const starIconSource = item?.shortlistData
-      ? icons.black_check_icon
-      : icons.black_start_icon;
+    const starIconSource = item?.user?.userShortListDetails?.id
+      ? icons.black_check_icon // Check icon if shortlisted
+      : icons.black_start_icon; // Star icon if not shortlisted
 
     const userAllImageShare = () => {
       const allImages = {
@@ -554,13 +654,45 @@ const MatchesInDeclinedScreen = () => {
         <View style={style.renderContainer}>
           <TouchableOpacity activeOpacity={1}>
             <View>
-              <Image
-                source={
-                  profilePic ? {uri: profilePic} : images.empty_male_Image
-                }
-                style={style.userImageStyle}
-                resizeMode={'cover'}
-              />
+              {/*<Image*/}
+              {/*  source={*/}
+              {/*    profilePic ? {uri: profilePic} : images.empty_male_Image*/}
+              {/*  }*/}
+              {/*  style={style.userImageStyle}*/}
+              {/*  resizeMode={'cover'}*/}
+              {/*/>*/}
+
+              {hasValidImage ? (
+                <>
+                  <Image
+                    source={{uri: item?.user?.profilePic}}
+                    style={style.userImageStyle}
+                  />
+                  {profilePrivacy && (
+                    <Image
+                      source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                      style={{
+                        position: 'absolute',
+                        tintColor: '#fff',
+                        resizeMode: 'contain',
+                        width: hp(33),
+                        height: hp(44),
+                        alignSelf: 'center',
+                        marginTop: hp(200),
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <ProfileAvatar
+                    firstName={item?.user?.firstName || item?.user?.name}
+                    lastName={item?.user?.lastName}
+                    textStyle={style.userImageStyle}
+                    profileTexts={{fontSize: fontSize(60), marginTop: -80}}
+                  />
+                </>
+              )}
 
               <LinearGradient
                 colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
@@ -576,9 +708,48 @@ const MatchesInDeclinedScreen = () => {
                   onPress={() => {
                     handlePress(item);
                   }}>
-                  <Text style={style.userNameTextStyle}>
-                    {firstName || name} {lastName}
-                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={style.userNameTextStyle}>
+                      {firstName || name} {lastName}
+                    </Text>
+
+                    {subPlan && (
+                      <View
+                        style={{
+                          height: 22,
+                          backgroundColor: 'orange',
+                          marginLeft: 11,
+                          borderRadius: 50,
+                          flexDirection: 'row',
+                          paddingHorizontal: 7,
+                        }}>
+                        <Image
+                          source={icons.crownIcon}
+                          style={{
+                            width: 11,
+                            height: 11,
+                            tintColor: 'white',
+                            alignSelf: 'center',
+                            resizeMode: 'contain',
+                          }}
+                        />
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: fontSize(12),
+                            fontWeight: 'bold',
+                            alignSelf: 'center',
+                            marginLeft: 3,
+                          }}>
+                          {planName}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
 
                   <View
                     style={[
@@ -661,35 +832,48 @@ const MatchesInDeclinedScreen = () => {
                       right: 35,
                       // top: 5,
                     }}>
-                    <TouchableOpacity
-                      style={{
-                        width: hp(60),
-                        height: hp(30),
-                        backgroundColor: '#282727',
-                        borderRadius: 15,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        marginHorizontal: 5,
-                      }}
-                      activeOpacity={0.5}
-                      onPress={userAllImageShare}>
-                      <Image
-                        source={icons.new_camera_icon}
+                    {!profilePrivacy && (
+                      <TouchableOpacity
                         style={{
-                          width: 16,
-                          height: 16,
-                          resizeMode: 'contain',
-                          marginRight: wp(10),
+                          width: hp(60),
+                          height: hp(30),
+                          backgroundColor: '#282727',
+                          borderRadius: 15,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          marginHorizontal: 5,
                         }}
-                      />
+                        activeOpacity={0.5}
+                        onPress={userAllImageShare}>
+                        <Image
+                          source={icons.new_camera_icon}
+                          style={{
+                            width: 16,
+                            height: 16,
+                            resizeMode: 'contain',
+                            marginRight: wp(10),
+                          }}
+                        />
 
-                      <Text style={{color: colors.white}}>{imageCount}</Text>
-                    </TouchableOpacity>
+                        <Text style={{color: colors.white}}>{imageCount}</Text>
+                      </TouchableOpacity>
+                    )}
                     {/*</View>*/}
 
                     <TouchableOpacity
-                      onPress={() => handleShortListPress(item)}
+                      // onPress={() => handleShortListPress(item)}
+                      onPress={() => {
+                        if (item?.user?.userShortListDetails?.id) {
+                          // If the user is already in the shortlist, remove them
+                          removeFromShortlist(
+                            item?.user?.userShortListDetails.id,
+                          );
+                        } else {
+                          // If the user is not in the shortlist, add them
+                          addToShortlist(item?.user?._id);
+                        }
+                      }}
                       activeOpacity={0.5}
                       style={{
                         width: hp(30),
@@ -935,7 +1119,7 @@ const MatchesInDeclinedScreen = () => {
       {/* Bottom Sheet */}
       <RBSheet
         ref={sheetRef}
-        height={hp(240)} // Height of the bottom sheet
+        height={hp(300)} // Height of the bottom sheet
         // openDuration={250} // Duration of the opening animation
         closeOnDragDown={true} // Allow closing the sheet by dragging it down
         customStyles={{
@@ -975,62 +1159,6 @@ const MatchesInDeclinedScreen = () => {
 
             <TouchableOpacity
               onPress={() => {
-                handleBlockProfilePress(blockedFriendId);
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.block_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Block {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={openBottomSheet}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.report_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Report this profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
               style={{
@@ -1056,6 +1184,99 @@ const MatchesInDeclinedScreen = () => {
                 }}>
                 Copy ID : {selectedUniqueId}
               </Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.new_report_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Report
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handleBlockProfilePress(blockedFriendId);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.block_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Block {selectedFirstName}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  You can't contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>

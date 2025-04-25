@@ -61,7 +61,7 @@ const DemoNewPagination = () => {
         console.log('No data found for this page.');
         setHasMoreData(false);
       } else {
-        console.log('Fetched data:', newData); // Log fetched data
+        // console.log('Fetched data:', newData); // Log fetched data
         setData(prevData => [...prevData, ...newData]);
       }
     } catch (error) {

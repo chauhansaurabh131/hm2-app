@@ -222,6 +222,7 @@ export const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: hp(20),
+    // backgroundColor: 'silver',
   },
   blockModalContainer: {
     flex: 1,

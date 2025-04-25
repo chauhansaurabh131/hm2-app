@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   Image,
@@ -135,6 +136,10 @@ const AddPersonalInfo = ({navigation}) => {
   const [selectReligion, setSelectReligion] = useState('');
   const [userHeight, setUserHeight] = useState('');
   const [userWeight, setUserWeight] = useState('');
+  const [selectManglik, setSelectManglik] = useState('');
+  const [selectGothra, setSelectGothra] = useState('');
+  const [selectZodiac, setSelectZodiac] = useState('');
+  const [selectLanguage, setSelectLanguage] = useState('');
   const [about, setAbout] = useState('');
 
   const [firstName, setFirstName] = useState('');
@@ -178,6 +183,9 @@ const AddPersonalInfo = ({navigation}) => {
 
   //Select Hobbies
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedLanguage, setSelectedLanguage] = useState([]);
+
+  const [loading, setLoading] = useState(false);
 
   const PersonalInfoPhases = [
     {
@@ -236,6 +244,7 @@ const AddPersonalInfo = ({navigation}) => {
   }, []);
 
   const openGallery = () => {
+    setLoading(false);
     ImagePicker.openPicker({
       multiple: true,
       mediaType: 'All',
@@ -264,50 +273,73 @@ const AddPersonalInfo = ({navigation}) => {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
-        text2: 'Please select your gender.',
+        text2: 'Please select your Gender.',
       });
       return;
     } else if (!maritalSelectedOption) {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
-        text2: 'Please select your marital.',
+        text2: 'Please select your Marital.',
       });
       return;
     } else if (!selectCaste) {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
-        text2: 'Please select your caste.',
+        text2: 'Please select your Caste.',
       });
       return;
     } else if (!selectReligion) {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
-        text2: 'Please select your caste.',
+        text2: 'Please select your Religion.',
       });
       return;
     } else if (!userHeight) {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
-        text2: 'Please select your height.',
+        text2: 'Please select your Height.',
       });
       return;
     } else if (!userWeight) {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
-        text2: 'Please select your weight.',
+        text2: 'Please select your Weight.',
       });
       return; // Stop navigation if caste is not religion
+    } else if (!selectManglik) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your Manglik.',
+      });
+      return;
+    } else if (!selectLanguage) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please select your Language.',
+      });
+      return;
+    } else if (!about) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Information',
+        text2: 'Please Add About Yourself.',
+      });
+      return;
     }
 
     // if (activeIndex === PersonalInfoPhases.length - 1) {
     //   // navigation.navigate('SetProfilePictureScreen');
     //   openGallery();
     // } else {
+
+    setLoading(true);
 
     if (activeIndex === 0) {
       apiDispatch(
@@ -319,6 +351,10 @@ const AddPersonalInfo = ({navigation}) => {
             religion: selectReligion.toLowerCase(),
             height: userHeight,
             weight: userWeight,
+            manglikStatus: selectManglik.toLowerCase(),
+            gothra: selectGothra.toLowerCase(),
+            zodiac: selectZodiac.toLowerCase(),
+            motherTongue: selectLanguage.toLowerCase(),
             writeBoutYourSelf: about,
 
             // firstName: firstName,
@@ -329,7 +365,7 @@ const AddPersonalInfo = ({navigation}) => {
             // writeBoutYourSelf: addDescription,
             // userProfileCompleted: true,
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 1) {
@@ -351,7 +387,7 @@ const AddPersonalInfo = ({navigation}) => {
             currentState: formattedState,
             currentCity: formattedCity,
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 2) {
@@ -364,7 +400,7 @@ const AddPersonalInfo = ({navigation}) => {
             homeMobileNumber: homeNumber,
             userProfileCompleted: true,
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 3) {
@@ -384,7 +420,7 @@ const AddPersonalInfo = ({navigation}) => {
             // state: convertFirstLetterToLowerCase(collageState),
             // country: convertFirstLetterToLowerCase(collageCountry),
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 4) {
@@ -414,7 +450,7 @@ const AddPersonalInfo = ({navigation}) => {
             workCity: convertFirstLetterToLowerCase(workInCity),
             workCountry: convertFirstLetterToLowerCase(workInCountry),
           },
-          () => dispatch({type: NEXT_SCREEN}),
+          () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 5) {
@@ -424,8 +460,12 @@ const AddPersonalInfo = ({navigation}) => {
         updateDetails(
           {
             hobbies: selectedItems,
+            language: selectedLanguage,
           },
           // () => navigation.navigate('SetProfilePictureScreen'),
+          () => {
+            setLoading(false);
+          },
         ),
       );
       openGallery();
@@ -532,6 +572,14 @@ const AddPersonalInfo = ({navigation}) => {
           setSelectCaste={setSelectCaste}
           selectReligion={selectReligion}
           setSelectReligion={setSelectReligion}
+          selectManglik={selectManglik}
+          setSelectManglik={setSelectManglik}
+          selectGothra={selectGothra}
+          setSelectGothra={setSelectGothra}
+          selectZodiac={selectZodiac}
+          setSelectZodiac={setSelectZodiac}
+          selectLanguage={selectLanguage}
+          setSelectLanguage={setSelectLanguage}
           userHeight={userHeight}
           setUserHeight={setUserHeight}
           userWeight={userWeight}
@@ -608,6 +656,8 @@ const AddPersonalInfo = ({navigation}) => {
           setSelectedFitness={setSelectedFitness}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
+          selectedLanguage={selectedLanguage}
+          setSelectedLanguage={setSelectedLanguage}
         />
       )}
 
@@ -653,15 +703,19 @@ const AddPersonalInfo = ({navigation}) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text
-              style={{
-                color: colors.white,
-                fontSize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-              }}>
-              {activeIndex === 5 ? 'Add Photos' : 'Continue'}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                {activeIndex === 5 ? 'Add Photos' : 'Continue'}
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       )}

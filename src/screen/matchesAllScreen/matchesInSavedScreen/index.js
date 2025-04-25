@@ -23,6 +23,8 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {accepted_Decline_Request} from '../../../actions/homeActions';
+import style from '../../matchesScreen/style';
+import ProfileAvatar from '../../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -522,8 +524,8 @@ const MatchesInSavedScreen = () => {
 
   const handlePress = items => {
     const matchesUserData = {
-      firstName: items?.friendList[0]?.name,
-      id: items?.friendList[0]?._id,
+      firstName: items?.friendList?.name,
+      id: items?.friendList?._id,
       userData: items,
     };
     // console.log(' === var ===> ', matchesUserData);
@@ -531,28 +533,42 @@ const MatchesInSavedScreen = () => {
   };
 
   const renderItem = ({item}) => {
-    // console.log(' === var ===> ', item?.friendList[0]?.userProfilePic);
-    const userId = item?.friendList?.[0]?._id;
+    const hasValidImage =
+      item?.friendList?.profilePic &&
+      item?.friendList?.profilePic !== 'null' &&
+      item?.friendList?.profilePic.trim() !== '';
+
+    // const profilePrivacy =
+    //   item?.friendList?.privacySettingCustom?.profilePhotoPrivacy === true ||
+    //   item?.friendList?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const profilePrivacy =
+      (item?.friendList?.privacySettingCustom?.profilePhotoPrivacy === true ||
+        item?.friendList?.privacySettingCustom?.showPhotoToFriendsOnly ===
+          true) &&
+      item?.friendsDetails?.status !== 'accepted';
+
+    const userId = item?.friendList?._id;
     const unFrinendRequestId = item?.friendsDetails?._id;
     const AllDetailsPass = item;
-    const profileImage = item?.friendList[0]?.profilePic;
+    const profileImage = item?.friendList?.profilePic;
 
-    const UniqueId = item?.friendList[0]?.userUniqueId;
-    const friendId = item?.friendList[0]?._id;
+    const UniqueId = item?.friendList?.userUniqueId;
+    const friendId = item?.friendList?._id;
 
-    const firstName = item?.friendList[0]?.firstName
-      ? item?.friendList[0]?.firstName.charAt(0).toUpperCase() +
-        item?.friendList[0]?.firstName.slice(1).toLowerCase()
+    const firstName = item?.friendList?.firstName
+      ? item?.friendList?.firstName.charAt(0).toUpperCase() +
+        item?.friendList?.firstName.slice(1).toLowerCase()
       : '';
 
-    const lastName = item?.friendList[0]?.lastName
-      ? item?.friendList[0]?.lastName.charAt(0).toUpperCase() +
-        item?.friendList[0]?.lastName.slice(1).toLowerCase()
+    const lastName = item?.friendList?.lastName
+      ? item?.friendList?.lastName.charAt(0).toUpperCase() +
+        item?.friendList?.lastName.slice(1).toLowerCase()
       : '';
 
-    const name = item?.friendList[0]?.name
-      ? item?.friendList[0]?.name.charAt(0).toUpperCase() +
-        item?.friendList[0]?.name.slice(1).toLowerCase()
+    const name = item?.friendList?.name
+      ? item?.friendList?.name.charAt(0).toUpperCase() +
+        item?.friendList?.name.slice(1).toLowerCase()
       : '';
 
     const calculateAge = dob => {
@@ -565,31 +581,31 @@ const MatchesInSavedScreen = () => {
       return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
 
-    const age = calculateAge(item?.friendList[0]?.dateOfBirth);
+    const age = calculateAge(item?.friendList?.dateOfBirth);
 
-    const height = item?.user?.height;
+    const height = item?.friendList?.height;
 
-    const jobTittle = item?.friendList[0]?.professional?.jobTitle
-      ? item?.friendList[0]?.professional?.jobTitle.charAt(0).toUpperCase() +
-        item?.friendList[0]?.professional?.jobTitle.slice(1).toLowerCase()
+    const jobTittle = item?.friendList?.writeBoutYourSelf
+      ? item?.friendList?.writeBoutYourSelf.charAt(0).toUpperCase() +
+        item?.friendList?.writeBoutYourSelf.slice(1).toLowerCase()
       : '';
 
-    const currentCity = item?.friendList[0]?.address?.currentCity
-      ? item?.friendList[0]?.address?.currentCity.charAt(0).toUpperCase() +
-        item?.friendList[0]?.address?.currentCity.slice(1).toLowerCase()
+    const currentCity = item?.friendList?.address?.currentCity
+      ? item?.friendList?.address?.currentCity.charAt(0).toUpperCase() +
+        item?.friendList?.address?.currentCity.slice(1).toLowerCase()
       : '';
 
-    const currentCountry = item?.friendList[0]?.address?.currentCountry
-      ? item?.friendList[0]?.address?.currentCountry.charAt(0).toUpperCase() +
-        item?.friendList[0]?.address?.currentCountry.slice(1).toLowerCase()
+    const currentCountry = item?.friendList?.address?.currentCountry
+      ? item?.friendList?.address?.currentCountry.charAt(0).toUpperCase() +
+        item?.friendList?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
-    const imageCount = Array.isArray(item?.friendList[0]?.userProfilePic)
-      ? item?.friendList[0]?.userProfilePic?.length
+    const imageCount = Array.isArray(item?.friendList?.userProfilePic)
+      ? item?.friendList?.userProfilePic?.length
       : 0;
 
-    const userAllImage = Array.isArray(item?.friendList[0]?.userProfilePic)
-      ? item?.friendList[0]?.userProfilePic.map(pic => pic.url)
+    const userAllImage = Array.isArray(item?.friendList?.userProfilePic)
+      ? item?.friendList?.userProfilePic.map(pic => pic.url)
       : [];
 
     // console.log(' === userAllImage ===> ', userAllImage);
@@ -630,13 +646,48 @@ const MatchesInSavedScreen = () => {
       <View style={styles.renderItemContainer}>
         <TouchableOpacity activeOpacity={1}>
           <View>
-            <Image
-              source={
-                profileImage ? {uri: profileImage} : images.empty_male_Image
-              }
-              style={styles.image}
-              resizeMode={'cover'}
-            />
+            {/*<Image*/}
+            {/*  source={*/}
+            {/*    profileImage ? {uri: profileImage} : images.empty_male_Image*/}
+            {/*  }*/}
+            {/*  style={styles.image}*/}
+            {/*  resizeMode={'cover'}*/}
+            {/*/>*/}
+
+            {hasValidImage ? (
+              <>
+                <Image
+                  source={{uri: item?.friendList?.profilePic}}
+                  style={style.userImageStyle}
+                />
+                {profilePrivacy && (
+                  <Image
+                    source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                    style={{
+                      position: 'absolute',
+                      tintColor: '#fff',
+                      resizeMode: 'contain',
+                      width: hp(33),
+                      height: hp(44),
+                      alignSelf: 'center',
+                      marginTop: hp(200),
+                    }}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <ProfileAvatar
+                  firstName={
+                    item?.friendList?.firstName || item?.friendList?.name
+                  }
+                  lastName={item?.friendList?.lastName}
+                  textStyle={style.userImageStyle}
+                  profileTexts={{fontSize: fontSize(60), marginTop: -80}}
+                />
+              </>
+            )}
+
             <LinearGradient
               colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
               style={styles.imageBorderBottomShadow}

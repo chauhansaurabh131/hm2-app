@@ -99,6 +99,38 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []),
+  );
+
+  // const createLike = async likedUserId => {
+  //   try {
+  //     const response = await axios.post(
+  //       'https://stag.mntech.website/api/v1/user/like/create-like',
+  //       {
+  //         likedUserId: likedUserId,
+  //         isLike: true,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //     // Handle successful response, maybe update local state or show success message
+  //     console.log('Like created successfully:', response.data);
+  //     ProfileLike();
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error('Error creating like:', error);
+  //     Alert.alert('Error', 'Failed to create like.');
+  //     fetchData();
+  //   }
+  // };
+
   const createLike = async likedUserId => {
     try {
       const response = await axios.post(
@@ -114,24 +146,72 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
           },
         },
       );
-      // Handle successful response, maybe update local state or show success message
+      // Handle successful response, update state with the new like status
       console.log('Like created successfully:', response.data);
-      ProfileLike();
-      fetchData();
+
+      // Extract the id from the response data
+      const {id, isLike} = response.data.data;
+
+      // Update the local state with the new like status and id
+      setUsers(prevData => {
+        return prevData.map(user =>
+          user._id === likedUserId
+            ? {
+                ...user,
+                userLikeDetails: {
+                  ...user.userLikeDetails,
+                  isLike: isLike, // Update with the correct isLike status from response
+                  id: id, // Add the id from response
+                },
+              }
+            : user,
+        );
+      });
     } catch (error) {
       console.error('Error creating like:', error);
       Alert.alert('Error', 'Failed to create like.');
-      fetchData();
     }
   };
 
+  // const updateLike = async likedUserId => {
+  //   try {
+  //     const response = await axios.put(
+  //       `https://stag.mntech.website/api/v1/user/like/update-like/${likedUserId}`,
+  //       {
+  //         likedUserId: likedUserId,
+  //         isLike: false,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //     // Handle successful response, maybe update local state or show success message
+  //     console.log('Like updated successfully:', response.data);
+  //     ProfileDisLike();
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error('Error updating like:', error);
+  //     Alert.alert('Error', 'Failed to update like.');
+  //     fetchData();
+  //   }
+  // };
+
   const updateLike = async likedUserId => {
+    const likeId =
+      likedUserId?.userLikeDetails?._id || likedUserId?.userLikeDetails?.id;
+
+    const userId = likedUserId?._id || likedUserId?.id;
+
     try {
+      // Sending the request to update the like status to false (unlike)
       const response = await axios.put(
-        `https://stag.mntech.website/api/v1/user/like/update-like/${likedUserId}`,
+        `https://stag.mntech.website/api/v1/user/like/update-like/${likeId}`,
         {
-          likedUserId: likedUserId,
-          isLike: false,
+          likedUserId: userId,
+          isLike: false, // Dislike the user
         },
         {
           headers: {
@@ -140,14 +220,34 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
           },
         },
       );
-      // Handle successful response, maybe update local state or show success message
-      console.log('Like updated successfully:', response.data);
-      ProfileDisLike();
-      fetchData();
+
+      console.log('Like updated successfully:', response.data.data);
+
+      // Update the local state to reflect the unliked status
+      const {id, isLike} = response.data.data;
+
+      setUsers(prevData => {
+        const updatedData = prevData.map(user => {
+          if ((user?._id || user?.id) === userId) {
+            return {
+              ...user,
+              userLikeDetails: {
+                ...(user.userLikeDetails || {}),
+                isLike: false,
+              },
+            };
+          }
+          return user;
+        });
+
+        return updatedData;
+      });
+
+      // If necessary, re-fetch the data after updating
+      // await fetchNewUserData();
     } catch (error) {
       console.error('Error updating like:', error);
       Alert.alert('Error', 'Failed to update like.');
-      fetchData();
     }
   };
 
@@ -156,77 +256,226 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
     if (isLiked) {
       // If already liked, call the update-like API to unlike
-      updateLike(item?.userLikeDetails?._id);
+      // updateLike(item?.userLikeDetails?._id || item?.userLikeDetails?.id);
+      updateLike(item);
+
+      // console.log(' === var ===> ', item?.userLikeDetails?.id);
     } else {
       // If not liked, call the create-like API to like
       createLike(item._id);
     }
   };
 
-  const OnsendRequestedSend = item => {
-    console.log(' === item>>> ===> ', item);
-    dispatch(
-      sendRequest({friend: item?._id, user: user.user.id}, () => {
-        fetchData();
-      }),
-    );
-  };
+  // const OnsendRequestedSend = item => {
+  //   console.log(' === item>>> ===> ', item);
+  //   dispatch(
+  //     sendRequest({friend: item?._id, user: user.user.id}, () => {
+  //       fetchData();
+  //     }),
+  //   );
+  // };
 
-  const handleRequestAction = (item, requestId) => {
-    if (item?.friendsDetails?.status === 'requested') {
-      // If the request status is 'requested', decline or remove the request
-      dispatch(
-        accepted_Decline_Request(
-          {
-            user: item?._id,
-            request: requestId, // Use the existing request ID
-            status: 'removed', // Decline the request or remove it
+  const OnsendRequestedSend = async item => {
+    try {
+      console.log(' === Sending Friend Request ===> ', item);
+
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/friend/create-friend',
+        {
+          friend: item?._id,
+          user: user?.user?.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
-          () => {
-            fetchData();
-          },
+        },
+      );
+
+      console.log('Friend request sent successfully:', response.data);
+
+      // Update the specific item in newUserData to reflect the request status
+      setUsers(prevData =>
+        prevData.map(userItem =>
+          userItem._id === item._id
+            ? {
+                ...userItem,
+                friendsDetails: {
+                  ...(userItem.friendsDetails || {}),
+                  status: 'requested', // Update status to 'requested'
+                },
+              }
+            : userItem,
         ),
       );
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send friend request.');
     }
   };
+
+  // const handleRequestAction = (item, requestId) => {
+  //   if (item?.friendsDetails?.status === 'requested') {
+  //     // If the request status is 'requested', decline or remove the request
+  //     dispatch(
+  //       accepted_Decline_Request(
+  //         {
+  //           user: item?._id,
+  //           request: requestId, // Use the existing request ID
+  //           status: 'removed', // Decline the request or remove it
+  //         },
+  //         () => {
+  //           fetchData();
+  //         },
+  //       ),
+  //     );
+  //   }
+  // };
+
+  const handleRequestAction = async (item, requestId) => {
+    if (item?.friendsDetails?.status === 'requested') {
+      try {
+        const response = await axios.post(
+          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+          {
+            user: item?._id,
+            request: requestId,
+            status: 'removed',
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        console.log('Friend request removed successfully:', response.data);
+
+        // ✅ Update UI locally by removing the "requested" status
+        setUsers(prevData =>
+          prevData.map(userItem =>
+            userItem._id === item._id
+              ? {
+                  ...userItem,
+                  friendsDetails: {
+                    ...(userItem.friendsDetails || {}),
+                    status: null, // or remove the whole friendsDetails if you want
+                  },
+                }
+              : userItem,
+          ),
+        );
+      } catch (error) {
+        console.log(' === error ===> ', error);
+        Alert.alert('Error', 'Failed to remove friend request.');
+      }
+    }
+  };
+
+  // const addToShortlist = async shortlistId => {
+  //   try {
+  //     const response = await axios.post(
+  //       'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+  //       {
+  //         shortlistId: shortlistId,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+  //         },
+  //       },
+  //     );
+  //     console.log('Shortlist created successfully:', response.data);
+  //     ShowToast();
+  //     fetchData(); // Refresh the user data after adding to shortlist
+  //   } catch (error) {
+  //     console.error('Error adding to shortlist:', error);
+  //     Alert.alert('Error', 'Failed to add to shortlist.');
+  //   }
+  // };
 
   const addToShortlist = async shortlistId => {
     try {
       const response = await axios.post(
         'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-        {
-          shortlistId: shortlistId,
-        },
+        {shortlistId},
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
       console.log('Shortlist created successfully:', response.data);
-      ShowToast();
-      fetchData(); // Refresh the user data after adding to shortlist
+
+      // Update the state immutably and ensure the new shortlist data is associated with the user
+      setUsers(prevData => {
+        return prevData.map(user =>
+          user._id === shortlistId
+            ? {
+                ...user,
+                userShortListDetails: response.data.data, // Updated shortlist details
+              }
+            : user,
+        );
+      });
+
+      // Optionally, trigger another API to refresh the list if needed
+      // fetchNewUserData(); // Re-fetch user data
     } catch (error) {
       console.error('Error adding to shortlist:', error);
       Alert.alert('Error', 'Failed to add to shortlist.');
     }
   };
 
+  // const removeFromShortlist = async shortlistId => {
+  //   console.log(' === removeFromShortlist_______ ===> ', shortlistId);
+  //   try {
+  //     const response = await axios.delete(
+  //       `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+  //         },
+  //       },
+  //     );
+  //     console.log('Shortlist removed successfully:', response.data);
+  //     RemoveShortlisted();
+  //     fetchData(); // Refresh the user data after removing from the shortlist
+  //   } catch (error) {
+  //     console.error('Error removing from shortlist:', error);
+  //     Alert.alert('Error', 'Failed to remove from shortlist.');
+  //   }
+  // };
+
   const removeFromShortlist = async shortlistId => {
-    console.log(' === removeFromShortlist_______ ===> ', shortlistId);
     try {
+      // Call the remove from shortlist API
       const response = await axios.delete(
         `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
-      console.log('Shortlist removed successfully:', response.data);
-      RemoveShortlisted();
-      fetchData(); // Refresh the user data after removing from the shortlist
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      // Directly update the state to remove the shortlist details without re-fetching data
+      setUsers(prevData => {
+        return prevData.map(user =>
+          // Ensure you are checking for the correct ID
+          user.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                userShortListDetails: {}, // Set to null after removal
+              }
+            : user,
+        );
+      });
     } catch (error) {
       console.error('Error removing from shortlist:', error);
       Alert.alert('Error', 'Failed to remove from shortlist.');
@@ -235,12 +484,38 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    // console.log(
-    //   ' === var ===> ',
-    //   item?.privacySettingCustom?.profilePhotoPrivacy,
-    // );
+    const shouldBlur = item?.privacySettingCustom?.showPhotoToFriendsOnly;
 
-    const profilePhotoPrivacy = item?.privacySettingCustom?.profilePhotoPrivacy;
+    // Destructure subscription details
+    const {selectedPlan, status} = item?.subscriptionDetails || {};
+
+    // Determine if the image should have a blue tint (active status)
+    const isActive = status === 'active';
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
+
+    const hasValidImage =
+      item.profilePic &&
+      item.profilePic !== 'null' &&
+      item.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item.privacySettingCustom?.showPhotoToFriendsOnly === true;
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
@@ -250,6 +525,10 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
     const lastName = item?.lastName
       ? item.lastName.charAt(0).toUpperCase() +
         item.lastName.slice(1).toLowerCase()
+      : '';
+
+    const name = item?.name
+      ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase()
       : '';
 
     const currentCity = item.address?.currentCity
@@ -317,7 +596,7 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
         : icons.new_send_icon; // No request sent, allow sending a request
 
     // Determine the star icon based on userShortListDetails
-    const starIconSource = item?.userShortListDetails
+    const starIconSource = item?.userShortListDetails?.id
       ? icons.black_check_icon
       : icons.black_start_icon;
 
@@ -348,90 +627,148 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
           {/*  }*/}
           {/*/>*/}
 
-          <View
-            style={{
-              width: hp(110),
-              height: hp(136),
-              justifyContent: 'center',
-              borderRadius: 10,
-              overflow: 'hidden',
-              marginBottom: 10,
-            }}>
-            {profilePhotoPrivacy === 'private' && item.profilePic ? (
-              <ImageBackground
-                source={{uri: item.profilePic}}
-                style={{
-                  width: '110%',
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                }}
-                blurRadius={10} // Add blur effect with a specific radius (adjust as needed)
-              >
-                <View
+          {hasValidImage ? (
+            <>
+              <Image source={{uri: item.profilePic}} style={styles.image} />
+              {profilePrivacy && (
+                <Image
+                  source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
                   style={{
-                    flexDirection: 'row',
                     position: 'absolute',
-                    bottom: 10, // Position the view at the bottom
-                    left: '50%', // Center the view horizontally
-                    transform: [{translateX: -35}], // Use a pixel value for translateX (approximately half the width)
-                    backgroundColor: '#000000CC',
-                    padding: 4,
-                    borderRadius: 50,
-                    paddingHorizontal: 10,
-                    alignItems: 'center', // Center the content vertically within the row
-                    justifyContent: 'center',
+                    tintColor: '#fff',
+                    resizeMode: 'contain',
+                    width: 12,
+                    height: 16,
                     alignSelf: 'center',
-                  }}>
-                  <Image
-                    source={icons.privacy_icon}
-                    style={{
-                      width: 7,
-                      height: 9,
-                      tintColor: 'white',
-                      resizeMode: 'contain',
-                      marginRight: 6,
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: fontSize(7),
-                      lineHeight: hp(12),
-                      fontFamily: fontFamily.poppins600,
-                      top: 1,
-                    }}>
-                    Private
-                  </Text>
-                </View>
-              </ImageBackground>
-            ) : profilePhotoPrivacy === 'public' && item.profilePic ? (
-              <Image
-                source={{uri: item.profilePic}}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                }}
-              />
-            ) : (
-              // Fallback to ProfileAvatar when no image is available
+                    top: 65,
+                  }}
+                />
+              )}
+
+              {subPlan && (
+                <Image
+                  source={icons.crownIcon} // Crown icon
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    resizeMode: 'contain',
+                    height: hp(12),
+                    width: hp(12),
+                    tintColor: crownTintColor,
+                    left: 15,
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <>
               <ProfileAvatar
-                firstName={item.firstName}
+                firstName={item.firstName || item.name}
                 lastName={item.lastName}
+                textStyle={{width: 110, height: 136, marginBottom: 10}}
               />
-            )}
-          </View>
+              {subPlan && (
+                <Image
+                  source={icons.crownIcon} // Crown icon
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    resizeMode: 'contain',
+                    height: hp(12),
+                    width: hp(12),
+                    // tintColor: 'white',
+                    tintColor: crownTintColor,
+                    left: 15,
+                  }}
+                />
+              )}
+            </>
+          )}
+
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    width: hp(110),*/}
+          {/*    height: hp(136),*/}
+          {/*    justifyContent: 'center',*/}
+          {/*    borderRadius: 10,*/}
+          {/*    overflow: 'hidden',*/}
+          {/*    marginBottom: 10,*/}
+          {/*  }}>*/}
+          {/*  {profilePhotoPrivacy === 'private' && item.profilePic ? (*/}
+          {/*    <ImageBackground*/}
+          {/*      source={{uri: item.profilePic}}*/}
+          {/*      style={{*/}
+          {/*        width: '110%',*/}
+          {/*        height: '100%',*/}
+          {/*        justifyContent: 'center',*/}
+          {/*        alignItems: 'center',*/}
+          {/*        overflow: 'hidden',*/}
+          {/*      }}*/}
+          {/*      blurRadius={10} // Add blur effect with a specific radius (adjust as needed)*/}
+          {/*    >*/}
+          {/*      <View*/}
+          {/*        style={{*/}
+          {/*          flexDirection: 'row',*/}
+          {/*          position: 'absolute',*/}
+          {/*          bottom: 10, // Position the view at the bottom*/}
+          {/*          left: '50%', // Center the view horizontally*/}
+          {/*          transform: [{translateX: -35}], // Use a pixel value for translateX (approximately half the width)*/}
+          {/*          backgroundColor: '#000000CC',*/}
+          {/*          padding: 4,*/}
+          {/*          borderRadius: 50,*/}
+          {/*          paddingHorizontal: 10,*/}
+          {/*          alignItems: 'center', // Center the content vertically within the row*/}
+          {/*          justifyContent: 'center',*/}
+          {/*          alignSelf: 'center',*/}
+          {/*        }}>*/}
+          {/*        <Image*/}
+          {/*          source={icons.privacy_icon}*/}
+          {/*          style={{*/}
+          {/*            width: 7,*/}
+          {/*            height: 9,*/}
+          {/*            tintColor: 'white',*/}
+          {/*            resizeMode: 'contain',*/}
+          {/*            marginRight: 6,*/}
+          {/*          }}*/}
+          {/*        />*/}
+          {/*        <Text*/}
+          {/*          style={{*/}
+          {/*            color: 'white',*/}
+          {/*            fontSize: fontSize(7),*/}
+          {/*            lineHeight: hp(12),*/}
+          {/*            fontFamily: fontFamily.poppins600,*/}
+          {/*            top: 1,*/}
+          {/*          }}>*/}
+          {/*          Private*/}
+          {/*        </Text>*/}
+          {/*      </View>*/}
+          {/*    </ImageBackground>*/}
+          {/*  ) : profilePhotoPrivacy === 'public' && item.profilePic ? (*/}
+          {/*    <Image*/}
+          {/*      source={{uri: item.profilePic}}*/}
+          {/*      style={{*/}
+          {/*        width: '100%',*/}
+          {/*        height: '100%',*/}
+          {/*        justifyContent: 'center',*/}
+          {/*        alignItems: 'center',*/}
+          {/*        overflow: 'hidden',*/}
+          {/*      }}*/}
+          {/*    />*/}
+          {/*  ) : (*/}
+          {/*    // Fallback to ProfileAvatar when no image is available*/}
+          {/*    <ProfileAvatar*/}
+          {/*      firstName={item.firstName}*/}
+          {/*      lastName={item.lastName}*/}
+          {/*    />*/}
+          {/*  )}*/}
+          {/*</View>*/}
 
           <View style={styles.overlayContainer}>
             <TouchableOpacity
               onPress={() => {
-                if (item?.userShortListDetails) {
+                if (item?.userShortListDetails?.id) {
                   // If the user is already in the shortlist, remove them
-                  removeFromShortlist(item.userShortListDetails._id);
+                  removeFromShortlist(item.userShortListDetails.id);
                 } else {
                   // If the user is not in the shortlist, add them
                   addToShortlist(item._id);
@@ -444,7 +781,7 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
           <View style={{alignItems: 'center'}}>
             <Text style={styles.itemText}>
-              {firstName} {lastName}
+              {firstName || name} {lastName}
             </Text>
 
             <View style={{flexDirection: 'row'}}>
@@ -473,8 +810,15 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  OnsendRequestedSend(item);
-                  handleRequestAction(item, item?.friendsDetails?._id); // Call the new function
+                  const status = item?.friendsDetails?.status;
+
+                  if (status === 'requested') {
+                    // If already requested, allow removing the request
+                    handleRequestAction(item, item?.friendsDetails?._id);
+                  } else {
+                    // Otherwise, send a new friend request
+                    OnsendRequestedSend(item);
+                  }
                 }}>
                 <Image
                   source={friendIconSource}
@@ -527,9 +871,13 @@ const NewPremiumMatchesComponent = ({toastConfigs}) => {
             return (
               <View
                 style={{
-                  width: 120,
+                  // width: 120,
+                  // height: 200,
+                  width: 115,
                   height: 200,
                   borderRadius: 10,
+                  marginRight: 5,
+                  marginTop: 15,
                   // backgroundColor: 'orange',
                 }}>
                 <View

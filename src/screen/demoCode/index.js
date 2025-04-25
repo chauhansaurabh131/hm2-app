@@ -1,136 +1,238 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
-import NewTextInputComponent from '../../components/newTextInputComponent';
-import {icons} from '../../assets';
-import CommonGradientButton from '../../components/commonGradientButton';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  FlatList,
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useSelector} from 'react-redux';
+import {style} from '../matchesAllScreen/matchesInAcceptedScreen/style';
+import {icons, images} from '../../assets';
 import {hp} from '../../utils/helpers';
-import {useDispatch, useSelector} from 'react-redux';
-import {register} from '../../actions/authActions';
-import Toast from 'react-native-toast-message';
+import axios from 'axios';
 
 const DemoCode = () => {
-  const [name, setName] = useState('');
-  const [nameError, setNameError] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
 
-  const {loading} = useSelector(state => state.auth);
-  const dispatch = useDispatch();
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
 
-  // Validate Name (at least 3 and at most 15 characters)
-  const validateName = () => {
-    if (name.length < 3) {
-      setNameError('Name must be at least 3 characters');
-      return false;
-    } else if (name.length > 15) {
-      setNameError('Name must be less than 15 characters');
-      return false;
-    } else {
-      setNameError('');
-      return true;
-    }
-  };
-
-  // Validate Email or Mobile
-  const validateEmailOrMobile = () => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email regex pattern
-    const mobilePattern = /^[0-9]{10}$/; // Mobile number regex (10 digits)
-
-    // Check if it's an email
-    if (emailPattern.test(email)) {
-      setEmailError('');
-      return 'email';
-    }
-
-    // Check if it's a valid mobile number (10 digits)
-    if (mobilePattern.test(email)) {
-      setEmailError('');
-      return 'mobile';
-    }
-
-    // Invalid email or mobile
-    setEmailError('Invalid E-mail Address or Mobile Number');
-    return false;
-  };
-
-  const onPressLogin = () => {
-    // Validate both name and email/mobile input before proceeding
-    const isNameValid = validateName();
-    const emailOrMobileValid = validateEmailOrMobile();
-
-    // If either validation fails, return early
-    if (!isNameValid || !emailOrMobileValid) {
+  // Function to fetch data from the API
+  const fetchData = async (pageNumber = 1) => {
+    if (!hasMoreData) {
       return;
     }
 
-    console.log(' === onPressLogin ===> ', name, email);
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/friend/get-request-sent?page=${pageNumber}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
 
-    // Now we make the API call after validation
-    if (emailOrMobileValid === 'email') {
-      // Proceed with registration using email
-      dispatch(
-        register(
-          {name, email, countryCodeId: '67d2698641c89038f51512a2'},
-          () => {
-            // navigation.navigate('VerifyEmailOtpScreen', { name, email });
-          },
-        ),
+      const json = await response.json();
+      const newData = json?.data?.results || [];
+      const combinedData = [...data, ...newData];
+
+      // Deduplicate based on _id
+      const uniqueData = Array.from(
+        new Map(combinedData.map(item => [item._id, item])).values(),
       );
-    } else if (emailOrMobileValid === 'mobile') {
-      // Proceed with registration using mobile number
-      dispatch(
-        register(
-          {
-            name,
-            mobileNumber: email,
-            countryCodeId: '67d2698641c89038f51512a2',
-          },
-          () => {
-            // navigation.navigate('VerifyMobileOtpScreen', { name, email });
-          },
-        ),
-      );
+
+      setData(uniqueData);
+      setHasMoreData(json?.data?.hasNextPage || false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch data. Please try again.');
+    } finally {
+      setLoading(false);
+      setIsFetchingMore(false);
     }
   };
 
-  return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 17, marginTop: 50}}>
-        {/* Name Input */}
-        <NewTextInputComponent
-          value={name}
-          onChangeText={text => setName(text)}
-          placeholder="Enter Your Name"
-          LeftIconName={icons.profileLogo}
-        />
-        {nameError ? (
-          <Text style={{marginTop: 2, color: 'red'}}>{nameError}</Text>
-        ) : null}
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-        {/* Email or Mobile Input */}
-        <NewTextInputComponent
-          value={email}
-          onChangeText={text => setEmail(text)}
-          placeholder="Your Email or Mobile"
-          style={{marginTop: 20}}
-          LeftIconName={icons.mailLogo}
-        />
-        {emailError ? (
-          <Text style={{color: 'red', marginTop: 2}}>{emailError}</Text>
-        ) : null}
+  const loadMoreData = () => {
+    if (!isFetchingMore && hasMoreData) {
+      setIsFetchingMore(true);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchData(nextPage);
+    }
+  };
 
-        {/* Login Button */}
-        <CommonGradientButton
-          buttonName={'Login'}
-          containerStyle={{width: '100%', marginTop: hp(20)}}
-          onPress={onPressLogin}
-        />
+  const addToShortlist = async shortlistId => {
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        {shortlistId},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log('Shortlist created successfully:', response.data);
+
+      // Update the state immutably and ensure the new shortlist data is associated with the user
+      setData(prevData => {
+        return prevData.map(user =>
+          user?.friendList?._id === shortlistId
+            ? {
+                ...user,
+                friendList: {
+                  ...user.friendList,
+                  userShortListDetails: response.data.data, // Updated shortlist details
+                },
+              }
+            : user,
+        );
+      });
+
+      // Optionally, trigger another API to refresh the list if needed
+      // fetchNewUserData(); // Re-fetch user data
+    } catch (error) {
+      console.error('Error adding to shortlist:', error);
+      Alert.alert('Error', 'Failed to add to shortlist.');
+    }
+  };
+
+  const removeFromShortlist = async shortlistId => {
+    try {
+      // Call the remove from shortlist API
+      const response = await axios.delete(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      // Directly update the state to remove the shortlist details without re-fetching data
+      setData(prevData => {
+        return prevData.map(user =>
+          // Ensure you are checking for the correct ID
+          user?.friendList?.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                friendList: {
+                  ...user?.friendList,
+                  userShortListDetails: {}, // Set to null after removal
+                },
+              }
+            : user,
+        );
+      });
+    } catch (error) {
+      console.error('Error removing from shortlist:', error);
+      Alert.alert('Error', 'Failed to remove from shortlist.');
+    }
+  };
+
+  const renderAccptedUserItem = ({item}) => {
+    const profileImage = item?.friendList?.profilePic;
+    // console.log(' === profileImage ===> ', profileImage);
+
+    console.log(
+      ' === shortlistData ===> ',
+      item?.friendList?.userShortListDetails?.id,
+    );
+
+    const starIconSource = item?.friendList?.userShortListDetails?.id
+      ? icons.black_check_icon // Check icon if shortlisted
+      : icons.black_start_icon; // Star icon if not shortlisted
+
+    return (
+      <View style={{marginHorizontal: 17, marginTop: 20}}>
+        <View style={{flexDirection: 'row'}}>
+          <Image
+            source={
+              profileImage ? {uri: profileImage} : images.empty_male_Image
+            }
+            style={{width: 150, height: 150, borderWidth: 10}}
+            resizeMode={'cover'}
+          />
+
+          <Text
+            style={{
+              marginLeft: 10,
+              color: 'black',
+              textAlign: 'center',
+              alignItems: 'center',
+            }}>
+            {item?.friendList?.firstName}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              if (item?.friendList?.userShortListDetails?.id) {
+                // If the user is already in the shortlist, remove them
+                removeFromShortlist(item?.friendList?.userShortListDetails.id);
+              } else {
+                // If the user is not in the shortlist, add them
+                addToShortlist(item?.friendList?._id);
+              }
+            }}
+            style={{position: 'absolute', right: 0, padding: 10}}>
+            <Image
+              source={starIconSource}
+              style={{width: hp(18), height: hp(18), resizeMode: 'contain'}}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
+    );
+  };
 
-      {/* Toast component for showing toast messages */}
-      <Toast />
+  return (
+    <SafeAreaView>
+      <FlatList
+        data={data}
+        renderItem={renderAccptedUserItem}
+        keyExtractor={item => item._id || item.id || item.name}
+        onEndReached={loadMoreData}
+        onEndReachedThreshold={0.5}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={
+          isFetchingMore ? (
+            <View style={{alignItems: 'center', padding: 10}}>
+              <Text style={{color: 'black'}}>Loading more data...</Text>
+            </View>
+          ) : null
+        }
+        ListEmptyComponent={
+          !loading && !isFetchingMore ? (
+            <View style={style.emptyListContainer}>
+              <View style={style.emptyListBody}>
+                <Image
+                  source={icons.no_Profile_Found_img}
+                  style={style.noImage}
+                />
+                <Text style={style.noImageText}>No Profiles Found</Text>
+              </View>
+            </View>
+          ) : null
+        }
+        contentContainerStyle={style.listContainer}
+      />
     </SafeAreaView>
   );
 };
-
 export default DemoCode;

@@ -33,6 +33,8 @@ import {RequestUserPermission} from '../../service/pushNotification';
 import NewPremiumMatchesComponent from '../../components/newPremiumMatchesComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import RemainingDataUiScreen from '../editRemainingFillUpData/remainingDataUiScreen';
+import DemoCode from '../demoCode';
+import RecentlyViewComponent from '../../components/recentlyViewComponent';
 
 const HomeScreen = ({route}) => {
   const [showMeAllStories, setShowMeAllStories] = useState(false);
@@ -51,12 +53,20 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
+  const {storiesData} = useSelector(state => state.home);
+
   // console.log(' === user____ ===> ', user);
 
   useEffect(() => {
     RequestUserPermission();
     // requestPermissions();
   }, []);
+
+  useEffect(() => {
+    dispatch(getSuccessStories());
+  }, [dispatch]);
+
+  console.log(' === storiesData ===> ', storiesData?.data?.totalResults);
 
   const userImage = user?.user?.profilePic;
 
@@ -641,45 +651,15 @@ const HomeScreen = ({route}) => {
             {/*    completeOpenModal(selectedBox);*/}
             {/*  }}*/}
             {/*/>*/}
-            <NewPremiumMatchesComponent toastConfigs={toastConfigs} />
-          </View>
-        </View>
-
-        <TouchableHighlight
-          activeOpacity={0.3}
-          style={{
-            justifyContent: 'center',
-            height: hp(45),
-          }}
-          underlayColor="#F9FBFF"
-          onPress={() => {
-            navigation.navigate('Matches');
-          }}>
-          <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-        </TouchableHighlight>
-
-        <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
-
-        <View style={{marginHorizontal: 17}}>
-          <View style={[style.premiumTextContainer, {marginTop: 28}]}>
-            <Text style={style.premiumTextStyle}>New Matches</Text>
-            <Text style={style.premiumTextsStyle}>
-              {/*{userData?.data[0]?.totalDocs}*/}
-            </Text>
-          </View>
-
-          {userProfileCompleted === true && userPartnerPreCompleted === true ? (
+            {/*<NewPremiumMatchesComponent toastConfigs={toastConfigs} />*/}
             <PremiumMatchesComponent toastConfigs={toastConfigs} />
-          ) : (
-            <Text style={{color: 'black'}}>Fill form</Text>
-          )}
+          </View>
         </View>
 
         <TouchableHighlight
           activeOpacity={0.3}
           style={{
             justifyContent: 'center',
-            // padding: 10,
             height: hp(45),
           }}
           underlayColor="#F9FBFF"
@@ -690,19 +670,51 @@ const HomeScreen = ({route}) => {
         </TouchableHighlight>
 
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
+
+        {/*<View style={{marginHorizontal: 17}}>*/}
+        {/*  <View style={[style.premiumTextContainer, {marginTop: 28}]}>*/}
+        {/*    <Text style={style.premiumTextStyle}>New Matches</Text>*/}
+        {/*    <Text style={style.premiumTextsStyle}>*/}
+        {/*      /!*{userData?.data[0]?.totalDocs}*!/*/}
+        {/*    </Text>*/}
+        {/*  </View>*/}
+
+        {/*  {userProfileCompleted === true && userPartnerPreCompleted === true ? (*/}
+        {/*    <PremiumMatchesComponent toastConfigs={toastConfigs} />*/}
+        {/*  ) : (*/}
+        {/*    <Text style={{color: 'black'}}>Fill form</Text>*/}
+        {/*  )}*/}
+        {/*</View>*/}
+
+        <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
+
+        {/* Start Recently view code*/}
+
+        <View style={{marginTop: 20}}>
+          <RecentlyViewComponent />
+        </View>
+
+        {/*<TouchableHighlight*/}
+        {/*  activeOpacity={0.3}*/}
+        {/*  style={{*/}
+        {/*    justifyContent: 'center',*/}
+        {/*    // padding: 10,*/}
+        {/*    height: hp(45),*/}
+        {/*    // backgroundColor: 'red',*/}
+        {/*  }}*/}
+        {/*  underlayColor="#F9FBFF"*/}
+        {/*  onPress={() => {*/}
+        {/*    navigation.navigate('Matches');*/}
+        {/*  }}>*/}
+        {/*  <Text style={style.showMeAllTextStyle}>Show Me All</Text>*/}
+        {/*</TouchableHighlight>*/}
+
+        {/*<View style={{width: '100%', height: 8, backgroundColor: '#F8F8F8'}} />*/}
+
+        {/* End Recently view code*/}
 
         {/*<View style={{marginHorizontal: 17, marginTop: hp(22)}}>*/}
-        <View>
-          {/*<Text*/}
-          {/*  style={{*/}
-          {/*    color: colors.black,*/}
-          {/*    fontSize: fontSize(16),*/}
-          {/*    lineHeight: hp(24),*/}
-          {/*    fontFamily: fontFamily.poppins500,*/}
-          {/*  }}>*/}
-          {/*  Add Details for Better Matches*/}
-          {/*</Text>*/}
-
+        <View style={{marginTop: 10}}>
           <RemainingDataUiScreen />
         </View>
 
@@ -715,31 +727,33 @@ const HomeScreen = ({route}) => {
         {/*  }}*/}
         {/*/>*/}
 
-        <View style={{marginHorizontal: 17}}>
-          <View style={[style.premiumTextContainer, {marginTop: 28}]}>
-            <Text style={style.premiumTextStyle}>Success Stories</Text>
-          </View>
+        {storiesData?.data?.totalResults > 0 && (
+          <>
+            <View style={{marginHorizontal: 17}}>
+              <View style={[style.premiumTextContainer, {marginTop: 28}]}>
+                <Text style={style.premiumTextStyle}>Success Stories</Text>
+              </View>
 
-          <SuccessStoryFlatListComponent />
-        </View>
+              <SuccessStoryFlatListComponent />
+            </View>
 
-        <TouchableOpacity
-          style={{
-            height: hp(45),
-            justifyContent: 'center',
-            // backgroundColor: 'orange',
-            marginTop: 5,
-            backgroundColor: showMeAllStories ? '#F9FBFF' : 'white',
-          }}
-          onPressIn={onStoriesAllOnPress} // Trigger when button is pressed
-          onPressOut={onStoriesAllNotPress} // Trigger when button is released
-        >
-          <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                height: hp(45),
+                justifyContent: 'center',
+                marginTop: 5,
+                backgroundColor: showMeAllStories ? '#F9FBFF' : 'white',
+              }}
+              onPressIn={onStoriesAllOnPress}
+              onPressOut={onStoriesAllNotPress}>
+              <Text style={style.showMeAllTextStyle}>Show Me All</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
         <View
           style={{
-            marginTop: hp(22),
+            // marginTop: hp(22),
             // marginBottom: hp(20),
             marginHorizontal: 17,
           }}>

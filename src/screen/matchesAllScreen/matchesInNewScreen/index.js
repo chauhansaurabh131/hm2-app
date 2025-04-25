@@ -16,21 +16,17 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
-import style from '../../../screen/matchesScreen/style';
+import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import {useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {colors} from '../../../utils/colors';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {
-  addShortList,
-  non_friend_Blocked,
-  removeShortList,
-  userDatas,
-} from '../../../actions/homeActions';
-import {home} from '../../../apis/homeApi';
+import {non_friend_Blocked} from '../../../actions/homeActions';
 import Toast from 'react-native-toast-message';
+import ProfileAvatar from '../../../components/letterProfileComponent';
+import axios from 'axios';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -61,9 +57,6 @@ const MatchesInNewScreen = () => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const Login_User_ID = user?.user?.id;
-
-  // console.log(' === Login User ID ===> ', user?.user?.id);
-
   // Function to open the bottom sheet
   const openBottomSheet = () => {
     sheetRef.current.close();
@@ -72,21 +65,13 @@ const MatchesInNewScreen = () => {
 
   const dispatch = useDispatch();
 
-  const {
-    userData = [],
-    totalPages = 1,
-    isUserDataLoading,
-  } = useSelector(state => state.home);
-
-  // console.log(' === userData ===> ', userData);
-
-  useEffect(() => {
-    dispatch(
-      userDatas({
-        page,
-      }),
-    );
-  }, [dispatch, page]);
+  // useEffect(() => {
+  //   dispatch(
+  //     userDatas({
+  //       page,
+  //     }),
+  //   );
+  // }, [dispatch, page]);
 
   const openModal = () => {
     setModalVisible(true);
@@ -187,22 +172,73 @@ const MatchesInNewScreen = () => {
     });
   };
 
-  const onShortListPress = item => {
-    if (item?.userShortListDetails) {
-      home.removeShortListsData(item.userShortListDetails._id).then(() => {
-        dispatch(removeShortList({userId: item._id}));
-        RemoveShortlisted();
-      });
-    } else {
-      home.addShortListsData({shortlistId: item._id}).then(({data: {data}}) => {
-        dispatch(
-          addShortList({
-            userId: item._id,
-            userShortListDetails: {...data, _id: data.id},
-          }),
+  const addToShortlist = async shortlistId => {
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        {shortlistId},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log('Shortlist created successfully:', response.data);
+
+      // Update the state immutably and ensure the new shortlist data is associated with the user
+      setData(prevData => {
+        return prevData.map(user =>
+          user._id === shortlistId
+            ? {
+                ...user,
+                userShortListDetails: response.data.data, // Updated shortlist details
+              }
+            : user,
         );
-        ShowToast();
       });
+
+      ShowToast();
+
+      // Optionally, trigger another API to refresh the list if needed
+      // fetchNewUserData(); // Re-fetch user data
+    } catch (error) {
+      console.error('Error adding to shortlist:', error);
+      Alert.alert('Error', 'Failed to add to shortlist.');
+    }
+  };
+
+  const removeFromShortlist = async shortlistId => {
+    try {
+      // Call the remove from shortlist API
+      const response = await axios.delete(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      // Directly update the state to remove the shortlist details without re-fetching data
+      setData(prevData => {
+        return prevData.map(user =>
+          // Ensure you are checking for the correct ID
+          user.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                userShortListDetails: {}, // Set to null after removal
+              }
+            : user,
+        );
+      });
+
+      RemoveShortlisted();
+    } catch (error) {
+      console.error('Error removing from shortlist:', error);
+      Alert.alert('Error', 'Failed to remove from shortlist.');
     }
   };
 
@@ -373,6 +409,7 @@ const MatchesInNewScreen = () => {
     setReportReasons([]);
     setQuestionText('Why are you reporting this?'); // Reset question text when going back
     setIsAboutClicked(false); // Reset "About" state
+    handleBack();
   };
 
   // Handle the "Submit" action for "About" section
@@ -429,7 +466,37 @@ const MatchesInNewScreen = () => {
   };
 
   const renderUserItem = ({item}) => {
-    // console.log(' === item_____ ===> ', item?.uniqueId);
+    const planName = item?.subscriptionDetails?.selectedPlan
+      ? item?.subscriptionDetails?.selectedPlan.charAt(0).toUpperCase() +
+        item?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
+      : '';
+
+    const hasValidImage =
+      item.profilePic &&
+      item.profilePic !== 'null' &&
+      item.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const {selectedPlan, status} = item?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
 
     const userAllImage = Array.isArray(item?.userProfilePic)
       ? item.userProfilePic.map(pic => pic.url)
@@ -437,9 +504,6 @@ const MatchesInNewScreen = () => {
 
     const blockedFriendId = item?._id;
     const uniqueId = item?.userUniqueId;
-    const profileImage = item.profilePic;
-    const birthTime = item.birthTime;
-    const currentCountry = item.address?.currentCountry;
 
     const firstName = item.firstName
       ? item.firstName.charAt(0).toUpperCase() +
@@ -489,99 +553,69 @@ const MatchesInNewScreen = () => {
 
     const age = calculateAge(item.dateOfBirth);
 
-    // const handlePress = () => {
-    //   console.log(' === item........... ===> ', item);
-    //   const matchesUserData = {
-    //     userAllImage,
-    //     profileImage,
-    //     birthTime,
-    //     currentCity,
-    //     JobTittle,
-    //     currentCountry,
-    //     age,
-    //     gender: item?.gender,
-    //     height: item?.height,
-    //     cast: item?.cast,
-    //     firstName: item?.firstName,
-    //     lastName: item?.lastName,
-    //     motherTongue: item?.motherTongue,
-    //     about: item?.writeBoutYourSelf,
-    //     religion: item?.religion,
-    //     dateOfBirth: item?.dateOfBirth,
-    //     currentResidenceAddress: item?.address?.currentResidenceAddress,
-    //     originResidenceAddress: item?.address?.originResidenceAddress,
-    //     originCountry: item?.address?.originCountry,
-    //     originCity: item?.address?.originCity,
-    //     mobileNumber: item?.mobileNumber,
-    //     homeMobileNumber: item?.homeMobileNumber,
-    //     email: item?.email,
-    //     degree: item?.userEducation?.degree,
-    //     collage: item?.userEducation?.collage,
-    //     educationCity: item?.userEducation?.city,
-    //     educationState: item?.userEducation?.state,
-    //     educationCountry: item?.userEducation?.country,
-    //     Designation: item?.userProfessional?.jobTitle,
-    //     companyName: item?.userProfessional?.companyName,
-    //     jobType: item?.userProfessional?.jobType,
-    //     currentSalary: item?.userProfessional?.currentSalary,
-    //     workCity: item?.userProfessional?.workCity,
-    //     workCountry: item?.userProfessional?.workCountry,
-    //     hobbies: item?.hobbies,
-    //     matchPercentage: item?.matchPercentage,
-    //     userLikeDetails: item?.userLikeDetails,
-    //   };
-    //
-    //   // console.log('User Data:', matchesUserData);
-    //
-    //   // Navigate to UserDetailsScreen
-    //   navigation.navigate('UserDetailsScreen', {matchesUserData});
-    // };
-
     const handlePress = items => {
       const matchesUserData = {
         firstName: items.name,
         id: items?._id,
       };
-      // console.log(' === var ===> ', matchesUserData);
       navigation.navigate('NewUserDetailsScreen', {matchesUserData});
-      // navigation.navigate('Abc', {matchesUserData});
     };
 
     const userAllImageShare = () => {
       const allImages = {
         userAllImage,
       };
-      // console.log(' === userAllImage ===> ', userAllImage);
       navigation.navigate('UserUploadImageFullScreen', {allImages});
     };
 
     const onThreeDotPress = () => {
-      // const userDetailsThreeDot = {
-      //   firstName: item?.firstName,
-      // };
       setSelectedFirstName(firstName);
       setSelectedUniqueId(uniqueId);
       setBlockedFriendId(blockedFriendId);
 
       sheetRef.current.open();
-      // console.log(' === onThreeDotPress ===> ', userDetailsThreeDot);
     };
 
-    const starIconSource = item?.userShortListDetails
-      ? icons.black_check_icon // Check icon if shortlisted
-      : icons.black_start_icon; // Star icon if not shortlisted
+    const starIconSource = item?.userShortListDetails?.id
+      ? icons.black_check_icon
+      : icons.black_start_icon;
 
     return (
       <View style={{marginHorizontal: 17}}>
         <TouchableOpacity activeOpacity={1}>
           <View>
-            <Image
-              source={
-                profileImage ? {uri: profileImage} : images.empty_male_Image
-              }
-              style={style.userImageStyle}
-              resizeMode={'cover'}
-            />
+            {/*<Image*/}
+            {/*  source={*/}
+            {/*    profileImage ? {uri: profileImage} : images.empty_male_Image*/}
+            {/*  }*/}
+            {/*  style={style.userImageStyle}*/}
+            {/*  resizeMode={'cover'}*/}
+            {/*/>*/}
+
+            {hasValidImage ? (
+              <>
+                <Image
+                  source={{uri: item.profilePic}}
+                  style={style.userImageStyle}
+                />
+                {profilePrivacy && (
+                  <Image
+                    source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                    style={style.logoIcon}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <ProfileAvatar
+                  firstName={item.firstName || item.name}
+                  lastName={item.lastName}
+                  textStyle={style.userImageStyle}
+                  profileTexts={style.profileAvatarText}
+                />
+              </>
+            )}
+
             <LinearGradient
               colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
               style={style.gradient}
@@ -596,19 +630,28 @@ const MatchesInNewScreen = () => {
                 onPress={() => {
                   handlePress(item);
                 }}>
-                <Text style={style.userNameTextStyle}>
-                  {firstName || item.name} {lastName || ' '}
-                </Text>
+                <View style={style.cardNameContainer}>
+                  <Text style={style.userNameTextStyle}>
+                    {firstName || item.name} {lastName || ' '}
+                  </Text>
+
+                  {subPlan && (
+                    <View style={style.subPlanContainer}>
+                      <Image source={icons.crownIcon} style={style.crowIcon} />
+                      <Text style={style.planNameText}>{planName}</Text>
+                    </View>
+                  )}
+                </View>
 
                 <View
                   style={[
                     style.userDetailsDescriptionContainer,
                     {marginTop: 3},
                   ]}>
-                  {/*<Text style={style.userDetailsTextStyle}>{item.gender}</Text>*/}
                   <Text style={style.userDetailsTextStyle}>
                     {age || 'N/A'} yrs,
                   </Text>
+
                   <Text style={style.userDetailsTextStyle}>{item.height}</Text>
 
                   <View style={style.verticalLineStyle} />
@@ -623,12 +666,6 @@ const MatchesInNewScreen = () => {
                     {currentCity || ' N/A'},
                   </Text>
 
-                  {/*<View style={style.verticalLineStyle} />*/}
-
-                  {/*<Text style={style.userDetailsTextStyle}> {'N/A'}</Text>*/}
-                  {/*<Text style={style.userDetailsTextStyle}>*/}
-                  {/*  {workCity || 'N/A'}*/}
-                  {/*</Text>*/}
                   <Text style={style.userDetailsTextStyle}>
                     {' '}
                     {workCountry || 'N/A'}
@@ -636,134 +673,56 @@ const MatchesInNewScreen = () => {
                 </View>
               </TouchableOpacity>
 
-              <View
-                style={{
-                  marginTop: hp(15),
-                  flexDirection: 'row',
-                  // backgroundColor: 'red',
-                  alignItems: 'center',
-                  // flex: 1,
-                }}>
+              <View style={style.cardBottomContainer}>
                 <Image
                   source={images.gradient_button_background_img}
-                  style={{
-                    // width: wp(105),
-                    // height: hp(30),
-                    // resizeMode: 'stretch',
-                    width: wp(105),
-                    height: hp(30),
-                    resizeMode: 'stretch',
-                    borderRadius: 50, // Adjust the radius as needed
-                    overflow: 'hidden', // Ensure rounded corners clip the image
-                  }}
+                  style={style.gradientButtonBG}
                 />
+
                 <TouchableOpacity
                   activeOpacity={0.5}
                   onPress={openModal}
-                  style={{
-                    position: 'absolute',
-                    left: 10,
-                    // top: 12,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    // borderRadius: 10,
-                  }}>
-                  <Image
-                    source={icons.couple_icon}
-                    style={{
-                      width: hp(16),
-                      height: hp(14),
-                      resizeMode: 'contain',
-                      tintColor: 'white',
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: 'white',
-                      marginLeft: 9,
-                      fontSize: fontSize(10),
-                      lineHeight: hp(15),
-                      fontFamily: fontFamily.poppins600,
-                      top: 1,
-                    }}>
-                    {/*85% Match*/}
+                  style={style.coupleImgContainer}>
+                  <Image source={icons.couple_icon} style={style.coupleImg} />
+                  <Text style={style.couplePercentageContainer}>
                     {item?.matchPercentage}% Match
                   </Text>
                 </TouchableOpacity>
 
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    position: 'absolute',
-                    right: 35,
-                    // top: 5,
-                  }}>
-                  <TouchableOpacity
-                    style={{
-                      width: hp(60),
-                      height: hp(30),
-                      backgroundColor: '#282727',
-                      borderRadius: 15,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginHorizontal: 5,
-                    }}
-                    activeOpacity={0.5}
-                    // onPress={() => {
-                    //   navigation.navigate('UserUploadImageFullScreen');
-                    // }}
-                    onPress={userAllImageShare}>
-                    <Image
-                      source={icons.new_camera_icon}
-                      style={{
-                        width: 16,
-                        height: 16,
-                        resizeMode: 'contain',
-                        marginRight: wp(10),
-                      }}
-                    />
+                <View style={style.cardBottomRightCon}>
+                  {!profilePrivacy && (
+                    <TouchableOpacity
+                      style={style.imageCountCon}
+                      activeOpacity={0.5}
+                      onPress={userAllImageShare}>
+                      <Image
+                        source={icons.new_camera_icon}
+                        style={style.cameraImg}
+                      />
 
-                    <Text style={{color: colors.white}}>{imageCount}</Text>
-                  </TouchableOpacity>
-                  {/*</View>*/}
+                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                    </TouchableOpacity>
+                  )}
 
                   <TouchableOpacity
                     onPress={() => {
-                      onShortListPress(item);
+                      if (item?.userShortListDetails?.id) {
+                        removeFromShortlist(item.userShortListDetails.id);
+                      } else {
+                        addToShortlist(item._id);
+                      }
                     }}
                     activeOpacity={0.5}
-                    style={{
-                      width: hp(30),
-                      height: hp(30),
-                      backgroundColor: '#282727',
-                      borderRadius: 50,
-                    }}>
-                    <Image
-                      source={starIconSource}
-                      style={{
-                        width: hp(30),
-                        height: hp(30),
-                        resizeMode: 'contain',
-                      }}
-                    />
+                    style={style.shortListCon}>
+                    <Image source={starIconSource} style={style.shortListImg} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     onPress={onThreeDotPress}
-                    style={{
-                      width: hp(30),
-                      height: hp(30),
-                      backgroundColor: '#282727',
-                      borderRadius: 50,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginHorizontal: 5,
-                    }}>
+                    style={style.threeDotCon}>
                     <Image
                       source={icons.new_three_dot}
-                      style={{width: 4, height: 14, tintColor: colors.white}}
+                      style={style.threeDotImg}
                     />
                   </TouchableOpacity>
                 </View>
@@ -777,41 +736,20 @@ const MatchesInNewScreen = () => {
 
   if (loading && page === 1) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        {/*<ActivityIndicator size="large" color="#0000ff" />*/}
-        <View style={{height: hp(449), marginHorizontal: 17}}>
-          <ShimmerPlaceholder
-            style={{
-              width: '100%',
-              height: hp(449),
-              borderRadius: 10,
-              marginBottom: hp(13),
-            }}
-          />
-          <View style={{marginTop: -180, marginHorizontal: 17}}>
-            <ShimmerPlaceholder style={{width: 100, height: 20}} />
+      <SafeAreaView style={style.loadingContainer}>
+        <View style={style.loadingBodyCon}>
+          <ShimmerPlaceholder style={style.loadingBodyMain} />
+
+          <View style={style.loadingCenterCon}>
+            <ShimmerPlaceholder style={style.loadingCenterOne} />
 
             <View style={{marginTop: 10}}>
-              <ShimmerPlaceholder style={{width: 100, height: 5}} />
+              <ShimmerPlaceholder style={style.loadingCenterTwo} />
             </View>
 
-            <View style={{marginTop: 50, flexDirection: 'row'}}>
-              <ShimmerPlaceholder
-                style={{
-                  width: wp(142),
-                  height: hp(40),
-                  justifyContent: 'center',
-                  marginRight: 40,
-                }}
-              />
-              <ShimmerPlaceholder
-                style={{
-                  width: wp(142),
-                  height: hp(40),
-                  justifyContent: 'center',
-                  marginRight: 40,
-                }}
-              />
+            <View style={style.loadingBottomCon}>
+              <ShimmerPlaceholder style={style.loadingBottomButton} />
+              <ShimmerPlaceholder style={style.loadingBottomButton} />
             </View>
           </View>
         </View>
@@ -821,209 +759,55 @@ const MatchesInNewScreen = () => {
 
   const toastConfigs = {
     AddShortlisted: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          // marginTop: -200,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
+      <View style={style.staticToastBody}>
+        <Text style={style.staticToastText}>{text1}</Text>
       </View>
     ),
+
     RemoveShortlisted: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          // marginTop: -200,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
+      <View style={style.staticToastBody}>
+        <Text style={style.staticToastText}>{text1}</Text>
       </View>
     ),
 
     Copied: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          // marginTop: -200,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
+      <View style={style.staticToastBody}>
+        <Text style={style.staticToastText}>{text1}</Text>
       </View>
     ),
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          flex: 1,
-          zIndex: 99,
-          position: 'absolute',
-          // alignItems: 'center',
-          // justifyContent: 'center',
-          alignSelf: 'center',
-          // alignContent: 'center',
-          top: -130,
-        }}>
+    <SafeAreaView style={style.container}>
+      <View style={style.toastDisplayContainer}>
         <Toast config={toastConfigs} />
       </View>
-      {/*<FlatList*/}
-      {/*  data={data}*/}
-      {/*  renderItem={renderUserItem}*/}
-      {/*  keyExtractor={item => item._id || item.id || item.name}*/}
-      {/*  onEndReached={loadMoreData}*/}
-      {/*  onEndReachedThreshold={0.5}*/}
-      {/*  showsVerticalScrollIndicator={false}*/}
-      {/*  // ListFooterComponent={isFetchingMore ? <ActivityIndicator /> : null}*/}
-      {/*  ListFooterComponent={*/}
-      {/*    isFetchingMore ? (*/}
-      {/*      <View style={{alignItems: 'center'}}>*/}
-      {/*        <Text style={{color: 'black'}}>Loading Data..</Text>*/}
-      {/*      </View>*/}
-      {/*    ) : null*/}
-      {/*  }*/}
-      {/*  ListEmptyComponent={*/}
-      {/*    !loading && !isFetchingMore ? (*/}
-      {/*      <View style={styles.emptyListContainer}>*/}
-      {/*        <Text style={{color: 'black'}}>No data available</Text>*/}
-      {/*      </View>*/}
-      {/*    ) : null*/}
-      {/*  }*/}
-      {/*  contentContainerStyle={styles.listContainer} // Added this line*/}
-      {/*/>*/}
-      {/*{isUserDataLoading ? (*/}
-      {/*  <View>*/}
-      {/*    <SafeAreaView style={styles.loadingContainer}>*/}
-      {/*      /!*<ActivityIndicator size="large" color="#0000ff" />*!/*/}
-      {/*      <View style={{height: hp(449), marginHorizontal: 17}}>*/}
-      {/*        <ShimmerPlaceholder*/}
-      {/*          style={{*/}
-      {/*            width: '100%',*/}
-      {/*            height: hp(449),*/}
-      {/*            borderRadius: 10,*/}
-      {/*            marginBottom: hp(13),*/}
-      {/*          }}*/}
-      {/*        />*/}
-      {/*        <View style={{marginTop: -180, marginHorizontal: 17}}>*/}
-      {/*          <ShimmerPlaceholder style={{width: 100, height: 20}} />*/}
-      {/*          <View style={{marginTop: 10}}>*/}
-      {/*            <ShimmerPlaceholder style={{width: 100, height: 5}} />*/}
-      {/*          </View>*/}
-      {/*          <View style={{marginTop: 50, flexDirection: 'row'}}>*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: wp(142),*/}
-      {/*                height: hp(40),*/}
-      {/*                justifyContent: 'center',*/}
-      {/*                marginRight: 40,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: wp(142),*/}
-      {/*                height: hp(40),*/}
-      {/*                justifyContent: 'center',*/}
-      {/*                marginRight: 40,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*          </View>*/}
-      {/*        </View>*/}
-      {/*      </View>*/}
-      {/*    </SafeAreaView>*/}
-      {/*  </View>*/}
-      {/*) : (*/}
+
       <FlatList
-        data={userData}
-        keyExtractor={(item, index) => index.toString()}
+        data={data}
         renderItem={renderUserItem}
+        keyExtractor={item => item._id || item.id || item.name}
+        onEndReached={loadMoreData}
+        onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
-        onEndReached={() => {
-          if (page < totalPages) {
-            setPage(prevState => prevState + 1);
-          }
-        }}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          !loading && !isFetchingMore ? (
-            <View
-              style={{
-                padding: 20,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  marginTop: hp(250),
-                  justifyContent: 'center',
-                }}>
-                <Image
-                  source={icons.no_Profile_Found_img}
-                  style={{
-                    width: hp(44),
-                    height: hp(44),
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(18),
-                    lineHeight: hp(27),
-                    fontFamily: fontFamily.poppins400,
-                    marginTop: hp(12),
-                  }}>
-                  No Profiles Found
-                </Text>
-              </View>
+        // ListFooterComponent={isFetchingMore ? <ActivityIndicator /> : null}
+        ListFooterComponent={
+          isFetchingMore ? (
+            <View style={{alignItems: 'center'}}>
+              <Text style={{color: 'black'}}>Loading Data..</Text>
             </View>
           ) : null
         }
+        ListEmptyComponent={
+          !loading && !isFetchingMore ? (
+            <View style={style.emptyListContainer}>
+              <Text style={{color: 'black'}}>No data available</Text>
+            </View>
+          ) : null
+        }
+        contentContainerStyle={style.listContainer} // Added this line
       />
-      {/*// )}*/}
+
       <Modal
         animationType="none"
         transparent={true}
@@ -1331,197 +1115,98 @@ const MatchesInNewScreen = () => {
         </View>
         {/*</TouchableWithoutFeedback>*/}
       </Modal>
+
       {/* Bottom Sheet */}
       <RBSheet
         ref={sheetRef}
-        height={hp(240)} // Height of the bottom sheet
-        // openDuration={250} // Duration of the opening animation
-        closeOnDragDown={true} // Allow closing the sheet by dragging it down
+        height={hp(300)}
+        closeOnDragDown={true}
         customStyles={{
           container: {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
           },
         }}>
-        {/* Content inside the bottom sheet */}
         <View style={{flex: 1}}>
-          {/*<Text style={{fontSize: 18}}>First Name: {selectedFirstName}</Text>*/}
-
-          <View style={{marginHorizontal: 30, marginTop: 20}}>
+          <View style={style.bottomSheetContainer}>
             <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
               onPress={handleShare}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={icons.share_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Share Profile
-              </Text>
+              style={style.firstLitterContainer}>
+              <Image source={icons.share_icon} style={style.bottomSheetIcon} />
+
+              <Text style={style.bottomSheetText}>Share Profile</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-              // onPress={handleBlockProfilePress}
-              onPress={() => {
-                handleBlockProfilePress(blockedFriendId);
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.block_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Block {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-              onPress={openBottomSheet}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.report_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Report this profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-
               onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
+              style={[style.firstLitterContainer, {marginTop: hp(20)}]}>
               <Image
                 source={icons.copy_id_card_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
+                style={style.bottomSheetIcon}
               />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
+
+              <Text style={style.bottomSheetText}>
                 Copy ID : {selectedUniqueId}
               </Text>
+            </TouchableOpacity>
+
+            <View style={style.bottomSheetLine} />
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={[style.firstLitterContainer, {marginTop: hp(20)}]}>
+              <Image
+                source={icons.new_report_icon}
+                style={[style.bottomSheetIcon, {top: -8}]}
+              />
+
+              <View>
+                <Text style={style.bottomSheetText}>Report</Text>
+
+                <Text style={style.bottomSheetSubTittle}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handleBlockProfilePress(blockedFriendId);
+              }}
+              style={[style.firstLitterContainer, {marginTop: hp(20)}]}>
+              <Image
+                source={icons.block_icon}
+                style={[style.bottomSheetIcon, {top: -8}]}
+              />
+
+              <View>
+                <Text style={style.bottomSheetText}>
+                  Block {selectedFirstName}
+                </Text>
+
+                <Text style={style.bottomSheetSubTittle}>
+                  You can't contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
       </RBSheet>
+
       {/*//BLOCK MODAL */}
       <Modal
         visible={isBlockModalVisible}
         transparent={true}
         animationType="fade"
         onRequestClose={() => setIsBlockModalVisible(false)}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}>
-          <View
-            style={{
-              width: wp(350),
-              padding: 20,
-              backgroundColor: 'white',
-              borderRadius: 10,
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                fontSize: fontSize(16),
-                color: 'black',
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-                marginTop: 20,
-              }}>
-              Are you sure you want to
-            </Text>
-            <Text
-              style={{
-                fontSize: fontSize(16),
-                color: 'black',
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-              }}>
-              Block This User?
-            </Text>
+        <View style={style.blockModalContainer}>
+          <View style={style.blockModalBody}>
+            <Text style={style.blockModalTittle}>Are you sure you want to</Text>
+            <Text style={style.blockModalSubTittle}>Block This User?</Text>
 
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: hp(30),
-              }}>
+            <View style={style.blockModalButtonCon}>
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={handleConfirmBlock}>
@@ -1529,23 +1214,8 @@ const MatchesInNewScreen = () => {
                   colors={['#2D46B9', '#8D1D8D']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
-                  style={{
-                    width: hp(122),
-                    height: hp(50),
-                    borderRadius: 50,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 20,
-                  }}>
-                  <Text
-                    style={{
-                      color: colors.white,
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                    }}>
-                    Yes
-                  </Text>
+                  style={style.blockModalYesBTNCon}>
+                  <Text style={style.blockModalYesText}>Yes</Text>
                 </LinearGradient>
               </TouchableOpacity>
 
@@ -1556,34 +1226,9 @@ const MatchesInNewScreen = () => {
                 }}>
                 <LinearGradient
                   colors={['#0D4EB3', '#9413D0']}
-                  style={{
-                    width: wp(122),
-                    height: hp(50),
-                    borderRadius: 50,
-                    borderWidth: 1,
-                    justifyContent: 'center',
-                    borderColor: 'transparent',
-                  }}>
-                  <View
-                    style={{
-                      borderRadius: 50, // <-- Inner Border Radius
-                      flex: 1,
-                      backgroundColor: colors.white,
-                      justifyContent: 'center',
-                      margin: isIOS ? 0 : 1,
-                    }}>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        backgroundColor: 'transparent',
-                        color: colors.black,
-                        margin: 10,
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      No
-                    </Text>
+                  style={style.blockModalBoBTNCon}>
+                  <View style={style.blockModalBoBTNBody}>
+                    <Text style={style.blockModalNoText}>No</Text>
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
@@ -1605,101 +1250,40 @@ const MatchesInNewScreen = () => {
         }}>
         {/* Content inside the bottom sheet */}
         <View style={{flex: 1}}>
-          {/* Back button, only visible when a reason is selected or when in "About" section */}
-
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              marginTop: hp(24),
-              alignItems: 'center',
-              marginHorizontal: 17,
-            }}>
+          <View style={style.reportCon}>
             {(reportReasons.length > 0 || isAboutClicked) && (
               <TouchableOpacity
                 onPress={handleBackArrow}
-                style={{position: 'absolute', left: 0}}>
-                {/*<Text style={styles.backButtonText}>Back</Text>*/}
+                style={style.reportBackArrowContainer}>
                 <Image
                   source={icons.back_arrow_icon}
-                  style={{width: hp(18), height: hp(18)}}
+                  style={style.reportBackIcon}
                 />
               </TouchableOpacity>
             )}
 
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins500,
-              }}>
-              Report
-            </Text>
+            <Text style={style.reportText}>Report</Text>
           </View>
 
-          <View
-            style={{
-              width: '100%',
-              height: 0.7,
-              backgroundColor: '#E7E7E7',
-              marginTop: hp(20),
-            }}
-          />
+          <View style={style.reportLine} />
 
-          <Text
-            style={{
-              textAlign: 'center',
-              marginTop: hp(15),
-              color: colors.black,
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins500,
-            }}>
-            {questionText}
-          </Text>
+          <Text style={style.reportQuesText}>{questionText}</Text>
 
           {reportReasons.length < 1 && !isAboutClicked && (
-            <View
-              style={{
-                alignItems: 'center',
-                marginTop: hp(9),
-              }}>
-              <Text
-                style={{
-                  color: '#8F8F8F',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                }}>
+            <View style={style.reportReasonCon}>
+              <Text style={style.reportReasonTittle}>
                 Your identity will remain anonymous to the
               </Text>
-              <Text
-                style={{
-                  color: '#8F8F8F',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                reported user.
-              </Text>
+              <Text style={style.reportReasonTittle}>reported user.</Text>
             </View>
           )}
 
           {/* Show the list of reasons if there are any */}
           {isAboutClicked ? (
             // If "About" is clicked, show the TextInput and Submit button
-            <View style={{marginTop: hp(28), marginHorizontal: 17}}>
+            <View style={style.reportAboutCon}>
               <TextInput
-                style={{
-                  borderWidth: 1,
-                  borderColor: colors.black,
-                  padding: 10,
-                  marginBottom: 20,
-                  borderRadius: 10,
-                  height: hp(120),
-                  textAlignVertical: 'top',
-                }}
+                style={style.reportAboutTextInput}
                 placeholder="Please provide details..."
                 value={aboutText}
                 onChangeText={setAboutText}
@@ -1714,25 +1298,8 @@ const MatchesInNewScreen = () => {
                   colors={['#0D4EB3', '#9413D0']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1.5}}
-                  style={{
-                    width: '100%',
-                    height: hp(50),
-                    borderRadius: 50,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    // justifyContent: 'space-between',
-                  }}>
-                  <Text
-                    style={{
-                      color: colors.white,
-                      marginLeft: hp(20),
-                      fontSize: fontSize(16),
-                      lineHeight: hp(21),
-                      fontFamily: fontFamily.poppins500,
-                    }}>
-                    Submit Report
-                  </Text>
+                  style={style.submitReportCon}>
+                  <Text style={style.submitReportText}>Submit Report</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -1740,32 +1307,15 @@ const MatchesInNewScreen = () => {
             reportReasons.map((reason, index) => (
               <TouchableOpacity
                 key={index}
-                // style={styles.reportReasonTouchable}
                 onPress={() => handleReportReasonClick(reason, questionText)} // Close the bottom sheet when clicked
               >
-                <Text
-                  style={{
-                    marginTop: hp(25),
-                    marginHorizontal: 17,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                    color: colors.black,
-                  }}>
-                  {reason}
-                </Text>
+                <Text style={style.reportReasonText}>{reason}</Text>
               </TouchableOpacity>
             ))
           ) : (
-            <View style={{marginTop: hp(26), marginHorizontal: 17}}>
+            <View style={style.reportReasonContainer}>
               <TouchableOpacity onPress={handleInappropriateContent}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
+                <Text style={style.reportReasonTexts}>
                   Inappropriate content
                 </Text>
               </TouchableOpacity>
@@ -1773,13 +1323,7 @@ const MatchesInNewScreen = () => {
               <TouchableOpacity
                 style={{marginTop: hp(28)}}
                 onPress={handleHarassmentOrBullying}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
+                <Text style={style.reportReasonTexts}>
                   Harassment or bullying.
                 </Text>
               </TouchableOpacity>
@@ -1787,13 +1331,7 @@ const MatchesInNewScreen = () => {
               <TouchableOpacity
                 style={{marginTop: hp(28)}}
                 onPress={handleFakeMisleadingProfile}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
+                <Text style={style.reportReasonTexts}>
                   Fake or misleading profile.
                 </Text>
               </TouchableOpacity>
@@ -1801,13 +1339,7 @@ const MatchesInNewScreen = () => {
               <TouchableOpacity
                 style={{marginTop: hp(28)}}
                 onPress={handleSpamPromotionalContent}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
+                <Text style={style.reportReasonTexts}>
                   Spam or promotional content.
                 </Text>
               </TouchableOpacity>
@@ -1815,13 +1347,7 @@ const MatchesInNewScreen = () => {
               <TouchableOpacity
                 style={{marginTop: hp(28)}}
                 onPress={handleScamsFraudulentActivity}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
+                <Text style={style.reportReasonTexts}>
                   Scams or fraudulent activity.
                 </Text>
               </TouchableOpacity>
@@ -1830,15 +1356,7 @@ const MatchesInNewScreen = () => {
                 style={{marginTop: hp(28)}}
                 onPress={() => setIsAboutClicked(true)} // Handle About click
               >
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
-                  Others
-                </Text>
+                <Text style={style.reportReasonTexts}>Others</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -1851,86 +1369,32 @@ const MatchesInNewScreen = () => {
         transparent={true}
         visible={isReportModalVisible}
         onRequestClose={handleCloseModal}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              // padding: 20,
-              borderRadius: 10,
-              alignItems: 'center',
-              width: '85%',
-            }}>
-            <Text
-              style={{
-                fontSize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins600,
-                color: colors.black,
-                textAlign: 'center',
-                marginTop: hp(43),
-              }}>
+        <View style={style.successModalCon}>
+          <View style={style.successModalBody}>
+            <Text style={style.successModalTittle}>
               Thank you for your report.
             </Text>
 
-            <View style={{marginTop: hp(38), alignItems: 'center'}}>
-              <Text
-                style={{
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
+            <View style={style.successModalSubTittleCon}>
+              <Text style={style.successModalSubTittle}>
                 We’ll review it soon to help keep
               </Text>
               <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
+                style={[style.successModalSubTittle, {textAlign: 'center'}]}>
                 our community safe.
               </Text>
             </View>
-            {/*<TouchableOpacity*/}
-            {/*  style={{backgroundColor: '#007BFF', padding: 10, borderRadius: 5}}*/}
-            {/*  onPress={handleCloseModal}>*/}
-            {/*  <Text style={{color: 'white', fontSize: 16}}>Close</Text>*/}
-            {/*</TouchableOpacity>*/}
 
             <TouchableOpacity
               activeOpacity={0.7}
-              style={{marginTop: hp(38), marginBottom: hp(43)}}
+              style={style.successOkCon}
               onPress={handleCloseModal}>
               <LinearGradient
                 colors={['#0D4EB3', '#9413D0']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.5}}
-                style={{
-                  width: hp(131),
-                  height: hp(50),
-                  borderRadius: 50,
-                  // flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  // justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    color: colors.white,
-                    fontSize: fontSize(16),
-                    lineHeight: hp(24),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
-                  Okay
-                </Text>
+                style={style.successOkBody}>
+                <Text style={style.successOkBtnText}>Okay</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -1939,48 +1403,5 @@ const MatchesInNewScreen = () => {
     </SafeAreaView>
   );
 };
-
-// Styling
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1, // Ensures the SafeAreaView takes up full height
-  },
-  loadingContainer: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  emptyListContainer: {
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  textContainer: {
-    justifyContent: 'center',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  gender: {
-    fontSize: 14,
-    color: '#555',
-  },
-  listContainer: {
-    paddingBottom: 200, // Adjust this value for more or less space
-  },
-});
 
 export default MatchesInNewScreen;

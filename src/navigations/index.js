@@ -398,6 +398,12 @@ const MainNavigator = () => {
       <Stack.Navigator
         screenOptions={{headerShown: false}}
         initialRouteName={'HomeTabs'}>
+        <Stack.Screen name="DemoCode" component={DemoCode} />
+
+        <Stack.Screen name="Abc" component={Abc} />
+
+        <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
+
         <Stack.Screen
           name="AddSetStoryImageComponent"
           component={AddSetStoryImageComponent}
@@ -410,9 +416,6 @@ const MainNavigator = () => {
         <Stack.Screen name="ViewStatusScreen" component={ViewStatusScreen} />
         <Stack.Screen name="NewAddStoryScreen" component={NewAddStoryScreen} />
 
-        <Stack.Screen name="DemoCode" component={DemoCode} />
-
-        <Stack.Screen name="Abc" component={Abc} />
         <Stack.Screen name="ExploreScreen" component={ExploreScreen} />
         <Stack.Screen name={'DatingHomeScreen'} component={DatingHomeScreen} />
 
@@ -420,7 +423,7 @@ const MainNavigator = () => {
           name={'DatingExploreScreen'}
           component={DatingExploreScreen}
         />
-        <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
+
         <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
         <Stack.Screen
           name={'DemoPractiveCodeScreen'}
@@ -506,10 +509,10 @@ const MainNavigator = () => {
           component={VerifyIdentityScreen}
         />
 
-        <Stack.Screen
-          name={'NewUserDetailsScreen'}
-          component={NewUserDetailsScreen}
-        />
+        {/*<Stack.Screen*/}
+        {/*  name={'NewUserDetailsScreen'}*/}
+        {/*  component={NewUserDetailsScreen}*/}
+        {/*/>*/}
 
         <Stack.Screen
           name={'RemainingDataUiScreen'}
@@ -787,6 +790,12 @@ const MainNavigator = () => {
         <Tab.Screen
           name="DatingSearchFilterScreen"
           component={DatingSearchFilterScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="NewUserDetailsScreen"
+          component={NewUserDetailsScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
       </Tab.Navigator>

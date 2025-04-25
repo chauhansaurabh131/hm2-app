@@ -25,6 +25,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
+import ProfileAvatar from '../letterProfileComponent';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const PremiumMatchesComponent = ({toastConfigs}) => {
@@ -116,24 +117,72 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
           },
         },
       );
-      // Handle successful response, maybe update local state or show success message
+      // Handle successful response, update state with the new like status
       console.log('Like created successfully:', response.data);
-      ProfileLike();
-      fetchData();
+
+      // Extract the id from the response data
+      const {id, isLike} = response.data.data;
+
+      // Update the local state with the new like status and id
+      setUsers(prevData => {
+        return prevData.map(user =>
+          user._id === likedUserId
+            ? {
+                ...user,
+                userLikeDetails: {
+                  ...user.userLikeDetails,
+                  isLike: isLike, // Update with the correct isLike status from response
+                  id: id, // Add the id from response
+                },
+              }
+            : user,
+        );
+      });
     } catch (error) {
       console.error('Error creating like:', error);
       Alert.alert('Error', 'Failed to create like.');
-      fetchData();
     }
   };
 
+  // const createLike = async likedUserId => {
+  //   try {
+  //     const response = await axios.post(
+  //       'https://stag.mntech.website/api/v1/user/like/create-like',
+  //       {
+  //         likedUserId: likedUserId,
+  //         isLike: true,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //     // Handle successful response, maybe update local state or show success message
+  //     console.log('Like created successfully:', response.data);
+  //     ProfileLike();
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error('Error creating like:', error);
+  //     Alert.alert('Error', 'Failed to create like.');
+  //     fetchData();
+  //   }
+  // };
+
   const updateLike = async likedUserId => {
+    const likeId =
+      likedUserId?.userLikeDetails?._id || likedUserId?.userLikeDetails?.id;
+
+    const userId = likedUserId?._id || likedUserId?.id;
+
     try {
+      // Sending the request to update the like status to false (unlike)
       const response = await axios.put(
-        `https://stag.mntech.website/api/v1/user/like/update-like/${likedUserId}`,
+        `https://stag.mntech.website/api/v1/user/like/update-like/${likeId}`,
         {
-          likedUserId: likedUserId,
-          isLike: false,
+          likedUserId: userId,
+          isLike: false, // Dislike the user
         },
         {
           headers: {
@@ -142,93 +191,288 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
           },
         },
       );
-      // Handle successful response, maybe update local state or show success message
-      console.log('Like updated successfully:', response.data);
-      ProfileDisLike();
-      fetchData();
+
+      console.log('Like updated successfully:', response.data.data);
+
+      // Update the local state to reflect the unliked status
+      const {id, isLike} = response.data.data;
+
+      setUsers(prevData => {
+        const updatedData = prevData.map(user => {
+          if ((user?._id || user?.id) === userId) {
+            return {
+              ...user,
+              userLikeDetails: {
+                ...(user.userLikeDetails || {}),
+                isLike: false,
+              },
+            };
+          }
+          return user;
+        });
+
+        return updatedData;
+      });
+
+      // If necessary, re-fetch the data after updating
+      // await fetchNewUserData();
     } catch (error) {
       console.error('Error updating like:', error);
       Alert.alert('Error', 'Failed to update like.');
-      fetchData();
     }
   };
+
+  // const updateLike = async likedUserId => {
+  //   try {
+  //     const response = await axios.put(
+  //       `https://stag.mntech.website/api/v1/user/like/update-like/${likedUserId}`,
+  //       {
+  //         likedUserId: likedUserId,
+  //         isLike: false,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //     // Handle successful response, maybe update local state or show success message
+  //     console.log('Like updated successfully:', response.data);
+  //     ProfileDisLike();
+  //     fetchData();
+  //   } catch (error) {
+  //     console.error('Error updating like:', error);
+  //     Alert.alert('Error', 'Failed to update like.');
+  //     fetchData();
+  //   }
+  // };
 
   const handleLikePress = item => {
     const isLiked = item?.userLikeDetails?.isLike; // Access the isLike property
 
     if (isLiked) {
       // If already liked, call the update-like API to unlike
-      updateLike(item?.userLikeDetails?._id);
+      // updateLike(item?.userLikeDetails?._id || item?.userLikeDetails?.id);
+      updateLike(item);
+
+      // console.log(' === var ===> ', item?.userLikeDetails?.id);
     } else {
       // If not liked, call the create-like API to like
       createLike(item._id);
     }
   };
 
-  const OnsendRequestedSend = item => {
-    console.log(' === item>>> ===> ', item);
-    dispatch(
-      sendRequest({friend: item?._id, user: user.user.id}, () => {
-        fetchData();
-      }),
-    );
-  };
+  const OnsendRequestedSend = async item => {
+    try {
+      console.log(' === Sending Friend Request ===> ', item);
 
-  const handleRequestAction = (item, requestId) => {
-    if (item?.friendsDetails?.status === 'requested') {
-      // If the request status is 'requested', decline or remove the request
-      dispatch(
-        accepted_Decline_Request(
-          {
-            user: item?._id,
-            request: requestId, // Use the existing request ID
-            status: 'removed', // Decline the request or remove it
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/friend/create-friend',
+        {
+          friend: item?._id,
+          user: user?.user?.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
-          () => {
-            fetchData();
-          },
+        },
+      );
+
+      console.log('Friend request sent successfully:', response.data);
+
+      // Update the specific item in newUserData to reflect the request status
+      setUsers(prevData =>
+        prevData.map(userItem =>
+          userItem._id === item._id
+            ? {
+                ...userItem,
+                friendsDetails: {
+                  ...(userItem.friendsDetails || {}),
+                  status: 'requested', // Update status to 'requested'
+                },
+              }
+            : userItem,
         ),
       );
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send friend request.');
     }
   };
+
+  // const OnsendRequestedSend = item => {
+  //   console.log(' === item>>> ===> ', item);
+  //   dispatch(
+  //     sendRequest({friend: item?._id, user: user.user.id}, () => {
+  //       fetchData();
+  //     }),
+  //   );
+  // };
+
+  const handleRequestAction = async (item, requestId) => {
+    if (item?.friendsDetails?.status === 'requested') {
+      try {
+        const response = await axios.post(
+          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+          {
+            user: item?._id,
+            request: requestId,
+            status: 'removed',
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        console.log('Friend request removed successfully:', response.data);
+
+        // ✅ Update UI locally by removing the "requested" status
+        setUsers(prevData =>
+          prevData.map(userItem =>
+            userItem._id === item._id
+              ? {
+                  ...userItem,
+                  friendsDetails: {
+                    ...(userItem.friendsDetails || {}),
+                    status: null, // or remove the whole friendsDetails if you want
+                  },
+                }
+              : userItem,
+          ),
+        );
+      } catch (error) {
+        console.log(' === error ===> ', error);
+        Alert.alert('Error', 'Failed to remove friend request.');
+      }
+    }
+  };
+
+  // const handleRequestAction = (item, requestId) => {
+  //   if (item?.friendsDetails?.status === 'requested') {
+  //     // If the request status is 'requested', decline or remove the request
+  //     dispatch(
+  //       accepted_Decline_Request(
+  //         {
+  //           user: item?._id,
+  //           request: requestId, // Use the existing request ID
+  //           status: 'removed', // Decline the request or remove it
+  //         },
+  //         () => {
+  //           fetchData();
+  //         },
+  //       ),
+  //     );
+  //   }
+  // };
+
+  // const addToShortlist = async shortlistId => {
+  //   try {
+  //     const response = await axios.post(
+  //       'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+  //       {
+  //         shortlistId: shortlistId,
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+  //         },
+  //       },
+  //     );
+  //     console.log('Shortlist created successfully:', response.data);
+  //     ShowToast();
+  //     fetchData(); // Refresh the user data after adding to shortlist
+  //   } catch (error) {
+  //     console.error('Error adding to shortlist:', error);
+  //     Alert.alert('Error', 'Failed to add to shortlist.');
+  //   }
+  // };
 
   const addToShortlist = async shortlistId => {
     try {
       const response = await axios.post(
         'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-        {
-          shortlistId: shortlistId,
-        },
+        {shortlistId},
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
       console.log('Shortlist created successfully:', response.data);
-      ShowToast();
-      fetchData(); // Refresh the user data after adding to shortlist
+
+      // Update the state immutably and ensure the new shortlist data is associated with the user
+      setUsers(prevData => {
+        return prevData.map(user =>
+          user._id === shortlistId
+            ? {
+                ...user,
+                userShortListDetails: response.data.data, // Updated shortlist details
+              }
+            : user,
+        );
+      });
+
+      // Optionally, trigger another API to refresh the list if needed
+      // fetchNewUserData(); // Re-fetch user data
     } catch (error) {
       console.error('Error adding to shortlist:', error);
       Alert.alert('Error', 'Failed to add to shortlist.');
     }
   };
 
+  // const removeFromShortlist = async shortlistId => {
+  //   console.log(' === removeFromShortlist_______ ===> ', shortlistId);
+  //   try {
+  //     const response = await axios.delete(
+  //       `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+  //         },
+  //       },
+  //     );
+  //     console.log('Shortlist removed successfully:', response.data);
+  //     RemoveShortlisted();
+  //     fetchData(); // Refresh the user data after removing from the shortlist
+  //   } catch (error) {
+  //     console.error('Error removing from shortlist:', error);
+  //     Alert.alert('Error', 'Failed to remove from shortlist.');
+  //   }
+  // };
+
   const removeFromShortlist = async shortlistId => {
-    console.log(' === removeFromShortlist_______ ===> ', shortlistId);
     try {
+      // Call the remove from shortlist API
       const response = await axios.delete(
         `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
-      console.log('Shortlist removed successfully:', response.data);
-      RemoveShortlisted();
-      fetchData(); // Refresh the user data after removing from the shortlist
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      // Directly update the state to remove the shortlist details without re-fetching data
+      setUsers(prevData => {
+        return prevData.map(user =>
+          // Ensure you are checking for the correct ID
+          user.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                userShortListDetails: {}, // Set to null after removal
+              }
+            : user,
+        );
+      });
     } catch (error) {
       console.error('Error removing from shortlist:', error);
       Alert.alert('Error', 'Failed to remove from shortlist.');
@@ -237,11 +481,42 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    // console.log(' === renderItem ===> ', item?.defaultFields);
+    // console.log(' === renderItem ===> ', item?.age);
+
+    const {selectedPlan, status} = item?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
+
+    const hasValidImage =
+      item.profilePic &&
+      item.profilePic !== 'null' &&
+      item.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item.privacySettingCustom?.showPhotoToFriendsOnly === true;
 
     const firstName = item?.firstName
       ? item.firstName.charAt(0).toUpperCase() +
         item.firstName.slice(1).toLowerCase()
+      : '';
+
+    const name = item?.name
+      ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase()
       : '';
 
     const lastName = item?.lastName
@@ -249,14 +524,14 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
         item.lastName.slice(1).toLowerCase()
       : '';
 
-    const currentCity = item?.defaultFields?.address?.currentCity
-      ? item?.defaultFields?.address.currentCity.charAt(0).toUpperCase() +
-        item?.defaultFields?.address.currentCity.slice(1).toLowerCase()
+    const currentCity = item?.address?.currentCity
+      ? item?.address.currentCity.charAt(0).toUpperCase() +
+        item?.address.currentCity.slice(1).toLowerCase()
       : '';
 
     const currentCountry = item?.defaultFields?.address?.currentCountry
-      ? item?.defaultFields?.address.currentCountry.charAt(0).toUpperCase() +
-        item?.defaultFields?.address.currentCountry.slice(1).toLowerCase()
+      ? item?.address.currentCountry.charAt(0).toUpperCase() +
+        item?.address.currentCountry.slice(1).toLowerCase()
       : '';
 
     const userAllImage = Array.isArray(item?.userProfilePic)
@@ -314,7 +589,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
         : icons.new_send_icon; // No request sent, allow sending a request
 
     // Determine the star icon based on userShortListDetails
-    const starIconSource = item?.userShortListDetails
+    const starIconSource = item?.userShortListDetails?.id
       ? icons.black_check_icon
       : icons.black_start_icon;
 
@@ -334,23 +609,81 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             borderWidth: 1,
             borderColor: '#EFEFEF',
           }}>
-          <Image
-            style={
-              item.profilePic
-                ? styles.image
-                : [styles.image, styles.imageWithBorder]
-            }
-            source={
-              item.profilePic ? {uri: item.profilePic} : images.empty_male_Image
-            }
-          />
+          {/*<Image*/}
+          {/*  style={*/}
+          {/*    item.profilePic*/}
+          {/*      ? styles.image*/}
+          {/*      : [styles.image, styles.imageWithBorder]*/}
+          {/*  }*/}
+          {/*  source={*/}
+          {/*    item.profilePic ? {uri: item.profilePic} : images.empty_male_Image*/}
+          {/*  }*/}
+          {/*/>*/}
+
+          {hasValidImage ? (
+            <>
+              <Image source={{uri: item.profilePic}} style={styles.image} />
+              {profilePrivacy && (
+                <Image
+                  source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                  style={{
+                    position: 'absolute',
+                    tintColor: '#fff',
+                    resizeMode: 'contain',
+                    width: 12,
+                    height: 16,
+                    alignSelf: 'center',
+                    top: 65,
+                  }}
+                />
+              )}
+
+              {subPlan && (
+                <Image
+                  source={icons.crownIcon} // Crown icon
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    resizeMode: 'contain',
+                    height: hp(12),
+                    width: hp(12),
+                    tintColor: crownTintColor,
+                    left: 15,
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              <ProfileAvatar
+                firstName={item.firstName || item.name}
+                lastName={item.lastName}
+                textStyle={{width: hp(110), height: hp(136), marginBottom: 10}}
+              />
+              {subPlan && (
+                <Image
+                  source={icons.crownIcon} // Crown icon
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    resizeMode: 'contain',
+                    height: hp(12),
+                    width: hp(12),
+                    // tintColor: 'white',
+                    tintColor: crownTintColor,
+                    left: 15,
+                  }}
+                />
+              )}
+            </>
+          )}
 
           <View style={styles.overlayContainer}>
             <TouchableOpacity
               onPress={() => {
-                if (item?.userShortListDetails) {
+                if (item?.userShortListDetails?.id) {
                   // If the user is already in the shortlist, remove them
-                  removeFromShortlist(item.userShortListDetails._id);
+                  removeFromShortlist(item.userShortListDetails.id);
                 } else {
                   // If the user is not in the shortlist, add them
                   addToShortlist(item._id);
@@ -363,16 +696,16 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
           <View style={{alignItems: 'center'}}>
             <Text style={styles.itemText}>
-              {firstName} {lastName}
+              {firstName || name} {lastName}
             </Text>
 
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.nameDetailTextStyle}>
-                {item?.defaultFields?.age} yrs,
+                {item?.age || 'N/A'} yrs,
               </Text>
               <Text style={styles.nameDetailTextStyle}>
                 {' '}
-                {item?.defaultFields?.height}
+                {item?.height || 'N/A'}
               </Text>
             </View>
 
@@ -397,8 +730,15 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
               <TouchableOpacity
                 onPress={() => {
-                  OnsendRequestedSend(item);
-                  handleRequestAction(item, item?.friendsDetails?._id); // Call the new function
+                  const status = item?.friendsDetails?.status;
+
+                  if (status === 'requested') {
+                    // If already requested, allow removing the request
+                    handleRequestAction(item, item?.friendsDetails?._id);
+                  } else {
+                    // Otherwise, send a new friend request
+                    OnsendRequestedSend(item);
+                  }
                 }}>
                 <Image
                   source={friendIconSource}
@@ -512,19 +852,89 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       {/*    }}*/}
       {/*  />*/}
       {/*) :*/}
-      {users.length > 0 ? (
-        <FlatList
-          data={users}
-          keyExtractor={(item, index) => String(index)} // Use a unique key or index for now
-          renderItem={renderItem}
-          horizontal // Make the FlatList horizontal
-          showsHorizontalScrollIndicator={false} // Optionally hide the horizontal scroll indicator
-          contentContainerStyle={styles.listContainer} // Optional styling for the list
-        />
-      ) : (
-        // <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>
-        //   No Premium Matches Found.............................
-        // </Text>
+      {/*{users.length > 0 ? (*/}
+      {/*  <FlatList*/}
+      {/*    data={users}*/}
+      {/*    keyExtractor={(item, index) => String(index)} // Use a unique key or index for now*/}
+      {/*    renderItem={renderItem}*/}
+      {/*    horizontal // Make the FlatList horizontal*/}
+      {/*    showsHorizontalScrollIndicator={false} // Optionally hide the horizontal scroll indicator*/}
+      {/*    contentContainerStyle={styles.listContainer} // Optional styling for the list*/}
+      {/*  />*/}
+      {/*) : (*/}
+      {/*  // <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>*/}
+      {/*  //   No Premium Matches Found.............................*/}
+      {/*  // </Text>*/}
+      {/*  <FlatList*/}
+      {/*    data={[1, 1, 1, 1]}*/}
+      {/*    horizontal={true}*/}
+      {/*    showsHorizontalScrollIndicator={false}*/}
+      {/*    renderItem={() => {*/}
+      {/*      return (*/}
+      {/*        <View*/}
+      {/*          style={{*/}
+      {/*            width: 120,*/}
+      {/*            height: 200,*/}
+      {/*            borderRadius: 10,*/}
+      {/*            // backgroundColor: 'orange',*/}
+      {/*          }}>*/}
+      {/*          <View*/}
+      {/*            style={{*/}
+      {/*              width: 100,*/}
+      {/*              height: 170,*/}
+      {/*              backgroundColor: '#9e9e9e',*/}
+      {/*              opacity: 0.4,*/}
+      {/*              alignItems: 'center',*/}
+      {/*              borderRadius: 10,*/}
+      {/*            }}>*/}
+      {/*            <ShimmerPlaceholder*/}
+      {/*              style={{*/}
+      {/*                width: '80%',*/}
+      {/*                height: 80,*/}
+      {/*                backgroundColor: 'black',*/}
+      {/*                marginTop: 10,*/}
+      {/*                borderRadius: 10,*/}
+      {/*              }}*/}
+      {/*            />*/}
+      {/*            <ShimmerPlaceholder*/}
+      {/*              style={{*/}
+      {/*                width: '60%',*/}
+      {/*                height: 10,*/}
+      {/*                backgroundColor: 'black',*/}
+      {/*                marginTop: 30,*/}
+      {/*              }}*/}
+      {/*            />*/}
+      {/*            <View*/}
+      {/*              style={{*/}
+      {/*                flexDirection: 'row',*/}
+      {/*                justifyContent: 'space-between',*/}
+      {/*                marginTop: 12,*/}
+      {/*              }}>*/}
+      {/*              <ShimmerPlaceholder*/}
+      {/*                style={{*/}
+      {/*                  width: 30,*/}
+      {/*                  height: 15,*/}
+      {/*                  backgroundColor: 'black',*/}
+      {/*                  borderRadius: 25,*/}
+      {/*                }}*/}
+      {/*              />*/}
+      {/*              <ShimmerPlaceholder*/}
+      {/*                style={{*/}
+      {/*                  width: 30,*/}
+      {/*                  height: 15,*/}
+      {/*                  backgroundColor: 'black',*/}
+      {/*                  borderRadius: 25,*/}
+      {/*                  marginLeft: 15,*/}
+      {/*                }}*/}
+      {/*              />*/}
+      {/*            </View>*/}
+      {/*          </View>*/}
+      {/*        </View>*/}
+      {/*      );*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*)}*/}
+      {loading ? (
         <FlatList
           data={[1, 1, 1, 1]}
           horizontal={true}
@@ -533,9 +943,13 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             return (
               <View
                 style={{
-                  width: 120,
+                  // width: 120,
+                  // height: 200,
+                  width: 115,
                   height: 200,
                   borderRadius: 10,
+                  marginRight: 5,
+                  marginTop: 15,
                   // backgroundColor: 'orange',
                 }}>
                 <View
@@ -593,6 +1007,19 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             );
           }}
         />
+      ) : users.length > 0 ? (
+        <FlatList
+          data={users}
+          keyExtractor={(item, index) => String(index)} // Use a unique key or index for now
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>
+          No Premium Matches Found
+        </Text>
       )}
 
       <Toast config={toastConfigs} />

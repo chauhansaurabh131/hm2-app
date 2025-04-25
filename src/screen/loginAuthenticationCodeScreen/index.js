@@ -108,11 +108,18 @@ const LoginAuthenticationCodeScreen = () => {
   const onVerifyPress = () => {
     setIsLoading(true);
     dispatch(
-      login({email, password, twoFactorCode: otp.join('')}, () => {
-        // dispatch(changeStack());
-        setIsLoading(false);
-        failureCallback();
-      }),
+      login(
+        {email, password, twoFactorCode: otp.join('')},
+        () => {
+          dispatch(changeStack());
+          setIsLoading(false);
+          failureCallback();
+        },
+        () => {
+          setIsLoading(false);
+          failureCallback();
+        },
+      ),
     );
   };
 

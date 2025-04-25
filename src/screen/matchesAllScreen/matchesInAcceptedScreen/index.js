@@ -15,7 +15,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
 import LinearGradient from 'react-native-linear-gradient';
-import {hp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import {useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import {colors} from '../../../utils/colors';
@@ -27,6 +27,7 @@ import {
 } from '../../../actions/homeActions';
 import axios from 'axios';
 import {style} from './style';
+import ProfileAvatar from '../../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -96,7 +97,7 @@ const MatchesInAcceptedScreen = () => {
         console.log('No data found for this page.');
         setHasMoreData(false);
       } else {
-        console.log('Fetched data:', newData); // Log fetched data
+        // console.log('Fetched data:', newData); // Log fetched data
         setData(prevData => [...prevData, ...newData]);
       }
     } catch (error) {
@@ -127,9 +128,7 @@ const MatchesInAcceptedScreen = () => {
     try {
       const response = await axios.post(
         'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-        {
-          shortlistId: shortlistId,
-        },
+        {shortlistId},
         {
           headers: {
             'Content-Type': 'application/json',
@@ -138,17 +137,29 @@ const MatchesInAcceptedScreen = () => {
         },
       );
       console.log('Shortlist created successfully:', response.data);
+
+      // Correctly update nested friendList
+      setData(prevData =>
+        prevData.map(user =>
+          user?.friendList?._id === shortlistId
+            ? {
+                ...user,
+                friendList: {
+                  ...user.friendList,
+                  userShortListDetails: response.data.data,
+                },
+              }
+            : user,
+        ),
+      );
       ShowToast();
-      return response.data; // Return the response to handle it in the caller
     } catch (error) {
       console.error('Error adding to shortlist:', error);
       Alert.alert('Error', 'Failed to add to shortlist.');
-      throw error; // Re-throw the error to handle it in the caller
     }
   };
 
   const removeFromShortlist = async shortlistId => {
-    console.log(' === removeFromShortlist ===> ', shortlistId);
     try {
       const response = await axios.delete(
         `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
@@ -158,64 +169,26 @@ const MatchesInAcceptedScreen = () => {
           },
         },
       );
-      console.log('Shortlist removed successfully:', response.data);
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      setData(prevData =>
+        prevData.map(user =>
+          user.friendList?.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                friendList: {
+                  ...user.friendList,
+                  userShortListDetails: {}, // or null
+                },
+              }
+            : user,
+        ),
+      );
       RemoveShortlisted();
     } catch (error) {
       console.error('Error removing from shortlist:', error);
       Alert.alert('Error', 'Failed to remove from shortlist.');
-      throw error; // Re-throw the error to handle it in the caller
-    }
-  };
-
-  const handleShortListPress = async item => {
-    const shortList = item?.friendList?.shortlistData;
-
-    try {
-      if (shortList) {
-        // Remove from shortlist
-        const shortlistId = shortList?._id || shortList[0]?._id; // Use the correct shortlist ID
-        console.log(' === shortList___ ===> ', shortList);
-        await removeFromShortlist(shortlistId);
-
-        // Update the state to reflect removal
-        setData(prevData =>
-          prevData.map(existingItem => {
-            if (existingItem?.friendList?._id === item?.friendList?._id) {
-              return {
-                ...existingItem,
-                friendList: {
-                  ...existingItem.friendList,
-                  shortlistData: null, // Set to null after removal
-                },
-              };
-            }
-            return existingItem;
-          }),
-        );
-      } else {
-        // Add to shortlist
-        const response = await addToShortlist(item?.friendList?._id);
-        const newShortlistId = response?.data?.id; // Extract the ID from the API response
-
-        // Update the state to reflect addition
-        setData(prevData =>
-          prevData.map(existingItem => {
-            if (existingItem?.friendList?._id === item?.friendList?._id) {
-              return {
-                ...existingItem,
-                friendList: {
-                  ...existingItem.friendList,
-                  shortlistData: [{_id: newShortlistId}], // Update with actual ID
-                },
-              };
-            }
-            return existingItem;
-          }),
-        );
-      }
-    } catch (error) {
-      console.error('Error handling shortlist press:', error);
-      Alert.alert('Error', 'An error occurred while updating the shortlist.');
     }
   };
 
@@ -271,7 +244,6 @@ const MatchesInAcceptedScreen = () => {
 
   // COPY ID FUNCTION
   const onCopyIdPress = async selectedUniqueId => {
-    console.log(' === selectedUniqueId ===> ', selectedUniqueId);
     await Clipboard.setString(selectedUniqueId);
     sheetRef.current.close();
     CopyId();
@@ -297,8 +269,6 @@ const MatchesInAcceptedScreen = () => {
 
     sheetRef.current.close();
 
-    console.log(' === onSendMessagePress ===> ', userData);
-
     navigation.navigate('ChatUserScreen', {
       userData,
     });
@@ -314,7 +284,8 @@ const MatchesInAcceptedScreen = () => {
     dispatch(
       accepted_Decline_Request(
         {
-          user: allDataShare?.friendList?._id,
+          // user: allDataShare?.friendList?._id,
+          user: allDataShare?.lastInitiatorUser,
           request: allDataShare?._id,
           status: 'removed',
         },
@@ -509,6 +480,33 @@ const MatchesInAcceptedScreen = () => {
   const renderAccptedUserItem = ({item}) => {
     const AllDetailsPass = item;
 
+    const hasValidImage =
+      item?.friendList?.profilePic &&
+      item?.friendList?.profilePic !== 'null' &&
+      item?.friendList?.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item?.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const planName = item?.friendList?.subscriptionDetails?.selectedPlan
+      ? item?.friendList?.subscriptionDetails?.selectedPlan
+          .charAt(0)
+          .toUpperCase() +
+        item?.friendList?.subscriptionDetails?.selectedPlan
+          .slice(1)
+          .toLowerCase()
+      : '';
+
+    const {selectedPlan, status} = item?.friendList?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
     const userAllImage = Array.isArray(item.friendList?.userProfilePic)
       ? item.friendList?.userProfilePic.map(pic => pic.url)
       : [];
@@ -575,54 +573,6 @@ const MatchesInAcceptedScreen = () => {
       sheetRef.current.open();
     };
 
-    // const handlePress = () => {
-    //   console.log(' === item........... ===> ', item);
-    //   const matchesUserData = {
-    //     userAllImage,
-    //     profileImage,
-    //     // birthTime,
-    //     currentCity,
-    //     // JobTittle,
-    //     currentCountry,
-    //     age,
-    //     gender: item?.gender,
-    //     height: item?.height,
-    //     cast: item?.cast,
-    //     firstName: item?.firstName,
-    //     lastName: item?.lastName,
-    //     motherTongue: item?.motherTongue,
-    //     about: item?.writeBoutYourSelf,
-    //     religion: item?.religion,
-    //     dateOfBirth: item?.dateOfBirth,
-    //     currentResidenceAddress: item?.address?.currentResidenceAddress,
-    //     originResidenceAddress: item?.address?.originResidenceAddress,
-    //     originCountry: item?.address?.originCountry,
-    //     originCity: item?.address?.originCity,
-    //     mobileNumber: item?.mobileNumber,
-    //     homeMobileNumber: item?.homeMobileNumber,
-    //     email: item?.email,
-    //     degree: item?.userEducation?.degree,
-    //     collage: item?.userEducation?.collage,
-    //     educationCity: item?.userEducation?.city,
-    //     educationState: item?.userEducation?.state,
-    //     educationCountry: item?.userEducation?.country,
-    //     Designation: item?.userProfessional?.jobTitle,
-    //     companyName: item?.userProfessional?.companyName,
-    //     jobType: item?.userProfessional?.jobType,
-    //     currentSalary: item?.userProfessional?.currentSalary,
-    //     workCity: item?.userProfessional?.workCity,
-    //     workCountry: item?.userProfessional?.workCountry,
-    //     hobbies: item?.hobbies,
-    //     matchPercentage: item?.matchPercentage,
-    //     userLikeDetails: item?.userLikeDetails,
-    //   };
-    //
-    //   // console.log('User Data:', matchesUserData);
-    //
-    //   // Navigate to UserDetailsScreen
-    //   navigation.navigate('UserDetailsScreen', {matchesUserData});
-    // };
-
     const handlePress = items => {
       // console.log(' === handlePress ===> ', item);
 
@@ -636,25 +586,52 @@ const MatchesInAcceptedScreen = () => {
       // navigation.navigate('Abc', {matchesUserData});
     };
 
-    const starIconSource = item.friendList?.shortlistData
-      ? icons.black_check_icon // Check icon if shortlisted
-      : icons.black_start_icon; // Star icon if not shortlisted
+    const starIconSource = item?.friendList?.userShortListDetails?.id
+      ? icons.black_check_icon
+      : icons.black_start_icon;
 
     return (
-      <View style={{marginHorizontal: 17}}>
+      <View style={style.renderContainer}>
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
             /* navigation.navigate('UserDetailsScreen'); */
           }}>
           <View>
-            <Image
-              source={
-                profileImage ? {uri: profileImage} : images.empty_male_Image
-              }
-              style={style.userImageStyle}
-              resizeMode={'cover'}
-            />
+            {/*<Image*/}
+            {/*  source={*/}
+            {/*    profileImage ? {uri: profileImage} : images.empty_male_Image*/}
+            {/*  }*/}
+            {/*  style={style.userImageStyle}*/}
+            {/*  resizeMode={'cover'}*/}
+            {/*/>*/}
+
+            {hasValidImage ? (
+              <>
+                <Image
+                  source={{uri: item?.friendList?.profilePic}}
+                  style={style.userImageStyle}
+                />
+                {profilePrivacy && (
+                  <Image
+                    source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                    style={style.logoImg}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <ProfileAvatar
+                  firstName={
+                    item?.friendList?.firstName || item?.friendList?.name
+                  }
+                  lastName={item?.friendList?.lastName}
+                  textStyle={style.userImageStyle}
+                  profileTexts={style.profileAvatarText}
+                />
+              </>
+            )}
+
             <LinearGradient
               colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
               style={style.gradient}
@@ -670,9 +647,18 @@ const MatchesInAcceptedScreen = () => {
                 onPress={() => {
                   handlePress(item);
                 }}>
-                <Text style={style.userNameTextStyle}>
-                  {firstName || name} {lastName}
-                </Text>
+                <View style={style.renderNameContainer}>
+                  <Text style={style.userNameTextStyle}>
+                    {firstName || name} {lastName}
+                  </Text>
+
+                  {subPlan && (
+                    <View style={style.subPlanCon}>
+                      <Image source={icons.crownIcon} style={style.crownImg} />
+                      <Text style={style.planNameText}>{planName}</Text>
+                    </View>
+                  )}
+                </View>
 
                 <View
                   style={[
@@ -730,7 +716,15 @@ const MatchesInAcceptedScreen = () => {
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => handleShortListPress(item)}
+                    onPress={() => {
+                      if (item?.friendList?.userShortListDetails?.id) {
+                        removeFromShortlist(
+                          item?.friendList?.userShortListDetails?.id,
+                        );
+                      } else {
+                        addToShortlist(item?.friendList?._id);
+                      }
+                    }}
                     activeOpacity={0.5}
                     style={style.starIconContainer}>
                     <Image source={starIconSource} style={style.starIcon} />
@@ -834,7 +828,7 @@ const MatchesInAcceptedScreen = () => {
       {/*//THREE DOT BOTTOM SHEET OPEN*/}
       <RBSheet
         ref={sheetRef}
-        height={hp(310)} // Height of the bottom sheet
+        height={hp(430)} // Height of the bottom sheet
         // openDuration={250} // Duration of the opening animation
         closeOnDragDown={true} // Allow closing the sheet by dragging it down
         customStyles={{
@@ -860,32 +854,6 @@ const MatchesInAcceptedScreen = () => {
 
             <TouchableOpacity
               onPress={() => {
-                handleBlockProfilePress(blockedFriendId);
-              }}
-              style={style.threeDotBottomSheetContainers}>
-              <Image
-                source={icons.block_icon}
-                style={style.threeDotBottomSheetIcon}
-              />
-              <Text style={style.threeDotBottomSheetTittleText}>
-                Block {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={openBottomSheet}
-              style={style.threeDotBottomSheetContainers}>
-              <Image
-                source={icons.report_icon}
-                style={style.threeDotBottomSheetIcon}
-              />
-              <Text style={style.threeDotBottomSheetTittleText}>
-                Report this profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
               style={style.threeDotBottomSheetContainers}>
@@ -898,18 +866,62 @@ const MatchesInAcceptedScreen = () => {
               </Text>
             </TouchableOpacity>
 
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={style.threeDotBottomSheetContainers}>
+              <Image
+                source={icons.new_report_icon}
+                style={[style.threeDotBottomSheetIcon, {top: -8}]}
+              />
+              <View>
+                <Text style={style.threeDotBottomSheetTittleText}>Report</Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => {
-                onSendMessagePress(allDataShare);
+                handleBlockProfilePress(blockedFriendId);
               }}
               style={style.threeDotBottomSheetContainers}>
               <Image
-                source={icons.send_message_icon}
-                style={style.threeDotBottomSheetIcon}
+                source={icons.block_icon}
+                style={[style.threeDotBottomSheetIcon, {top: -8}]}
               />
-              <Text style={style.threeDotBottomSheetTittleText}>
-                Send Message
-              </Text>
+
+              <View>
+                <Text style={style.threeDotBottomSheetTittleText}>
+                  Block {selectedFirstName}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  You can't contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -919,9 +931,59 @@ const MatchesInAcceptedScreen = () => {
               style={style.threeDotBottomSheetContainers}>
               <Image
                 source={icons.unFriend_icon}
-                style={style.threeDotBottomSheetIcon}
+                style={[style.threeDotBottomSheetIcon, {top: -8}]}
               />
-              <Text style={style.threeDotBottomSheetTittleText}>Unfriend</Text>
+
+              <View>
+                <Text style={style.threeDotBottomSheetTittleText}>
+                  Unfriend
+                </Text>
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  This user will be permanently deleted.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={() => {
+                onSendMessagePress(allDataShare);
+              }}
+              style={style.threeDotBottomSheetContainers}>
+              <Image
+                source={icons.send_message_icon}
+                style={[style.threeDotBottomSheetIcon, {top: -8}]}
+              />
+
+              <View>
+                <Text style={style.threeDotBottomSheetTittleText}>
+                  Send Message
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Send a direct message.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>

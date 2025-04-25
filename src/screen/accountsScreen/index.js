@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -16,10 +17,12 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import axios from 'axios';
 
 const AccountsScreen = ({navigation}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [kycData, setKycData] = useState(null); // State to hold KYC data
+  const [planData, setPlanData] = useState(null);
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
@@ -37,8 +40,41 @@ const AccountsScreen = ({navigation}) => {
     setTopModalVisible(!topModalVisible);
   };
 
-  const openTopSheetModal = () => {
-    toggleModal();
+  useEffect(() => {
+    const fetchPlanData = async () => {
+      try {
+        const token = user?.tokens?.access?.token;
+        if (token) {
+          const response = await axios.get(
+            'https://stag.mntech.website/api/v1/user/user/checkPlan',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          setPlanData(response.data);
+          console.log('API Response:', response.data);
+        } else {
+          Alert.alert('Error', 'No access token found.');
+        }
+      } catch (error) {
+        console.error('API Error:', error);
+        Alert.alert('Error', 'Failed to fetch plan data.');
+      } finally {
+        console.log(' === err ===> ');
+      }
+    };
+
+    fetchPlanData();
+  }, []);
+
+  const onPrivacyScreenHandle = () => {
+    if (planData) {
+      navigation.navigate('PrivacyScreen', {planData: planData.data}); // Pass data to Abc screen
+    } else {
+      Alert.alert('Error', 'No plan data available to pass.');
+    }
   };
 
   // Function to fetch KYC details
@@ -217,8 +253,11 @@ const AccountsScreen = ({navigation}) => {
         <TouchableHighlight
           activeOpacity={0.6}
           underlayColor="#F9FBFF"
+          // onPress={() => {
+          //   navigation.navigate('PrivacyScreen');
+          // }}
           onPress={() => {
-            navigation.navigate('PrivacyScreen');
+            onPrivacyScreenHandle();
           }}>
           <View style={{marginHorizontal: 17, marginBottom: 15}}>
             <View

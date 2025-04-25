@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
+  Modal,
   SafeAreaView,
   ScrollView,
   Text,
@@ -15,365 +16,342 @@ import {useNavigation} from '@react-navigation/native';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
-import {hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
 
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import axios from 'axios';
 
-const PrivacyScreen = () => {
+const CustomCheckbox = ({isChecked, onPress}) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        width: hp(20),
+        height: hp(20),
+        borderWidth: 1,
+        borderColor: '#8225AF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+        marginRight: 10,
+        backgroundColor: isChecked ? 'purple' : 'white',
+      }}>
+      {isChecked && (
+        <Text style={{color: 'white', fontSize: 12, fontWeight: 'bold'}}>
+          ✓
+        </Text>
+      )}
+    </TouchableOpacity>
+  );
+};
+
+const PROFILE_TYPES = {
+  PUBLIC: 'publicProfile',
+  PREMIUM: 'premiumProfile',
+  PRIVATE: 'privateProfile',
+};
+
+const PrivacyScreen = ({route}) => {
+  const {planData} = route.params;
+  console.log(' === planData ===> ', planData);
+
+  const [selectedPrivacy, setSelectedPrivacy] = useState('');
+  const [checkedOptions, setCheckedOptions] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
-  console.log(' === var ===> ', user?.user);
+  const privacySetting = user?.user?.privacySetting;
 
-  const apiDispatch = useDispatch();
-
-  const profileMapping = {
-    publicProfile: 'Public Profile',
-    premiumProfile: 'Premium Members Only',
-    privateProfile: 'Private Profile',
-  };
-
-  const mappedProfile = profileMapping[user?.user?.privacySetting];
-
-  const [selectedProfile, setSelectedProfile] = useState(
-    mappedProfile || 'Public Profile',
-  );
-
-  const [selectedPublicVisibility, setSelectedPublicVisibility] =
-    useState('Public');
-
-  const [selectedPremiumVisibility, setSelectedPremiumVisibility] =
-    useState('Public');
-
-  const [selectedPrivateVisibility, setSelectedPrivateVisibility] =
-    useState('Private');
-
-  const [loading, setLoading] = useState(false);
-
-  const bottomSheetRef = useRef(null);
-  const bottomPremiumSheetRef = useRef(null);
-  const bottomPrivateSheetRef = useRef(null);
-
-  // useEffect(() => {
-  //   updateDetails();
-  // }, []);
-
-  useEffect(() => {
-    let formattedVisibility;
-    if (user?.user?.privacySettingCustom?.profilePhotoPrivacy === 'public') {
-      formattedVisibility = 'Public';
-    } else if (
-      user?.user?.privacySettingCustom?.profilePhotoPrivacy === 'private'
-    ) {
-      formattedVisibility = 'Blur Profile Picture';
-    } else if (
-      user?.user?.privacySettingCustom?.profilePhotoPrivacy === 'no-photo'
-    ) {
-      formattedVisibility = 'No Photo';
-    } else if (
-      user?.user?.privacySettingCustom?.profilePhotoPrivacy === 'Premium'
-    ) {
-      formattedVisibility = 'Visible to Premium Members Only';
-    }
-
-    if (selectedProfile === 'Public Profile') {
-      setSelectedPublicVisibility(formattedVisibility || 'Public');
-    } else if (selectedProfile === 'Premium Members Only') {
-      setSelectedPublicVisibility(
-        formattedVisibility || 'Visible to Premium Members Only',
-      );
-    } else if (selectedProfile === 'Private Profile') {
-      setSelectedPublicVisibility(formattedVisibility || 'Public');
-    }
-  }, [selectedProfile]);
-
-  useEffect(() => {
-    let formattedPhoto;
-    if (user?.user?.privacySettingCustom?.photoGallery === 'public') {
-      formattedPhoto = 'Public';
-    } else if (user?.user?.privacySettingCustom?.photoGallery === 'private') {
-      formattedPhoto = 'Private';
-    } else if (user?.user?.privacySettingCustom?.photoGallery === 'Premium') {
-      formattedPhoto = 'Visible to Premium Members Only';
-    }
-
-    if (selectedProfile === 'Public Profile') {
-      setSelectedPremiumVisibility(formattedPhoto || 'Public');
-    } else if (selectedProfile === 'Private Profile') {
-      setSelectedPremiumVisibility(formattedPhoto || 'private');
-    } else if (selectedProfile === 'Premium Members Only') {
-      setSelectedPremiumVisibility(
-        formattedPhoto || 'Visible to Premium Members Only',
-      );
-    }
-  }, [selectedProfile]);
-
-  useEffect(() => {
-    let formattedContect;
-    if (user?.user?.privacySettingCustom?.contact === 'private') {
-      formattedContect = 'Private';
-    } else if (
-      user?.user?.privacySettingCustom?.contact === 'Premium Members Only'
-    ) {
-      formattedContect = 'Visible to Premium Members Only';
-    }
-
-    if (selectedProfile === 'Premium Members Only') {
-      setSelectedPrivateVisibility(formattedContect || 'Premium Members Only');
-    } else {
-      setSelectedPrivateVisibility(formattedContect || 'Private');
-    }
-  }, [selectedProfile]);
-
-  const onSavePress = async () => {
-    setLoading(true);
-    const profileMapping = {
-      'Public Profile': 'publicProfile',
-      'Premium Members Only': 'premiumProfile',
-      'Private Profile': 'privateProfile',
-    };
-
-    const mappedProfile = profileMapping[selectedProfile];
-
-    let formattedVisibilitys;
-    if (selectedPublicVisibility === 'Public') {
-      formattedVisibilitys = 'public';
-    } else if (selectedPublicVisibility === 'Blur Profile Picture') {
-      formattedVisibilitys = 'private';
-    } else if (selectedPublicVisibility === 'No Photo') {
-      formattedVisibilitys = 'no-photo';
-    } else if (selectedPublicVisibility === 'Visible to Premium Members Only') {
-      formattedVisibilitys = 'premium';
-    }
-
-    let formattedPhotoGallery;
-    if (selectedPremiumVisibility === 'Public') {
-      formattedPhotoGallery = 'public';
-    } else if (selectedPremiumVisibility === 'Private') {
-      formattedPhotoGallery = 'private';
-    } else if (
-      selectedPremiumVisibility === 'Visible to Premium Members Only'
-    ) {
-      formattedPhotoGallery = 'premium';
-    }
-
-    let formattedContact;
-    if (selectedPrivateVisibility === 'Private') {
-      formattedContact = 'private';
-    } else if (
-      selectedPrivateVisibility === 'Visible to Premium Members Only'
-    ) {
-      formattedContact = 'premium';
-    }
-
-    // Define the profile data
-    const profileData = {
-      publicProfile: [
-        'privacySettingCustom',
-        'profilePic',
-        'userProfilePic',
-        'userProfileVideo',
-        'age',
-        'firstName',
-        'lastName',
-        'dateOfBirth',
-        'birthTime',
-        'religion',
-        'caste',
-        'height',
-        'weight',
-        'displayName',
-        'name',
-        'randomId',
-        'maritalStatus',
-        'userEducation',
-        'userProfessional',
-        'hobbies',
-        'userPartnerDetails',
-        'homeMobileNumber',
-        'mobileNumber',
-        'email',
-      ],
-      privateProfile: [
-        'privacySettingCustom',
-        'profilePic',
-        'userProfilePic',
-        'userProfileVideo',
-        'age',
-        'dateOfBirth',
-        'birthTime',
-        'religion',
-        'caste',
-        'height',
-        'weight',
-        'displayName',
-        'name',
-        'randomId',
-        'maritalStatus',
-        'userEducation',
-        'userProfessional',
-        'hobbies',
-        'userPartnerDetails',
-        'homeMobileNumber',
-        'mobileNumber',
-        'email',
-      ],
-      premiumProfile: [
-        'privacySettingCustom',
-        'profilePic',
-        'userProfilePic',
-        'userProfileVideo',
-        'age',
-        'firstName',
-        'lastName',
-        'dateOfBirth',
-        'birthTime',
-        'religion',
-        'caste',
-        'height',
-        'weight',
-        'displayName',
-        'name',
-        'randomId',
-        'maritalStatus',
-        'userEducation',
-        'userProfessional',
-        'hobbies',
-        'userPartnerDetails',
-        'homeMobileNumber',
-        'mobileNumber',
-        'email',
-      ],
-    };
-
-    // Conditionally remove `profilePic` based on `selectedPublicVisibility`
-    // if (
-    //   selectedPublicVisibility === 'Blur Profile Picture' ||
-    //   selectedPublicVisibility === 'No Photo'
-    // ) {
-    //   // Remove profilePic from all profiles if the condition matches
-    //   Object.keys(profileData).forEach(profileKey => {
-    //     profileData[profileKey] = profileData[profileKey].filter(
-    //       item => item !== 'profilePic',
-    //     );
-    //   });
-    // }
-
-    // Conditionally remove `userProfilePic` based on `selectedPremiumVisibility`
-    if (selectedPremiumVisibility === 'Private') {
-      // Remove userProfilePic if Premium visibility is Private
-      Object.keys(profileData).forEach(profileKey => {
-        profileData[profileKey] = profileData[profileKey].filter(
-          item => item !== 'userProfilePic' && item !== 'userProfileVideo',
-        );
-      });
-    }
-
-    if (selectedPrivateVisibility === 'Private') {
-      // Remove 'homeMobileNumber', 'mobileNumber', and 'email' if Private visibility is selected
-      Object.keys(profileData).forEach(profileKey => {
-        profileData[profileKey] = profileData[profileKey].filter(
-          item =>
-            item !== 'homeMobileNumber' &&
-            item !== 'mobileNumber' &&
-            item !== 'email',
-        );
-      });
-    }
-
-    // console.log(
-    //   ' === selectedPublicVisibility ===> ',
-    //   selectedPublicVisibility,
-    // );
-
-    // Create the request body dynamically
-    const requestBody = {
-      privacySetting: mappedProfile,
-      privacySettingCustom: {
-        profilePhotoPrivacy: formattedVisibilitys,
-        photoGallery: formattedPhotoGallery,
-        contact: formattedContact,
-        [mappedProfile]: profileData[mappedProfile], // Only include the selected profile's data
-      },
-    };
-
-    try {
-      // Uncomment below to call the API
-      const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/user/update-user',
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify(requestBody),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error('Error updating user information');
-      }
-
-      console.log(' === response__ ===> ', response);
-      const data = await response.json();
-      console.log('API response:', data);
-
-      apiDispatch(updateDetails());
-      setLoading(false);
-
-      // console.log(' === requestBody ===> ', requestBody);
-    } catch (error) {
-      console.error('Error calling API:', error);
-    }
-  };
-
-  const profiles = [
-    {
-      title: 'Public Profile',
-      description: 'Visible to all members. Contact will be hidden',
-    },
-    {
-      title: 'Premium Members Only',
-      description:
-        'Name, photos, contact, and address are hidden \nfrom unregistered members.',
-    },
-    {title: 'Private Profile', description: 'Visible on accepted.'},
-  ];
-
-  const visibilityPublicOptions = [
-    {value: 'Public', label: 'Anyone can view it'},
-    {value: 'Blur Profile Picture', label: 'Private'},
-    {
-      value: 'Visible to Premium Members Only',
-      label: 'Visible to Premium Members Only',
-    },
-    {value: 'No Photo', label: 'No Photo'},
-  ];
-
-  const visibilityPremiumOptions = [
-    {value: 'Public', label: 'Anyone can view it'},
-    {
-      value: 'Visible to Premium Members Only',
-      label: 'Visible to Premium Members Only',
-    },
-    {value: 'Private', label: 'Private'},
-  ];
-
-  const visibilityPrivateOptions = [
-    'Private',
-    'Visible to Premium Members Only',
-  ];
   const navigation = useNavigation();
+  const apiDispatch = useDispatch();
 
   const topModalBottomSheetRef = useRef(null);
 
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
+  };
+
+  useEffect(() => {
+    if (privacySetting) {
+      setSelectedPrivacy(privacySetting);
+    }
+
+    if (
+      (privacySetting === PROFILE_TYPES.PUBLIC ||
+        privacySetting === PROFILE_TYPES.PRIVATE) &&
+      user?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true
+    ) {
+      setCheckedOptions(prevState => ({
+        ...prevState,
+        [PROFILE_TYPES.PUBLIC]: ['Photos visible on accept'],
+      }));
+    } else {
+      setCheckedOptions(prevState => ({
+        ...prevState,
+        [PROFILE_TYPES.PUBLIC]: [],
+      }));
+    }
+
+    if (privacySetting === PROFILE_TYPES.PREMIUM) {
+      const customSettings = user?.user?.privacySettingCustom || {};
+      const newCheckedOptions = {};
+
+      if (customSettings.profilePhotoPrivacy) {
+        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
+          'Hide Photos for Everyone.',
+        ];
+      }
+
+      if (customSettings.address) {
+        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
+          ...(newCheckedOptions[PROFILE_TYPES.PREMIUM] || []),
+          'Hide Address Info for Everyone.',
+        ];
+      }
+
+      if (customSettings.contact) {
+        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
+          ...(newCheckedOptions[PROFILE_TYPES.PREMIUM] || []),
+          'Hide Contact Info for Everyone.',
+        ];
+      }
+
+      if (customSettings.professional) {
+        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
+          ...(newCheckedOptions[PROFILE_TYPES.PREMIUM] || []),
+          'Hide Professional Info for Everyone.',
+        ];
+      }
+
+      setCheckedOptions(prevState => ({
+        ...prevState,
+        [PROFILE_TYPES.PREMIUM]: newCheckedOptions[PROFILE_TYPES.PREMIUM] || [],
+      }));
+    }
+  }, [privacySetting, user]);
+
+  const handleCheckboxToggle = (value, label) => {
+    setCheckedOptions(prevState => {
+      const newCheckedOptions = {...prevState};
+
+      if (newCheckedOptions[value]?.includes(label)) {
+        newCheckedOptions[value] = newCheckedOptions[value].filter(
+          item => item !== label,
+        );
+      } else {
+        newCheckedOptions[value] = [...(newCheckedOptions[value] || []), label];
+      }
+
+      return newCheckedOptions;
+    });
+  };
+
+  const handleSave = async () => {
+    const token = user?.tokens?.access?.token; // Replace with the actual token
+    const apiUrl = 'https://stag.mntech.website/api/v1/user/user/update-user';
+
+    setLoading(true);
+
+    let privacySettingCustom = {
+      profilePhotoPrivacy:
+        checkedOptions[selectedPrivacy]?.includes(
+          'Hide Photos for Everyone.',
+        ) || false,
+      showPhotoToFriendsOnly:
+        checkedOptions[selectedPrivacy]?.includes('Photos visible on accept') ||
+        false,
+      address:
+        checkedOptions[selectedPrivacy]?.includes(
+          'Hide Address Info for Everyone.',
+        ) || false,
+      contact:
+        checkedOptions[selectedPrivacy]?.includes(
+          'Hide Contact Info for Everyone.',
+        ) || false,
+      professional:
+        checkedOptions[selectedPrivacy]?.includes(
+          'Hide Professional Info for Everyone.',
+        ) || false,
+    };
+
+    // Add only the selected profile type
+    if (selectedPrivacy === 'publicProfile') {
+      privacySettingCustom.publicProfile = [
+        'profilePic',
+        'userProfilePic',
+        'userProfileVideo',
+        'firstName',
+        'lastName',
+        'dateOfBirth',
+        'birthTime',
+        'religion',
+        'caste',
+        'height',
+        'weight',
+        'displayName',
+        'name',
+        'randomId',
+        'maritalStatus',
+        'userEducation',
+        'userProfessional',
+        'hobbies',
+        'userPartnerDetails',
+        'userUniqueId',
+        'privacySetting',
+        'motherTongue',
+        'isUserActive',
+        'age',
+        'maritalStatus',
+        'writeBoutYourSelf',
+        'gender',
+        'address',
+        'privacySettingCustom',
+        'language',
+        'manglikStatus',
+        'gothra',
+        'zodiac',
+      ];
+    } else if (selectedPrivacy === 'privateProfile') {
+      privacySettingCustom.privateProfile = [
+        'profilePic',
+        'userProfilePic',
+        'userProfileVideo',
+        'firstName',
+        'lastName',
+        'dateOfBirth',
+        'birthTime',
+        'religion',
+        'caste',
+        'height',
+        'weight',
+        'displayName',
+        'name',
+        'randomId',
+        'maritalStatus',
+        'userEducation',
+        'userProfessional',
+        'hobbies',
+        'userPartnerDetails',
+        'userUniqueId',
+        'privacySetting',
+        'motherTongue',
+        'isUserActive',
+        'age',
+        'maritalStatus',
+        'writeBoutYourSelf',
+        'gender',
+        'address',
+        'privacySettingCustom',
+        'language',
+        'manglikStatus',
+        'gothra',
+        'zodiac',
+      ];
+      // Automatically set showPhotoToFriendsOnly to true for privateProfile
+      privacySettingCustom.showPhotoToFriendsOnly = true;
+      privacySettingCustom.profilePhotoPrivacy = true;
+    } else if (selectedPrivacy === 'premiumProfile') {
+      privacySettingCustom.premiumProfile = [
+        // 'profilePic',
+        // 'userProfilePic',
+        // 'userProfileVideo',
+        // 'firstName',
+        // 'lastName',
+        // 'dateOfBirth',
+        // 'birthTime',
+        // 'religion',
+        // 'caste',
+        // 'height',
+        // 'weight',
+        // 'displayName',
+        // 'name',
+        // 'randomId',
+        // 'maritalStatus',
+        // 'userEducation',
+        // 'userProfessional',
+        // 'hobbies',
+        // 'userPartnerDetails',
+        // 'privacySetting',
+        'profilePic',
+        'userProfilePic',
+        'userProfileVideo',
+        'firstName',
+        'lastName',
+        'dateOfBirth',
+        'birthTime',
+        'religion',
+        'caste',
+        'height',
+        'weight',
+        'displayName',
+        'name',
+        'randomId',
+        'maritalStatus',
+        'userEducation',
+        'userProfessional',
+        'hobbies',
+        'userPartnerDetails',
+        'userUniqueId',
+        'privacySetting',
+        'motherTongue',
+        'isUserActive',
+        'age',
+        'maritalStatus',
+        'writeBoutYourSelf',
+        'gender',
+        'address',
+        'privacySettingCustom',
+        'language',
+        'manglikStatus',
+        'gothra',
+        'zodiac',
+      ];
+    }
+
+    const payload = {
+      privacySetting: selectedPrivacy,
+      privacySettingCustom: privacySettingCustom,
+    };
+
+    try {
+      const response = await axios.put(apiUrl, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('API Response:', response.data);
+      apiDispatch(updateDetails());
+      setLoading(false);
+
+      // Set the appropriate message based on the selectedPrivacy
+      let message = '';
+      if (selectedPrivacy === PROFILE_TYPES.PUBLIC) {
+        message = 'Profile set to Public.\nChanges are saved.';
+      } else if (selectedPrivacy === PROFILE_TYPES.PREMIUM) {
+        message = 'Profile set to Premier Member only.\nChanges are saved.';
+      } else if (selectedPrivacy === PROFILE_TYPES.PRIVATE) {
+        message = 'Profile set to Private.';
+      }
+
+      setModalMessage(message); // Set the modal message
+      setIsModalVisible(true); // Show the modal
+
+      // alert('Privacy settings updated successfully!');
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      alert('Failed to update privacy settings.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -397,7 +375,9 @@ const PrivacyScreen = () => {
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={style.headingTittleContainer}>
-          <Text style={style.headingCredentialsText}>Privacy setting</Text>
+          <Text style={style.headingCredentialsText}>
+            Select Profile Privacy Option
+          </Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>
@@ -411,329 +391,381 @@ const PrivacyScreen = () => {
 
       <View style={style.underLineHeaderStyle} />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={style.bodyContainer}>
-          <Text style={style.bodyTittle}>Select Profile Privacy Option</Text>
+      <View style={{marginHorizontal: 17, marginTop: hp(17)}}>
+        {[
+          {
+            label: 'Public Profile',
+            labelTwo: 'All info visible except contact & email',
+            defaultText: 'Default',
+            value: PROFILE_TYPES.PUBLIC,
+            extraTexts: ['Photos visible on accept'],
+          },
+          {
+            label: 'Premium Members Only',
+            labelTwo:
+              'Photos, contact will be hidden from unregistered\nmembers.',
+            defaultText: [],
+            value: PROFILE_TYPES.PREMIUM,
+            extraTexts: [
+              'Hide Photos for Everyone.',
+              'Hide Contact Info for Everyone.',
+              'Hide Address Info for Everyone.',
+              'Hide Professional Info for Everyone.',
+            ],
+          },
+          {
+            label: 'Private Profile',
+            labelTwo: 'All information will be hidden.',
+            defaultText: [],
+            value: PROFILE_TYPES.PRIVATE,
+            extraTexts: [],
+          },
+        ].map(option => {
+          const isSelected = selectedPrivacy === option.value;
+          const shouldShowExtraText =
+            isSelected && option.extraTexts.length > 0;
 
-          {profiles.map((profile, index) => {
-            const isSelected = selectedProfile === profile.title;
-            const isDefault = profile.title === 'Public Profile';
+          // const isDisabled =
+          //   privacySetting === 'publicProfile' &&
+          //   option.value === 'premiumProfile';
 
-            return (
+          const isDisabled =
+            option.value === 'premiumProfile' && !planData?.isActive;
+
+          return (
+            <View
+              key={option.value}
+              style={{marginTop: 10, opacity: isDisabled ? 0.5 : 1}}>
               <TouchableOpacity
-                activeOpacity={0.6}
-                key={index}
-                onPress={() => setSelectedProfile(profile.title)}
+                activeOpacity={isDisabled ? 1 : 0.6}
+                onPress={() => !isDisabled && setSelectedPrivacy(option.value)}
                 style={{
-                  borderRadius: 14,
-                  marginTop: index !== 0 ? hp(10) : 10,
-                  height: hp(101),
+                  width: '100%',
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 15,
+                  borderBottomLeftRadius: shouldShowExtraText ? 0 : 15,
+                  borderBottomRightRadius: shouldShowExtraText ? 0 : 15,
+                  overflow: 'hidden',
                 }}>
                 {isSelected ? (
                   <LinearGradient
-                    colors={['#8225AF', '#0F52BA']}
+                    colors={['#0F52BA', '#8225AF']}
                     start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1.1}}
-                    style={style.gradientContainer}>
-                    <View style={style.profileTittleStyle}>
-                      <Text style={style.profileText}>{profile.title}</Text>
+                    end={{x: 1, y: 0.1}}
+                    style={{
+                      padding: 15,
+                      height: 80,
+                      justifyContent: 'center',
+                    }}>
+                    <View style={{position: 'absolute', right: 15, top: 12}}>
+                      <Image
+                        source={icons.white_tran_check_box}
+                        style={{
+                          width: hp(16),
+                          height: hp(16),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: fontSize(14),
+                          lineHeight: hp(18),
+                          fontFamily: fontFamily.poppins500,
+                        }}>
+                        {option.label}
+                      </Text>
 
-                      {isDefault && (
-                        <View style={style.defaultContainer}>
-                          <Text style={style.defaultText}>Default</Text>
+                      {option.label === 'Public Profile' && (
+                        <View
+                          style={{
+                            width: hp(54),
+                            height: hp(18),
+                            borderRadius: 50,
+                            backgroundColor: '#FFFFFF29',
+                            marginLeft: 12,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            top: -1,
+                          }}>
+                          <Text
+                            style={{
+                              color: 'white',
+                              fontSize: fontSize(9),
+                              lineHeight: hp(12),
+                              fontFamily: fontFamily.poppins400,
+                            }}>
+                            {option.defaultText}
+                          </Text>
                         </View>
                       )}
                     </View>
-                    <Text style={style.descriptionText}>
-                      {profile.description}
+                    <Text
+                      style={{
+                        color: 'white',
+                        marginTop: hp(5),
+                        fontSize: fontSize(10),
+                        lineHeight: hp(14),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      {option.labelTwo}
                     </Text>
-
-                    <Image
-                      source={require('../../assets/icons/white_tran_check_box.png')}
-                      style={style.checkIcon}
-                    />
                   </LinearGradient>
                 ) : (
-                  <View style={style.secondProfileTittle}>
-                    <Text style={style.secondProfileTittleText}>
-                      {profile.title}
-                    </Text>
+                  <View
+                    style={{
+                      padding: 15,
+                      height: hp(83),
+                      backgroundColor: '#FAFAFA',
+                      justifyContent: 'center',
+                    }}>
+                    <View style={{position: 'absolute', right: 25}}>
+                      <Image
+                        source={icons.rightSideIcon}
+                        style={{
+                          width: hp(6),
+                          height: hp(11),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
 
-                    <Text style={style.secondDescriptionText}>
-                      {profile.description}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          color: 'black',
+                          fontSize: fontSize(14),
+                          lineHeight: hp(18),
+                          fontFamily: fontFamily.poppins500,
+                        }}>
+                        {option.label}
+                      </Text>
+
+                      {option.label === 'Public Profile' && (
+                        <View
+                          style={{
+                            width: hp(54),
+                            height: hp(18),
+                            borderRadius: 50,
+                            backgroundColor: '#EFF5FF',
+                            marginLeft: 12,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            top: -1,
+                          }}>
+                          <Text
+                            style={{
+                              color: 'black',
+                              fontSize: fontSize(9),
+                              lineHeight: hp(12),
+                              fontFamily: fontFamily.poppins400,
+                            }}>
+                            {option.defaultText}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+
+                    <Text
+                      style={{
+                        color: 'black',
+                        marginTop: hp(5),
+                        fontSize: fontSize(10),
+                        lineHeight: hp(14),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      {option.labelTwo}
                     </Text>
                   </View>
                 )}
               </TouchableOpacity>
-            );
-          })}
-        </View>
 
-        <View style={style.moreSettingContainer}>
-          <Text style={style.moreSettingText}>
-            More Setting for
-            <Text style={{color: colors.black}}> {selectedProfile}</Text>
-          </Text>
-        </View>
-
-        <View style={style.horizontalLine} />
-
-        <View style={style.thirdContainer}>
-          <Text style={style.bodyTittleText}>Profile Photo</Text>
-
-          <TouchableHighlight
-            activeOpacity={0.3}
-            style={style.dataTouchableContainer}
-            underlayColor="#F9FBFF"
-            onPress={() => {
-              bottomSheetRef.current.open();
-            }}>
-            <View style={style.dataTouchableBody}>
-              <View style={style.dataTouchableBodyContainer}>
-                <Text style={style.selectedDataText}>
-                  {selectedPublicVisibility}
-                </Text>
-
-                {selectedPublicVisibility === 'Public' && (
-                  <View style={style.anyOneContainer}>
-                    <Text style={style.anyOneText}>Anyone can view it</Text>
-                  </View>
-                )}
-              </View>
-
-              <Image source={icons.rightSideIcon} style={style.rightSideIcon} />
-            </View>
-          </TouchableHighlight>
-        </View>
-
-        {/* Bottom Sheet */}
-        <RBSheet
-          ref={bottomSheetRef}
-          height={hp(250)}
-          openDuration={250}
-          customStyles={{
-            container: {
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            },
-          }}>
-          <Text style={style.bottomSheetTittle}>Profile Photo Privacy</Text>
-
-          <View style={style.bottomSheetHorizontalLine} />
-
-          <View style={style.bottomSheetBodyContainer}>
-            {visibilityPublicOptions
-              .filter(option => {
-                return !(
-                  (selectedProfile === 'Public Profile' &&
-                    option.value === 'Visible to Premium Members Only') ||
-                  (selectedProfile === 'Premium Members Only' &&
-                    option.value === 'Public') ||
-                  (selectedProfile === 'Private Profile' &&
-                    option.value === 'Visible to Premium Members Only')
-                );
-              })
-              .map((option, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setSelectedPublicVisibility(option.value);
-                    bottomSheetRef.current.close();
-                  }}
-                  style={style.bottomSheetValueContainer}>
-                  <View style={style.bottomSheetValueBody}>
-                    <Text style={style.bottomSheetValueText}>
-                      {option.value}
+              {shouldShowExtraText && !isDisabled && (
+                <LinearGradient
+                  colors={['#0F52BA', '#8225AF']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0.1}}
+                  style={{
+                    padding: 1,
+                    borderBottomLeftRadius: 15,
+                    borderBottomRightRadius: 15,
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: 'white',
+                      padding: 15,
+                      borderBottomLeftRadius: 15,
+                      borderBottomRightRadius: 15,
+                    }}>
+                    <Text
+                      style={{
+                        color: 'black',
+                        marginBottom: hp(12),
+                        fontSize: fontSize(12),
+                        lineHeight: hp(16),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      More Privacy Options
                     </Text>
+                    {option.extraTexts.map((text, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          marginTop: hp(10),
+                        }}
+                        onPress={() =>
+                          text !== 'More Privacy Options.' &&
+                          handleCheckboxToggle(option.value, text)
+                        }
+                        disabled={isDisabled}>
+                        {text !== 'More Privacy Options.' && (
+                          <CustomCheckbox
+                            isChecked={
+                              checkedOptions[option.value]?.includes(text) ||
+                              false
+                            }
+                            onPress={() =>
+                              handleCheckboxToggle(option.value, text)
+                            }
+                          />
+                        )}
+                        <Text
+                          style={{
+                            color: 'black',
+                            fontSize: fontSize(14),
+                            lineHeight: hp(18),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          {text}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
                   </View>
+                </LinearGradient>
+              )}
+            </View>
+          );
+        })}
+      </View>
 
-                  {option.value === 'Public' && (
-                    <View style={style.bottomSheetLabelContainer}>
-                      <Text style={style.bottomSheetLabelText}>
-                        {option.label}
-                      </Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-          </View>
-        </RBSheet>
-
-        <View style={style.horizontalSecondLine} />
-
-        <View style={style.thirdContainer}>
-          <Text style={style.bodyTittleText}>Photo Gallery</Text>
-
-          <TouchableHighlight
-            activeOpacity={0.3}
-            style={style.dataTouchableContainer}
-            underlayColor="#F9FBFF"
-            onPress={() => {
-              bottomPremiumSheetRef.current.open();
+      <Modal
+        visible={isModalVisible}
+        animationType="none"
+        transparent={true}
+        onRequestClose={() => setIsModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              alignItems: 'center',
             }}>
-            <View style={style.dataTouchableBody}>
-              <View style={style.dataTouchableBodyContainer}>
-                <Text style={style.selectedDataText}>
-                  {selectedPremiumVisibility}
+            <Image
+              source={icons.check_gradient_icon}
+              style={{
+                width: hp(34),
+                height: hp(34),
+                resizeMode: 'contain',
+                marginTop: hp(43),
+                marginBottom: hp(30),
+              }}
+            />
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                textAlign: 'center',
+                fontFamily: fontFamily.poppins500,
+                lineHeight: hp(24),
+                color: colors.black,
+                marginBottom: hp(30),
+              }}>
+              {modalMessage}
+            </Text>
+            {/*<TouchableOpacity onPress={() => setIsModalVisible(false)}>*/}
+            {/*  <Text style={{color: '#007BFF', fontSize: 14}}>Close</Text>*/}
+            {/*</TouchableOpacity>*/}
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => setIsModalVisible(false)}>
+              <LinearGradient
+                colors={['#0F52BA', '#8225AF']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.2}}
+                style={{
+                  width: hp(114),
+                  height: hp(50),
+                  borderRadius: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  marginBottom: hp(39),
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Okay
                 </Text>
-
-                {selectedPremiumVisibility === 'Public' && (
-                  <View style={style.anyOneContainer}>
-                    <Text style={style.anyOneText}>Anyone can view it</Text>
-                  </View>
-                )}
-              </View>
-
-              <Image source={icons.rightSideIcon} style={style.rightSideIcon} />
-            </View>
-          </TouchableHighlight>
-        </View>
-
-        {/* Photo Gallery Bottom Sheet */}
-        <RBSheet
-          ref={bottomPremiumSheetRef}
-          height={hp(200)}
-          openDuration={250}
-          customStyles={{
-            container: {
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            },
-          }}>
-          <Text style={style.bottomSheetTittle}>Photo Gallery Privacy</Text>
-
-          <View style={style.bottomSheetHorizontalLine} />
-
-          <View style={style.bottomSheetBodyContainer}>
-            {visibilityPremiumOptions
-              .filter(option => {
-                // Remove options that should be disabled
-                return !(
-                  (selectedProfile === 'Public Profile' &&
-                    option.value === 'Visible to Premium Members Only') ||
-                  (selectedProfile === 'Premium Members Only' &&
-                    option.value === 'Public') ||
-                  (selectedProfile === 'Private Profile' &&
-                    option.value === 'Visible to Premium Members Only')
-                );
-              })
-              .map((option, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setSelectedPremiumVisibility(option.value);
-                    bottomPremiumSheetRef.current.close();
-                  }}
-                  style={style.bottomSheetValueContainer}>
-                  <View style={style.bottomSheetValueBody}>
-                    <Text style={style.bottomSheetValueText}>
-                      {option.value}
-                    </Text>
-                  </View>
-
-                  {option.value === 'Public' && (
-                    <View style={style.bottomSheetLabelContainer}>
-                      <Text style={style.bottomSheetLabelText}>
-                        {option.label}
-                      </Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
-        </RBSheet>
-
-        <View style={style.horizontalLine} />
-
-        <View style={style.thirdContainer}>
-          <Text style={style.bodyTittleText}>Contact</Text>
-
-          <TouchableHighlight
-            activeOpacity={0.3}
-            style={style.dataTouchableContainer}
-            underlayColor="#F9FBFF"
-            onPress={() => bottomPrivateSheetRef.current.open()}>
-            <View style={style.dataTouchableBody}>
-              <View style={style.dataTouchableBodyContainer}>
-                <Text style={style.selectedDataText}>
-                  {selectedPrivateVisibility}
-                </Text>
-
-                {selectedPrivateVisibility === 'Public' && (
-                  <View style={style.anyOneContainer}>
-                    <Text style={style.anyOneText}>Anyone can view it</Text>
-                  </View>
-                )}
-              </View>
-
-              <Image source={icons.rightSideIcon} style={style.rightSideIcon} />
-            </View>
-          </TouchableHighlight>
         </View>
+      </Modal>
 
-        {/* Contact Privacy Bottom Sheet */}
-        <RBSheet
-          ref={bottomPrivateSheetRef}
-          height={hp(180)}
-          openDuration={250}
-          customStyles={{
-            container: {
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            },
-          }}>
-          <Text style={style.bottomSheetTittle}>Contact Privacy</Text>
-
-          <View style={style.bottomSheetHorizontalLine} />
-
-          <View style={style.bottomSheetBodyContainer}>
-            {visibilityPrivateOptions
-              .filter(option => {
-                // Remove options that should be disabled
-                return !(
-                  (selectedProfile === 'Public Profile' &&
-                    option === 'Visible to Premium Members Only') ||
-                  (selectedProfile === 'Premium Members Only' &&
-                    option === 'Public') ||
-                  (selectedProfile === 'Private Profile' &&
-                    option === 'Visible to Premium Members Only')
-                );
-              })
-              .map((option, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setSelectedPrivateVisibility(option);
-                    bottomPrivateSheetRef.current.close();
-                  }}
-                  style={style.bottomSheetValueContainer}>
-                  <Text style={style.bottomSheetValueText}>{option}</Text>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </RBSheet>
-
-        <View style={style.horizontalLine} />
-
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={style.saveButtonContainer}
-          onPress={onSavePress}>
-          <LinearGradient
-            colors={['#0D4EB3', '#9413D0']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0.5}}
-            style={style.saveButtonBody}>
-            {loading ? (
-              <ActivityIndicator size="large" color={colors.white} />
-            ) : (
-              <Text style={style.saveButtonText}>Save Changes</Text>
-            )}
-          </LinearGradient>
-        </TouchableOpacity>
-
-        <View style={{height: hp(30)}} />
-      </ScrollView>
+      <View
+        style={{
+          // marginHorizontal: 17,
+          position: 'absolute',
+          bottom: 26,
+          width: '100%',
+        }}>
+        <View style={{marginHorizontal: 17}}>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
+            <LinearGradient
+              colors={['#0F52BA', '#8225AF']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1.2}}
+              style={{
+                width: '100%',
+                height: hp(44),
+                borderRadius: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+                // marginTop: hp(75),
+              }}>
+              {loading ? (
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text style={{color: 'white'}}>Save Changes</Text>
+              )}
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

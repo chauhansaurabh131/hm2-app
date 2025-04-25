@@ -23,6 +23,9 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import style from '../../matchesScreen/style';
+import ProfileAvatar from '../../../components/letterProfileComponent';
+import axios from 'axios';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const MatchesInSentScreen = () => {
@@ -141,93 +144,166 @@ const MatchesInSentScreen = () => {
     }
   };
 
-  const handleShortListPress = async item => {
-    const shortlistId = item?.shortlistData?._id ?? item?.shortlistData?._id;
-    const userId = item?.friend?._id; // Ensure you're using the correct ID
+  // const handleShortListPress = async item => {
+  //   const shortlistId = item?.shortlistData?._id ?? item?.shortlistData?._id;
+  //   const userId = item?.friendList?._id; // Ensure you're using the correct ID
+  //
+  //   // console.log(' === var ===> ', {item, shortlistId});
+  //
+  //   if (shortlistId) {
+  //     // If the item is already shortlisted, remove it from the shortlist
+  //     try {
+  //       const response = await fetch(
+  //         `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+  //         {
+  //           method: 'DELETE',
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         },
+  //       );
+  //
+  //       const result = await response.json();
+  //
+  //       if (response.ok) {
+  //         // Successfully removed from shortlist
+  //         // Alert.alert('Success', 'Removed from shortlist');
+  //         RemoveShortlisted();
+  //
+  //         // Update the data by removing the shortlistData
+  //         setData(prevData => {
+  //           return prevData.map(dataItem => {
+  //             // console.log(
+  //             //   ' === 111 ===> ',
+  //             //   dataItem.shortlistData?._id,
+  //             //   shortlistId,
+  //             // );
+  //             return dataItem.shortlistData?._id === shortlistId
+  //               ? {...dataItem, shortlistData: null} // Remove shortlistData
+  //               : dataItem;
+  //           });
+  //         });
+  //       } else {
+  //         Alert.alert('Error', 'Failed to remove from shortlist');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error removing from shortlist:', error);
+  //       Alert.alert('Error', 'Failed to remove from shortlist');
+  //     }
+  //   } else {
+  //     // If the item is not shortlisted, create a new shortlist
+  //     try {
+  //       const response = await fetch(
+  //         'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //           body: JSON.stringify({
+  //             shortlistId: userId, // Correctly passing the userId
+  //           }),
+  //         },
+  //       );
+  //
+  //       const result = await response.json();
+  //
+  //       if (response.ok) {
+  //         // Successfully added to shortlist
+  //         // Alert.alert('Success', 'Added to shortlist');
+  //         ShowToast();
+  //         // Update the data with the new shortlist data
+  //         setData(prevData => {
+  //           return prevData.map(dataItem => {
+  //             return dataItem.friendList?._id === userId
+  //               ? {
+  //                   ...dataItem,
+  //                   shortlistData: {_id: result?.data?.id, ...result.data},
+  //                 } // Add the shortlistData
+  //               : dataItem;
+  //           });
+  //         });
+  //       } else {
+  //         Alert.alert('Error', 'Failed to add to shortlist');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error adding to shortlist:', error);
+  //       Alert.alert('Error', 'Failed to add to shortlist');
+  //     }
+  //   }
+  // };
 
-    // console.log(' === var ===> ', {item, shortlistId});
-
-    if (shortlistId) {
-      // If the item is already shortlisted, remove it from the shortlist
-      try {
-        const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+  const addToShortlist = async shortlistId => {
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        {shortlistId},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
           },
+        },
+      );
+      console.log('Shortlist created successfully:', response.data);
+
+      // Update the state immutably and ensure the new shortlist data is associated with the user
+      setData(prevData => {
+        return prevData.map(user =>
+          user?.friendList?._id === shortlistId
+            ? {
+                ...user,
+                friendList: {
+                  ...user.friendList,
+                  userShortListDetails: response.data.data, // Updated shortlist details
+                },
+              }
+            : user,
         );
+      });
 
-        const result = await response.json();
+      ShowToast();
+    } catch (error) {
+      console.error('Error adding to shortlist:', error);
+      Alert.alert('Error', 'Failed to add to shortlist.');
+    }
+  };
 
-        if (response.ok) {
-          // Successfully removed from shortlist
-          // Alert.alert('Success', 'Removed from shortlist');
-          RemoveShortlisted();
-
-          // Update the data by removing the shortlistData
-          setData(prevData => {
-            return prevData.map(dataItem => {
-              // console.log(
-              //   ' === 111 ===> ',
-              //   dataItem.shortlistData?._id,
-              //   shortlistId,
-              // );
-              return dataItem.shortlistData?._id === shortlistId
-                ? {...dataItem, shortlistData: null} // Remove shortlistData
-                : dataItem;
-            });
-          });
-        } else {
-          Alert.alert('Error', 'Failed to remove from shortlist');
-        }
-      } catch (error) {
-        console.error('Error removing from shortlist:', error);
-        Alert.alert('Error', 'Failed to remove from shortlist');
-      }
-    } else {
-      // If the item is not shortlisted, create a new shortlist
-      try {
-        const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-              shortlistId: userId, // Correctly passing the userId
-            }),
+  const removeFromShortlist = async shortlistId => {
+    try {
+      // Call the remove from shortlist API
+      const response = await axios.delete(
+        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
+        },
+      );
+
+      console.log('Shortlist removed successfully:', response.data?.data);
+
+      // Directly update the state to remove the shortlist details without re-fetching data
+      setData(prevData => {
+        return prevData.map(user =>
+          // Ensure you are checking for the correct ID
+          user?.friendList?.userShortListDetails?.id === shortlistId
+            ? {
+                ...user,
+                friendList: {
+                  ...user?.friendList,
+                  userShortListDetails: {}, // Set to null after removal
+                },
+              }
+            : user,
         );
+      });
 
-        const result = await response.json();
-
-        if (response.ok) {
-          // Successfully added to shortlist
-          // Alert.alert('Success', 'Added to shortlist');
-          ShowToast();
-          // Update the data with the new shortlist data
-          setData(prevData => {
-            return prevData.map(dataItem => {
-              return dataItem.friend?._id === userId
-                ? {
-                    ...dataItem,
-                    shortlistData: {_id: result?.data?.id, ...result.data},
-                  } // Add the shortlistData
-                : dataItem;
-            });
-          });
-        } else {
-          Alert.alert('Error', 'Failed to add to shortlist');
-        }
-      } catch (error) {
-        console.error('Error adding to shortlist:', error);
-        Alert.alert('Error', 'Failed to add to shortlist');
-      }
+      RemoveShortlisted();
+    } catch (error) {
+      console.error('Error removing from shortlist:', error);
+      Alert.alert('Error', 'Failed to remove from shortlist.');
     }
   };
 
@@ -286,7 +362,9 @@ const MatchesInSentScreen = () => {
 
       if (response.status === 200) {
         setData(prevData =>
-          prevData.filter(dataItem => dataItem.friend?._id !== blockedFriendId),
+          prevData.filter(
+            dataItem => dataItem.friendList?._id !== blockedFriendId,
+          ),
         );
         setIsBlockModalVisible(false);
       } else {
@@ -483,8 +561,8 @@ const MatchesInSentScreen = () => {
 
   const handlePress = items => {
     const matchesUserData = {
-      firstName: items?.friend?.name,
-      id: items?.friend?._id,
+      firstName: items?.friendList?.name,
+      id: items?.friendList?._id,
       userData: items,
       screen: 'SendScreen',
     };
@@ -493,42 +571,69 @@ const MatchesInSentScreen = () => {
   };
 
   const renderItem = ({item}) => {
-    // console.log(' === var ===> ', item?.friend?._id);
+    console.log(' === var ===> ', item?.friendList);
 
-    const uniqueId = item?.friend?.userUniqueId;
-
-    const blockedFriendIds = item?.friend?._id;
-
-    const profileImage = item?.friend?.profilePic;
-
-    const firstName = item?.friend?.firstName
-      ? item?.friend?.firstName.charAt(0).toUpperCase() +
-        item?.friend?.firstName.slice(1).toLowerCase()
+    const planName = item?.friendList?.subscriptionDetails?.selectedPlan
+      ? item?.friendList?.subscriptionDetails?.selectedPlan
+          .charAt(0)
+          .toUpperCase() +
+        item?.friendList?.subscriptionDetails?.selectedPlan
+          .slice(1)
+          .toLowerCase()
       : '';
 
-    const lastName = item?.friend?.lastName
-      ? item?.friend?.lastName.charAt(0).toUpperCase() +
-        item?.friend?.lastName.slice(1).toLowerCase()
+    const hasValidImage =
+      item?.friendList?.profilePic &&
+      item?.friendList?.profilePic !== 'null' &&
+      item?.friendList?.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item?.friendList?.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item?.friendList?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const {selectedPlan, status} = item?.friendList?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    const uniqueId = item?.friendList?.userUniqueId;
+
+    const blockedFriendIds = item?.friendList?._id;
+
+    const profileImage = item?.friendList?.profilePic;
+
+    const firstName = item?.friendList?.firstName
+      ? item?.friendList?.firstName.charAt(0).toUpperCase() +
+        item?.friendList?.firstName.slice(1).toLowerCase()
       : '';
 
-    const name = item?.friend?.name
-      ? item?.friend?.name.charAt(0).toUpperCase() +
-        item?.friend?.name.slice(1).toLowerCase()
+    const lastName = item?.friendList?.lastName
+      ? item?.friendList?.lastName.charAt(0).toUpperCase() +
+        item?.friendList?.lastName.slice(1).toLowerCase()
       : '';
 
-    const JobTittle = item?.friend?.userProfessional?.jobTitle
-      ? item?.friend?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
-        item?.friend?.userProfessional?.jobTitle.slice(1).toLowerCase()
+    const name = item?.friendList?.name
+      ? item?.friendList?.name.charAt(0).toUpperCase() +
+        item?.friendList?.name.slice(1).toLowerCase()
       : '';
 
-    const currentCity = item?.friend?.address?.currentCity
-      ? item?.friend?.address?.currentCity.charAt(0).toUpperCase() +
-        item?.friend?.address?.currentCity.slice(1).toLowerCase()
+    const JobTittle = item?.friendList?.userProfessional?.jobTitle
+      ? item?.friendList?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
+        item?.friendList?.userProfessional?.jobTitle.slice(1).toLowerCase()
       : '';
 
-    const currentCountry = item?.friend?.address?.currentCountry
-      ? item?.friend?.address?.currentCountry.charAt(0).toUpperCase() +
-        item?.friend?.address?.currentCountry.slice(1).toLowerCase()
+    const currentCity = item?.friendList?.address?.currentCity
+      ? item?.friendList?.address?.currentCity.charAt(0).toUpperCase() +
+        item?.friendList?.address?.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const currentCountry = item?.friendList?.address?.currentCountry
+      ? item?.friendList?.address?.currentCountry.charAt(0).toUpperCase() +
+        item?.friendList?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
     const calculateAge = dob => {
@@ -541,16 +646,16 @@ const MatchesInSentScreen = () => {
       return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
 
-    const age = calculateAge(item?.friend?.dateOfBirth);
+    const age = calculateAge(item?.friendList?.dateOfBirth);
 
-    const height = item?.friend?.height;
+    const height = item?.friendList?.height;
 
-    const imageCount = Array.isArray(item?.friend?.userProfilePic)
-      ? item?.friend?.userProfilePic.length
+    const imageCount = Array.isArray(item?.friendList?.userProfilePic)
+      ? item?.friendList?.userProfilePic.length
       : 0;
 
-    const userAllImage = Array.isArray(item?.friend?.userProfilePic)
-      ? item?.friend?.userProfilePic.map(pic => pic.url)
+    const userAllImage = Array.isArray(item?.friendList?.userProfilePic)
+      ? item?.friendList?.userProfilePic.map(pic => pic.url)
       : [];
 
     const userAllImageShare = () => {
@@ -561,7 +666,7 @@ const MatchesInSentScreen = () => {
       navigation.navigate('UserUploadImageFullScreen', {allImages});
     };
 
-    const starIconSource = item?.shortlistData
+    const starIconSource = item?.friendList?.userShortListDetails?.id
       ? icons.black_check_icon // Check icon if shortlisted
       : icons.black_start_icon; // Star icon if not shortlisted
 
@@ -577,18 +682,53 @@ const MatchesInSentScreen = () => {
       <View style={{marginHorizontal: 17}}>
         <TouchableOpacity activeOpacity={1}>
           <View>
-            <Image
-              source={
-                profileImage ? {uri: profileImage} : images.empty_male_Image
-              }
-              style={{
-                width: '100%',
-                height: hp(449),
-                borderRadius: 18,
-                marginBottom: hp(13),
-              }}
-              resizeMode={'cover'}
-            />
+            {/*<Image*/}
+            {/*  source={*/}
+            {/*    profileImage ? {uri: profileImage} : images.empty_male_Image*/}
+            {/*  }*/}
+            {/*  style={{*/}
+            {/*    width: '100%',*/}
+            {/*    height: hp(449),*/}
+            {/*    borderRadius: 18,*/}
+            {/*    marginBottom: hp(13),*/}
+            {/*  }}*/}
+            {/*  resizeMode={'cover'}*/}
+            {/*/>*/}
+
+            {hasValidImage ? (
+              <>
+                <Image
+                  source={{uri: item?.friendList?.profilePic}}
+                  style={style.userImageStyle}
+                />
+                {profilePrivacy && (
+                  <Image
+                    source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                    style={{
+                      position: 'absolute',
+                      tintColor: '#fff',
+                      resizeMode: 'contain',
+                      width: hp(33),
+                      height: hp(44),
+                      alignSelf: 'center',
+                      marginTop: hp(200),
+                    }}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <ProfileAvatar
+                  firstName={
+                    item?.friendList?.firstName || item?.friendList?.name
+                  }
+                  lastName={item?.friendList?.lastName}
+                  textStyle={style.userImageStyle}
+                  profileTexts={{fontSize: fontSize(60), marginTop: -80}}
+                />
+              </>
+            )}
+
             <LinearGradient
               colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
               style={{
@@ -633,16 +773,55 @@ const MatchesInSentScreen = () => {
                 onPress={() => {
                   handlePress(item);
                 }}>
-                <Text
+                <View
                   style={{
-                    color: colors.white,
-                    fontSize: fontSize(24),
-                    lineHeight: hp(36),
-                    fontFamily: fontFamily.poppins700,
-                    marginTop: 5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
                   }}>
-                  {firstName || item.name} {lastName}
-                </Text>
+                  <Text
+                    style={{
+                      color: colors.white,
+                      fontSize: fontSize(24),
+                      lineHeight: hp(36),
+                      fontFamily: fontFamily.poppins700,
+                      marginTop: 5,
+                    }}>
+                    {firstName || item.name} {lastName}
+                  </Text>
+
+                  {subPlan && (
+                    <View
+                      style={{
+                        height: 22,
+                        backgroundColor: 'orange',
+                        marginLeft: 11,
+                        borderRadius: 50,
+                        flexDirection: 'row',
+                        paddingHorizontal: 7,
+                      }}>
+                      <Image
+                        source={icons.crownIcon}
+                        style={{
+                          width: 11,
+                          height: 11,
+                          tintColor: 'white',
+                          alignSelf: 'center',
+                          resizeMode: 'contain',
+                        }}
+                      />
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: fontSize(12),
+                          fontWeight: 'bold',
+                          alignSelf: 'center',
+                          marginLeft: 3,
+                        }}>
+                        {planName}
+                      </Text>
+                    </View>
+                  )}
+                </View>
 
                 <View style={[{flexDirection: 'row'}, {marginTop: 3}]}>
                   <Text
@@ -774,38 +953,51 @@ const MatchesInSentScreen = () => {
                     right: 35,
                     // top: 5,
                   }}>
-                  <TouchableOpacity
-                    style={{
-                      width: hp(60),
-                      height: hp(30),
-                      backgroundColor: '#282727',
-                      borderRadius: 15,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginHorizontal: 5,
-                    }}
-                    activeOpacity={0.5}
-                    // onPress={() => {
-                    //   navigation.navigate('UserUploadImageFullScreen');
-                    // }}
-                    onPress={userAllImageShare}>
-                    <Image
-                      source={icons.new_camera_icon}
+                  {!profilePrivacy && (
+                    <TouchableOpacity
                       style={{
-                        width: 16,
-                        height: 16,
-                        resizeMode: 'contain',
-                        marginRight: wp(10),
+                        width: hp(60),
+                        height: hp(30),
+                        backgroundColor: '#282727',
+                        borderRadius: 15,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        marginHorizontal: 5,
                       }}
-                    />
+                      activeOpacity={0.5}
+                      // onPress={() => {
+                      //   navigation.navigate('UserUploadImageFullScreen');
+                      // }}
+                      onPress={userAllImageShare}>
+                      <Image
+                        source={icons.new_camera_icon}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          resizeMode: 'contain',
+                          marginRight: wp(10),
+                        }}
+                      />
 
-                    <Text style={{color: colors.white}}>{imageCount}</Text>
-                  </TouchableOpacity>
+                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                    </TouchableOpacity>
+                  )}
                   {/*</View>*/}
 
                   <TouchableOpacity
-                    onPress={() => handleShortListPress(item)}
+                    // onPress={() => handleShortListPress(item)}
+                    onPress={() => {
+                      if (item?.friendList?.userShortListDetails?.id) {
+                        // If the user is already in the shortlist, remove them
+                        removeFromShortlist(
+                          item?.friendList?.userShortListDetails.id,
+                        );
+                      } else {
+                        // If the user is not in the shortlist, add them
+                        addToShortlist(item?.friendList?._id);
+                      }
+                    }}
                     activeOpacity={0.5}
                     style={{
                       width: hp(30),

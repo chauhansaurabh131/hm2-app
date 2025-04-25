@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -13,7 +13,11 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import UsersProfileDetailsScreen from '../usersProfileDetailsScreen';
 
@@ -54,6 +58,7 @@ const NewUserDetailsScreen = () => {
 
   const route = useRoute();
   const {matchesUserData} = route.params;
+  console.log(' === matchesUserData ===> ', matchesUserData?.id);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -71,10 +76,10 @@ const NewUserDetailsScreen = () => {
   //   matchesUserData?.userData?.friend,
   // );
 
-  console.log(
-    ' === var ===> ',
-    userDetails?.privacySettingCustom?.profilePhotoPrivacy,
-  );
+  // console.log(
+  //   ' === var ===> ',
+  //   userDetails?.privacySettingCustom?.profilePhotoPrivacy,
+  // );
 
   const openBottomSheet = () => {
     friendBottomSheetRef.current.close();
@@ -169,10 +174,48 @@ const NewUserDetailsScreen = () => {
     }
   };
 
+  const createProfileViewer = async () => {
+    if (!userId || !accessToken) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/profile-viewer/create-profile-viewer',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            viewerId: matchesUserData?.id,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to create profile viewer');
+      }
+
+      const result = await response.json();
+      console.log('Profile viewer created:', result);
+    } catch (error) {
+      console.error('Error creating profile viewer:', error.message);
+    }
+  };
+
   // Initial fetch when component mounts
-  useEffect(() => {
-    fetchUserDetails();
-  }, [matchesUserData?.id, accessToken]);
+  // useEffect(() => {
+  //   fetchUserDetails();
+  // }, [matchesUserData?.id, accessToken]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserDetails();
+      createProfileViewer();
+    }, [matchesUserData?.id, accessToken]),
+  );
 
   if (loading) {
     return (
@@ -278,7 +321,11 @@ const NewUserDetailsScreen = () => {
 
   const handleShortlist = async () => {
     const loggedInUserId = userDetails._id; // Get the logged-in user's ID
-    const currentShortlistId = userDetails?.userShortListDetails?._id;
+    const currentShortlistId =
+      userDetails?.userShortListDetails?._id ||
+      userDetails?.userShortListDetails?.id;
+
+    console.log(' === currentShortlistId ===> ', currentShortlistId);
 
     if (currentShortlistId) {
       // If the user is already in the shortlist, delete them
@@ -372,6 +419,8 @@ const NewUserDetailsScreen = () => {
     const likedUserId = userDetails._id; // The user you want to like/unlike
     const currentIsLike = userDetails?.userLikeDetails?.isLike;
     const currentIsLikeId = userDetails?.userLikeDetails?._id;
+
+    console.log(' === currentIsLikeId ===> ', currentIsLikeId);
 
     if (currentIsLike === true) {
       // If already liked, remove the like
@@ -591,13 +640,17 @@ const NewUserDetailsScreen = () => {
     // } else if (status === 'requested') {
     //   friendBottomSheetRef.current.open();
     // }
-    if (
-      status === 'accepted' ||
-      status === 'requested' ||
-      status === undefined
-    ) {
-      friendBottomSheetRef.current.open();
-    }
+
+    // if (
+    //   status === 'accepted' ||
+    //   status === 'requested' ||
+    //   status === 'rejected' ||
+    //   status === undefined
+    // ) {
+    //   friendBottomSheetRef.current.open();
+    // }
+
+    friendBottomSheetRef.current.open();
   };
 
   const handleShare = async () => {
@@ -1029,6 +1082,32 @@ const NewUserDetailsScreen = () => {
     ),
   };
 
+  // console.log(
+  //   ' === userDetails___ ===> ',
+  //   userDetails?.subscriptionDetails?.selectedPlan,
+  // );
+
+  // console.log(' === userDetails___ ===> ', userDetails?.friendsDetails?.status);
+
+  const profilePrivacy =
+    (userDetails.privacySettingCustom?.profilePhotoPrivacy === true ||
+      userDetails.privacySettingCustom?.showPhotoToFriendsOnly === true) &&
+    userDetails?.friendsDetails?.status !== 'accepted';
+
+  const {selectedPlan, status} = userDetails?.subscriptionDetails || {};
+
+  // Determine if the selected plan is 'gold' (for the crown icon)
+  const isGoldPlan = selectedPlan === 'gold';
+  const isSilverPlan = selectedPlan === 'silver';
+  const isPlatinumPlan = selectedPlan === 'Platinum';
+
+  const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+  const hasValidImage =
+    userDetails.profilePic &&
+    userDetails.profilePic !== 'null' &&
+    userDetails.profilePic.trim() !== '';
+
   const calculateAge = dob => {
     const birthDate = new Date(dob);
     const difference = Date.now() - birthDate.getTime();
@@ -1043,8 +1122,14 @@ const NewUserDetailsScreen = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const planName = capitalizeFirstLetter(
+    userDetails?.subscriptionDetails?.selectedPlan,
+  );
+
   const firstName = capitalizeFirstLetter(userDetails?.firstName);
   const lastName = capitalizeFirstLetter(userDetails?.lastName);
+  const name = capitalizeFirstLetter(userDetails?.name);
+
   const jobTittle = capitalizeFirstLetter(
     userDetails?.userProfessional?.jobTitle,
   );
@@ -1125,34 +1210,45 @@ const NewUserDetailsScreen = () => {
               height: hp(449),
               resizeMode: 'cover',
             }}>
-            {userDetails?.privacySettingCustom?.profilePhotoPrivacy ===
-              'private' && userDetails.profilePic ? (
-              <ImageBackground
-                source={{uri: userDetails.profilePic}}
-                style={{
-                  width: '110%',
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                }}
-                blurRadius={10} // Add blur effect with a specific radius (adjust as needed)
-              />
-            ) : userDetails?.privacySettingCustom?.profilePhotoPrivacy ===
-                'public' && userDetails.profilePic ? (
-              <Image
-                source={{uri: userDetails.profilePic}}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                }}
-              />
+            {hasValidImage ? (
+              <>
+                <Image
+                  source={{uri: userDetails.profilePic}}
+                  style={{
+                    width: '100%',
+                    height: hp(449),
+                    resizeMode: 'cover',
+                  }}
+                />
+                {profilePrivacy && (
+                  <Image
+                    source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                    style={{
+                      position: 'absolute',
+                      tintColor: '#fff',
+                      resizeMode: 'contain',
+                      width: 33,
+                      height: 44,
+                      alignSelf: 'center',
+                      top: 200,
+                    }}
+                  />
+                )}
+              </>
             ) : (
-              // Fallback to ProfileAvatar when no image is available
-              <ProfileAvatar firstName={firstName} lastName={lastName} />
+              <>
+                <ProfileAvatar
+                  firstName={userDetails.firstName || userDetails.name}
+                  lastName={userDetails.lastName}
+                  textStyle={{
+                    width: '100%',
+                    height: hp(449),
+                    resizeMode: 'cover',
+                    borderRadius: 0,
+                  }}
+                  profileTexts={{fontSize: fontSize(60)}}
+                />
+              </>
             )}
           </View>
 
@@ -1169,8 +1265,45 @@ const NewUserDetailsScreen = () => {
               <View
                 style={[style.userDetailsDescriptionContainer, {marginTop: 3}]}>
                 <Text style={style.userNameTextStyle}>
-                  {firstName} {lastName}
+                  {firstName || name} {lastName}
                 </Text>
+
+                {subPlan && (
+                  <View
+                    style={{
+                      // width: 57,
+                      // width: '100%',
+                      height: 22,
+                      backgroundColor: 'orange',
+                      marginLeft: 11,
+                      marginTop: 5,
+                      borderRadius: 50,
+                      flexDirection: 'row',
+                      paddingHorizontal: 7,
+                    }}>
+                    <Image
+                      source={icons.crownIcon}
+                      style={{
+                        width: 11,
+                        height: 11,
+                        tintColor: 'white',
+                        alignSelf: 'center',
+                        // marginLeft: 6,
+                        resizeMode: 'contain',
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: fontSize(12),
+                        fontWeight: 'bold',
+                        alignSelf: 'center',
+                        marginLeft: 3,
+                      }}>
+                      {planName}
+                    </Text>
+                  </View>
+                )}
               </View>
 
               <View
@@ -1189,10 +1322,12 @@ const NewUserDetailsScreen = () => {
               </View>
 
               <View style={style.userDetailsDescriptionContainer}>
-                <Text style={style.userDetailsTextStyle}>{currentCity},</Text>
+                <Text style={style.userDetailsTextStyle}>
+                  {currentCity || 'N/A'},
+                </Text>
                 <Text style={style.userDetailsTextStyle}>
                   {' '}
-                  {currentCountry}
+                  {currentCountry || 'N/A'}
                 </Text>
               </View>
 
@@ -1212,8 +1347,7 @@ const NewUserDetailsScreen = () => {
                 </TouchableOpacity>
 
                 <View style={style.bottomSecondImagesContainer}>
-                  {userDetails?.privacySettingCustom?.profilePhotoPrivacy ===
-                    'public' && (
+                  {!profilePrivacy && (
                     <TouchableOpacity
                       style={style.cameraImageContainer}
                       activeOpacity={0.5}
@@ -1233,7 +1367,8 @@ const NewUserDetailsScreen = () => {
                       style={style.starIconContainer}>
                       <Image
                         source={
-                          userDetails?.userShortListDetails?._id
+                          userDetails?.userShortListDetails?._id ||
+                          userDetails?.userShortListDetails?.id
                             ? icons.black_check_icon
                             : icons.black_start_icon
                         }
@@ -1472,8 +1607,8 @@ const NewUserDetailsScreen = () => {
           // height={hp(310)} // Height of the bottom sheet
           height={
             userDetails?.friendsDetails?.status === 'accepted'
-              ? hp(310)
-              : hp(230)
+              ? hp(430)
+              : hp(300)
           }
           // openDuration={250} // Duration of the opening animation
           closeOnDragDown={true} // Allow closing the sheet by dragging it down
@@ -1498,52 +1633,6 @@ const NewUserDetailsScreen = () => {
                 </Text>
               </TouchableOpacity>
 
-              {matchesUserData?.userData?.status === 'blocked' ? (
-                <TouchableOpacity
-                  style={style.threeDotBottomSheetContainers}
-                  onPress={() => {
-                    blockedUnfriendFunction();
-                  }}>
-                  <Image
-                    source={icons.block_icon}
-                    style={style.threeDotBottomSheetIcon}
-                  />
-                  <Text style={style.threeDotBottomSheetTittleText}>
-                    Unblock{' '}
-                    {userDetails?.firstName?.charAt(0).toUpperCase() +
-                      userDetails?.firstName?.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  onPress={() => {
-                    handleBlockProfilePress();
-                  }}
-                  style={style.threeDotBottomSheetContainers}>
-                  <Image
-                    source={icons.block_icon}
-                    style={style.threeDotBottomSheetIcon}
-                  />
-                  <Text style={style.threeDotBottomSheetTittleText}>
-                    Block{' '}
-                    {userDetails?.firstName?.charAt(0).toUpperCase() +
-                      userDetails?.firstName?.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              <TouchableOpacity
-                onPress={openBottomSheet}
-                style={style.threeDotBottomSheetContainers}>
-                <Image
-                  source={icons.report_icon}
-                  style={style.threeDotBottomSheetIcon}
-                />
-                <Text style={style.threeDotBottomSheetTittleText}>
-                  Report this profile
-                </Text>
-              </TouchableOpacity>
-
               <TouchableOpacity
                 onPress={() => {
                   onCopyIdPress();
@@ -1558,23 +1647,96 @@ const NewUserDetailsScreen = () => {
                 </Text>
               </TouchableOpacity>
 
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EBEBEB',
+                  marginTop: hp(22),
+                }}
+              />
+
+              <TouchableOpacity
+                onPress={openBottomSheet}
+                style={style.threeDotBottomSheetContainers}>
+                <Image
+                  source={icons.new_report_icon}
+                  style={[style.threeDotBottomSheetIcon, {top: -8}]}
+                />
+                <View>
+                  <Text style={style.threeDotBottomSheetTittleText}>
+                    Report
+                  </Text>
+
+                  <Text
+                    style={{
+                      fontSize: fontSize(12),
+                      lineHeight: hp(16),
+                      fontFamily: fontFamily.poppins400,
+                      color: '#7B7B7B',
+                    }}>
+                    Your report will be anonymous.
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {/*<Text>Your report will be anonymous.</Text>*/}
+
+              {matchesUserData?.userData?.status === 'blocked' ? (
+                <TouchableOpacity
+                  style={style.threeDotBottomSheetContainers}
+                  onPress={() => {
+                    blockedUnfriendFunction();
+                  }}>
+                  <Image
+                    source={icons.block_icon}
+                    style={style.threeDotBottomSheetIcon}
+                  />
+
+                  <Text style={style.threeDotBottomSheetTittleText}>
+                    Unblock{' '}
+                    {userDetails?.firstName?.charAt(0).toUpperCase() +
+                      userDetails?.firstName?.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    handleBlockProfilePress();
+                  }}
+                  style={style.threeDotBottomSheetContainers}>
+                  <Image
+                    source={icons.block_icon}
+                    style={[style.threeDotBottomSheetIcon, {top: -8}]}
+                  />
+
+                  <View>
+                    <Text style={style.threeDotBottomSheetTittleText}>
+                      Block{' '}
+                      {userDetails?.firstName?.charAt(0).toUpperCase() +
+                        userDetails?.firstName?.slice(1) ||
+                        userDetails?.name?.charAt(0).toUpperCase() +
+                          userDetails?.name?.slice(1)}
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(16),
+                        fontFamily: fontFamily.poppins400,
+                        color: '#7B7B7B',
+                      }}>
+                      You can't contact this user again.
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+
               {userDetails?.friendsDetails?.status !== 'requested' &&
+                userDetails?.friendsDetails?.status !== 'rejected' &&
+                userDetails?.friendsDetails?.status !== 'removed' &&
                 userDetails?.friendsDetails?.status !== undefined && (
                   <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        bottomSheetSendMessagePress(matchesUserData?.userData);
-                      }}
-                      style={style.threeDotBottomSheetContainers}>
-                      <Image
-                        source={icons.send_message_icon}
-                        style={style.threeDotBottomSheetIcon}
-                      />
-                      <Text style={style.threeDotBottomSheetTittleText}>
-                        Send Message
-                      </Text>
-                    </TouchableOpacity>
-
                     <TouchableOpacity
                       onPress={() => {
                         handleUnFriendPress();
@@ -1582,11 +1744,60 @@ const NewUserDetailsScreen = () => {
                       style={style.threeDotBottomSheetContainers}>
                       <Image
                         source={icons.unFriend_icon}
-                        style={style.threeDotBottomSheetIcon}
+                        style={[style.threeDotBottomSheetIcon, {top: -8}]}
                       />
-                      <Text style={style.threeDotBottomSheetTittleText}>
-                        Unfriend
-                      </Text>
+
+                      <View>
+                        <Text style={style.threeDotBottomSheetTittleText}>
+                          Unfriend
+                        </Text>
+
+                        <Text
+                          style={{
+                            fontSize: fontSize(12),
+                            lineHeight: hp(16),
+                            fontFamily: fontFamily.poppins400,
+                            color: '#7B7B7B',
+                          }}>
+                          This user will be permanently deleted.
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 1,
+                        backgroundColor: '#EBEBEB',
+                        marginTop: hp(22),
+                      }}
+                    />
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        bottomSheetSendMessagePress(matchesUserData?.userData);
+                      }}
+                      style={style.threeDotBottomSheetContainers}>
+                      <Image
+                        source={icons.send_message_icon}
+                        style={[style.threeDotBottomSheetIcon, {top: -8}]}
+                      />
+
+                      <View>
+                        <Text style={style.threeDotBottomSheetTittleText}>
+                          Send Message
+                        </Text>
+
+                        <Text
+                          style={{
+                            fontSize: fontSize(12),
+                            lineHeight: hp(16),
+                            fontFamily: fontFamily.poppins400,
+                            color: '#7B7B7B',
+                          }}>
+                          Send a direct message.
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   </>
                 )}

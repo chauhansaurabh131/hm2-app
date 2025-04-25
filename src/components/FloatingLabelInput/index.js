@@ -106,7 +106,8 @@ const styles = StyleSheet.create({
   unitText: {
     position: 'absolute',
     right: 10, // Position the unit text on the right
-    fontSize: fontSize(18),
+    // fontSize: fontSize(18),
+    fontSize: fontSize(14),
     color: '#AFAFAF',
     fontFamily: fontFamily.poppins500,
   },

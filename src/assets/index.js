@@ -124,6 +124,7 @@ export const icons = {
   view_profile_icon: require('./icons/view_profile_icon.png'),
   block_icon: require('./icons/block_icon.png'),
   report_icon: require('./icons/report_icon.png'),
+  new_report_icon: require('./icons/New_report_icon.png'),
   long_term_icon: require('./icons/long_Term_Icon.png'),
   new_dating_icon: require('./icons/new_Dating_icon.png'),
   user_like_icon: require('./icons/user_like_icon.png'),
