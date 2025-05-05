@@ -41,63 +41,108 @@ const NewLogInScreen = () => {
     });
   };
 
+  // const onPressLogin = () => {
+  //   Keyboard.dismiss();
+  //   const trimmedEmail = email.trim();
+  //   // dispatch(login({email, password}, () => dispatch(changeStack())));
+  //
+  //   // Check if the email or mobile number is valid
+  //   const isEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+  //     trimmedEmail,
+  //   );
+  //   let loginPayload = {};
+  //
+  //   if (isEmail) {
+  //     console.log('Logging in with Email:', trimmedEmail);
+  //     loginPayload = {email: trimmedEmail, password};
+  //   } else {
+  //     // Handle mobile number, ensuring it is 10 digits and no '+' sign
+  //     const mobileNumber = trimmedEmail.replace(/\D/g, ''); // Removes all non-digit characters
+  //     const isMobile = mobileNumber.length === 10;
+  //
+  //     if (isMobile) {
+  //       console.log('Logging in with Mobile Number:', mobileNumber);
+  //       loginPayload = {
+  //         countryCodeId: '67d2698641c89038f51512a2', // You can dynamically handle this based on user's region
+  //         mobileNumber: mobileNumber, // Only 10 digits will be passed
+  //         password,
+  //       };
+  //     } else {
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: 'Invalid Mobile Number',
+  //         text2: 'Please enter a valid 10-digit mobile number',
+  //       });
+  //       console.log('Invalid Mobile Number');
+  //       return; // Return early if number is not valid
+  //     }
+  //   }
+  //
+  //   dispatch(login({...loginPayload}, successCallback, failureCallback));
+  //   setEmail('');
+  //   setPassword('');
+  // };
+
   const onPressLogin = () => {
     Keyboard.dismiss();
-    const trimmedEmail = email.trim();
-    // dispatch(login({email, password}, () => dispatch(changeStack())));
 
-    // Check if the email or mobile number is valid
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
     const isEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
       trimmedEmail,
     );
     let loginPayload = {};
 
     if (isEmail) {
+      if (!trimmedPassword) {
+        Toast.show({
+          type: 'error',
+          text1: 'Missing Password',
+          text2: 'Please enter your password',
+        });
+        return;
+      }
+
       console.log('Logging in with Email:', trimmedEmail);
-      loginPayload = {email: trimmedEmail, password};
+      loginPayload = {
+        email: trimmedEmail,
+        password: trimmedPassword,
+      };
     } else {
-      // Handle mobile number, ensuring it is 10 digits and no '+' sign
-      const mobileNumber = trimmedEmail.replace(/\D/g, ''); // Removes all non-digit characters
+      const mobileNumber = trimmedEmail.replace(/\D/g, ''); // removes non-digits
       const isMobile = mobileNumber.length === 10;
 
       if (isMobile) {
+        if (!trimmedPassword) {
+          Toast.show({
+            type: 'error',
+            text1: 'Missing Password',
+            text2: 'Please enter your password',
+          });
+          return;
+        }
+
         console.log('Logging in with Mobile Number:', mobileNumber);
         loginPayload = {
-          countryCodeId: '67d2698641c89038f51512a2', // You can dynamically handle this based on user's region
-          mobileNumber: mobileNumber, // Only 10 digits will be passed
-          password,
+          countryCodeId: '680b21192ce1b8556e4774c1',
+          mobileNumber,
+          password: trimmedPassword,
         };
       } else {
         Toast.show({
           type: 'error',
           text1: 'Invalid Mobile Number',
-          text2: 'Please enter a valid 10-digit mobile number',
+          text2: 'Please enter a valid 10-digit mobile number or email',
         });
-        console.log('Invalid Mobile Number');
-        return; // Return early if number is not valid
+        return;
       }
     }
 
-    // dispatch(login({email, password}, successCallback, failureCallback));
-    // dispatch(
-    //   login({
-    //     ...loginPayload,
-    //     successCallback,
-    //     failureCallback,
-    //   }),
-    // );
     dispatch(login({...loginPayload}, successCallback, failureCallback));
     setEmail('');
     setPassword('');
   };
-
-  // const onPressLogin = () => {
-  //   Keyboard.dismiss();
-  //   // dispatch(login({email, password}, () => dispatch(changeStack())));
-  //   dispatch(login({email, password}, successCallback, failureCallback));
-  //   setEmail('');
-  //   setPassword('');
-  // };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

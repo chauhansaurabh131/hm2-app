@@ -165,6 +165,7 @@ const AddPersonalInfo = ({navigation}) => {
 
   const [mobileNumber, setMobileNumber] = useState('');
   const [homeNumber, setHomeNumber] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   //EDUCATIONS DETAILS
   const [degree, setDegree] = useState('');
@@ -398,6 +399,7 @@ const AddPersonalInfo = ({navigation}) => {
           {
             mobileNumber: mobileNumber,
             homeMobileNumber: homeNumber,
+            email: userEmail,
             userProfileCompleted: true,
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
@@ -624,6 +626,8 @@ const AddPersonalInfo = ({navigation}) => {
           setMobileNumber={setMobileNumber}
           homeNumber={homeNumber}
           setHomeNumber={setHomeNumber}
+          userEmail={userEmail}
+          setUserEmail={setUserEmail}
           //EDUCATIONS DETAILS
           degree={degree}
           setDegree={setDegree}

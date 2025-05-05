@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   SafeAreaView,
   TextInput,
@@ -17,21 +17,65 @@ import CommonGradientButton from '../../components/commonGradientButton';
 import {verifyOTP} from '../../actions/authActions';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
+import axios from 'axios';
 
 const VerifyEmailOtpScreen = ({route}) => {
   const {email = ''} = route.params;
 
+  // console.log(' === email ===> ', email);
+
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputRefs = useRef([]);
+
+  const [timer, setTimer] = useState(120); // 2 minutes
+  const [resendAvailable, setResendAvailable] = useState(false);
 
   const {otpVerifiedDetails, loading} = useSelector(state => state.auth);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const hiddenChars = email.substring(0, 3);
-  const domain = email.substring(email.indexOf('@'));
-  const maskedEmail = hiddenChars + '******' + domain;
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prev => prev - 1);
+      }, 1000);
+    } else {
+      setResendAvailable(true);
+    }
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const formatTime = seconds => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const getMaskedValue = (input = '') => {
+    const isMobile = /^[0-9]{10}$/.test(input);
+
+    if (isMobile) {
+      // Mask first 8 digits, show last 2
+      return '********' + input.slice(-2);
+    } else if (input.includes('@')) {
+      // Mask part of the email
+      const atIndex = input.indexOf('@');
+      const namePart = input.slice(0, atIndex);
+      const domainPart = input.slice(atIndex);
+
+      const visibleChars = namePart.slice(0, 3);
+      return visibleChars + '******' + domainPart;
+    } else {
+      // In case input is something unexpected
+      return input;
+    }
+  };
+
+  const maskedValue = getMaskedValue(email);
 
   const handleOtpChange = (value, index) => {
     // Ensure that only numeric values are accepted
@@ -57,14 +101,90 @@ const VerifyEmailOtpScreen = ({route}) => {
     }
   };
 
+  // const onVerifyCodePress = () => {
+  //   const enteredOtp = otp.join('');
+  //   console.log('Entered OTP:', enteredOtp);
+  //   dispatch(
+  //     verifyOTP({email, otp: otp.join('')}, () =>
+  //       navigation.navigate('NewSetPasswordScreen'),
+  //     ),
+  //   );
+  // };
+
   const onVerifyCodePress = () => {
     const enteredOtp = otp.join('');
     console.log('Entered OTP:', enteredOtp);
+    console.log('Email or Mobile:', email);
+
+    // Check if it's a 10-digit number (i.e., mobile number)
+    const isMobile = /^[0-9]{10}$/.test(email);
+
+    const payload = {
+      otp: enteredOtp,
+      ...(isMobile ? {mobileNumber: email} : {email: email}),
+    };
+
     dispatch(
-      verifyOTP({email, otp: otp.join('')}, () =>
-        navigation.navigate('NewSetPasswordScreen'),
-      ),
+      verifyOTP(payload, () => {
+        navigation.navigate('NewSetPasswordScreen');
+      }),
     );
+  };
+
+  const resendOtpEmail = async () => {
+    const isMobile = /^[0-9]{10}$/.test(email); // Basic mobile number check
+
+    try {
+      if (isMobile) {
+        // Mobile OTP API
+        const response = await axios.post(
+          'https://stag.mntech.website/api/v1/user/auth/send-verify-otp-email',
+          {
+            countryCodeId: '680b21192ce1b8556e4774c1', // replace with actual ID if required
+            mobileNumber: email,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        console.log('Resend Mobile OTP success:', response.data);
+        Toast.show({
+          type: 'success',
+          text1: 'OTP Sent',
+          text2: 'A new OTP has been sent to your mobile number',
+        });
+      } else {
+        // Email OTP API
+        const response = await axios.post(
+          'https://stag.mntech.website/api/v1/user/auth/send-verify-otp-email',
+          {
+            email: email,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        console.log('Resend Email OTP success:', response.data);
+        Toast.show({
+          type: 'success',
+          text1: 'OTP Sent',
+          text2: 'A new OTP has been sent to your email',
+        });
+      }
+    } catch (error) {
+      console.error('Resend OTP error:', error.response?.data || error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to resend OTP',
+        text2: error.response?.data?.message || 'Please try again later',
+      });
+    }
   };
 
   return (
@@ -117,13 +237,16 @@ const VerifyEmailOtpScreen = ({route}) => {
               alignSelf: 'center',
               marginTop: hp(80),
             }}>
-            Verify Email
+            {/*Verify Email*/}
+            {/^[0-9]{10}$/.test(email)
+              ? 'Verify Mobile Number'
+              : 'Verify Email'}
           </Text>
 
           <View style={{alignSelf: 'center', marginTop: hp(20)}}>
             <Text style={{color: colors.lightGray}}>
               OTP sent on
-              <Text style={{color: colors.black}}> {maskedEmail}</Text>
+              <Text style={{color: colors.black}}> {maskedValue}</Text>
             </Text>
           </View>
 
@@ -150,10 +273,33 @@ const VerifyEmailOtpScreen = ({route}) => {
             </View>
           </View>
 
-          <View style={{alignSelf: 'center'}}>
-            <Text style={{color: colors.lightGray}}>
-              Resend in <Text style={{color: colors.black}}>48 Sec. </Text>
-            </Text>
+          {/*<View style={{alignSelf: 'center'}}>*/}
+          {/*  <Text style={{color: colors.lightGray}}>*/}
+          {/*    Resend in <Text style={{color: colors.black}}>48 Sec. </Text>*/}
+          {/*  </Text>*/}
+          {/*</View>*/}
+
+          <View style={{alignSelf: 'center', marginTop: hp(20)}}>
+            {resendAvailable ? (
+              <TouchableOpacity
+                onPress={() => {
+                  setTimer(120);
+                  setResendAvailable(false);
+                  // You can also trigger resend OTP API here
+                  resendOtpEmail();
+                }}>
+                <Text style={{color: colors.black, fontWeight: 'bold'}}>
+                  Resend OTP
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <Text style={{color: colors.lightGray}}>
+                Resend in{' '}
+                <Text style={{color: colors.black}}>
+                  {formatTime(timer)} Min
+                </Text>
+              </Text>
+            )}
           </View>
 
           <CommonGradientButton

@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Image,
   SafeAreaView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -25,6 +27,8 @@ import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 const CredentialsScreen = () => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef();
+  const bottomSheetEmailChangeRef = useRef();
+  const bottomSheetEmailChangeSubmitRef = useRef();
   const passwordBottomSheetRef = useRef();
   const bottomSheetPasswordChangeRef2 = useRef(null);
   const [selectedCredential, setSelectedCredential] = useState(null);
@@ -49,10 +53,53 @@ const CredentialsScreen = () => {
 
   const [topModalVisible, setTopModalVisible] = useState(false);
 
+  const [otp, setOtp] = useState(['', '', '', '']);
+  const [resendAvailable, setResendAvailable] = useState(false);
+  const [timer, setTimer] = useState(120); // 2 minutes
+  const [loader, setLoader] = useState(false);
+  const inputRefs = useRef([]);
+
+  // console.log(' === currentEmail ===> ', currentEmail);
+
   const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
+
+  // console.log(' === user ===> ', user?.tokens?.access?.token);
+
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prev => prev - 1);
+      }, 1000);
+    } else {
+      setResendAvailable(true);
+    }
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  // Format seconds as MM:SS
+  const formatTime = seconds => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const maskEmail = email => {
+    const [localPart, domain] = email.split('@');
+    if (!localPart || !domain) {
+      return email;
+    }
+
+    const visibleChars = 3;
+    const maskedPart = '*'.repeat(Math.max(localPart.length - visibleChars, 0));
+    const visible = localPart.slice(0, visibleChars);
+
+    return `${visible}${maskedPart}@${domain}`;
+  };
 
   const topModalBottomSheetRef = useRef(null);
   const openTopBottomSheet = () => {
@@ -109,32 +156,140 @@ const CredentialsScreen = () => {
     setNewEmail(text);
   };
 
-  const handleSubmit = () => {
-    // if (newEmail.trim() !== '') {
-    //   setCurrentEmail(newEmail);
-    // }
+  // const onChangeEmailPress = () => {
+  //   const enteredOtp = otp.join('');
+  //   console.log(' === enteredOtp ===> ', enteredOtp);
+  // };
 
-    console.log(' === newEmail ===> ', newEmail);
+  // const handleSubmit = () => {
+  //   console.log(' === newEmail ===> ', newEmail);
+  //
+  //   bottomSheetEmailChangeRef.current.open();
+  //
+  //   // apiDispatch(updateDetails({email: newEmail}));
+  //
+  //   bottomSheetRef.current.close();
+  //   passwordBottomSheetRef.current.close();
+  // };
 
-    apiDispatch(updateDetails({email: newEmail}));
+  const onChangeEmailPress = () => {
+    const enteredOtp = otp.join('');
+    console.log('=== enteredOtp ===> ', enteredOtp);
+    setLoader(true);
 
-    bottomSheetRef.current.close();
-    passwordBottomSheetRef.current.close();
+    const payload = {
+      email: {
+        currentEmail: currentEmail,
+        newEmail: newEmail,
+        otp: enteredOtp,
+      },
+    };
+
+    fetch(
+      'https://stag.mntech.website/api/v1/user/auth/verify-otp-change-email',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      },
+    )
+      .then(response => response.json())
+      .then(data => {
+        console.log('✅ Success:', data);
+
+        if (data?.data?.success === true) {
+          // ✅ OTP is valid
+          setLoader(false);
+          apiDispatch(updateDetails());
+          bottomSheetEmailChangeRef.current.close();
+          bottomSheetEmailChangeSubmitRef.current.open();
+          setOtp(['', '', '', '']);
+        } else {
+          // ❌ OTP is invalid or other server-side issue
+          setLoader(false);
+          setOtp(['', '', '', '']);
+          alert(data?.data?.message || 'Something went wrong.');
+        }
+      })
+      .catch(error => {
+        console.error('❌ Error:', error);
+        setLoader(false);
+        setOtp(['', '', '', '']);
+        alert('Network error. Please try again.');
+      });
   };
 
-  // const onUpdatePasswordPress = () => {
-  //   if (newPassword === confirmPassword) {
-  //     passwordBottomSheetRef.current.close();
-  //     setTimeout(() => {
-  //       bottomSheetPasswordChangeRef2.current.open();
-  //     }, 100); // Small delay to ensure the first sheet closes before opening the second
-  //   } else {
-  //     Alert.alert(
-  //       'Password Mismatch',
-  //       'New Password and Confirm Password do not match.',
-  //     );
-  //   }
-  // };
+  const handleSubmit = async () => {
+    console.log('=== newEmail ===>', newEmail);
+    setLoader(true);
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/auth/send-otp-change-email',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: {
+              currentEmail: currentEmail,
+              newEmail: newEmail,
+            },
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('OTP sent successfully:', data);
+        setLoader(false);
+
+        // Open OTP verification bottom sheet
+        bottomSheetEmailChangeRef.current.open();
+
+        // Optionally close other bottom sheets
+        bottomSheetRef.current.close();
+        passwordBottomSheetRef.current.close();
+      } else {
+        console.warn('Failed to send OTP:', data.message || data);
+        setLoader(false);
+        // Show error message to user if needed
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      setLoader(false);
+    }
+  };
+
+  const handleOtpChange = (value, index) => {
+    // Ensure that only numeric values are accepted
+    if (/^[0-9]$/.test(value)) {
+      const otpCopy = [...otp];
+      otpCopy[index] = value;
+      setOtp(otpCopy);
+
+      // Automatically focus on the next input field
+      if (value && index < 3) {
+        inputRefs.current[index + 1].focus();
+      }
+    } else if (value === '') {
+      // Handle backspace to clear the value
+      const otpCopy = [...otp];
+      otpCopy[index] = '';
+      setOtp(otpCopy);
+
+      // Automatically go back to the previous input if the current one is empty
+      if (index > 0) {
+        inputRefs.current[index - 1].focus();
+      }
+    }
+  };
 
   const onUpdatePasswordPress = async () => {
     // Check if new password and confirm password match
@@ -274,7 +429,12 @@ const CredentialsScreen = () => {
               />
 
               <View style={style.bottomSheetButtonContainer}>
-                <TouchableOpacity activeOpacity={0.7} onPress={handleSubmit}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    bottomSheetRef.current.close();
+                    passwordBottomSheetRef.current.close();
+                  }}>
                   <LinearGradient
                     colors={['#0D4EB3', '#9413D0']}
                     style={style.bottomSheetNotNowContainer}>
@@ -284,13 +444,25 @@ const CredentialsScreen = () => {
                   </LinearGradient>
                 </TouchableOpacity>
 
-                <TouchableOpacity activeOpacity={0.5} onPress={handleSubmit}>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={handleSubmit}
+                  disabled={!newEmail.trim()}>
                   <LinearGradient
                     colors={['#0D4EB3', '#9413D0']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}
-                    style={style.submitButtonContainer}>
-                    <Text style={style.submitButtonTextStyle}>Submit</Text>
+                    // style={style.submitButtonContainer}
+                    style={[
+                      style.submitButtonContainer,
+                      !newEmail.trim() && {opacity: 0.5}, // visually indicate it's disabled
+                    ]}>
+                    {loader ? (
+                      <ActivityIndicator size="large" color={colors.white} />
+                    ) : (
+                      <Text style={style.submitButtonTextStyle}>Submit</Text>
+                    )}
+                    {/*<Text style={style.submitButtonTextStyle}>Submit</Text>*/}
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
@@ -457,6 +629,115 @@ const CredentialsScreen = () => {
       default:
         return null;
     }
+  };
+
+  const renderBottomSheetEmailChangeContent = () => {
+    return (
+      <View style={style.bottomSheetContainer}>
+        <View style={{marginHorizontal: 30}}>
+          <Text style={style.bottomSheetTittleText}>Verify Email</Text>
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 0.7,
+            backgroundColor: '#E7E7E7',
+            marginTop: 20,
+          }}
+        />
+
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: hp(34),
+            fontSize: fontSize(14),
+            lineHeight: hp(18),
+            fontFamily: fontFamily.poppins400,
+            color: '#AEAEAE',
+          }}>
+          OTP sent on{' '}
+          <Text style={{color: colors.black}}> {maskEmail(newEmail)}</Text>
+        </Text>
+
+        <View style={styles.container}>
+          <View style={styles.otpContainer}>
+            {otp.map((digit, index) => (
+              <TextInput
+                key={index}
+                value={digit}
+                onChangeText={value => handleOtpChange(value, index)}
+                keyboardType="numeric"
+                maxLength={1}
+                secureTextEntry={false}
+                style={[
+                  styles.otpInput,
+                  digit ? styles.activeInput : styles.inactiveInput,
+                  digit ? styles.digitStyle : styles.placeholderStyle,
+                ]}
+                ref={ref => (inputRefs.current[index] = ref)}
+                placeholder="0"
+                placeholderTextColor="#D9D9D9"
+              />
+            ))}
+          </View>
+        </View>
+
+        <View style={{alignSelf: 'center', top: -5}}>
+          {resendAvailable ? (
+            <TouchableOpacity
+              onPress={() => {
+                setTimer(120);
+                setResendAvailable(false);
+                // You can also trigger resend OTP API here
+                // resendOtpEmail();
+              }}>
+              <Text style={{color: colors.black, fontWeight: 'bold'}}>
+                Resend OTP
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={{color: colors.lightGray}}>
+              Resend in{' '}
+              <Text style={{color: colors.black}}>{formatTime(timer)} Min</Text>
+            </Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={{marginTop: hp(45)}}
+          activeOpacity={0.7}
+          onPress={onChangeEmailPress}>
+          <LinearGradient
+            colors={['#0F52BA', '#8225AF']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1.2}}
+            style={{
+              width: '85%',
+              height: hp(50),
+              borderRadius: 50,
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              // marginTop: hp(75),
+            }}>
+            {loader ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Verify Code
+              </Text>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   const renderPasswordBottomSheetContent = () => {
@@ -729,6 +1010,102 @@ const CredentialsScreen = () => {
       </RBSheet>
 
       <RBSheet
+        ref={bottomSheetEmailChangeRef}
+        height={hp(430)}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        onOpen={() => {
+          setTimer(120); // Start timer when opened
+          setResendAvailable(false);
+        }}
+        onClose={() => {
+          setTimer(120); // Reset timer when closed
+          setResendAvailable(false);
+        }}
+        customStyles={{
+          draggableIcon: {
+            backgroundColor: '#ffffff',
+          },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {renderBottomSheetEmailChangeContent()}
+      </RBSheet>
+
+      <RBSheet
+        ref={bottomSheetEmailChangeSubmitRef}
+        height={hp(350)}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        customStyles={{
+          draggableIcon: {
+            backgroundColor: '#ffffff',
+          },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {/*{renderBottomSheetEmailChangeContent()}*/}
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <Image
+            source={icons.confirm_check_icon}
+            style={{
+              tintColor: '#0F52BA',
+              marginTop: hp(45),
+              height: hp(40),
+              width: hp(40),
+              resizeMode: 'contain',
+            }}
+          />
+          <Text
+            style={{
+              marginTop: hp(48),
+              fontSize: fontSize(18),
+              lineHeight: hp(26),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+            }}>
+            Email has been updated
+          </Text>
+
+          <TouchableOpacity
+            style={{marginTop: hp(45)}}
+            activeOpacity={0.7}
+            // onPress={onChangeEmailPress}
+            onPress={() => {
+              bottomSheetEmailChangeSubmitRef.current.close();
+            }}>
+            <LinearGradient
+              colors={['#0F52BA', '#8225AF']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1.2}}
+              style={{
+                width: hp(120),
+                height: hp(50),
+                borderRadius: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+                // marginTop: hp(75),
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Ok
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
+
+      <RBSheet
         ref={passwordBottomSheetRef}
         height={isIOS ? hp(550) : hp(530)} // Adjust the height as per your requirement
         closeOnDragDown={true}
@@ -830,5 +1207,41 @@ const CredentialsScreen = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // marginTop: hp(20),
+  },
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: wp(330),
+    height: hp(150),
+  },
+  otpInput: {
+    width: wp(60),
+    height: hp(50),
+    textAlign: 'center',
+    fontSize: fontSize(24),
+    borderBottomWidth: 1,
+    borderBottomColor: '#D9D9D9',
+    fontWeight: 'bold',
+  },
+  activeInput: {
+    borderBottomColor: colors.black,
+  },
+  inactiveInput: {
+    borderBottomColor: '#D9D9D9',
+  },
+  digitStyle: {
+    color: colors.black,
+  },
+  placeholderStyle: {
+    color: '#D9D9D9',
+  },
+});
 
 export default CredentialsScreen;

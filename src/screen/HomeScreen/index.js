@@ -841,7 +841,7 @@ const HomeScreen = ({route}) => {
       </ScrollView>
       {/*</View>*/}
       {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
-      <Toast config={toastConfigs} />
+      {/*<Toast config={toastConfigs} />*/}
     </SafeAreaView>
   );
 };

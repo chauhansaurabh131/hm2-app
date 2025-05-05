@@ -43,18 +43,33 @@ function* login(action) {
     action.data?.successCallback();
   } catch (error) {
     // console.log(' === error____ ===> ', error);
+    // const errorMessage = error?.response?.data?.message || 'An error occurred.';
+    // const otpType = error?.response?.data?.otpType;
+    // const otpEmail = error?.response?.data?.email;
+    // const otpMobileNumber = error?.response?.data?.mobileNumber;
+    //
+    // console.log(' === error?.response ===> ', error?.response?.data?.method);
+    //
+    // console.log(' === error___New ===> ', error);
+    //
+    // if (errorMessage !== 'Incorrect email or password') {
+    //   // action.data?.failureCallback();
+    //   action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
+    // }
+
+    const statusCode = error?.response?.status;
     const errorMessage = error?.response?.data?.message || 'An error occurred.';
     const otpType = error?.response?.data?.otpType;
     const otpEmail = error?.response?.data?.email;
     const otpMobileNumber = error?.response?.data?.mobileNumber;
 
-    console.log(' === error?.response ===> ', error?.response?.data?.method);
+    console.log(' === error status ===> ', statusCode);
+    console.log(' === error message ===> ', errorMessage);
 
-    if (errorMessage !== 'Incorrect email or password') {
-      // action.data?.failureCallback();
+    // Only trigger failure callback if it's not a 500 error
+    if (statusCode !== 500 && errorMessage !== 'Incorrect email or password') {
       action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
     }
-    // action.data?.failureCallback();
 
     yield put(authAction.loginFail());
   }

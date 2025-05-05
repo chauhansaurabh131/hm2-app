@@ -91,7 +91,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
-      Alert.alert('Error', 'Failed to fetch data.');
+      // Alert.alert('Error', 'Failed to fetch data.');
       setLoading(false);
     }
   };

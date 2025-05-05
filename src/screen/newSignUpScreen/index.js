@@ -114,9 +114,10 @@ const NewSignUpScreen = () => {
     // Now we make the API call after validation
     if (emailOrMobileValid === 'email') {
       // Proceed with registration using email
+
       dispatch(
         register(
-          {name, email, countryCodeId: '67d2698641c89038f51512a2'},
+          {name, email, countryCodeId: '680b21192ce1b8556e4774c1'},
           () => {
             navigation.navigate('VerifyEmailOtpScreen', {name, email});
           },
@@ -124,15 +125,16 @@ const NewSignUpScreen = () => {
       );
     } else if (emailOrMobileValid === 'mobile') {
       // Proceed with registration using mobile number
+
       dispatch(
         register(
           {
             name,
             mobileNumber: email,
-            countryCodeId: '67d2698641c89038f51512a2',
+            countryCodeId: '680b21192ce1b8556e4774c1',
           },
           () => {
-            navigation.navigate('VerifyMobileOtpScreen', {name, email});
+            navigation.navigate('VerifyEmailOtpScreen', {name, email});
           },
         ),
       );
@@ -169,7 +171,13 @@ const NewSignUpScreen = () => {
           <View style={{marginTop: hp(50)}}>
             <NewTextInputComponent
               value={name}
-              onChangeText={text => setName(text)}
+              // onChangeText={text => setName(text)}
+              onChangeText={text => {
+                // Capitalize first letter and keep rest the same
+                const formattedText =
+                  text.charAt(0).toUpperCase() + text.slice(1);
+                setName(formattedText);
+              }}
               placeholder="Enter Your Name"
               LeftIconName={icons.profileLogo}
             />

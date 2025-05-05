@@ -15,6 +15,7 @@ const NewStartExploreScreen = () => {
   const [selectedOption, setSelectedOption] = useState(null); // State to manage selected option
   const apiDispatch = useDispatch();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const selectionOptionClick = () => {
     // if (selectedBox === 'marriage') {
@@ -29,6 +30,7 @@ const NewStartExploreScreen = () => {
             appUsesType: 'marriage',
           },
           () => dispatch(changeStack('marriage')),
+          setLoading(false),
         ),
       );
     } else if (selectedOption === 'dating') {
@@ -39,6 +41,7 @@ const NewStartExploreScreen = () => {
             appUsesType: 'dating',
           },
           () => dispatch(changeStack('dating')),
+          setLoading(false),
         ),
       );
     } else if (selectedOption === 'social') {
@@ -155,7 +158,7 @@ const NewStartExploreScreen = () => {
             buttonName={'Start Explore'}
             containerStyle={style.buttonContainerStyle}
             onPress={selectionOptionClick}
-            // loading={loading}
+            loading={loading}
           />
         )}
       </View>
