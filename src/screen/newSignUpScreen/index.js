@@ -349,7 +349,7 @@ const NewSignUpScreen = () => {
 
               <TouchableOpacity
                 activeOpacity={0.5}
-                // onPress={signIn}
+                onPress={signIn}
                 style={{
                   width: hp(44),
                   height: hp(44),
