@@ -30,6 +30,21 @@ export const loginFail = () => ({
   type: TYPES.LOGIN_FAILED,
 });
 
+/* ------------- GOOGLE_LOGIN ------------- */
+export const googleLogin = (payload, callback, failedCallback) => ({
+  type: TYPES.GOOGLE_LOGIN,
+  data: {payload, callback, failedCallback},
+});
+
+export const googleLoginSuccess = data => ({
+  type: TYPES.GOOGLE_SUCCESS,
+  data,
+});
+
+export const googleLoginFail = () => ({
+  type: TYPES.GOOGLE_FAILED,
+});
+
 // Verify OTP Actions
 export const verifyOTP = (payload, callback) => ({
   type: TYPES.VERIFY_OTP,

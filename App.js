@@ -735,20 +735,70 @@
 import React, {useEffect} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNavigator from './src/navigations';
-import {LogBox, Platform, PermissionsAndroid} from 'react-native';
+import {LogBox, Platform, PermissionsAndroid, Alert} from 'react-native';
 import {Provider} from 'react-redux';
 import {persistor, store} from './src/reducer/store';
-import {RequestUserPermission} from './src/service/pushNotification';
+import {
+  ForegroundMessages,
+  NoificationListner,
+  RequestUserPermission,
+} from './src/service/pushNotification';
 import {PersistGate} from 'redux-persist/integration/react';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import messaging from '@react-native-firebase/messaging';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 
 LogBox.ignoreAllLogs();
 
 const App = () => {
+  // useEffect(() => {
+  //   RequestUserPermission();
+  //   requestPermissions();
+  // }, []);
+
   useEffect(() => {
+    requestPermissionsAndroid();
+
+    NoificationListner();
+
+    ForegroundMessages();
     RequestUserPermission();
     requestPermissions();
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('FCM message received:', remoteMessage); // Log to see if it's triggered
+      onDisplayNotification(remoteMessage);
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  const onDisplayNotification = async remoteMessage => {
+    try {
+      // Create a notification channel (if not already created)
+      const channelId = await notifee.createChannel({
+        id: 'default',
+        name: 'Default Channel',
+        sound: 'default',
+        importance: AndroidImportance.HIGH,
+      });
+
+      // Display the notification
+      await notifee.displayNotification({
+        title: remoteMessage.notification.title || 'Default Title',
+        body: remoteMessage.notification.body || 'Default message content',
+        android: {
+          channelId,
+          smallIcon: 'ic_launcher', // Ensure you have a valid icon here
+          pressAction: {
+            id: 'default',
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Error displaying notification:', error);
+    }
+  };
 
   const requestPermissions = async () => {
     // Request photo library permission
@@ -810,6 +860,26 @@ const App = () => {
           console.warn('Microphone access denied');
         }
       }
+    }
+  };
+
+  const requestPermissionsAndroid = async () => {
+    // Ensure we're on Android 13 or higher
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert('Permission Granted');
+      } else {
+        Alert.alert('Permission Denied');
+      }
+    } else {
+      console.log(
+        ' === POST_NOTIFICATIONS ===> ',
+        'POST_NOTIFICATIONS permission not required for this Android version',
+      );
     }
   };
 

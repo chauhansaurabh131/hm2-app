@@ -6,6 +6,10 @@ export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
 
+export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
+export const GOOGLE_SUCCESS = 'GOOGLE_SUCCESS';
+export const GOOGLE_FAILED = 'GOOGLE_FAILED';
+
 export const VERIFY_OTP = 'VERIFY_OTP';
 export const VERIFY_OTP_SUCCESS = 'VERIFY_OTP_SUCCESS';
 export const VERIFY_OTP_FAILED = 'VERIFY_OTP_FAILED';

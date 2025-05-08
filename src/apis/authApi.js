@@ -12,6 +12,10 @@ const verifyOTP = async data => {
   return post('/api/v1/user/auth/verify-otp-email', data, false);
 };
 
+const googleLoggin = async data => {
+  return post('/api/v1/user/auth/google', data, true);
+};
+
 const setPassWord = async data => {
   return put('/api/v1/user/auth/update-user', data, true);
 };
@@ -20,5 +24,6 @@ export const auth = {
   register,
   login,
   verifyOTP,
+  googleLoggin,
   setPassWord,
 };

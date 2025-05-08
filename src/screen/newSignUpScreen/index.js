@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   Keyboard,
@@ -14,15 +14,21 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import NewTextInputComponent from '../../components/newTextInputComponent';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useDispatch, useSelector} from 'react-redux';
-import {register} from '../../actions/authActions';
+import {changeStack, googleLogin, register} from '../../actions/authActions';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 const NewSignUpScreen = () => {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -40,6 +46,13 @@ const NewSignUpScreen = () => {
   //     return true;
   //   }
   // };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '562359368016-goaj8oi4f8tgeo001als2rib72da5dqs.apps.googleusercontent.com',
+    });
+  }, []);
 
   const validateName = () => {
     if (name.length < 3) {
@@ -138,6 +151,62 @@ const NewSignUpScreen = () => {
           },
         ),
       );
+    }
+  };
+
+  const signIn = async () => {
+    console.log(' === signIn Press ===> ');
+    try {
+      await GoogleSignin.signOut();
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      console.log(' === response ===> ', response);
+
+      const idToken = response.idToken || response?.data?.idToken;
+
+      if (!idToken) {
+        console.log('No idToken found in response');
+        return;
+      }
+
+      // dispatch(
+      //   googleLogin({access_token: idToken}, () => {
+      //     navigation.navigate('NewStartExploreScreen');
+      //   }),
+      // );
+
+      dispatch(
+        googleLogin(
+          {access_token: idToken},
+          () => {
+            // console.log(' === Success Callback ===> ');
+            dispatch(changeStack());
+          },
+          () => {
+            // console.log(' === Failure Callback ===> ');
+            navigation.navigate('NewStartExploreScreen');
+          },
+        ),
+      );
+    } catch (error) {
+      console.log(' === signIn error ===> ', error);
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            console.log('Sign in already in progress');
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            console.log('Play Services not available');
+            break;
+          case statusCodes.SIGN_IN_CANCELLED:
+            console.log('User cancelled sign-in');
+            break;
+          default:
+            console.log('Other Google sign-in error:', error.code);
+        }
+      } else {
+        console.log('Non-Google sign-in error:', error.message);
+      }
     }
   };
 
@@ -279,6 +348,8 @@ const NewSignUpScreen = () => {
               </Text>
 
               <TouchableOpacity
+                activeOpacity={0.5}
+                // onPress={signIn}
                 style={{
                   width: hp(44),
                   height: hp(44),

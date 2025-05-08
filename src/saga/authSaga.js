@@ -99,6 +99,56 @@ function* verifyOTP(action) {
   }
 }
 
+function* googleLogin(action) {
+  try {
+    const response = yield call(auth.googleLoggin, action.data.payload);
+
+    // Check if appUsesType exists in the response
+    const appUsesType = response.data.data?.user?.appUsesType;
+
+    console.log(' === googleLoginSuccess+++++ ===> ', appUsesType);
+
+    if (appUsesType) {
+      // If appUsesType exists, trigger success and the success callback
+      yield put(authAction.googleLoginSuccess(response.data.data));
+      yield setAsyncStorageData(
+        TOKEN,
+        `Bearer ${response?.data?.data?.tokens?.access?.token}`,
+      );
+      yield setAsyncStorageData(
+        REFRESH_TOKEN,
+        `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
+      );
+
+      // Trigger success callback if provided
+      if (action.data.callback) {
+        console.log(' === Success Callback ===> ', appUsesType);
+        action.data.callback();
+      }
+      console.log('Done');
+    } else {
+      // If appUsesType does not exist, trigger failure
+      yield put(authAction.googleLoginFail());
+
+      // Trigger failure callback if provided
+      if (action.data.failedCallback) {
+        console.log(' === Failure Callback ===> appUsesType is undefined');
+        action.data.failedCallback();
+      }
+      console.log('Failed');
+    }
+  } catch (error) {
+    // Handle any errors during login
+    yield put(authAction.googleLoginFail());
+    console.log('Error during login: ', error);
+
+    if (action.data.failedCallback) {
+      action.data.failedCallback();
+    }
+    console.log('Failed');
+  }
+}
+
 // Set Password saga
 function* setPassword(action) {
   try {
@@ -117,6 +167,7 @@ function* authSaga() {
   yield all([
     takeLatest(TYPES.REGISTER, register),
     takeLatest(TYPES.LOGIN, login),
+    takeLatest(TYPES.GOOGLE_LOGIN, googleLogin),
     takeLatest(TYPES.VERIFY_OTP, verifyOTP),
     takeLatest(TYPES.SET_PASSWORD, setPassword),
     // takeLatest(TYPES.GET_USER_DATA, getUserData),

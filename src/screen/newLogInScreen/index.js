@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   Keyboard,
@@ -12,11 +12,16 @@ import {colors} from '../../utils/colors';
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import NewTextInputComponent from '../../components/newTextInputComponent';
-import {changeStack, login} from '../../actions/authActions';
+import {changeStack, googleLogin, login} from '../../actions/authActions';
 import {useDispatch, useSelector} from 'react-redux';
 import CommonGradientButton from '../../components/commonGradientButton';
 import Toast from 'react-native-toast-message';
 import {useNavigation} from '@react-navigation/native';
+import {
+  GoogleSignin,
+  isErrorWithCode,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 const NewLogInScreen = () => {
   const [email, setEmail] = useState('');
@@ -26,6 +31,13 @@ const NewLogInScreen = () => {
   const navigation = useNavigation();
 
   const {loading} = useSelector(state => state.auth);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '562359368016-goaj8oi4f8tgeo001als2rib72da5dqs.apps.googleusercontent.com',
+    });
+  }, []);
 
   const successCallback = () => {
     dispatch(changeStack());
@@ -144,6 +156,62 @@ const NewLogInScreen = () => {
     setPassword('');
   };
 
+  const signIn = async () => {
+    console.log(' === signIn Press ===> ');
+    try {
+      await GoogleSignin.signOut();
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      console.log(' === response ===> ', response);
+
+      const idToken = response.idToken || response?.data?.idToken;
+
+      if (!idToken) {
+        console.log('No idToken found in response');
+        return;
+      }
+
+      // dispatch(
+      //   googleLogin({access_token: idToken}, () => {
+      //     navigation.navigate('NewStartExploreScreen');
+      //   }),
+      // );
+
+      dispatch(
+        googleLogin(
+          {access_token: idToken},
+          () => {
+            // console.log(' === Success Callback ===> ');
+            dispatch(changeStack());
+          },
+          () => {
+            // console.log(' === Failure Callback ===> ');
+            navigation.navigate('NewStartExploreScreen');
+          },
+        ),
+      );
+    } catch (error) {
+      console.log(' === signIn error ===> ', error);
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            console.log('Sign in already in progress');
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            console.log('Play Services not available');
+            break;
+          case statusCodes.SIGN_IN_CANCELLED:
+            console.log('User cancelled sign-in');
+            break;
+          default:
+            console.log('Other Google sign-in error:', error.code);
+        }
+      } else {
+        console.log('Non-Google sign-in error:', error.message);
+      }
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
@@ -255,9 +323,7 @@ const NewLogInScreen = () => {
 
               <TouchableOpacity
                 activeOpacity={0.5}
-                onPress={() => {
-                  console.log(' === Goggle Logo ===> ');
-                }}
+                onPress={signIn}
                 style={{
                   width: hp(44),
                   height: hp(44),

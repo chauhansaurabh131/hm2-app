@@ -1,49 +1,42 @@
 {
   "project_info": {
-    "project_number": "478268963840",
-    "project_id": "happymilan-130a5",
-    "storage_bucket": "happymilan-130a5.firebasestorage.app"
+    "project_number": "562359368016",
+    "project_id": "fir-notification-test-2",
+    "storage_bucket": "fir-notification-test-2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:478268963840:android:532bc132fb47cf0f2cace5",
+        "mobilesdk_app_id": "1:562359368016:android:fd8c4654ad76e4783ed455",
         "android_client_info": {
           "package_name": "com.happymilan2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "478268963840-pgiog77bere529u2vvi79evvfdtd9fsr.apps.googleusercontent.com",
+          "client_id": "562359368016-5lpt246ubttdti42l1gqo519h88c2v35.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.happymilan2",
-            "certificate_hash": "04ca50d1df1a0b8143511a383f2d1f7a78d2bdcd"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
-          "client_id": "478268963840-84lqu6pk2orpq80m3s9m9lgfv36e6anv.apps.googleusercontent.com",
+          "client_id": "562359368016-goaj8oi4f8tgeo001als2rib72da5dqs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDQgO8UK9AFBUiwCSago1V_tSrlefBzZQk"
+          "current_key": "AIzaSyAlYYuk3aQKGMD3krEzUt5J3umNu0HLnEE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "478268963840-84lqu6pk2orpq80m3s9m9lgfv36e6anv.apps.googleusercontent.com",
+              "client_id": "562359368016-goaj8oi4f8tgeo001als2rib72da5dqs.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "478268963840-7p1r8a6dcufm52in0prcfpq2h03nqsle.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.HappyMilan2"
-              }
             }
           ]
         }
