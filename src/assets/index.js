@@ -192,6 +192,8 @@ export const icons = {
   two_factor_icon: require('./icons/two_factor_icon.png'),
   google_play_icon: require('./icons/google_play_icon.png'),
   app_store_icon: require('./icons/app_store_icon.png'),
+  view_status_icon: require('./icons/view_status_icon.png'),
+  help_center_icon: require('./icons/help_center_icon.png'),
 };
 
 export const gif = {

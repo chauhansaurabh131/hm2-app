@@ -11,6 +11,7 @@ import {
   Modal,
   Pressable,
   Alert,
+  FlatList,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient'; // Import LinearGradient
@@ -19,11 +20,17 @@ import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {icons} from '../../assets';
 import {useSelector} from 'react-redux';
 import CommonGradientButton from '../../components/commonGradientButton';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import dayjs from 'dayjs';
 
 const ViewUserStatusScreen = () => {
   const route = useRoute(); // Get the route object
   const {userStatus, statusData} = route.params || {}; // Access the passed status data
+  const [totalResults, setTotalResults] = useState(null);
+  const [viewers, setViewers] = useState([]);
   const navigation = useNavigation();
+  const bottomSheetRef = useRef();
 
   const {user} = useSelector(state => state.auth);
 
@@ -77,6 +84,44 @@ const ViewUserStatusScreen = () => {
       progressAnim.stopAnimation(); // Stop the animation on component unmount
     };
   }, [statusAddTime]);
+
+  useEffect(() => {
+    const fetchStoryViews = async () => {
+      try {
+        if (!statusId) {
+          console.warn('User ID is missing');
+          return;
+        }
+
+        const response = await fetch(
+          `https://stag.mntech.website/api/v1/user/story-view/paginated/${userStatus?.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        const rawResults = responseData?.data?.results || [];
+
+        setTotalResults(responseData?.data?.totalResults);
+        setViewers(rawResults);
+      } catch (error) {
+        console.error('Error fetching story views:', error);
+      }
+    };
+
+    if (accessToken && statusId) {
+      fetchStoryViews();
+    }
+  }, [accessToken, statusId]);
 
   // Function to start animation
   const startAnimation = (duration = 9000) => {
@@ -158,6 +203,105 @@ const ViewUserStatusScreen = () => {
   const handleCancel = () => {
     setModalVisible(false); // Close the modal
     handlePressOut(); // Resume the timer when modal closes
+  };
+
+  const formatCustomTime = time => {
+    const now = dayjs();
+    const posted = dayjs(time);
+    const diffInMinutes = now.diff(posted, 'minute');
+    const diffInHours = now.diff(posted, 'hour');
+
+    if (diffInMinutes < 1) {
+      return 'Just now';
+    }
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} min${diffInMinutes > 1 ? 's' : ''} ago`;
+    }
+    if (diffInHours < 3) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    }
+
+    return posted.format('hh:mm A'); // e.g., "10:12 AM"
+  };
+
+  const clickedOnUser = viewerId => {
+    const matchesUserData = {
+      firstName: viewerId.name,
+      id: viewerId?.id,
+    };
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+  };
+
+  const renderViewer = ({item}) => {
+    const viewer = item.viewerId;
+
+    const hasValidImage =
+      viewer.profilePic &&
+      viewer.profilePic !== 'null' &&
+      viewer.profilePic.trim() !== '';
+
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingVertical: 5,
+          marginTop: 5,
+        }}>
+        <View style={{width: '100%'}}>
+          <TouchableOpacity
+            activeOpacity={0.3}
+            onPress={() => clickedOnUser(viewer)}
+            style={{paddingHorizontal: 25}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {hasValidImage ? (
+                <>
+                  {viewer?.profilePic && (
+                    <Image
+                      source={{uri: viewer.profilePic}}
+                      style={{
+                        width: hp(40),
+                        height: hp(40),
+                        borderRadius: 20,
+                        marginRight: 10,
+                      }}
+                    />
+                  )}
+                </>
+              ) : (
+                <ProfileAvatar
+                  firstName={viewer.firstName || viewer.name}
+                  lastName={viewer.lastName}
+                  textStyle={{
+                    width: hp(40),
+                    height: hp(40),
+                    borderRadius: 20,
+                    marginRight: 10,
+                  }}
+                  profileTexts={{
+                    fontSize: fontSize(14),
+                  }}
+                />
+              )}
+
+              <View style={{top: -3}}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: 'white',
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  {viewer?.name || 'Unnamed User'}
+                </Text>
+                <Text style={{fontSize: 12, color: 'white'}}>
+                  {item?.createdAt ? formatCustomTime(item.createdAt) : ''}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -281,6 +425,32 @@ const ViewUserStatusScreen = () => {
         </Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={() => bottomSheetRef.current?.open()}
+        activeOpacity={0.5}
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          alignSelf: 'center',
+          flexDirection: 'row',
+        }}>
+        <Image
+          source={icons.view_status_icon}
+          style={{width: hp(22), height: hp(15), resizeMode: 'contain'}}
+        />
+        <Text
+          style={{
+            color: 'white',
+            fontSize: fontSize(14),
+            lineHeight: hp(16),
+            fontFamily: fontFamily.poppins400,
+            top: 2,
+            marginLeft: hp(8),
+          }}>
+          {totalResults !== null ? totalResults : '0'}
+        </Text>
+      </TouchableOpacity>
+
       {/* Modal for Delete Confirmation */}
       <Modal
         animationType="none"
@@ -299,10 +469,7 @@ const ViewUserStatusScreen = () => {
           <View
             style={{
               backgroundColor: 'white',
-              // padding: 0,
               borderRadius: 10,
-              // width: '80%',
-              // alignItems: 'center',
               width: hp(340),
             }}>
             <View style={{marginHorizontal: hp(38)}}>
@@ -325,17 +492,6 @@ const ViewUserStatusScreen = () => {
                   marginTop: hp(44),
                   marginBottom: hp(38),
                 }}>
-                {/*<TouchableOpacity*/}
-                {/*  style={{*/}
-                {/*    backgroundColor: 'red',*/}
-                {/*    padding: 10,*/}
-                {/*    borderRadius: 5,*/}
-                {/*    marginRight: 10,*/}
-                {/*  }}*/}
-                {/*  onPress={handleDelete}>*/}
-                {/*  <Text style={{color: 'white'}}>Delete</Text>*/}
-                {/*</TouchableOpacity>*/}
-
                 <TouchableOpacity activeOpacity={0.7} onPress={handleCancel}>
                   <LinearGradient
                     colors={['#0D4EB3', '#9413D0']}
@@ -353,7 +509,7 @@ const ViewUserStatusScreen = () => {
                         flex: 1,
                         backgroundColor: colors.white,
                         justifyContent: 'center',
-                        margin: isIOS ? 0 : 1,
+                        margin: isIOS ? 0 : 1.5,
                       }}>
                       <Text
                         style={{
@@ -363,23 +519,13 @@ const ViewUserStatusScreen = () => {
                           margin: 10,
                           fontSize: fontSize(14),
                           lineHeight: hp(21),
-                          fontFamily: fontFamily.poppins600,
+                          fontFamily: fontFamily.poppins500,
                         }}>
                         Not Now
                       </Text>
                     </View>
                   </LinearGradient>
                 </TouchableOpacity>
-
-                {/*<TouchableOpacity*/}
-                {/*  style={{*/}
-                {/*    backgroundColor: 'gray',*/}
-                {/*    padding: 10,*/}
-                {/*    borderRadius: 5,*/}
-                {/*  }}*/}
-                {/*  onPress={handleCancel}>*/}
-                {/*  <Text style={{color: 'white'}}>Cancel</Text>*/}
-                {/*</TouchableOpacity>*/}
 
                 <CommonGradientButton
                   onPress={handleDelete}
@@ -389,12 +535,63 @@ const ViewUserStatusScreen = () => {
                     height: hp(50),
                     borderRadius: 50,
                   }}
+                  buttonTextStyle={{
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins500,
+                  }}
                 />
               </View>
             </View>
           </View>
         </View>
       </Modal>
+
+      <RBSheet
+        ref={bottomSheetRef}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        height={hp(350)}
+        onOpen={handlePressIn} // 👈 Pause progress when opened
+        onClose={handlePressOut}
+        customStyles={{
+          wrapper: {
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          },
+          draggableIcon: {
+            backgroundColor: 'black',
+          },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            backgroundColor: 'black',
+          },
+        }}>
+        <View style={{flex: 1, backgroundColor: 'black'}}>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins400,
+              paddingHorizontal: 25,
+              marginBottom: hp(15),
+            }}>
+            Who viewed?
+          </Text>
+
+          <View
+            style={{width: '100%', height: 1.5, backgroundColor: '#3F3F3F'}}
+          />
+
+          <FlatList
+            data={viewers}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderViewer}
+            contentContainerStyle={{paddingBottom: 20, marginTop: 10}}
+          />
+        </View>
+      </RBSheet>
     </SafeAreaView>
   );
 };

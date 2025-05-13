@@ -675,10 +675,94 @@ const UpgradeScreen = () => {
                 {expandedIndex === 0 && ( // Show text only if expanded
                   <View style={style.querySubTittleContainer}>
                     <Text style={style.querySubTittle}>
-                      HappyMilan is a social networking website that{'\n'}
-                      caters to both categories: matrimony and dating.{'\n'}
-                      Users can select either option when registering
+                      We accept a wide range of payment methods,{'\n'}including:
                     </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: hp(8),
+                        marginTop: hp(15),
+                      }}>
+                      <View
+                        style={{
+                          width: hp(5),
+                          height: hp(5),
+                          borderRadius: 50,
+                          backgroundColor: 'black',
+                          top: 6,
+                        }}
+                      />
+
+                      <Text style={[style.querySubTittle, {marginLeft: hp(8)}]}>
+                        Credit/Debit Cards (Visa, MasterCard,{'\n'}American
+                        Express)
+                      </Text>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: hp(8),
+                        marginTop: hp(5),
+                      }}>
+                      <View
+                        style={{
+                          width: hp(5),
+                          height: hp(5),
+                          borderRadius: 50,
+                          backgroundColor: 'black',
+                          top: 6,
+                        }}
+                      />
+
+                      <Text style={[style.querySubTittle, {marginLeft: hp(8)}]}>
+                        Digital Wallets (PayPal, Google Pay, Apple Pay)
+                      </Text>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: hp(8),
+                        marginTop: hp(5),
+                      }}>
+                      <View
+                        style={{
+                          width: hp(5),
+                          height: hp(5),
+                          borderRadius: 50,
+                          backgroundColor: 'black',
+                          top: 6,
+                        }}
+                      />
+
+                      <Text style={[style.querySubTittle, {marginLeft: hp(8)}]}>
+                        Net Banking and UPI (for users in supported{'\n'}
+                        regions)
+                      </Text>
+                    </View>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: hp(8),
+                        marginTop: hp(5),
+                      }}>
+                      <View
+                        style={{
+                          width: hp(5),
+                          height: hp(5),
+                          borderRadius: 50,
+                          backgroundColor: 'black',
+                          top: 6,
+                        }}
+                      />
+
+                      <Text style={[style.querySubTittle, {marginLeft: hp(8)}]}>
+                        Mobile Payments (where available)
+                      </Text>
+                    </View>
                   </View>
                 )}
               </TouchableOpacity>
@@ -711,9 +795,11 @@ const UpgradeScreen = () => {
                 {expandedIndex === 1 && ( // Show text only if expanded
                   <View style={style.querySubTittleContainer}>
                     <Text style={style.querySubTittle}>
-                      HappyMilan is a social networking website that{'\n'}
-                      caters to both categories: matrimony and dating.{'\n'}
-                      Users can select either option when registering
+                      Yes, you can cancel your subscription at any time.{'\n'}If
+                      you cancel during an active subscription period,{'\n'}your
+                      premium features will remain available until{'\n'}the end
+                      of the billing cycle. After that, your{'\n'}account will
+                      revert to a free plan.
                     </Text>
                   </View>
                 )}
@@ -728,9 +814,7 @@ const UpgradeScreen = () => {
                   backgroundColor: expandedIndex === 2 ? '#F5F9FF' : 'white',
                 }}>
                 <View style={style.queryTittleContainer}>
-                  <Text style={style.queryTittle}>
-                    Is there a refund policy?
-                  </Text>
+                  <Text style={style.queryTittle}>Do you offer refunds?</Text>
 
                   <Image
                     source={icons.down_arrow_icon}
@@ -747,9 +831,11 @@ const UpgradeScreen = () => {
                 {expandedIndex === 2 && ( // Show text only if expanded
                   <View style={style.querySubTittleContainer}>
                     <Text style={style.querySubTittle}>
-                      HappyMilan is a social networking website that{'\n'}
-                      caters to both categories: matrimony and dating.{'\n'}
-                      Users can select either option when registering
+                      Refunds are generally not provided after a{'\n'}
+                      subscription has been activated, except in cases{'\n'}of
+                      accidental charges or technical issues. Please{'\n'}
+                      contact our support team within 14 days of{'\n'}purchase
+                      for refund inquiries.
                     </Text>
                   </View>
                 )}
@@ -767,7 +853,7 @@ const UpgradeScreen = () => {
                 }}>
                 <View style={style.queryTittleContainer}>
                   <Text style={style.queryTittle}>
-                    Will I need to pay any additional charges?
+                    What happens if my payment fails?
                   </Text>
 
                   <Image
@@ -785,9 +871,12 @@ const UpgradeScreen = () => {
                 {expandedIndex === 3 && ( // Show text only if expanded
                   <View style={style.querySubTittleContainer}>
                     <Text style={style.querySubTittle}>
-                      HappyMilan is a social networking website that{'\n'}
-                      caters to both categories: matrimony and dating.{'\n'}
-                      Users can select either option when registering
+                      If your payment fails, you will receive a notification
+                      {'\n'}
+                      with the option to update your payment details.{'\n'}Your
+                      subscription will remain active for a short{'\n'}grace
+                      period, during which you can resolve the{'\n'}payment
+                      issue.
                     </Text>
                   </View>
                 )}

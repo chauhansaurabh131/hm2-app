@@ -15,6 +15,7 @@ import {icons, images} from '../../assets';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useNavigation} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
+import DemoCode from '../demoCode';
 
 const NewAddStoryScreen = () => {
   const {user} = useSelector(state => state.auth);
@@ -92,6 +93,7 @@ const NewAddStoryScreen = () => {
       console.log('User has a status content:', userStatus);
 
       navigation.navigate('ViewUserStatusScreen', {userStatus});
+      // navigation.navigate('DemoCode', {userStatus});
     } else if (userImage) {
       // Open gallery if userImage exists
       openGallery();

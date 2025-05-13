@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   SafeAreaView,
+  Linking,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
@@ -71,7 +72,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
       }}>
       <RBSheet
         ref={bottomSheetRef}
-        height={hp(550)}
+        height={hp(630)}
         openDuration={250}
         customStyles={{
           container: {
@@ -120,60 +121,91 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           <View style={styles.horizontalLine} />
 
           <View style={styles.bodyContainer}>
-            <TouchableOpacity
-              style={styles.labelContainer}
-              onPress={() => {
-                {
-                  appType === 'dating'
-                    ? navigation.navigate('DatingProfileScreen')
-                    : navigation.navigate('MyProfileScreen');
-                }
-                closeBottomSheet();
-              }}>
-              <View style={styles.labelViewContainer}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={icons.profileLogo}
-                    style={styles.profileIcon}
-                  />
+            <View style={{marginHorizontal: 27}}>
+              <TouchableOpacity
+                style={styles.labelContainer}
+                onPress={() => {
+                  {
+                    appType === 'dating'
+                      ? navigation.navigate('DatingProfileScreen')
+                      : navigation.navigate('MyProfileScreen');
+                  }
+                  closeBottomSheet();
+                }}>
+                <View style={styles.labelViewContainer}>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={icons.profileLogo}
+                      style={styles.profileIcon}
+                    />
+                  </View>
+                  <Text style={styles.labelText}>My Profile</Text>
                 </View>
-                <Text style={styles.labelText}>My Profile</Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.labelContainer}
+                onPress={() => {
+                  navigation.navigate('AccountsScreen');
+                  closeBottomSheet();
+                }}>
+                <View style={styles.labelViewContainer}>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={icons.settingIcon}
+                      style={styles.settingIcon}
+                    />
+                  </View>
+                  <Text style={styles.labelText}>Account Settings</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.labelContainer}
+                onPress={() => {
+                  navigation.navigate('PrivacyScreen');
+                  closeBottomSheet();
+                }}>
+                <View style={styles.labelViewContainer}>
+                  <View style={styles.imageContainer}>
+                    <Image source={icons.logLogo} style={styles.privacyIcon} />
+                  </View>
+                  <Text style={styles.labelText}>Privacy Policy</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.labelContainer}
+                onPress={() => {
+                  Linking.openURL('https://happymilan.vercel.app/faq/payment');
+                  closeBottomSheet(); // Optional: close your sheet
+                }}>
+                <View style={styles.labelViewContainer}>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={icons.help_center_icon}
+                      style={{
+                        width: hp(16),
+                        height: hp(16),
+                        tintColor: colors.black,
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
+                  <Text style={styles.labelText}>Help Center</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={[styles.horizontalLine, {marginTop: 5, height: 1.3}]}
+            />
 
             <TouchableOpacity
-              style={styles.labelContainer}
-              onPress={() => {
-                navigation.navigate('AccountsScreen');
-                closeBottomSheet();
-              }}>
-              <View style={styles.labelViewContainer}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={icons.settingIcon}
-                    style={styles.settingIcon}
-                  />
-                </View>
-                <Text style={styles.labelText}>Accounts</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.labelContainer}
-              onPress={() => {
-                navigation.navigate('PrivacyScreen');
-                closeBottomSheet();
-              }}>
-              <View style={styles.labelViewContainer}>
-                <View style={styles.imageContainer}>
-                  <Image source={icons.logLogo} style={styles.privacyIcon} />
-                </View>
-                <Text style={styles.labelText}>Privacy Policy</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.labelContainer}
+              style={[
+                styles.labelContainer,
+                {marginHorizontal: 27, marginTop: 10, marginBottom: 10},
+              ]}
               onPress={() => {
                 navigation.navigate('ConnectToWebScreen');
                 closeBottomSheet();
@@ -189,11 +221,17 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={onLogOutPress}
-              style={styles.logOutContainer}>
-              <Text style={styles.buttonText}>Log Out</Text>
-            </TouchableOpacity>
+            <View
+              style={[styles.horizontalLine, {marginTop: 5, height: 1.3}]}
+            />
+
+            <View style={{marginHorizontal: 27, marginTop: hp(10)}}>
+              <TouchableOpacity
+                onPress={onLogOutPress}
+                style={styles.logOutContainer}>
+                <Text style={styles.buttonText}>Log Out</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </RBSheet>
@@ -304,7 +342,7 @@ const styles = StyleSheet.create({
     marginTop: hp(26),
   },
   bodyContainer: {
-    marginHorizontal: 27,
+    // marginHorizontal: 27,
     marginTop: hp(12),
   },
   labelContainer: {

@@ -316,7 +316,7 @@ const style = StyleSheet.create({
   queryTittle: {
     fontSize: fontSize(12),
     lineHeight: hp(18),
-    fontFamily: fontFamily.poppins500,
+    fontFamily: fontFamily.poppins600,
     color: colors.black,
   },
   querySubTittle: {
