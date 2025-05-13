@@ -101,7 +101,8 @@ const ResetPasswordScreen = () => {
               }
               containerStyle={{width: '100%', marginTop: hp(29)}}
               onPress={onSendCodePress}
-              disabled={loading} // Disable the button while loading
+              // disabled={loading}
+              disabled={loading || email.trim() === ''}
             />
           </View>
 
@@ -120,7 +121,7 @@ const ResetPasswordScreen = () => {
               }}
             />
 
-            <TouchableOpacity
+            <View
               style={{
                 flexDirection: 'row',
                 alignSelf: 'center',
@@ -128,9 +129,6 @@ const ResetPasswordScreen = () => {
                 marginTop: hp(58),
 
                 alignItems: 'center',
-              }}
-              onPress={() => {
-                // navigation.navigate('NewSignUpScreen');
               }}>
               <Text
                 style={{
@@ -141,7 +139,11 @@ const ResetPasswordScreen = () => {
                 }}>
                 New Member?{' '}
               </Text>
-              <View>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                  navigation.navigate('NewSignUpScreen');
+                }}>
                 <Text
                   style={{
                     color: colors.blue,
@@ -151,8 +153,8 @@ const ResetPasswordScreen = () => {
                   }}>
                   Sign Up
                 </Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </SafeAreaView>

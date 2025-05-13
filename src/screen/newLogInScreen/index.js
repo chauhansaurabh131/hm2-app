@@ -22,6 +22,7 @@ import {
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import messaging from '@react-native-firebase/messaging';
 
 const NewLogInScreen = () => {
   const [email, setEmail] = useState('');
@@ -29,8 +30,28 @@ const NewLogInScreen = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [fcmToken, setFcmToken] = useState(null);
 
   const {loading} = useSelector(state => state.auth);
+
+  useEffect(() => {
+    const RequestUserPermission = async () => {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        const token = await messaging().getToken();
+        if (token) {
+          console.log('=============fcmToken_____========>', token);
+          setFcmToken(token); // Save the token in state
+        }
+      }
+    };
+
+    RequestUserPermission();
+  }, []);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -50,6 +71,7 @@ const NewLogInScreen = () => {
       otpType, // pass the method data
       otpEmail,
       otpMobileNumber,
+      deviceToken: fcmToken,
     });
   };
 
@@ -140,6 +162,7 @@ const NewLogInScreen = () => {
           countryCodeId: '680b21192ce1b8556e4774c1',
           mobileNumber,
           password: trimmedPassword,
+          deviceToken: fcmToken,
         };
       } else {
         Toast.show({
@@ -151,7 +174,13 @@ const NewLogInScreen = () => {
       }
     }
 
-    dispatch(login({...loginPayload}, successCallback, failureCallback));
+    dispatch(
+      login(
+        {...loginPayload, deviceToken: fcmToken},
+        successCallback,
+        failureCallback,
+      ),
+    );
     setEmail('');
     setPassword('');
   };
@@ -307,6 +336,7 @@ const NewLogInScreen = () => {
                 alignItems: 'center',
                 marginTop: hp(21),
                 width: wp(267),
+                justifyContent: 'center',
               }}>
               <Text
                 style={{
@@ -344,27 +374,27 @@ const NewLogInScreen = () => {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={{
-                  width: hp(44),
-                  height: hp(44),
-                  borderRadius: hp(50),
-                  borderColor: '#D4D4D4',
-                  borderWidth: 1,
-                  marginRight: wp(20),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: wp(24),
-                }}>
-                <Image
-                  source={icons.facebookLogo}
-                  style={{
-                    height: hp(17.6),
-                    width: hp(17.6),
-                    resizeMode: 'contain',
-                  }}
-                />
-              </TouchableOpacity>
+              {/*<TouchableOpacity*/}
+              {/*  style={{*/}
+              {/*    width: hp(44),*/}
+              {/*    height: hp(44),*/}
+              {/*    borderRadius: hp(50),*/}
+              {/*    borderColor: '#D4D4D4',*/}
+              {/*    borderWidth: 1,*/}
+              {/*    marginRight: wp(20),*/}
+              {/*    justifyContent: 'center',*/}
+              {/*    alignItems: 'center',*/}
+              {/*    marginLeft: wp(24),*/}
+              {/*  }}>*/}
+              {/*  <Image*/}
+              {/*    source={icons.facebookLogo}*/}
+              {/*    style={{*/}
+              {/*      height: hp(17.6),*/}
+              {/*      width: hp(17.6),*/}
+              {/*      resizeMode: 'contain',*/}
+              {/*    }}*/}
+              {/*  />*/}
+              {/*</TouchableOpacity>*/}
             </View>
 
             <View
@@ -377,7 +407,7 @@ const NewLogInScreen = () => {
               }}
             />
 
-            <TouchableOpacity
+            <View
               style={{
                 flexDirection: 'row',
                 alignSelf: 'center',
@@ -385,9 +415,6 @@ const NewLogInScreen = () => {
                 marginTop: hp(58),
 
                 alignItems: 'center',
-              }}
-              onPress={() => {
-                navigation.navigate('NewSignUpScreen');
               }}>
               <Text
                 style={{
@@ -398,7 +425,11 @@ const NewLogInScreen = () => {
                 }}>
                 New Member?{' '}
               </Text>
-              <View>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => {
+                  navigation.navigate('NewSignUpScreen');
+                }}>
                 <Text
                   style={{
                     color: colors.blue,
@@ -408,8 +439,8 @@ const NewLogInScreen = () => {
                   }}>
                   Sign Up
                 </Text>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
         {/*<Toast ref={ref => Toast.setRef(ref)} />*/}

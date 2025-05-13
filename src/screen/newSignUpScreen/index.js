@@ -333,6 +333,7 @@ const NewSignUpScreen = () => {
                 alignItems: 'center',
                 marginTop: hp(21),
                 width: wp(267),
+                justifyContent: 'center',
               }}>
               <Text
                 style={{
@@ -370,27 +371,27 @@ const NewSignUpScreen = () => {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={{
-                  width: hp(44),
-                  height: hp(44),
-                  borderRadius: hp(50),
-                  borderColor: '#D4D4D4',
-                  borderWidth: 1,
-                  marginRight: wp(20),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: wp(24),
-                }}>
-                <Image
-                  source={icons.facebookLogo}
-                  style={{
-                    height: hp(17.6),
-                    width: hp(17.6),
-                    resizeMode: 'contain',
-                  }}
-                />
-              </TouchableOpacity>
+              {/*<TouchableOpacity*/}
+              {/*  style={{*/}
+              {/*    width: hp(44),*/}
+              {/*    height: hp(44),*/}
+              {/*    borderRadius: hp(50),*/}
+              {/*    borderColor: '#D4D4D4',*/}
+              {/*    borderWidth: 1,*/}
+              {/*    marginRight: wp(20),*/}
+              {/*    justifyContent: 'center',*/}
+              {/*    alignItems: 'center',*/}
+              {/*    marginLeft: wp(24),*/}
+              {/*  }}>*/}
+              {/*  <Image*/}
+              {/*    source={icons.facebookLogo}*/}
+              {/*    style={{*/}
+              {/*      height: hp(17.6),*/}
+              {/*      width: hp(17.6),*/}
+              {/*      resizeMode: 'contain',*/}
+              {/*    }}*/}
+              {/*  />*/}
+              {/*</TouchableOpacity>*/}
             </View>
 
             <View
