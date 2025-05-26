@@ -19,6 +19,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {paymentDetails} from '../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const UpgradeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('silver');
@@ -532,10 +533,24 @@ const UpgradeScreen = () => {
 
             {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
             <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
-              <Image
-                source={userImage ? {uri: userImage} : images.empty_male_Image}
-                style={style.profileImageStyle}
-              />
+              {userImage ? (
+                <Image
+                  source={{uri: userImage}}
+                  style={style.profileImageStyle}
+                />
+              ) : (
+                <ProfileAvatar
+                  firstName={user?.user?.firstName}
+                  lastName={user?.user?.lastName}
+                  textStyle={style.profileImageStyle}
+                  profileTexts={{fontSize: fontSize(10)}}
+                />
+              )}
+
+              {/*<Image*/}
+              {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+              {/*  style={style.profileImageStyle}*/}
+              {/*/>*/}
             </TouchableOpacity>
           </View>
 

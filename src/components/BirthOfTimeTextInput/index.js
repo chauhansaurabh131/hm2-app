@@ -125,16 +125,17 @@ const BirthOfTimeTextInput = ({
               onDateChange={setSelectedTime}
               minuteInterval={1}
               textColor={'black'}
+              style={{height: 80, paddingVertical: 50}}
             />
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.button} onPress={handleConfirm}>
                 <Text style={styles.buttonText}>Confirm</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.button}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => setModalVisible(false)}*/}
+              {/*  style={styles.button}>*/}
+              {/*  <Text style={styles.buttonText}>Cancel</Text>*/}
+              {/*</TouchableOpacity>*/}
             </View>
           </View>
         </View>

@@ -35,6 +35,7 @@ import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import RemainingDataUiScreen from '../editRemainingFillUpData/remainingDataUiScreen';
 import DemoCode from '../demoCode';
 import RecentlyViewComponent from '../../components/recentlyViewComponent';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const HomeScreen = ({route}) => {
   const [showMeAllStories, setShowMeAllStories] = useState(false);
@@ -69,6 +70,11 @@ const HomeScreen = ({route}) => {
   console.log(' === storiesData ===> ', storiesData?.data?.totalResults);
 
   const userImage = user?.user?.profilePic;
+
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
 
   const accessToken = user?.tokens?.access?.token;
   const [socket, setSocket] = useState(null);
@@ -442,10 +448,19 @@ const HomeScreen = ({route}) => {
             // onPress={openTopSheetModal}
             onPress={openBottomSheet}
             style={style.headerTopSheetImageContainer}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.headerTopSheetImageStyle}
-            />
+            {hasValidImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={style.headerTopSheetImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || name}
+                lastName={user?.user?.lastName}
+                textStyle={style.headerTopSheetImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -581,16 +596,27 @@ const HomeScreen = ({route}) => {
               end={{x: 0, y: 1.5}}
               style={style.cardBodyStyle}>
               <View style={style.cardViewStyle}>
-                <Image
-                  // source={images.profileDisplayImage}
-                  // source={{uri: profilePicUrl}}
-                  source={
-                    profilePicUrl
-                      ? {uri: profilePicUrl}
-                      : images.empty_male_Image
-                  }
-                  style={style.imageStyle}
-                />
+                {/*<Image*/}
+                {/*  source={*/}
+                {/*    profilePicUrl*/}
+                {/*      ? {uri: profilePicUrl}*/}
+                {/*      : images.empty_male_Image*/}
+                {/*  }*/}
+                {/*  style={style.imageStyle}*/}
+                {/*/>*/}
+
+                {profilePicUrl ? (
+                  <Image
+                    source={{uri: profilePicUrl}}
+                    style={style.imageStyle}
+                  />
+                ) : (
+                  <ProfileAvatar
+                    firstName={user?.user?.firstName}
+                    lastName={user?.user?.lastName}
+                    textStyle={style.imageStyle}
+                  />
+                )}
                 <View style={style.cardTextContainer}>
                   {/*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*/}
                   <Text style={style.cardUserTextStyle}>
@@ -639,7 +665,7 @@ const HomeScreen = ({route}) => {
 
         <View style={{marginHorizontal: 17}}>
           <View style={style.premiumTextContainer}>
-            <Text style={style.premiumTextStyle}>Premium Matches</Text>
+            <Text style={style.premiumTextStyle}>New Matches</Text>
             {/*<Text style={style.premiumTextsStyle}>110</Text>*/}
           </View>
 
@@ -663,8 +689,11 @@ const HomeScreen = ({route}) => {
             height: hp(45),
           }}
           underlayColor="#F9FBFF"
+          // onPress={() => {
+          //   navigation.navigate('Matches');
+          // }}
           onPress={() => {
-            navigation.navigate('Matches');
+            navigation.navigate('Matches', {initialTab: 'new'}); // 👈 passing "viewed"
           }}>
           <Text style={style.showMeAllTextStyle}>Show Me All</Text>
         </TouchableHighlight>
@@ -694,27 +723,7 @@ const HomeScreen = ({route}) => {
           <RecentlyViewComponent />
         </View>
 
-        {/*<TouchableHighlight*/}
-        {/*  activeOpacity={0.3}*/}
-        {/*  style={{*/}
-        {/*    justifyContent: 'center',*/}
-        {/*    // padding: 10,*/}
-        {/*    height: hp(45),*/}
-        {/*    // backgroundColor: 'red',*/}
-        {/*  }}*/}
-        {/*  underlayColor="#F9FBFF"*/}
-        {/*  onPress={() => {*/}
-        {/*    navigation.navigate('Matches');*/}
-        {/*  }}>*/}
-        {/*  <Text style={style.showMeAllTextStyle}>Show Me All</Text>*/}
-        {/*</TouchableHighlight>*/}
-
-        {/*<View style={{width: '100%', height: 8, backgroundColor: '#F8F8F8'}} />*/}
-
-        {/* End Recently view code*/}
-
-        {/*<View style={{marginHorizontal: 17, marginTop: hp(22)}}>*/}
-        <View style={{marginTop: 10}}>
+        <View style={{marginTop: 10, backgroundColor: 'red'}}>
           <RemainingDataUiScreen />
         </View>
 
@@ -730,24 +739,27 @@ const HomeScreen = ({route}) => {
         {storiesData?.data?.totalResults > 0 && (
           <>
             <View style={{marginHorizontal: 17}}>
-              <View style={[style.premiumTextContainer, {marginTop: 28}]}>
+              <View style={[style.premiumTextContainer, {marginTop: 0}]}>
                 <Text style={style.premiumTextStyle}>Success Stories</Text>
               </View>
 
               <SuccessStoryFlatListComponent />
             </View>
 
-            <TouchableOpacity
+            <TouchableHighlight
+              activeOpacity={0.6}
+              underlayColor="#F9FBFF"
               style={{
                 height: hp(45),
                 justifyContent: 'center',
-                marginTop: 5,
-                backgroundColor: showMeAllStories ? '#F9FBFF' : 'white',
+                marginTop: hp(5),
+                marginBottom: hp(10),
               }}
-              onPressIn={onStoriesAllOnPress}
-              onPressOut={onStoriesAllNotPress}>
+              onPress={() => {
+                console.log(' === var ===> ');
+              }}>
               <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
           </>
         )}
 

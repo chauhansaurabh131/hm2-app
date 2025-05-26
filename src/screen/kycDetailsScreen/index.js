@@ -22,6 +22,7 @@ import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const KycDetailsScreen = ({route}) => {
   const {kycData} = route.params; // Retrieve kycData from route params
@@ -32,6 +33,8 @@ const KycDetailsScreen = ({route}) => {
   const [imageName, setImageName] = useState(''); // State for image file name
   const [isSubmitted, setIsSubmitted] = useState(false); // State to track if submission is done
   // const [kycData, setKycData] = useState(null); // State to hold KYC data
+
+  console.log(' === selectedID ===> ', selectedID);
 
   console.log('Received KYC Data:', kycData?.isDocUpload); // Use the KYC data in this screen
 
@@ -103,6 +106,10 @@ const KycDetailsScreen = ({route}) => {
   };
 
   const handleSubmit = async () => {
+    const formattedID = selectedID.toLowerCase().replace(/\s+/g, '-');
+
+    console.log(' === selectedID__+++ ===> ', formattedID);
+
     try {
       // Log the selected ID type and image path when the form is submitted
       console.log('Selected ID Type:', selectedID);
@@ -174,7 +181,7 @@ const KycDetailsScreen = ({route}) => {
                 Authorization: `Bearer ${accessToken}`, // Use your auth token here
               },
               body: JSON.stringify({
-                kycDocName: selectedID, // This will be the selected ID type (e.g., passport, driving-license)
+                kycDocName: formattedID, // This will be the selected ID type (e.g., passport, driving-license)
                 kycDocImagePath: docUrl, // The URL of the uploaded document from S3
                 // isDocUpload: true,
               }),
@@ -250,10 +257,23 @@ const KycDetailsScreen = ({route}) => {
           />
           {/*<TouchableOpacity onPress={openTopSheetModal}>*/}
           <TouchableOpacity onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -353,21 +373,25 @@ const KycDetailsScreen = ({route}) => {
 
                   <View style={style.bottomSheetUnderLine} />
 
-                  <TouchableOpacity onPress={() => handleSelect('passport')}>
+                  {/*<TouchableOpacity onPress={() => handleSelect('passport')}>*/}
+                  <TouchableOpacity onPress={() => handleSelect('Passport')}>
                     <Text style={style.passwordText}>Passport</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => handleSelect('driving-license')}>
+                    // onPress={() => handleSelect('driving-license')}>
+                    onPress={() => handleSelect('Driving license')}>
                     <Text style={style.bottomSheetText}>Driving License</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => handleSelect('aadhar-card')}>
+                  {/*<TouchableOpacity onPress={() => handleSelect('aadhar-card')}>*/}
+                  <TouchableOpacity onPress={() => handleSelect('Aadhar Card')}>
                     <Text style={style.bottomSheetText}>Aadhar Card</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={() => handleSelect('election-card')}>
+                    // onPress={() => handleSelect('election-card')}>
+                    onPress={() => handleSelect('Election Card')}>
                     <Text style={style.bottomSheetText}>Election Card</Text>
                   </TouchableOpacity>
                 </View>

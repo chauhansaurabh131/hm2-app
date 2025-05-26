@@ -75,6 +75,7 @@ const style = StyleSheet.create({
     lineHeight: hp(27),
     fontFamily: fontFamily.poppins500,
     height: hp(44),
+    color: colors.black,
   },
   bodyUnderLine: {
     width: '100%',

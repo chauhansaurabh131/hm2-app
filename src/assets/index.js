@@ -194,6 +194,9 @@ export const icons = {
   app_store_icon: require('./icons/app_store_icon.png'),
   view_status_icon: require('./icons/view_status_icon.png'),
   help_center_icon: require('./icons/help_center_icon.png'),
+  new_show_password_icon: require('./icons/new_show_password_icon.png'),
+  new_secure_Eye_icon: require('./icons/new_secure_Eye_icon.png'),
+  recent_view_icon: require('./icons/recent_viewed.png'),
 };
 
 export const gif = {

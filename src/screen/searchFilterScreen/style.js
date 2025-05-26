@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 
-export const style = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
@@ -164,8 +164,9 @@ export const style = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
+    // fontSize: fontSize(20),
     fontSize: fontSize(20),
-    lineHeight: hp(30),
+    lineHeight: hp(26),
     fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
@@ -187,7 +188,7 @@ export const style = StyleSheet.create({
     marginTop: hp(37),
   },
   textInput: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: '#000000',
     textAlign: 'center',
     width: '100%',
@@ -273,3 +274,5 @@ export const style = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
+
+export default style;

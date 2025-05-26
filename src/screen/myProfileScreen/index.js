@@ -22,12 +22,15 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {colors} from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const MyProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
   // console.log(' === userData.... ===> ', userData?.writeBoutYourSelf);
+
+  console.log(' === userData--+++ ===> ', userData);
 
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -101,6 +104,10 @@ const MyProfileScreen = () => {
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };
   const age = calculateAge(user?.user?.dateOfBirth);
+
+  console.log(' === user?.user?.dateOfBirth ===> ', user?.user?.dateOfBirth);
+  console.log(' === age ===> ', age);
+
   const height = user.user?.height;
 
   const imageCount = Array.isArray(user?.user?.userProfilePic)
@@ -145,12 +152,26 @@ const MyProfileScreen = () => {
 
         {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
         <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-          <Image
+          {profileImage ? (
+            <Image
+              source={{uri: profileImage}}
+              style={style.profileLogoStyle}
+            />
+          ) : (
+            <ProfileAvatar
+              firstName={user?.user?.firstName}
+              lastName={user?.user?.lastName}
+              textStyle={style.profileLogoStyle}
+              profileTexts={{fontSize: fontSize(10)}}
+            />
+          )}
+
+          {/* <Image
             source={
               profileImage ? {uri: profileImage} : images.empty_male_Image
             }
             style={style.profileLogoStyle}
-          />
+          />*/}
         </TouchableOpacity>
       </View>
 
@@ -169,12 +190,30 @@ const MyProfileScreen = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
-          <Image
-            source={
-              profileImage ? {uri: profileImage} : images.empty_male_Image
-            }
-            style={style.userProfileImage}
-          />
+          {profileImage ? (
+            <Image
+              source={{uri: profileImage}}
+              style={style.userProfileImage}
+            />
+          ) : (
+            <ProfileAvatar
+              firstName={user?.user?.firstName}
+              lastName={user?.user?.lastName}
+              textStyle={{
+                width: '100%',
+                height: hp(449),
+                resizeMode: 'cover',
+                borderRadius: 0,
+              }}
+              profileTexts={{fontSize: fontSize(60)}}
+            />
+          )}
+          {/*<Image*/}
+          {/*  source={*/}
+          {/*    profileImage ? {uri: profileImage} : images.empty_male_Image*/}
+          {/*  }*/}
+          {/*  style={style.userProfileImage}*/}
+          {/*/>*/}
           <LinearGradient
             colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
             style={{
@@ -204,9 +243,7 @@ const MyProfileScreen = () => {
                     style.userDetailsDescriptionContainer,
                     {marginTop: 5},
                   ]}>
-                  <Text style={style.userDetailsTextStyle}>
-                    {age || 'N/A'} yrs,
-                  </Text>
+                  <Text style={style.userDetailsTextStyle}>{age} yrs,</Text>
                   <Text style={style.userDetailsTextStyle}>{height}</Text>
 
                   <View style={style.verticalLineStyle} />

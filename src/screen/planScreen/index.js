@@ -17,6 +17,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const PlanScreen = () => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -51,10 +52,23 @@ const PlanScreen = () => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -71,7 +85,7 @@ const PlanScreen = () => {
           {/*  source={icons.notification_icon}*/}
           {/*  style={style.headingCredentialsImageStyle}*/}
           {/*/>*/}
-          <Text style={style.headingCredentialsText}>Plan</Text>
+          <Text style={style.headingCredentialsText}>Plan Details</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>

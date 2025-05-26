@@ -1,5 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   Modal,
   SafeAreaView,
@@ -20,13 +21,17 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
 import style from './style';
 import {colors} from '../../utils/colors';
+import RNBlobUtil from 'react-native-blob-util';
 
 const ChangeNameRequestScreen = () => {
   const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
   const profileImage = user?.user?.profilePic;
   const userData = user?.user;
+  const userId = userData?.id;
+  // console.log(' === userId ===> ', userId);
 
-  console.log(' === userData ===> ', userData?.firstName);
+  // console.log(' === userData ===> ', userData?.id);
 
   const navigation = useNavigation();
 
@@ -35,6 +40,7 @@ const ChangeNameRequestScreen = () => {
   const [selectedID, setSelectedID] = useState('');
   const [imagePath, setImagePath] = useState('');
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const refRBSheet = useRef();
   const topModalBottomSheetRef = useRef(null);
@@ -94,9 +100,9 @@ const ChangeNameRequestScreen = () => {
     return parts[parts.length - 1]; // Return the last part (file name)
   };
 
-  const handleSave = () => {
-    // Handle the save action here, e.g., make an API call or update the state.
-
+  const handleSave = async () => {
+    setLoading(true);
+    // === 1. Input Validation ===
     if (!firstName) {
       Toast.show({
         type: 'error',
@@ -146,14 +152,311 @@ const ChangeNameRequestScreen = () => {
       return;
     }
 
-    console.log('Saved First Name: ', firstName);
-    console.log('Saved Last Name: ', lastName);
-    console.log('Selected ID Type:', selectedID);
-    console.log('Selected Image Path:', imagePath);
-    setSuccessModalVisible(true);
+    try {
+      // === 2. Prepare image metadata ===
+      const imageName = imagePath.split('/').pop();
+      const fileExtension = imageName.split('.').pop().toLowerCase();
+      const contentType = getContentType(fileExtension);
+      const formattedID = selectedID.toLowerCase().replace(/\s+/g, '-');
+
+      // === 3. Get Presigned URL ===
+      const presignRes = await fetch(
+        'https://stag.mntech.website/api/v1/s3/uploadkycdoc',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            key: imageName,
+            contentType,
+            name: 'upload',
+          }),
+        },
+      );
+
+      const presignData = await presignRes.json();
+      const presignedUrl = presignData?.data?.url;
+      const docUrl = presignData?.data?.docUrl;
+
+      if (!presignedUrl || !docUrl) {
+        throw new Error('Failed to retrieve presigned URL');
+      }
+
+      // === 4. Upload image to S3 ===
+      const uploadResponse = await RNBlobUtil.fetch(
+        'PUT',
+        presignedUrl,
+        {
+          'Content-Type': contentType,
+          'x-amz-acl': 'public-read',
+        },
+        RNBlobUtil.wrap(imagePath),
+      );
+
+      if (uploadResponse.respInfo.status !== 200) {
+        throw new Error('Failed to upload image to S3');
+      }
+
+      // === 5. Fetch latest KYC record ===
+      const getKycRes = await fetch(
+        `https://stag.mntech.website/api/v1/user/kyc/by-user/${userId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const kycData = await getKycRes.json();
+      const latestKyc = kycData?.data?.[kycData.data.length - 1];
+
+      if (!latestKyc?.id) {
+        throw new Error('No existing KYC record found');
+      }
+
+      const kycId = latestKyc.id;
+
+      // === 6. Update KYC Record ===
+      const putRes = await fetch(
+        `https://stag.mntech.website/api/v1/user/kyc/${kycId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            nameRequest: [
+              {
+                firstName,
+                lastName,
+                kycDocName: formattedID,
+                kycDocImagePath: docUrl, // ✅ use uploaded doc URL
+              },
+            ],
+          }),
+        },
+      );
+
+      if (!putRes.ok) {
+        throw new Error(`PUT failed with status ${putRes.status}`);
+      }
+      setSuccessModalVisible(true);
+      setLoading(false);
+
+      Toast.show({
+        type: 'success',
+        text1: 'KYC Updated Successfully',
+        visibilityTime: 3000,
+      });
+    } catch (err) {
+      setLoading(false);
+      console.error('Error in handleSave:', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: err.message || 'Something went wrong',
+      });
+    }
   };
 
+  const getContentType = fileExtension => {
+    switch (fileExtension) {
+      case 'mp4':
+        return 'video/mp4';
+      case 'jpeg':
+      case 'jpg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'application/octet-stream';
+      // return 'image/jpeg';
+    }
+  };
+
+  // const handleSave = () => {
+  //   // Handle the save action here, e.g., make an API call or update the state.
+  //
+  //   if (!firstName) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'FirstName Required',
+  //       text2: 'Please Add First Name.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return; // Stop further execution if no ID is selected
+  //   }
+  //
+  //   if (!lastName) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'LastName Required',
+  //       text2: 'Please Add Last Name.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return; // Stop further execution if no ID is selected
+  //   }
+  //
+  //   if (!selectedID) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'ID Type Required',
+  //       text2: 'Please select an ID type before saving.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return;
+  //   }
+  //
+  //   // Check if image is selected
+  //   if (!imagePath) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'Image Required',
+  //       text2: 'Please select an image before saving.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return;
+  //   }
+  //
+  //   // console.log('Saved First Name: ', firstName);
+  //   // console.log('Saved Last Name: ', lastName);
+  //   // console.log('Selected ID Type:', selectedID);
+  //   // console.log('Selected Image Path:', imagePath);
+  //
+  //   const formattedID = selectedID.toLowerCase().replace(/\s+/g, '-');
+  //
+  //   console.log(' === formattedID ===> ', formattedID);
+  //
+  //   // setSuccessModalVisible(true);
+  // };
+
+  // const handleSave = async () => {
+  //   // Validation logic...
+  //   if (!firstName) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'FirstName Required',
+  //       text2: 'Please Add First Name.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return;
+  //   }
+  //
+  //   if (!lastName) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'LastName Required',
+  //       text2: 'Please Add Last Name.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return;
+  //   }
+  //
+  //   if (!selectedID) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'ID Type Required',
+  //       text2: 'Please select an ID type before saving.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return;
+  //   }
+  //
+  //   if (!imagePath) {
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'Image Required',
+  //       text2: 'Please select an image before saving.',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //     return;
+  //   }
+  //
+  //   const formattedID = selectedID.toLowerCase().replace(/\s+/g, '-');
+  //   console.log(' === formattedID ===> ', formattedID);
+  //
+  //   try {
+  //     const response = await fetch(
+  //       `https://stag.mntech.website/api/v1/user/kyc/by-user/${userId}`,
+  //       {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+  //
+  //     const data = await response.json();
+  //     const kycRecords = data?.data || [];
+  //     console.log('KYC data:', data?.data);
+  //
+  //     if (kycRecords.length === 0) {
+  //       Toast.show({
+  //         type: 'info',
+  //         position: 'top',
+  //         text1: 'No KYC data found.',
+  //         visibilityTime: 3000,
+  //         autoHide: true,
+  //       });
+  //       return;
+  //     }
+  //
+  //     const latestKyc = kycRecords[kycRecords.length - 1]; // Get the last record
+  //
+  //     console.log('Latest KYC:', latestKyc);
+  //     console.log(' === latestKyc?.id ===> ', latestKyc?.id);
+  //
+  //     // You can show a success message or move to next step
+  //     Toast.show({
+  //       type: 'success',
+  //       position: 'top',
+  //       text1: 'KYC Data Fetched',
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //
+  //     // Optional: setSuccessModalVisible(true);
+  //   } catch (error) {
+  //     console.error('Error fetching KYC data:', error);
+  //     Toast.show({
+  //       type: 'error',
+  //       position: 'top',
+  //       text1: 'API Error',
+  //       text2: error.message,
+  //       visibilityTime: 3000,
+  //       autoHide: true,
+  //     });
+  //   }
+  // };
+
   const handleCloseSuccessModal = () => {
+    setLoading(false);
     setSuccessModalVisible(false);
     navigation.goBack();
   };
@@ -247,25 +550,29 @@ const ChangeNameRequestScreen = () => {
 
             <View style={style.bottomSheetUnderLine} />
 
-            <TouchableOpacity onPress={() => handleSelect('passport')}>
+            {/*<TouchableOpacity onPress={() => handleSelect('passport')}>*/}
+            <TouchableOpacity onPress={() => handleSelect('Passport')}>
               <Text style={style.bottomSheetOptionText}>Passport</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={{marginTop: hp(10)}}
-              onPress={() => handleSelect('driving-license')}>
+              // onPress={() => handleSelect('driving-license')}>
+              onPress={() => handleSelect('Driving License')}>
               <Text style={style.bottomSheetOptionText}>Driving License</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={{marginTop: hp(10)}}
-              onPress={() => handleSelect('aadhar-card')}>
+              // onPress={() => handleSelect('aadhar-card')}>
+              onPress={() => handleSelect('Aadhar Card')}>
               <Text style={style.bottomSheetOptionText}>Aadhar Card</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={{marginTop: hp(10)}}
-              onPress={() => handleSelect('election-card')}>
+              // onPress={() => handleSelect('election-card')}>
+              onPress={() => handleSelect('Election Card')}>
               <Text style={style.bottomSheetOptionText}>Election Card</Text>
             </TouchableOpacity>
           </View>
@@ -356,7 +663,11 @@ const ChangeNameRequestScreen = () => {
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1.5}}
             style={style.applyButtonBody}>
-            <Text style={style.applyButtonText}>Apply</Text>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text style={style.applyButtonText}>Apply</Text>
+            )}
           </LinearGradient>
         </TouchableOpacity>
       </View>

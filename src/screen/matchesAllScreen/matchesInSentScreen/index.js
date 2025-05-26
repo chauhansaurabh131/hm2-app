@@ -1205,7 +1205,7 @@ const MatchesInSentScreen = () => {
       {/* Bottom Sheet */}
       <RBSheet
         ref={sheetRef}
-        height={hp(240)}
+        height={hp(280)}
         closeOnDragDown={true}
         customStyles={{
           container: {
@@ -1244,62 +1244,6 @@ const MatchesInSentScreen = () => {
 
             <TouchableOpacity
               onPress={() => {
-                handleBlockProfilePress(blockedFriendId);
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.block_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Block {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={openBottomSheet}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.report_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Report this profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
               style={{
@@ -1325,6 +1269,98 @@ const MatchesInSentScreen = () => {
                 }}>
                 Copy ID : {selectedUniqueId}
               </Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.new_report_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Report
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handleBlockProfilePress(blockedFriendId);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.block_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Block {selectedFirstName}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  You can't contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>

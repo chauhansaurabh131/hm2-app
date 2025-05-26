@@ -51,9 +51,9 @@ const style = StyleSheet.create({
   },
   headingCredentialsText: {
     // marginLeft: wp(11),
-    fontSize: fontSize(14),
-    lineHeight: hp(21),
-    fontFamily: fontFamily.poppins500,
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins600,
     color: colors.black,
   },
   backButtonContainer: {

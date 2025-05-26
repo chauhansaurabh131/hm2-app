@@ -20,6 +20,7 @@ import io from 'socket.io-client';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect} from '@react-navigation/native';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -102,6 +103,11 @@ const ChatScreen = ({navigation}) => {
   });
 
   const FilterData = ({item}) => {
+    const hasValidImage =
+      item.friendList.profilePic &&
+      item.friendList.profilePic !== 'null' &&
+      item.friendList.profilePic.trim() !== '';
+
     if (!item || !item.friendList) {
       return null;
     }
@@ -116,6 +122,11 @@ const ChatScreen = ({navigation}) => {
     const lastName = item.friendList.lastName
       ? item.friendList.lastName.charAt(0).toUpperCase() +
         item.friendList.lastName.slice(1).toLowerCase()
+      : '';
+
+    const name = item.friendList.name
+      ? item.friendList.name.charAt(0).toUpperCase() +
+        item.friendList.name.slice(1).toLowerCase()
       : '';
 
     // console.log(' === firstname ===> ', firstname);
@@ -147,15 +158,28 @@ const ChatScreen = ({navigation}) => {
           alignItems: 'center',
           marginBottom: hp(20),
         }}>
-        <Image
-          source={{uri: item.friendList.profilePic}}
-          style={{
-            width: 47,
-            height: 47,
-            borderRadius: 25,
-            marginRight: wp(19),
-          }}
-        />
+        {hasValidImage ? (
+          <Image
+            source={{uri: item.friendList.profilePic}}
+            style={{
+              width: 47,
+              height: 47,
+              borderRadius: 25,
+              marginRight: wp(19),
+            }}
+          />
+        ) : (
+          <ProfileAvatar
+            firstName={firstName || lastName}
+            lastName={item.lastName}
+            textStyle={{
+              width: 47,
+              height: 47,
+              borderRadius: 25,
+              marginRight: wp(19),
+            }}
+          />
+        )}
 
         <View style={{flexDirection: 'column', flex: 1}}>
           <View style={{flexDirection: 'row'}}>
@@ -168,7 +192,7 @@ const ChatScreen = ({navigation}) => {
                 marginRight: wp(10),
               }}>
               {/*{item.friendList.firstName} {item.friendList.lastName}*/}
-              {firstName} {lastName}
+              {firstName || name} {lastName}
             </Text>
             <Text
               style={{
@@ -211,9 +235,11 @@ const ChatScreen = ({navigation}) => {
             {userImage ? (
               <Image source={{uri: userImage}} style={style.profileLogoStyle} />
             ) : (
-              <Image
-                source={images.empty_male_Image}
-                style={style.profileLogoStyle}
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileLogoStyle}
+                profileTexts={{fontSize: fontSize(10)}}
               />
             )}
           </TouchableOpacity>

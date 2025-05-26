@@ -47,7 +47,7 @@ const SuccessStoryFlatListComponent = () => {
             <Image source={{uri: item?.images[0]}} style={styles.storyImage} />
             <View style={{marginHorizontal: 14}}>
               <Text style={styles.storyTitle}>
-                {item?.title?.length > 20
+                {item?.title?.length > 17
                   ? `${item.title.substring(0, 15)}...`
                   : item.title}
               </Text>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 4,
     // elevation: 2, // Adds shadow/elevation for Android
-    marginTop: 18,
+    marginTop: hp(10),
     height: hp(202),
     borderWidth: 1,
     borderColor: '#EFEFEF',

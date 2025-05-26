@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Alert,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {colors} from '../../utils/colors';
 import {icons, images} from '../../assets';
@@ -30,6 +31,8 @@ const SuccessStoryEditInformationScreen = ({route}) => {
   // const [selectedImages, setSelectedImages] = useState([null, null, null]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [imagePaths, setImagePaths] = useState([]); // Add this state to store image paths
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
@@ -37,11 +40,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
   const userImage = user?.user?.profilePic;
 
   const handlePublish = async () => {
-    console.log(' === partnerId ===> ', partnerId);
-    console.log(' === name ===> ', name);
-    console.log(' === birthday ===> ', birthday);
-    console.log(' === description ===> ', description);
-
+    setLoading(true);
     // Check if description length is at least 150 characters
     if (description.length < 200) {
       Alert.alert(
@@ -95,10 +94,13 @@ const SuccessStoryEditInformationScreen = ({route}) => {
 
       const partnerApiResponse = await partnerResponse.json();
       console.log('API Response for Partner ID:', partnerApiResponse);
-      partnerUserId = partnerApiResponse?.data[0]?.id;
+      partnerUserId = partnerApiResponse?.data[0]?._id;
+      // console.log(' === partnerApiResponse ===> ', partnerApiResponse?.data[0]);
       console.log(' === partnerUserId+++++++ ===> ', partnerUserId);
 
       if (!partnerUserId) {
+        setLoading(false);
+        Alert.alert('Error', 'Recheck Your Partner ID.');
         console.error('Failed to get Partner ID');
         return;
       }
@@ -181,13 +183,16 @@ const SuccessStoryEditInformationScreen = ({route}) => {
 
       if (createStoryResponse.ok) {
         navigation.goBack();
+        setLoading(false);
         console.log('Story created successfully');
         // Handle success (e.g., navigate to a success screen or show a success message)
       } else {
         console.error('Failed to create story', createStoryApiResponse);
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error in story creation process:', error);
+      setLoading(false);
     }
   };
 
@@ -369,56 +374,6 @@ const SuccessStoryEditInformationScreen = ({route}) => {
             style={styles.textArea}
           />
 
-          {/*<View style={styles.imageContainer}>*/}
-          {/*  <TouchableOpacity*/}
-          {/*    onPress={() => ImagePicker(0)}*/}
-          {/*    style={styles.imagePicker}>*/}
-          {/*    {selectedImages[0] ? (*/}
-          {/*      <Image*/}
-          {/*        source={{uri: selectedImages[0]}}*/}
-          {/*        style={styles.selectedImage}*/}
-          {/*      />*/}
-          {/*    ) : (*/}
-          {/*      <>*/}
-          {/*        <Image source={icons.add_image_icon} style={styles.icon} />*/}
-          {/*        <Text style={styles.addPhotoText}>Add Photo</Text>*/}
-          {/*      </>*/}
-          {/*    )}*/}
-          {/*  </TouchableOpacity>*/}
-
-          {/*  <TouchableOpacity*/}
-          {/*    onPress={() => ImagePicker(1)}*/}
-          {/*    style={styles.imagePicker}>*/}
-          {/*    {selectedImages[1] ? (*/}
-          {/*      <Image*/}
-          {/*        source={{uri: selectedImages[1]}}*/}
-          {/*        style={styles.selectedImage}*/}
-          {/*      />*/}
-          {/*    ) : (*/}
-          {/*      <>*/}
-          {/*        <Image source={icons.add_image_icon} style={styles.icon} />*/}
-          {/*        <Text style={styles.addPhotoText}>Add Photo</Text>*/}
-          {/*      </>*/}
-          {/*    )}*/}
-          {/*  </TouchableOpacity>*/}
-          {/*</View>*/}
-
-          {/*<TouchableOpacity*/}
-          {/*  onPress={() => ImagePicker(2)}*/}
-          {/*  style={styles.imagePickerFull}>*/}
-          {/*  {selectedImages[2] ? (*/}
-          {/*    <Image*/}
-          {/*      source={{uri: selectedImages[2]}}*/}
-          {/*      style={styles.selectedImageFull}*/}
-          {/*    />*/}
-          {/*  ) : (*/}
-          {/*    <>*/}
-          {/*      <Image source={icons.add_image_icon} style={styles.icon} />*/}
-          {/*      <Text style={styles.addPhotoText}>Add Photo</Text>*/}
-          {/*    </>*/}
-          {/*  )}*/}
-          {/*</TouchableOpacity>*/}
-
           <TouchableOpacity
             style={{
               width: '100%',
@@ -447,20 +402,6 @@ const SuccessStoryEditInformationScreen = ({route}) => {
             data={selectedImages}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-              // <Image
-              //   source={{uri: item}}
-              //   style={{
-              //     width: '50%',
-              //     height: 200,
-              //     marginTop: 20,
-              //     marginRight: 10, // Add space between images
-              //     borderRadius: 10,
-              //     // justifyContent: 'center',
-              //     // alignItems: 'center',
-              //     alignSelf: 'center',
-              //   }}
-              //   // resizeMode="cover"
-              // />
               <View style={{marginTop: 20}}>
                 <View style={{flexDirection: 'row', alignSelf: 'center'}}>
                   <Image
@@ -468,13 +409,8 @@ const SuccessStoryEditInformationScreen = ({route}) => {
                     style={{
                       width: '70%',
                       height: hp(250),
-                      // marginTop: 20,
-                      // marginRight: 10, // Add space between images
                       borderRadius: 10,
-                      // justifyContent: 'center',
-                      // alignItems: 'center',
                     }}
-                    // resizeMode="stretch"
                   />
                   <TouchableOpacity
                     onPress={() => removeImage(item)} // Remove the image when pressed
@@ -484,7 +420,6 @@ const SuccessStoryEditInformationScreen = ({route}) => {
                       right: 10,
                       backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background for the X button
                       borderRadius: 50,
-                      // padding: 5,
                       height: hp(20),
                       width: hp(20),
                       alignItems: 'center',
@@ -495,7 +430,6 @@ const SuccessStoryEditInformationScreen = ({route}) => {
                         color: 'white',
                         fontSize: 9,
                         fontWeight: 'bold',
-                        // top: -2,
                       }}>
                       X
                     </Text>
@@ -513,13 +447,32 @@ const SuccessStoryEditInformationScreen = ({route}) => {
               <Text style={styles.notNowText}>Not now</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.7} onPress={handlePublish}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handlePublish}
+              disabled={
+                name.trim().length === 0 ||
+                birthday.trim().length === 0 ||
+                partnerId.trim().length === 0
+              }
+              style={{
+                opacity:
+                  name.trim().length === 0 ||
+                  birthday.trim().length === 0 ||
+                  partnerId.trim().length === 0
+                    ? 0.5
+                    : 1,
+              }}>
               <LinearGradient
                 colors={['#0D4EB3', '#9413D0']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
                 style={styles.publishButton}>
-                <Text style={styles.publishButtonText}>Publish</Text>
+                {loading ? (
+                  <ActivityIndicator size="large" color={colors.white} />
+                ) : (
+                  <Text style={styles.publishButtonText}>Publish</Text>
+                )}
               </LinearGradient>
             </TouchableOpacity>
           </View>

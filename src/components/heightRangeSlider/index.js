@@ -4,6 +4,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import LinearGradient from 'react-native-linear-gradient';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
+import {style} from './style';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window'); // Get device width
 
@@ -37,15 +38,15 @@ const HeightRangeSlider = ({
       colors={['#0F52BA', '#BA0FA9']}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1.3}}
-      style={styles.gradientMarker}
+      style={style.gradientMarker}
     />
   );
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      <View style={[styles.labelContainer, labelContainerStyle]}>
-        <Text style={[styles.label, tittleLabel]}>{tittleLabelText}</Text>
-        <Text style={[styles.label, rangeLabel]}>
+    <View style={[style.container, containerStyle]}>
+      <View style={[style.labelContainer, labelContainerStyle]}>
+        <Text style={[style.label, tittleLabel]}>{tittleLabelText}</Text>
+        <Text style={[style.label, rangeLabel]}>
           {range[0]} - {range[1]}
         </Text>
       </View>
@@ -56,11 +57,11 @@ const HeightRangeSlider = ({
           max={8.0}
           step={0.2} // Step size for decimal increments
           onValuesChange={handleValuesChange}
-          selectedStyle={styles.selectedStyle}
-          unselectedStyle={styles.unselectedStyle}
+          selectedStyle={style.selectedStyle}
+          unselectedStyle={style.unselectedStyle}
           customMarker={CustomMarker}
-          containerStyle={styles.sliderContainer}
-          trackStyle={[styles.trackStyle, trackStyle]}
+          containerStyle={style.sliderContainer}
+          trackStyle={[style.trackStyle, trackStyle]}
           sliderLength={SCREEN_WIDTH - 40} // Full width minus padding
         />
       </View>
@@ -68,38 +69,38 @@ const HeightRangeSlider = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: '90%', // Ensure full width
-  },
-  labelContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: fontSize(18),
-    lineHeight: hp(27),
-    fontFamily: fontFamily.poppins400,
-    color: colors.black,
-  },
-  sliderContainer: {
-    alignSelf: 'center',
-  },
-  trackStyle: {
-    height: 1,
-    backgroundColor: '#d3d3d3', // Color of the track
-  },
-  selectedStyle: {
-    backgroundColor: '#0F52BA', // Active track color
-  },
-  unselectedStyle: {
-    backgroundColor: '#d3d3d3', // Inactive track color
-  },
-  gradientMarker: {
-    height: 16,
-    width: 16,
-    borderRadius: 8,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     width: '90%', // Ensure full width
+//   },
+//   labelContainer: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//   },
+//   label: {
+//     fontSize: fontSize(18),
+//     lineHeight: hp(27),
+//     fontFamily: fontFamily.poppins400,
+//     color: colors.black,
+//   },
+//   sliderContainer: {
+//     alignSelf: 'center',
+//   },
+//   trackStyle: {
+//     height: 1,
+//     backgroundColor: '#d3d3d3', // Color of the track
+//   },
+//   selectedStyle: {
+//     backgroundColor: '#0F52BA', // Active track color
+//   },
+//   unselectedStyle: {
+//     backgroundColor: '#d3d3d3', // Inactive track color
+//   },
+//   gradientMarker: {
+//     height: 16,
+//     width: 16,
+//     borderRadius: 8,
+//   },
+// });
 
 export default HeightRangeSlider;

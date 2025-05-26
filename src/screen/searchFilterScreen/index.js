@@ -15,10 +15,8 @@ import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {useSelector} from 'react-redux';
 import {colors} from '../../utils/colors';
-import {style} from './style';
 import AgeRangeSlider from '../../components/ageRangeSlider';
 import HeightRangeSlider from '../../components/heightRangeSlider';
-import DropDownMutipleValueComponent from '../../components/DropDownMutipleValueComponent';
 import LinearGradient from 'react-native-linear-gradient';
 import GradientButton from '../../components/GradientButton';
 import axios from 'axios';
@@ -27,7 +25,8 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import DropdownComponentBottomSheet from '../../components/newDropDownMutipleValueBottomSheet';
 import Toast from 'react-native-toast-message';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
-import Abc from '../abc';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import style from '../HomeScreen/style';
 
 const SearchFilterScreen = () => {
   const [ageSelectedRange, setAgeSelectedRange] = useState([22, 27]);
@@ -277,12 +276,38 @@ const SearchFilterScreen = () => {
 
   const renderItem = ({item}) => {
     return (
-      <View style={style.itemContainer}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 10,
+        }}>
         <TouchableOpacity onPress={() => handleSavedSearchClick(item)}>
-          <Text style={style.bottomSheetItem}>{item.saveSearch}</Text>
+          <Text
+            style={{
+              fontSize: fontSize(16),
+              marginBottom: 5,
+              color: colors.black,
+              lineHeight: hp(30),
+              fontFamily: fontFamily.poppins400,
+              // backgroundColor: 'orange',
+              width: wp(250),
+            }}>
+            {item.saveSearch}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleSavedSearchDeleteClick(item)}>
-          <Image source={icons.delete_icon} style={style.deleteIcon} />
+          <Image
+            source={icons.delete_icon}
+            style={{
+              width: hp(16),
+              height: hp(16),
+              tintColor: '#5F6368',
+              // marginRight: 5,
+              resizeMode: 'contain',
+            }}
+          />
         </TouchableOpacity>
       </View>
     );
@@ -556,54 +581,183 @@ const SearchFilterScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <Image
         source={images.gradient_header_background_img}
-        style={style.headerBackGroundImage}
+        style={{height: hp(128), width: '100%', resizeMode: 'cover'}}
       />
 
-      <View style={style.headerBodyContainer}>
-        <View style={style.headerLogoContainer}>
-          <Image source={icons.headerIconWhite} style={style.appLogo} />
+      <View
+        style={{
+          position: 'absolute',
+          width: '100%',
+          marginTop: isIOS ? hp(60) : hp(12),
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 17,
+          }}>
+          <Image
+            source={icons.headerIconWhite}
+            style={{
+              width: wp(96),
+              height: hp(24),
+              resizeMode: 'contain',
+              marginTop: hp(2),
+            }}
+          />
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={openTopBottomSheet}
-            style={style.headerTopSheetImageContainer}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileLogo}
-            />
+            style={{alignSelf: 'center'}}>
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={{
+                  width: hp(24),
+                  height: hp(24),
+                  borderRadius: 50,
+                  marginRight: hp(10.5),
+                  resizeMode: 'cover',
+                  right: -7,
+                  marginTop: hp(2),
+                }}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={{
+                  width: hp(24),
+                  height: hp(24),
+                  borderRadius: 50,
+                  marginRight: hp(10.5),
+                  resizeMode: 'cover',
+                  right: -7,
+                  marginTop: hp(2),
+                }}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={{*/}
+            {/*    width: hp(24),*/}
+            {/*    height: hp(24),*/}
+            {/*    borderRadius: 50,*/}
+            {/*    marginRight: hp(10.5),*/}
+            {/*    resizeMode: 'cover',*/}
+            {/*    right: -7,*/}
+            {/*    marginTop: hp(2),*/}
+            {/*  }}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
-        <View style={style.headerSearchContainer}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginHorizontal: 17,
+            marginTop: hp(22),
+            backgroundColor: '#112873',
+            borderRadius: 100,
+            paddingHorizontal: 20,
+          }}>
           <TextInput
-            style={style.searchTextInput}
+            style={{
+              flex: 1,
+              height: hp(50),
+              color: colors.white,
+              fontSize: fontSize(14),
+              lineHeight: hp(21),
+              fontFamily: fontFamily.poppins400,
+            }}
             placeholderTextColor={colors.white}
             placeholder={'Profile ID Search'}
             value={profileID} // Bind the state
             onChangeText={setProfileID} // Update the state on change
           />
-          <Image source={icons.search_icon} style={style.searchIcon} />
+
+          <TouchableOpacity
+            onPress={() => {
+              if (!profileID.trim()) {
+                // Alert.alert('Error', 'Profile ID not found');
+                ShowToast();
+              } else {
+                handleModalClose();
+              }
+            }}
+            activeOpacity={0.5}
+            style={{
+              width: hp(50),
+              height: hp(30),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image
+              source={icons.search_icon}
+              style={{
+                width: hp(16),
+                height: hp(16),
+                marginLeft: hp(10),
+                tintColor: colors.white,
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={style.advanceContainer}>
-          <View style={style.advanceBodyContainer}>
-            <Text style={style.advanceText}>Advance Search</Text>
+        <View
+          style={{
+            marginHorizontal: 17,
+            marginTop: hp(21),
+            marginBottom: hp(21),
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: fontSize(18),
+                lineHeight: hp(27),
+                fontFamily: fontFamily.poppins500,
+              }}>
+              Advance Search
+            </Text>
 
             {totalResults > 0 && (
               <TouchableOpacity
-                style={style.savedContainer}
+                style={{flexDirection: 'row', alignItems: 'center'}}
                 onPress={openBottomSheet}>
-                <Text style={style.savedText}>{totalResults} Saved</Text>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#5130C2',
+                  }}>
+                  {totalResults} Saved
+                </Text>
 
                 <Image
                   source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
+                  style={{
+                    width: hp(6),
+                    height: hp(11),
+                    marginLeft: hp(14),
+                    tintColor: '#5F6368',
+                  }}
                 />
               </TouchableOpacity>
             )}
@@ -703,20 +857,47 @@ const SearchFilterScreen = () => {
             />
           </View>
 
-          <View style={style.ToggleContainer}>
-            <View style={style.rowContainer}>
+          <View style={{flex: 1, marginTop: hp(35)}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                // backgroundColor: 'red',
+                justifyContent: 'space-between',
+              }}>
               {/* Label */}
-              <Text style={style.label}>Profile with Photo</Text>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  color: colors.black,
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                Profile with Photo
+              </Text>
 
               {/* Toggle */}
-              <View style={style.toggleContainer}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  borderRadius: 50,
+                  backgroundColor: '#F5F5F5',
+                  padding: 2,
+                }}>
                 {/* Yes Button */}
                 <TouchableOpacity
                   style={[
-                    style.button,
+                    {
+                      width: 80,
+                      height: 40,
+                      borderRadius: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      overflow: 'hidden',
+                    },
                     selectedToggle === 'Yes'
-                      ? style.activeButton
-                      : style.inactiveButton,
+                      ? {elevation: 3}
+                      : {backgroundColor: '#F5F5F5'},
                   ]}
                   onPress={() => setSelectedToggle('Yes')}>
                   {selectedToggle === 'Yes' ? (
@@ -724,21 +905,38 @@ const SearchFilterScreen = () => {
                       colors={['#0D4EB3', '#9413D0']}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 1}}
-                      style={style.gradient}>
-                      <Text style={style.activeText}>Yes</Text>
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 50,
+                      }}>
+                      <Text style={{color: '#FFFFFF', fontWeight: 'bold'}}>
+                        Yes
+                      </Text>
                     </LinearGradient>
                   ) : (
-                    <Text style={style.inactiveText}>Yes</Text>
+                    <Text style={{color: '#000000', fontWeight: '500'}}>
+                      Yes
+                    </Text>
                   )}
                 </TouchableOpacity>
 
                 {/* No Button */}
                 <TouchableOpacity
                   style={[
-                    style.button,
+                    {
+                      width: 80,
+                      height: 40,
+                      borderRadius: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      overflow: 'hidden',
+                    },
                     selectedToggle === 'No'
-                      ? style.activeButton
-                      : style.inactiveButton,
+                      ? {elevation: 3}
+                      : {backgroundColor: '#F5F5F5'},
                   ]}
                   onPress={() => setSelectedToggle('No')}>
                   {selectedToggle === 'No' ? (
@@ -746,11 +944,21 @@ const SearchFilterScreen = () => {
                       colors={['#0D4EB3', '#9413D0']}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 1}}
-                      style={style.gradient}>
-                      <Text style={style.activeText}>No</Text>
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 50,
+                      }}>
+                      <Text style={{color: '#FFFFFF', fontWeight: 'bold'}}>
+                        No
+                      </Text>
                     </LinearGradient>
                   ) : (
-                    <Text style={style.inactiveText}>No</Text>
+                    <Text style={{color: '#000000', fontWeight: '500'}}>
+                      No
+                    </Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -780,18 +988,63 @@ const SearchFilterScreen = () => {
         animationType="none"
         // onRequestClose={() => setModalVisible(false)}
         onRequestClose={handleModalClose}>
-        <View style={style.modalOverlay}>
-          <View style={style.modalContainer}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              padding: 20,
+              alignItems: 'center',
+            }}>
             {/* Title */}
-            <Text style={style.title}>Save Search</Text>
+            <Text
+              style={{
+                fontSize: fontSize(20),
+                lineHeight: hp(26),
+                fontFamily: fontFamily.poppins500,
+                color: colors.black,
+              }}>
+              Save Search
+            </Text>
             {/* Subtitle */}
-            <Text style={style.subtitle}>
+            <Text
+              style={{
+                fontSize: fontSize(12),
+                lineHeight: hp(18),
+                fontFamily: fontFamily.poppins400,
+                color: colors.black,
+              }}>
               This search will be saved for future use.
             </Text>
             {/* Input */}
-            <View style={style.textInputContainer}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: hp(50),
+                borderWidth: 1,
+                borderColor: '#CDCDCD',
+                borderRadius: 100,
+                marginBottom: 20,
+                marginTop: hp(37),
+              }}>
               <TextInput
-                style={style.textInput}
+                style={{
+                  fontSize: fontSize(16),
+                  color: '#000000',
+                  textAlign: 'center',
+                  width: '100%',
+                  height: '100%',
+                  padding: 0,
+                }}
                 placeholder="Enter Search Name"
                 placeholderTextColor="black"
                 value={searchName}
@@ -799,7 +1052,14 @@ const SearchFilterScreen = () => {
               />
             </View>
             {/* Buttons */}
-            <View style={style.buttonRow}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+                marginTop: hp(15),
+                marginBottom: hp(15),
+              }}>
               {/* Not Now Button */}
               <TouchableOpacity
                 activeOpacity={0.7}
@@ -856,13 +1116,26 @@ const SearchFilterScreen = () => {
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
                   style={[
-                    style.gradientButton,
-                    !searchName.trim() && style.disabledButton, // Add disabled style
+                    {
+                      borderRadius: 25,
+                      paddingVertical: 10,
+                      paddingHorizontal: 30,
+                      width: hp(136),
+                      height: hp(50),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                    !searchName.trim() && {opacity: 0.6}, // Add disabled style
                   ]}>
                   <Text
                     style={[
-                      style.gradientButtonText,
-                      !searchName.trim() && style.disabledButtonText, // Add disabled text style
+                      {
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.white,
+                      },
+                      !searchName.trim() && {color: '#A9A9A9'}, // Add disabled text style
                     ]}>
                     Continue
                   </Text>
@@ -879,11 +1152,29 @@ const SearchFilterScreen = () => {
         height={300}
         openDuration={250}
         customStyles={{
-          container: style.bottomSheetContainer,
+          container: {borderTopLeftRadius: 15, borderTopRightRadius: 15},
         }}>
-        <View style={style.bottomSheetContent}>
-          <Text style={style.bottomSheetTitle}>Saved Search</Text>
-          <View style={style.bottomSheetLine} />
+        <View style={{flex: 1}}>
+          <Text
+            style={{
+              fontSize: fontSize(16),
+              // marginBottom: 20,
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+              marginTop: hp(23),
+              marginHorizontal: hp(30),
+            }}>
+            Saved Search
+          </Text>
+          <View
+            style={{
+              width: '100%',
+              height: 0.7,
+              backgroundColor: '#E7E7E7',
+              marginTop: hp(21),
+            }}
+          />
           {loading ? (
             <Text
               style={{

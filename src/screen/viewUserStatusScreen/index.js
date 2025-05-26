@@ -351,15 +351,38 @@ const ViewUserStatusScreen = () => {
           />
         </TouchableOpacity>
 
-        <Image
-          source={{uri: userImage}}
-          style={{
-            width: hp(40),
-            height: hp(40),
-            resizeMode: 'cover',
-            borderRadius: 50,
-          }}
-        />
+        {userImage ? (
+          <Image
+            source={{uri: userImage}}
+            style={{
+              width: hp(40),
+              height: hp(40),
+              resizeMode: 'cover',
+              borderRadius: 50,
+            }}
+          />
+        ) : (
+          <ProfileAvatar
+            // firstName={userName}
+            firstName={userStatus?.userId?.firstName || userName}
+            lastName={userStatus?.userId?.lastName || statusData?.userId?.name}
+            textStyle={{
+              width: hp(40),
+              height: hp(40),
+              resizeMode: 'cover',
+              borderRadius: 50,
+            }}
+          />
+        )}
+        {/*<Image*/}
+        {/*  source={{uri: userImage}}*/}
+        {/*  style={{*/}
+        {/*    width: hp(40),*/}
+        {/*    height: hp(40),*/}
+        {/*    resizeMode: 'cover',*/}
+        {/*    borderRadius: 50,*/}
+        {/*  }}*/}
+        {/*/>*/}
 
         <View style={{marginLeft: wp(18)}}>
           <Text

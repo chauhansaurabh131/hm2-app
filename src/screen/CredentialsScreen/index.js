@@ -23,6 +23,7 @@ import {colors} from '../../utils/colors';
 import {changeStack, logout} from '../../actions/authActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const CredentialsScreen = () => {
   const navigation = useNavigation();
@@ -778,12 +779,12 @@ const CredentialsScreen = () => {
               <Image
                 source={
                   isCurrentPasswordVisible
-                    ? icons.show_Password_icon
-                    : icons.secureEyeLogo
+                    ? icons.new_show_password_icon
+                    : icons.new_secure_Eye_icon
                 }
                 style={{
-                  width: hp(16),
-                  height: hp(14),
+                  width: hp(18),
+                  height: hp(16),
                   resizeMode: 'contain',
                   top: 5,
                 }}
@@ -808,12 +809,12 @@ const CredentialsScreen = () => {
               <Image
                 source={
                   isNewPasswordVisible
-                    ? icons.show_Password_icon
-                    : icons.secureEyeLogo
+                    ? icons.new_show_password_icon
+                    : icons.new_secure_Eye_icon
                 }
                 style={{
-                  width: hp(16),
-                  height: hp(14),
+                  width: hp(18),
+                  height: hp(16),
                   resizeMode: 'contain',
                   top: 5,
                 }}
@@ -840,12 +841,12 @@ const CredentialsScreen = () => {
               <Image
                 source={
                   isConfirmPasswordVisible
-                    ? icons.show_Password_icon
-                    : icons.secureEyeLogo
+                    ? icons.new_show_password_icon
+                    : icons.new_secure_Eye_icon
                 }
                 style={{
-                  width: hp(16),
-                  height: hp(14),
+                  width: hp(18),
+                  height: hp(16),
                   resizeMode: 'contain',
                   top: 5,
                 }}
@@ -892,10 +893,23 @@ const CredentialsScreen = () => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -913,7 +927,7 @@ const CredentialsScreen = () => {
           {/*  style={style.headingCredentialsImageStyle}*/}
           {/*/>*/}
 
-          <Text style={style.headingCredentialsText}>Login Details</Text>
+          <Text style={style.headingCredentialsText}>Login Info</Text>
 
           <TouchableOpacity
             style={style.backButtonContainer}

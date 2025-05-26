@@ -19,6 +19,7 @@ import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const StepForAuthenticationOnScreen = () => {
   const [barcodeUrl, setBarcodeUrl] = useState(null); // State to hold barcode URL
@@ -182,10 +183,23 @@ const StepForAuthenticationOnScreen = () => {
           />
           {/*<TouchableOpacity onPress={openTopSheetModal}>*/}
           <TouchableOpacity onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 

@@ -1,636 +1,388 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Image,
-  Modal,
   SafeAreaView,
   Text,
-  TouchableOpacity,
+  Alert,
+  FlatList,
   View,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {useSelector} from 'react-redux';
+import {icons, images} from '../../assets';
+import {style} from '../searchUserDataScreen/style';
+import {fontSize, hp} from '../../utils/helpers';
+import ProfileAvatar from '../../components/letterProfileComponent';
 import LinearGradient from 'react-native-linear-gradient';
-import {icons} from '../../assets';
-import axios from 'axios';
-import {updateDetails} from '../../actions/homeActions';
 import {colors} from '../../utils/colors';
-import {style} from '../adminProfileDetailsScreen/adminContactDetailsScreen/style';
-
-const CustomCheckbox = ({isChecked, onPress}) => {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        width: hp(20),
-        height: hp(20),
-        borderWidth: 1,
-        borderColor: '#8225AF',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        marginRight: 10,
-        backgroundColor: isChecked ? 'purple' : 'white',
-      }}>
-      {isChecked && (
-        <Text style={{color: 'white', fontSize: 12, fontWeight: 'bold'}}>
-          ✓
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
-};
-
-const PROFILE_TYPES = {
-  PUBLIC: 'publicProfile',
-  PREMIUM: 'premiumProfile',
-  PRIVATE: 'privateProfile',
-};
 
 const Abc = ({route}) => {
-  const {planData} = route.params;
-  console.log(' === planData ===> ', planData);
-
+  const {data} = route.params;
   const {user} = useSelector(state => state.auth);
-  const privacySetting = user?.user?.privacySetting;
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const accessToken = user?.tokens?.access?.token;
+  const userId = user?.user?.id;
 
-  // console.log(' === privacySetting ===> ', privacySetting);
-  //
-  // console.log(' === User Details ===> ', user?.user?.privacySettingCustom);
+  // console.log(' === var ===> ', user?.user?.id);
 
-  const [selectedPrivacy, setSelectedPrivacy] = useState(
-    privacySetting || PROFILE_TYPES.PUBLIC,
-  ); // Default to 'publicProfile' if no privacySetting
-  const [checkedOptions, setCheckedOptions] = useState({});
-
-  const apiDispatch = useDispatch();
+  const [searchUserData, setSearchUserData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    if (privacySetting) {
-      setSelectedPrivacy(privacySetting);
+    fetchUserData(1);
+  }, []);
+
+  const fetchUserData = async (pageNumber = 1) => {
+    if (!accessToken || isFetching) {
+      return;
+    }
+    if (totalPages && pageNumber > totalPages) {
+      return;
     }
 
-    if (
-      (privacySetting === PROFILE_TYPES.PUBLIC ||
-        privacySetting === PROFILE_TYPES.PRIVATE) &&
-      user?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true
-    ) {
-      setCheckedOptions(prevState => ({
-        ...prevState,
-        [PROFILE_TYPES.PUBLIC]: ['Photos visible on accept'],
-      }));
-    } else {
-      setCheckedOptions(prevState => ({
-        ...prevState,
-        [PROFILE_TYPES.PUBLIC]: [],
-      }));
-    }
+    setIsFetching(true);
 
-    if (privacySetting === PROFILE_TYPES.PREMIUM) {
-      const customSettings = user?.user?.privacySettingCustom || {};
-      const newCheckedOptions = {};
-
-      if (customSettings.profilePhotoPrivacy) {
-        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
-          'Hide Photos for Everyone.',
-        ];
-      }
-
-      if (customSettings.address) {
-        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
-          ...(newCheckedOptions[PROFILE_TYPES.PREMIUM] || []),
-          'Hide Address Info for Everyone.',
-        ];
-      }
-
-      if (customSettings.contact) {
-        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
-          ...(newCheckedOptions[PROFILE_TYPES.PREMIUM] || []),
-          'Hide Contact Info for Everyone.',
-        ];
-      }
-
-      if (customSettings.professional) {
-        newCheckedOptions[PROFILE_TYPES.PREMIUM] = [
-          ...(newCheckedOptions[PROFILE_TYPES.PREMIUM] || []),
-          'Hide Professional Info for Everyone.',
-        ];
-      }
-
-      setCheckedOptions(prevState => ({
-        ...prevState,
-        [PROFILE_TYPES.PREMIUM]: newCheckedOptions[PROFILE_TYPES.PREMIUM] || [],
-      }));
-    }
-  }, [privacySetting, user]);
-
-  const handleCheckboxToggle = (value, label) => {
-    setCheckedOptions(prevState => {
-      const newCheckedOptions = {...prevState};
-
-      if (newCheckedOptions[value]?.includes(label)) {
-        newCheckedOptions[value] = newCheckedOptions[value].filter(
-          item => item !== label,
-        );
-      } else {
-        newCheckedOptions[value] = [...(newCheckedOptions[value] || []), label];
-      }
-
-      return newCheckedOptions;
-    });
-  };
-
-  const handleSave = async () => {
-    const token = user?.tokens?.access?.token; // Replace with the actual token
-    const apiUrl = 'https://stag.mntech.website/api/v1/user/user/update-user';
-
-    let privacySettingCustom = {
-      profilePhotoPrivacy:
-        checkedOptions[selectedPrivacy]?.includes(
-          'Hide Photos for Everyone.',
-        ) || false,
-      showPhotoToFriendsOnly:
-        checkedOptions[selectedPrivacy]?.includes('Photos visible on accept') ||
-        false,
-      address:
-        checkedOptions[selectedPrivacy]?.includes(
-          'Hide Address Info for Everyone.',
-        ) || false,
-      contact:
-        checkedOptions[selectedPrivacy]?.includes(
-          'Hide Contact Info for Everyone.',
-        ) || false,
-      professional:
-        checkedOptions[selectedPrivacy]?.includes(
-          'Hide Professional Info for Everyone.',
-        ) || false,
-    };
-
-    // Add only the selected profile type
-    if (selectedPrivacy === PROFILE_TYPES.PUBLIC) {
-      privacySettingCustom.publicProfile = [
-        'privacySetting',
-        'profilePic',
-        'userProfilePic',
-        'userProfileVideo',
-        'firstName',
-        'dateOfBirth',
-        'birthTime',
-        'religion',
-        'caste',
-        'height',
-        'weight',
-        'displayName',
-        'name',
-        'randomId',
-        'maritalStatus',
-        'userEducation',
-        'userProfessional',
-        'hobbies',
-        'userPartnerDetails',
-        'profilePhotoPrivacy',
-        'privacySettingCustom',
-        'datingData',
-      ];
-    } else if (selectedPrivacy === PROFILE_TYPES.PRIVATE) {
-      privacySettingCustom.privateProfile = [
-        'profilePic',
-        'userProfilePic',
-        'userProfileVideo',
-        'dateOfBirth',
-        'birthTime',
-        'religion',
-        'caste',
-        'height',
-        'weight',
-        'displayName',
-        'name',
-        'randomId',
-        'maritalStatus',
-        'userEducation',
-        'userProfessional',
-        'hobbies',
-        'userPartnerDetails',
-      ];
-      // Automatically set showPhotoToFriendsOnly to true for privateProfile
-      privacySettingCustom.showPhotoToFriendsOnly = true;
-    } else if (selectedPrivacy === PROFILE_TYPES.PREMIUM) {
-      privacySettingCustom.premiumProfile = [
-        'profilePic',
-        'userProfilePic',
-        'userProfileVideo',
-        'firstName',
-        'lastName',
-        'dateOfBirth',
-        'birthTime',
-        'religion',
-        'caste',
-        'height',
-        'weight',
-        'displayName',
-        'name',
-        'randomId',
-        'maritalStatus',
-        'userEducation',
-        'userProfessional',
-        'hobbies',
-        'userPartnerDetails',
-      ];
-    }
-
-    const payload = {
-      privacySetting: selectedPrivacy,
-      privacySettingCustom: privacySettingCustom,
+    const url = `https://stag.mntech.website/api/v1/user/search/search-user?page=${pageNumber}`;
+    const requestBody = {
+      minAge: data.minAge,
+      maxAge: data.maxAge,
+      maritalStatus: data.maritalStatus,
+      religion: data.religion,
+      motherTongue: data.motherTongue,
+      minHeight: data.minHeight,
+      maxHeight: data.maxHeight,
+      currentCountry: data.currentCountry,
+      state: [],
+      currentCity: data.currentCity,
     };
 
     try {
-      const response = await axios.put(apiUrl, payload, {
+      const response = await fetch(url, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
+        body: JSON.stringify(requestBody),
       });
 
-      // console.log('API Response:', response.data);
-      apiDispatch(updateDetails());
+      const responseData = await response.json();
+      const users = responseData?.data ?? [];
 
-      // console.log(' === selectedPrivacy___ ===> ', selectedPrivacy);
-
-      // Set the appropriate message based on the selectedPrivacy
-      let message = '';
-      if (selectedPrivacy === PROFILE_TYPES.PUBLIC) {
-        message = 'Profile set to Public.\nChanges are saved.';
-      } else if (selectedPrivacy === PROFILE_TYPES.PREMIUM) {
-        message = 'Profile set to Premier Member only.\nChanges are saved.';
-      } else if (selectedPrivacy === PROFILE_TYPES.PRIVATE) {
-        message = 'Profile set to Private.';
+      if (pageNumber === 1) {
+        setSearchUserData(users);
+      } else {
+        setSearchUserData(prev => [...prev, ...users]);
       }
 
-      setModalMessage(message); // Set the modal message
-      setIsModalVisible(true); // Show the modal
+      if (responseData?.totalPages) {
+        setTotalPages(responseData.totalPages);
+      }
 
-      // alert('Privacy settings updated successfully!');
+      setPage(pageNumber);
+
+      if (users.length === 0 || pageNumber >= responseData?.totalPages) {
+        console.log('No more data. Stopping further API calls.');
+        setTotalPages(pageNumber); // Lock further fetches
+      }
     } catch (error) {
-      console.error('API Error:', error.response?.data || error.message);
-      alert('Failed to update privacy settings.');
+      console.error('Error fetching data:', error);
+      Alert.alert('Error', 'Failed to fetch user data.');
+    } finally {
+      setIsFetching(false);
     }
   };
 
-  return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 17, marginTop: 20}}>
-        {[
-          {
-            label: 'Public Profile',
-            labelTwo: 'All info visible except contact & email',
-            defaultText: 'Default',
-            value: PROFILE_TYPES.PUBLIC,
-            extraTexts: ['Photos visible on accept'],
-          },
-          {
-            label: 'Premium Members Only',
-            labelTwo:
-              'Photos, contact will be hidden from unregistered\nmembers.',
-            defaultText: [],
-            value: PROFILE_TYPES.PREMIUM,
-            extraTexts: [
-              'Hide Photos for Everyone.',
-              'Hide Contact Info for Everyone.',
-              'Hide Address Info for Everyone.',
-              'Hide Professional Info for Everyone.',
-            ],
-          },
-          {
-            label: 'Private Profile',
-            labelTwo: 'All information will be hidden.',
-            defaultText: [],
-            value: PROFILE_TYPES.PRIVATE,
-            extraTexts: [],
-          },
-        ].map(option => {
-          const isSelected = selectedPrivacy === option.value;
-          const shouldShowExtraText =
-            isSelected && option.extraTexts.length > 0;
+  const loadMoreData = () => {
+    if (!isFetching && (!totalPages || page < totalPages)) {
+      fetchUserData(page + 1);
+    }
+  };
 
-          const isDisabled =
-            option.value === PROFILE_TYPES.PREMIUM && !planData?.isActive;
+  const onThreeDotPress = item => {
+    console.log(' === onThreeDotPress ===> ', item?._id);
+    console.log(
+      ' === onThreeDotPress_unfriend_id ===> ',
+      item?.friendsDetails?._id,
+    );
+    // handleConfirmBlock(item?._id); // Call the API directly here
+  };
 
-          return (
-            <View
-              key={option.value}
-              style={{marginTop: 10, opacity: isDisabled ? 0.5 : 1}}>
-              <TouchableOpacity
-                activeOpacity={isDisabled ? 1 : 0.6}
-                onPress={() => !isDisabled && setSelectedPrivacy(option.value)}
+  const SearchUserDataRenderItem = ({item}) => {
+    // console.log(
+    //   ' === SearchUserDataRenderItem___ ===> ',
+    //   item?.friendsDetails?.status,
+    // );
+
+    const planName = item?.subscriptionDetails?.selectedPlan
+      ? item?.subscriptionDetails?.selectedPlan.charAt(0).toUpperCase() +
+        item?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
+      : '';
+
+    const hasValidImage =
+      item.profilePic &&
+      item.profilePic !== 'null' &&
+      item.profilePic.trim() !== '';
+
+    const profilePrivacy =
+      item.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const {selectedPlan, status} = item?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    const starIconSource = item?.userShortListDetails?.id
+      ? icons.black_check_icon // Check icon if shortlisted
+      : icons.black_start_icon; // Star icon if not shortlisted
+
+    // console.log(' === uniqueId ===> ', item?.userUniqueId);
+
+    const userUniqueId = item?.userUniqueId;
+
+    const name = item.name
+      ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase()
+      : '';
+
+    const friendStatusData = item?.friendsDetails?.status;
+
+    const jobTitle = item?.userProfessional?.jobTitle
+      ? item?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
+        item?.userProfessional?.jobTitle.slice(1).toLowerCase()
+      : '';
+
+    const currentCity = item?.address?.currentCity
+      ? item?.address?.currentCity.charAt(0).toUpperCase() +
+        item?.address?.currentCity.slice(1).toLowerCase()
+      : '';
+
+    const currentCountry = item?.address?.currentCountry
+      ? item?.address?.currentCountry.charAt(0).toUpperCase() +
+        item?.address?.currentCountry.slice(1).toLowerCase()
+      : '';
+
+    const calculateAge = dateOfBirth => {
+      const birthDate = new Date(dateOfBirth);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+
+      if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+      return age;
+    };
+
+    const age = calculateAge(item.dateOfBirth);
+
+    const imageCount = Array.isArray(item?.userProfilePic)
+      ? item.userProfilePic.length
+      : 0;
+
+    const userAllImage = Array.isArray(item?.userProfilePic)
+      ? item.userProfilePic.map(pic => pic.url)
+      : [];
+
+    return (
+      <View style={style.flatListContainer}>
+        {/*<Image*/}
+        {/*  source={*/}
+        {/*    item.profilePic ? {uri: item.profilePic} : images.empty_male_Image*/}
+        {/*  }*/}
+        {/*  style={style.flatListImageBody}*/}
+        {/*  resizeMode={'cover'}*/}
+        {/*/>*/}
+
+        {hasValidImage ? (
+          <>
+            <Image
+              source={{uri: item.profilePic}}
+              style={style.flatListImageBody}
+            />
+            {profilePrivacy && item?.friendsDetails?.status !== 'accepted' && (
+              <Image
+                source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
                 style={{
-                  width: '100%',
-                  borderTopLeftRadius: 15,
-                  borderTopRightRadius: 15,
-                  borderBottomLeftRadius: shouldShowExtraText ? 0 : 15,
-                  borderBottomRightRadius: shouldShowExtraText ? 0 : 15,
-                  overflow: 'hidden',
-                }}>
-                {isSelected ? (
-                  <LinearGradient
-                    colors={['#0F52BA', '#8225AF']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0.1}}
-                    style={{
-                      padding: 15,
-                      height: 80,
-                      justifyContent: 'center',
-                    }}>
-                    <View style={{position: 'absolute', right: 15, top: 12}}>
-                      <Image
-                        source={icons.white_tran_check_box}
-                        style={{
-                          width: hp(16),
-                          height: hp(16),
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </View>
+                  position: 'absolute',
+                  tintColor: '#fff',
+                  resizeMode: 'contain',
+                  width: hp(33),
+                  height: hp(44),
+                  alignSelf: 'center',
+                  marginTop: hp(200),
+                }}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            <ProfileAvatar
+              firstName={item.firstName || item.name}
+              lastName={item.lastName}
+              textStyle={{
+                width: '100%',
+                height: hp(449),
+                borderRadius: 18,
+                marginBottom: hp(13),
+              }}
+              profileTexts={{fontSize: fontSize(60), marginTop: -80}}
+            />
+          </>
+        )}
 
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: fontSize(14),
-                          lineHeight: hp(18),
-                          fontFamily: fontFamily.poppins500,
-                        }}>
-                        {option.label}
-                      </Text>
+        <LinearGradient
+          colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
+          style={style.imageBottomShadow}
+        />
+        <View style={style.imageBodyDetailContainer}>
+          <View style={style.onlineTextBody}>
+            <Text style={style.onlineText}>Online</Text>
+          </View>
 
-                      {option.label === 'Public Profile' && (
-                        <View
-                          style={{
-                            width: hp(54),
-                            height: hp(18),
-                            borderRadius: 50,
-                            backgroundColor: '#FFFFFF29',
-                            marginLeft: 12,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            top: -1,
-                          }}>
-                          <Text
-                            style={{
-                              color: 'white',
-                              fontSize: fontSize(9),
-                              lineHeight: hp(12),
-                              fontFamily: fontFamily.poppins400,
-                            }}>
-                            {option.defaultText}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text
-                      style={{
-                        color: 'white',
-                        marginTop: hp(5),
-                        fontSize: fontSize(10),
-                        lineHeight: hp(14),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      {option.labelTwo}
-                    </Text>
-                  </LinearGradient>
-                ) : (
-                  <View
-                    style={{
-                      padding: 15,
-                      height: hp(83),
-                      backgroundColor: '#FAFAFA',
-                      justifyContent: 'center',
-                    }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          color: 'black',
-                          fontSize: fontSize(14),
-                          lineHeight: hp(18),
-                          fontFamily: fontFamily.poppins500,
-                        }}>
-                        {option.label}
-                      </Text>
-
-                      {option.label === 'Public Profile' && (
-                        <View
-                          style={{
-                            width: hp(54),
-                            height: hp(18),
-                            borderRadius: 50,
-                            backgroundColor: '#EFF5FF',
-                            marginLeft: 12,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            top: -1,
-                          }}>
-                          <Text
-                            style={{
-                              color: 'black',
-                              fontSize: fontSize(9),
-                              lineHeight: hp(12),
-                              fontFamily: fontFamily.poppins400,
-                            }}>
-                            {option.defaultText}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-
-                    <Text
-                      style={{
-                        color: 'black',
-                        marginTop: hp(5),
-                        fontSize: fontSize(10),
-                        lineHeight: hp(14),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      {option.labelTwo}
-                    </Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              {shouldShowExtraText && !isDisabled && (
-                <LinearGradient
-                  colors={['#0F52BA', '#8225AF']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0.1}}
+          <TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={style.nameText}>{name || 'No Name Available'}</Text>
+              {subPlan && (
+                <View
                   style={{
-                    padding: 1,
-                    borderBottomLeftRadius: 15,
-                    borderBottomRightRadius: 15,
+                    height: 22,
+                    backgroundColor: 'orange',
+                    marginLeft: 11,
+                    borderRadius: 50,
+                    flexDirection: 'row',
+                    paddingHorizontal: 7,
                   }}>
-                  <View
+                  <Image
+                    source={icons.crownIcon}
                     style={{
-                      backgroundColor: 'white',
-                      padding: 15,
-                      borderBottomLeftRadius: 15,
-                      borderBottomRightRadius: 15,
+                      width: 11,
+                      height: 11,
+                      tintColor: 'white',
+                      alignSelf: 'center',
+                      resizeMode: 'contain',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: fontSize(12),
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                      marginLeft: 3,
                     }}>
-                    <Text
-                      style={{
-                        color: 'black',
-                        marginBottom: hp(12),
-                        fontSize: fontSize(12),
-                        lineHeight: hp(16),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      More Privacy Options
-                    </Text>
-                    {option.extraTexts.map((text, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          marginTop: hp(10),
-                        }}
-                        onPress={() =>
-                          text !== 'More Privacy Options.' &&
-                          handleCheckboxToggle(option.value, text)
-                        }
-                        disabled={isDisabled}>
-                        {text !== 'More Privacy Options.' && (
-                          <CustomCheckbox
-                            isChecked={
-                              checkedOptions[option.value]?.includes(text) ||
-                              false
-                            }
-                            onPress={() =>
-                              handleCheckboxToggle(option.value, text)
-                            }
-                          />
-                        )}
-                        <Text
-                          style={{
-                            color: 'black',
-                            fontSize: fontSize(14),
-                            lineHeight: hp(18),
-                            fontFamily: fontFamily.poppins400,
-                          }}>
-                          {text}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </LinearGradient>
+                    {planName}
+                  </Text>
+                </View>
               )}
             </View>
-          );
-        })}
-      </View>
 
-      <Modal
-        visible={isModalVisible}
-        animationType="none"
-        transparent={true}
-        onRequestClose={() => setIsModalVisible(false)}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}>
-          <View
-            style={{
-              width: '90%',
-              backgroundColor: 'white',
-              borderRadius: 10,
-              alignItems: 'center',
-            }}>
+            <View style={{flexDirection: 'row', marginTop: 3}}>
+              <Text style={style.userAge}>{age || 'N/A'} yrs,</Text>
+              <Text style={style.userHeightStyle}>{item?.height}</Text>
+
+              <View style={style.verticalLineStyle} />
+
+              <Text style={style.jobTittleText}>{jobTitle || 'N/A'}</Text>
+            </View>
+
+            <View style={style.userAddressDetailsContainer}>
+              <Text style={style.currentCityStyle}>
+                {currentCity || 'N/A'},
+              </Text>
+
+              <Text style={style.currentCountryStyle}>
+                {' '}
+                {currentCountry || 'N/A'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <View style={style.imageBottomImageContainer}>
             <Image
-              source={icons.check_gradient_icon}
-              style={{
-                width: hp(34),
-                height: hp(34),
-                resizeMode: 'contain',
-                marginTop: hp(43),
-                marginBottom: hp(30),
-              }}
+              source={images.gradient_button_background_img}
+              style={style.gradientImageContainer}
             />
-            <Text
-              style={{
-                fontSize: fontSize(16),
-                textAlign: 'center',
-                fontFamily: fontFamily.poppins500,
-                lineHeight: hp(24),
-                color: colors.black,
-                marginBottom: hp(30),
-              }}>
-              {modalMessage}
-            </Text>
-            {/*<TouchableOpacity onPress={() => setIsModalVisible(false)}>*/}
-            {/*  <Text style={{color: '#007BFF', fontSize: 14}}>Close</Text>*/}
-            {/*</TouchableOpacity>*/}
-
             <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => setIsModalVisible(false)}>
-              <LinearGradient
-                colors={['#0F52BA', '#8225AF']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1.2}}
-                style={{
-                  width: hp(114),
-                  height: hp(50),
-                  borderRadius: 50,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                  marginBottom: hp(39),
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: fontSize(16),
-                    lineHeight: hp(24),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
-                  Okay
-                </Text>
-              </LinearGradient>
+              activeOpacity={0.5}
+              // onPress={openModal}
+              style={style.gradientImageButton}>
+              <Image source={icons.couple_icon} style={style.coupleImage} />
+              <Text style={style.matchesText}>
+                {/*85% Match*/}
+                {item?.matchPercentage}% Match
+              </Text>
             </TouchableOpacity>
+
+            <View style={style.bottomImageContainer}>
+              {(!profilePrivacy ||
+                item?.friendsDetails?.status === 'accepted') && (
+                <TouchableOpacity
+                  style={style.cameraImageContainer}
+                  activeOpacity={0.5}>
+                  <Image
+                    source={icons.new_camera_icon}
+                    style={style.cameraImage}
+                  />
+                  <Text style={{color: colors.white}}>{imageCount}</Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                activeOpacity={0.5}
+                style={style.starIconContainer}>
+                <Image source={starIconSource} style={style.startIcon} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={style.threeDotContainer}
+                onPress={() => {
+                  onThreeDotPress(item);
+                }}>
+                <Image
+                  source={icons.new_three_dot}
+                  style={style.threeDotImage}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </Modal>
+      </View>
+    );
+  };
 
-      <TouchableOpacity
-        onPress={handleSave}
-        style={{
-          marginTop: 50,
-          width: '90%',
-          height: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignSelf: 'center',
-          borderRadius: 25,
-          backgroundColor: 'gray',
-        }}>
-        <Text
-          style={{
-            color: 'white',
-            fontSize: fontSize(16),
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          Save
-        </Text>
-      </TouchableOpacity>
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <FlatList
+        data={searchUserData}
+        keyExtractor={item => item._id}
+        renderItem={SearchUserDataRenderItem}
+        onEndReached={loadMoreData}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetching ? (
+            <View style={{alignItems: 'center', padding: 20}}>
+              <Text style={{color: 'black'}}>Loading more...</Text>
+            </View>
+          ) : !isFetching && searchUserData.length === 0 ? (
+            <View style={{alignItems: 'center', padding: 20}}>
+              <Text style={{color: 'gray'}}>No user found.</Text>
+            </View>
+          ) : page >= totalPages && searchUserData.length > 0 ? (
+            <View style={{alignItems: 'center', padding: 20}}>
+              <Text style={{color: 'gray'}}>No more data to load.</Text>
+            </View>
+          ) : null
+        }
+      />
     </SafeAreaView>
   );
 };

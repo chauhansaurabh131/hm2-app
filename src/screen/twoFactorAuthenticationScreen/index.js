@@ -19,6 +19,7 @@ import {useSelector} from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const TwoFactorAuthenticationScreen = () => {
   const [isToggled, setIsToggled] = useState(false);
@@ -155,19 +156,30 @@ const TwoFactorAuthenticationScreen = () => {
           />
           {/*<TouchableOpacity onPress={openTopSheetModal}>*/}
           <TouchableOpacity onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={style.headingTittleContainer}>
-          <Text style={style.headingCredentialsText}>
-            Two Factor Authentication
-          </Text>
+          <Text style={style.headingCredentialsText}>Enable 2FA</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>

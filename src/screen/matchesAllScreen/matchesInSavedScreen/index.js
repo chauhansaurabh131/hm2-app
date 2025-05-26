@@ -585,9 +585,11 @@ const MatchesInSavedScreen = () => {
 
     const height = item?.friendList?.height;
 
-    const jobTittle = item?.friendList?.writeBoutYourSelf
-      ? item?.friendList?.writeBoutYourSelf.charAt(0).toUpperCase() +
-        item?.friendList?.writeBoutYourSelf.slice(1).toLowerCase()
+    console.log(' === var ===> ', item?.friendList?.userProfessional?.jobTitle);
+
+    const jobTittle = item?.friendList?.userProfessional?.jobTitle
+      ? item?.friendList?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
+        item?.friendList?.userProfessional?.jobTitle.slice(1).toLowerCase()
       : '';
 
     const currentCity = item?.friendList?.address?.currentCity
@@ -854,7 +856,7 @@ const MatchesInSavedScreen = () => {
 
       <RBSheet
         ref={unFriendBottomSheet}
-        height={hp(240)} // Height of the bottom sheet
+        height={hp(280)} // Height of the bottom sheet
         closeOnDragDown={true} // Allow closing the sheet by dragging it down
         customStyles={{
           container: {
@@ -892,73 +894,6 @@ const MatchesInSavedScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              // onPress={() => {
-              //   handleBlockProfilePress(blockedFriendId);
-              // }}
-
-              onPress={() => {
-                onUnfriendBottomSheetBlockPress(blockedFriendId);
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.block_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Block {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-              onPress={openBottomSheet}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.report_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Report this profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-
               onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
@@ -985,6 +920,102 @@ const MatchesInSavedScreen = () => {
                 }}>
                 Copy ID : {selectedUniqueId}
               </Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              // onPress={() => {
+              //   sheetRef.current.close();
+              // }}
+              onPress={openBottomSheet}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.new_report_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Report
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                onUnfriendBottomSheetBlockPress(blockedFriendId);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.block_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Block {selectedFirstName}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  You can't contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -1454,7 +1485,7 @@ const MatchesInSavedScreen = () => {
 
       <RBSheet
         ref={friendBottomSheet}
-        height={hp(310)} // Height of the bottom sheet
+        height={hp(420)} // Height of the bottom sheet
         closeOnDragDown={true} // Allow closing the sheet by dragging it down
         customStyles={{
           container: {
@@ -1492,73 +1523,6 @@ const MatchesInSavedScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              // onPress={() => {
-              //   handleBlockProfilePress(blockedFriendId);
-              // }}
-
-              onPress={() => {
-                onUnfriendBottomSheetBlockPress(blockedFriendId);
-              }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.block_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Block {selectedFirstName}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-              onPress={openBottomSheet}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(20),
-              }}>
-              <Image
-                source={icons.report_icon}
-                style={{
-                  width: hp(17),
-                  height: hp(17),
-                  resizeMode: 'contain',
-                  marginRight: hp(22),
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Report this profile
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              // onPress={() => {
-              //   sheetRef.current.close();
-              // }}
-
               onPress={() => {
                 onCopyIdPress(selectedUniqueId);
               }}
@@ -1587,9 +1551,58 @@ const MatchesInSavedScreen = () => {
               </Text>
             </TouchableOpacity>
 
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={openBottomSheet}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.new_report_icon}
+                style={{
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Report
+                </Text>
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Your report will be anonymous.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => {
-                onSendMessagePress(allDataShare);
+                onUnfriendBottomSheetBlockPress(blockedFriendId);
               }}
               style={{
                 flexDirection: 'row',
@@ -1597,23 +1610,36 @@ const MatchesInSavedScreen = () => {
                 marginTop: hp(20),
               }}>
               <Image
-                source={icons.send_message_icon}
+                source={icons.block_icon}
                 style={{
                   width: hp(17),
                   height: hp(17),
                   resizeMode: 'contain',
                   marginRight: hp(22),
+                  top: -8,
                 }}
               />
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Send Message
-              </Text>
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Block {selectedFirstName}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  You can't contact this user again.
+                </Text>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -1630,17 +1656,83 @@ const MatchesInSavedScreen = () => {
                   height: hp(17),
                   resizeMode: 'contain',
                   marginRight: hp(22),
+                  top: -8,
                 }}
               />
-              <Text
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Unfriend
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  This user will be permanently deleted.
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                width: '100%',
+                height: 1,
+                backgroundColor: '#EBEBEB',
+                marginTop: hp(22),
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={() => {
+                onSendMessagePress(allDataShare);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.send_message_icon}
                 style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Unfriend
-              </Text>
+                  width: hp(17),
+                  height: hp(17),
+                  resizeMode: 'contain',
+                  marginRight: hp(22),
+                  top: -8,
+                }}
+              />
+
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                    color: colors.black,
+                  }}>
+                  Send Message
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: fontSize(12),
+                    lineHeight: hp(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#7B7B7B',
+                  }}>
+                  Send a direct message.
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>

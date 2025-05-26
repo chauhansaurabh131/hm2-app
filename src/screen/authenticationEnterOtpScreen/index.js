@@ -18,7 +18,8 @@ import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
-import Toast from 'react-native-toast-message'; // Import axios
+import Toast from 'react-native-toast-message';
+import ProfileAvatar from '../../components/letterProfileComponent'; // Import axios
 
 const AuthenticationEnterOtpScreen = () => {
   const route = useRoute();
@@ -205,10 +206,23 @@ const AuthenticationEnterOtpScreen = () => {
               style={style.customerHeaderImage}
             />
             <TouchableOpacity onPress={openBottomSheet}>
-              <Image
-                source={userImage ? {uri: userImage} : images.empty_male_Image}
-                style={style.profileImageStyle}
-              />
+              {userImage ? (
+                <Image
+                  source={{uri: userImage}}
+                  style={style.profileImageStyle}
+                />
+              ) : (
+                <ProfileAvatar
+                  firstName={user?.user?.firstName}
+                  lastName={user?.user?.lastName}
+                  textStyle={style.profileImageStyle}
+                  profileTexts={{fontSize: fontSize(10)}}
+                />
+              )}
+              {/*<Image*/}
+              {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+              {/*  style={style.profileImageStyle}*/}
+              {/*/>*/}
             </TouchableOpacity>
           </View>
 

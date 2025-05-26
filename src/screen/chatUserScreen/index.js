@@ -33,6 +33,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import EmojiSelector from 'react-native-emoji-selector';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -746,6 +747,13 @@ const ChatUserScreen = ({route}) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const hasValidImage =
+    userData?.friendList?.profilePic ||
+    (userData?.friendList[0]?.profilePic && userData?.friendList?.profilePic) ||
+    (userData?.friendList[0]?.profilePic !== 'null' &&
+      userData?.friendList?.profilePic) ||
+    userData?.friendList[0]?.profilePic.trim() !== '';
+
   return (
     <MenuProvider>
       <SafeAreaView style={style.container}>
@@ -791,7 +799,8 @@ const ChatUserScreen = ({route}) => {
                 />
               </TouchableOpacity>
 
-              {userData && (
+              {userData?.friendList?.profilePic ||
+              userData?.friendList[0]?.profilePic ? (
                 <Image
                   source={{
                     uri:
@@ -800,7 +809,32 @@ const ChatUserScreen = ({route}) => {
                   }}
                   style={style.userProfileIcon}
                 />
+              ) : (
+                <ProfileAvatar
+                  firstName={
+                    userData?.friendList?.firstName ||
+                    userData?.friendList[0]?.firstName
+                  }
+                  lastName={
+                    userData?.friendList?.lastName ||
+                    userData?.friendList[0]?.lastName
+                  }
+                  textStyle={style.userProfileIcon}
+                  profileTexts={{fontSize: fontSize(18)}}
+                />
               )}
+
+              {/*{userData && (*/}
+              {/*  <Image*/}
+              {/*    source={{*/}
+              {/*      uri:*/}
+              {/*        userData?.friendList?.profilePic ||*/}
+              {/*        userData?.friendList[0]?.profilePic,*/}
+              {/*    }}*/}
+              {/*    style={style.userProfileIcon}*/}
+              {/*  />*/}
+              {/*)}*/}
+
               <View style={style.detailsContainer}>
                 <Text style={style.userNameTextStyle}>
                   {userData

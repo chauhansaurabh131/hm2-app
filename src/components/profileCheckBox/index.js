@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     // fontSize: fontSize(12),
     paddingVertical: 2,
     paddingHorizontal: 15,
-    backgroundColor: '#ECECEC',
+    // backgroundColor: '#ECECEC',
     borderRadius: 25,
     // color: colors.black,
     // fontFamily: fontFamily.poppins400,

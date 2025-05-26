@@ -347,7 +347,6 @@ const UserDetailScreen = ({navigation}) => {
         {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
         <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
           <Image
-            // source={images.profileDisplayImage}
             source={userImage ? {uri: userImage} : images.empty_male_Image}
             style={style.profileLogoStyle}
           />

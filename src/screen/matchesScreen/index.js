@@ -30,25 +30,50 @@ import MatchesInSentScreen from '../matchesAllScreen/matchesInSentScreen';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import MatchesInReceivedScreen from '../matchesAllScreen/matchesInReceivedScreen';
 import MatchesInDeclinedScreen from '../matchesAllScreen/MatchesInDeclinedScreen';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import MatchesInRecentlyViewedScreen from '../matchesAllScreen/matchesInRecentlyViewedScreen';
 
 const MatchesScreen = ({navigation, route}) => {
-  // const initialTab = route?.params?.initialTab || 'new'; // 👈 get from params
-  // const [selectedTab, setSelectedTab] = useState(initialTab);
-  const [selectedTab, setSelectedTab] = useState('new');
+  const initialTab = route?.params?.initialTab || 'new'; // 👈 get from params
+  const [selectedTab, setSelectedTab] = useState(initialTab);
+  // const [selectedTab, setSelectedTab] = useState('new');
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [step, setStep] = useState(1);
   const [requestStatus, setRequestStatus] = useState(null);
 
-  // useEffect(() => {
-  //   if (route?.params?.initialTab) {
-  //     setSelectedTab(route.params.initialTab);
-  //   }
-  // }, [route?.params?.initialTab]);
-  //
-  // console.log(' === selectedTab ===> ', selectedTab);
+  useEffect(() => {
+    const tab = route?.params?.initialTab;
+
+    if (tab) {
+      setSelectedTab(tab);
+
+      if (tab === 'viewed') {
+        setTimeout(() => {
+          scrollToEnd();
+        }, 100);
+      } else {
+        // Optional: scroll to start if not "viewed"
+        setTimeout(() => {
+          scrollToStart();
+        }, 100);
+      }
+
+      // Clear the param after use
+      navigation.setParams({initialTab: undefined});
+    }
+  }, [route?.params?.initialTab]);
+
+  const scrollToStart = () => {
+    flatListRef.current?.scrollToOffset({animated: true, offset: 0});
+  };
 
   const topModalBottomSheetRef = useRef(null);
+  const flatListRef = useRef(null);
+
+  const scrollToEnd = () => {
+    flatListRef.current?.scrollToEnd({animated: true});
+  };
 
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
@@ -64,8 +89,8 @@ const MatchesScreen = ({navigation, route}) => {
     {id: 'saved', label: 'Saved'},
     {id: 'sent', label: 'Sent'},
     {id: 'declined', label: 'Declined'},
-    // {id: 'deleted', label: 'Deleted'},
     {id: 'blocked', label: 'Blocked'},
+    {id: 'viewed', label: 'Viewed'},
   ];
 
   const openModal = () => {
@@ -110,10 +135,10 @@ const MatchesScreen = ({navigation, route}) => {
           return icons.matches_sent_icon; // Replace with your actual image reference for "Sent"
         case 'declined':
           return icons.matched_declined_icon; // Replace with your actual image reference for "Declined"
-        // case 'deleted':
-        //   return icons.delete_Profile_icon; // Replace with your actual image reference for "Deleted"
         case 'blocked':
           return icons.block_icon; // Replace with your actual image reference for "Blocked"
+        case 'viewed':
+          return icons.recent_view_icon; // Replace with your actual image reference for "Deleted"
         default:
           return images.user_Three_Image; // Fallback image if none matches
       }
@@ -164,16 +189,16 @@ const MatchesScreen = ({navigation, route}) => {
             marginRight: 10,
             resizeMode: 'contain',
           };
-        // case 'deleted':
-        //   return {
-        //     width: hp(19.21),
-        //     height: hp(14),
-        //     marginRight: 10,
-        //     resizeMode: 'contain',
-        //   };
         case 'blocked':
           return {
             width: hp(14),
+            height: hp(14),
+            marginRight: 10,
+            resizeMode: 'contain',
+          };
+        case 'viewed':
+          return {
+            width: hp(19.21),
             height: hp(14),
             marginRight: 10,
             resizeMode: 'contain',
@@ -220,8 +245,18 @@ const MatchesScreen = ({navigation, route}) => {
     );
   };
 
+  // const handleTabPress = tab => {
+  //   setSelectedTab(tab);
+  // };
+
   const handleTabPress = tab => {
     setSelectedTab(tab);
+
+    if (tab === 'viewed') {
+      setTimeout(() => {
+        scrollToEnd(); // Scroll to end if 'viewed' tab is selected
+      }, 100); // Small delay to ensure FlatList is rendered
+    }
   };
 
   const renderContent = () => {
@@ -275,6 +310,13 @@ const MatchesScreen = ({navigation, route}) => {
           </View>
         );
 
+      case 'viewed':
+        return (
+          <View>
+            <MatchesInRecentlyViewedScreen />
+          </View>
+        );
+
       default:
         return null;
     }
@@ -291,10 +333,19 @@ const MatchesScreen = ({navigation, route}) => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileLogoStyle}
-            />
+            {userImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={style.profileLogoStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileLogoStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -309,7 +360,16 @@ const MatchesScreen = ({navigation, route}) => {
         />
 
         <View>
+          {/*<FlatList*/}
+          {/*  horizontal*/}
+          {/*  showsHorizontalScrollIndicator={false}*/}
+          {/*  data={tabsData}*/}
+          {/*  renderItem={renderTabItem}*/}
+          {/*  keyExtractor={item => item.id}*/}
+          {/*  contentContainerStyle={style.flatListStatusBarStyle}*/}
+          {/*/>*/}
           <FlatList
+            ref={flatListRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             data={tabsData}

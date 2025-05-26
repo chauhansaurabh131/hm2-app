@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import style from './style';
-import {hp} from '../../utils/helpers';
+import {fontSize, hp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect} from '@react-navigation/native';
@@ -18,6 +18,7 @@ import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import axios from 'axios';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const AccountsScreen = ({navigation}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -141,10 +142,24 @@ const AccountsScreen = ({navigation}) => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -190,10 +205,11 @@ const AccountsScreen = ({navigation}) => {
                   style={style.sideArrowImageStyle}
                 />
                 <View style={style.credentialTittleContainer}>
-                  <Text style={style.credentialTittleText}>Login Details</Text>
+                  <Text style={style.credentialTittleText}>Login Info</Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    This menu lets users update and manage{'\n'}authentication
-                    info for secure access
+                    Manage your email, password, and account{'\n'}login
+                    credentials. Helps keep your account{'\n'}secure and
+                    updated.
                   </Text>
                 </View>
               </View>
@@ -236,11 +252,12 @@ const AccountsScreen = ({navigation}) => {
                 />
                 <View style={style.credentialTittleContainer}>
                   <Text style={style.credentialTittleText}>
-                    Profile Setting
+                    Profile Visibility
                   </Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    This menu enables users to conceal or{'\n'}delete their
-                    profile from public visibility
+                    Allows users to hide or delete their profile from{'\n'}
+                    public view. Useful for maintaining privacy or{'\n'}
+                    temporarily deactivating the account.
                   </Text>
                 </View>
               </View>
@@ -284,8 +301,8 @@ const AccountsScreen = ({navigation}) => {
                     Privacy Setting
                   </Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    This menu enables users to conceal or{'\n'}delete their
-                    profile from public visibility
+                    Control who can see your profile, activity,{'\n'}or contact
+                    you. Adjust visibility and{'\n'}data-sharing preferences.
                   </Text>
                 </View>
               </View>
@@ -299,20 +316,14 @@ const AccountsScreen = ({navigation}) => {
           activeOpacity={0.6}
           underlayColor="#F9FBFF"
           onPress={() => {
-            navigation.navigate('EmailSmsAlertScreen');
+            navigation.navigate('TwoFactorAuthenticationScreen', {kycData});
           }}>
           <View style={{marginHorizontal: 17, marginBottom: 15}}>
-            <View
-              // activeOpacity={0.5}
-              style={{marginTop: hp(16)}}
-              // onPress={() => {
-              //   navigation.navigate('EmailSmsAlertScreen');
-              // }}
-            >
+            <View style={{marginTop: hp(16)}}>
               <View style={style.bodyDescription}>
                 <View style={{width: 25}}>
                   <Image
-                    source={icons.notification_icon}
+                    source={icons.two_factor_icon}
                     style={style.emailSmsIconStyle}
                   />
                 </View>
@@ -322,10 +333,10 @@ const AccountsScreen = ({navigation}) => {
                   style={style.sideArrowImageStyle}
                 />
                 <View style={style.credentialTittleContainer}>
-                  <Text style={style.credentialTittleText}>Notification</Text>
+                  <Text style={style.credentialTittleText}>Enable 2FA</Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    This menu enables users to conceal or{'\n'}delete their
-                    profile from public visibility
+                    Activate two-factor authentication for added{'\n'}security.
+                    Requires a second verification step{'\n'}during login.
                   </Text>
                 </View>
               </View>
@@ -362,10 +373,10 @@ const AccountsScreen = ({navigation}) => {
                   style={style.sideArrowImageStyle}
                 />
                 <View style={style.credentialTittleContainer}>
-                  <Text style={style.credentialTittleText}>Plan</Text>
+                  <Text style={style.credentialTittleText}>Plan Details</Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    In this menu, you'll see the plan you've purchased{'\n'}and
-                    the payment method used for the purchase.
+                    View your subscription plan and renewal info.{'\n'}Upgrade
+                    anytime for more features.
                   </Text>
                 </View>
               </View>
@@ -404,28 +415,35 @@ const AccountsScreen = ({navigation}) => {
                 <View style={style.credentialTittleContainer}>
                   <Text style={style.credentialTittleText}>KYC Details</Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    In this menu, you'll see the plan you've purchased{'\n'}and
-                    the payment method used for the purchase.
+                    Submit or update identity verification documents.{'\n'}
+                    Ensures compliance and enhances platform trust.
                   </Text>
                 </View>
               </View>
             </View>
           </View>
         </TouchableHighlight>
+
         <View style={style.descriptionBodyUnderlineStyle} />
 
         <TouchableHighlight
           activeOpacity={0.6}
           underlayColor="#F9FBFF"
           onPress={() => {
-            navigation.navigate('TwoFactorAuthenticationScreen', {kycData});
+            navigation.navigate('EmailSmsAlertScreen');
           }}>
           <View style={{marginHorizontal: 17, marginBottom: 15}}>
-            <View style={{marginTop: hp(16)}}>
+            <View
+              // activeOpacity={0.5}
+              style={{marginTop: hp(16)}}
+              // onPress={() => {
+              //   navigation.navigate('EmailSmsAlertScreen');
+              // }}
+            >
               <View style={style.bodyDescription}>
                 <View style={{width: 25}}>
                   <Image
-                    source={icons.two_factor_icon}
+                    source={icons.notification_icon}
                     style={style.emailSmsIconStyle}
                   />
                 </View>
@@ -435,11 +453,10 @@ const AccountsScreen = ({navigation}) => {
                   style={style.sideArrowImageStyle}
                 />
                 <View style={style.credentialTittleContainer}>
-                  <Text style={style.credentialTittleText}>
-                    Two Factor Authentication
-                  </Text>
+                  <Text style={style.credentialTittleText}>Notifications</Text>
                   <Text style={style.credentialDescriptionTextStyle}>
-                    Let’s get you setup using two-factor{'\n'}authentication.
+                    Manage how and when you receive alerts.{'\n'}Choose between
+                    email, SMS, or app notifications.
                   </Text>
                 </View>
               </View>

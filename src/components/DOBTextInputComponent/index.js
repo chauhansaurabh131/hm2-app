@@ -9,8 +9,9 @@ import {
   Modal,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker'; // Import the DatePicker
-import {fontFamily, fontSize, wp} from '../../utils/helpers';
-import {colors} from '../../utils/colors'; // Use your own helper functions
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {colors} from '../../utils/colors';
+import {icons} from '../../assets'; // Use your own helper functions
 
 const DOBTextInputComponent = ({
   label,
@@ -154,18 +155,54 @@ const DOBTextInputComponent = ({
       <Modal visible={open} transparent={true} animationType="fade">
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
+            {/*<TouchableOpacity*/}
+            {/*  style={styles.closeButton}*/}
+            {/*  onPress={() => setOpen(false)}>*/}
+            {/*  <Text style={styles.closeButtonText}>X</Text>*/}
+            {/*</TouchableOpacity>*/}
+
             <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setOpen(false)}>
-              <Text style={styles.closeButtonText}>X</Text>
+              onPress={() => setOpen(false)}
+              style={{
+                height: hp(30),
+                width: hp(30),
+                justifyContent: 'center',
+                alignItems: 'center',
+                // top: -20,
+                position: 'absolute',
+                top: 5,
+                right: 10,
+              }}>
+              <Image
+                source={icons.x_cancel_icon}
+                style={{
+                  width: hp(12),
+                  height: hp(12),
+                  resizeMode: 'contain',
+                  tintColor: 'black',
+                }}
+              />
             </TouchableOpacity>
-            <View style={{marginTop: 40}}>
+
+            <Text
+              style={{
+                fontSize: fontSize(18),
+                lineHeight: hp(26),
+                fontFamily: fontFamily.poppins400,
+                color: colors.black,
+                marginTop: hp(10),
+              }}>
+              Date of Birth
+            </Text>
+
+            <View style={{marginTop: 20}}>
               <DatePicker
                 date={selectedDate} // Selected date
                 mode="date"
                 maximumDate={maxDate} // Prevent dates beyond the current year
                 onDateChange={setSelectedDate} // Update date in state when scrolling
                 textColor={'black'}
+                style={{height: 130, width: 300}}
               />
             </View>
             <TouchableOpacity
@@ -227,24 +264,31 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#fff',
+
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '80%', // Ensure the modal has a proper width so the X button aligns properly
+    width: '85%', // Ensure the modal has a proper width so the X button aligns properly
     position: 'relative',
   },
   setDateButton: {
     marginTop: 20,
     backgroundColor: colors.black,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 30,
+    // paddingVertical: 10,
+    // paddingHorizontal: 20,
+    // borderRadius: 30,
+    width: '90%',
+    height: hp(44),
+    justifyContent: 'center',
+    borderRadius: 50,
   },
   setDateButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: fontFamily.poppins500,
+    color: '#FFFFFF',
+    fontSize: fontSize(16),
+    lineHeight: hp(22),
+    fontFamily: fontFamily.poppins400,
+    textAlign: 'center',
   },
   closeButton: {
     position: 'absolute', // Make the button absolutely positioned

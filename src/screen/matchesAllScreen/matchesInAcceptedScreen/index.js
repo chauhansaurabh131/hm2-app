@@ -265,7 +265,7 @@ const MatchesInAcceptedScreen = () => {
 
   // SEND MESSAGE FUNCTION
   const onSendMessagePress = userData => {
-    // console.log(' === onSendMessagePress ===> ', userData);
+    console.log(' === onSendMessagePress ===> ', userData);
 
     sheetRef.current.close();
 

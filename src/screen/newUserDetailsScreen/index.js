@@ -1180,10 +1180,20 @@ const NewUserDetailsScreen = () => {
         />
 
         <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
-          <Image
-            source={userImage ? {uri: userImage} : images.empty_male_Image}
-            style={style.profileLogoStyle}
-          />
+          {userImage ? (
+            <Image source={{uri: userImage}} style={style.profileLogoStyle} />
+          ) : (
+            <ProfileAvatar
+              firstName={user?.user?.firstName}
+              lastName={user?.user?.firstName}
+              textStyle={style.profileLogoStyle}
+              profileTexts={{fontSize: fontSize(10)}}
+            />
+          )}
+          {/*<Image*/}
+          {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+          {/*  style={style.profileLogoStyle}*/}
+          {/*/>*/}
         </TouchableOpacity>
       </View>
 

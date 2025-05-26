@@ -10,6 +10,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import ProfileCheckboxGroup from '../../components/profileCheckBox';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const EmailSmsAlertScreen = () => {
   const navigation = useNavigation();
@@ -65,10 +66,23 @@ const EmailSmsAlertScreen = () => {
           />
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -85,9 +99,7 @@ const EmailSmsAlertScreen = () => {
           {/*  source={icons.email_sms_icon}*/}
           {/*  style={style.headingCredentialsImageStyle}*/}
           {/*/>*/}
-          <Text style={style.headingCredentialsText}>
-            Email/SMS Alert Setting
-          </Text>
+          <Text style={style.headingCredentialsText}>Notifications</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>

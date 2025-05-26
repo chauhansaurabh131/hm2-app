@@ -10,12 +10,13 @@ import {
   Text,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {hp} from '../../utils/helpers';
+import {fontSize, hp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useNavigation} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
 import DemoCode from '../demoCode';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const NewAddStoryScreen = () => {
   const {user} = useSelector(state => state.auth);
@@ -87,6 +88,19 @@ const NewAddStoryScreen = () => {
   );
 
   // Handle image click based on the conditions
+  // const handleImageClick = () => {
+  //   if (userStatus?.content) {
+  //     // Log a message if userStatus.content exists
+  //     console.log('User has a status content:', userStatus);
+  //
+  //     navigation.navigate('ViewUserStatusScreen', {userStatus});
+  //     // navigation.navigate('DemoCode', {userStatus});
+  //   } else if (userImage) {
+  //     // Open gallery if userImage exists
+  //     openGallery();
+  //   }
+  // };
+
   const handleImageClick = () => {
     if (userStatus?.content) {
       // Log a message if userStatus.content exists
@@ -94,8 +108,8 @@ const NewAddStoryScreen = () => {
 
       navigation.navigate('ViewUserStatusScreen', {userStatus});
       // navigation.navigate('DemoCode', {userStatus});
-    } else if (userImage) {
-      // Open gallery if userImage exists
+    } else {
+      // Always open the gallery if there's no user status
       openGallery();
     }
   };
@@ -130,21 +144,47 @@ const NewAddStoryScreen = () => {
         <TouchableOpacity onPress={handleImageClick}>
           <View style={styles.imageContainer}>
             {/* Update the onPress logic here */}
+            {/*<TouchableOpacity activeOpacity={0.7} onPress={handleImageClick}>*/}
+            {/*  <Image*/}
+            {/*    source={*/}
+            {/*      userStatus?.content*/}
+            {/*        ? {uri: userStatus.content} // If status image exists, use it*/}
+            {/*        : userImage*/}
+            {/*        ? {uri: userImage}*/}
+            {/*        : images.empty_male_Image // Fallback to profile image or default image*/}
+            {/*    }*/}
+            {/*    // Apply conditional styling for the blue border*/}
+            {/*    style={[*/}
+            {/*      styles.profileImage,*/}
+            {/*      userStatus?.content && styles.blueBorder, // Add blue border if userStatus.content exists*/}
+            {/*    ]}*/}
+            {/*  />*/}
+            {/*</TouchableOpacity>*/}
+
             <TouchableOpacity activeOpacity={0.7} onPress={handleImageClick}>
-              <Image
-                source={
-                  userStatus?.content
-                    ? {uri: userStatus.content} // If status image exists, use it
-                    : userImage
-                    ? {uri: userImage}
-                    : images.empty_male_Image // Fallback to profile image or default image
-                }
-                // Apply conditional styling for the blue border
-                style={[
-                  styles.profileImage,
-                  userStatus?.content && styles.blueBorder, // Add blue border if userStatus.content exists
-                ]}
-              />
+              {userStatus?.content || userImage ? (
+                <Image
+                  source={
+                    userStatus?.content
+                      ? {uri: userStatus.content}
+                      : {uri: userImage}
+                  }
+                  style={[
+                    styles.profileImage,
+                    userStatus?.content && styles.blueBorder,
+                  ]}
+                />
+              ) : (
+                <ProfileAvatar
+                  firstName={user?.user?.firstName}
+                  lastName={user?.user?.lastName}
+                  textStyle={[
+                    styles.profileImage,
+                    userStatus?.content && styles.blueBorder,
+                  ]}
+                  profileTexts={{fontSize: fontSize(14)}}
+                />
+              )}
             </TouchableOpacity>
 
             <View style={styles.iconWrapper}>

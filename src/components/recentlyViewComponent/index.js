@@ -371,12 +371,12 @@ const RecentlyViewComponent = () => {
           <TouchableHighlight
             activeOpacity={0.6}
             underlayColor="#F9FBFF"
-            // onPress={() => {
-            //   navigation.navigate('Matches', {initialTab: 'saved'}); // 👈 pass tab
-            // }}
             onPress={() => {
-              navigation.navigate('Matches');
+              navigation.navigate('Matches', {initialTab: 'viewed'}); // 👈 passing "viewed"
             }}
+            // onPress={() => {
+            //   navigation.navigate('Matches');
+            // }}
             style={{
               // backgroundColor: 'red',
               height: 45,

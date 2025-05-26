@@ -871,7 +871,8 @@ const App = () => {
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert('Permission Granted');
+        // Alert.alert('Permission Granted');
+        console.log(' === Permission Granted ===> ');
       } else {
         Alert.alert('Permission Denied');
       }

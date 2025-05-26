@@ -23,6 +23,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import axios from 'axios';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const CustomCheckbox = ({isChecked, onPress}) => {
   return (
@@ -365,19 +366,30 @@ const PrivacyScreen = ({route}) => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={style.headingTittleContainer}>
-          <Text style={style.headingCredentialsText}>
-            Select Profile Privacy Option
-          </Text>
+          <Text style={style.headingCredentialsText}>Privacy Setting</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>

@@ -25,6 +25,7 @@ import {updateDetails} from '../../actions/homeActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
@@ -173,10 +174,23 @@ const HideDeleteProfileScreen = () => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -193,7 +207,7 @@ const HideDeleteProfileScreen = () => {
           {/*  source={icons.delete_Profile_icon}*/}
           {/*  style={style.headingCredentialsImageStyle}*/}
           {/*/>*/}
-          <Text style={style.headingCredentialsText}>Profile Setting</Text>
+          <Text style={style.headingCredentialsText}>Profile Visibility</Text>
           <TouchableOpacity
             style={style.backButtonContainer}
             onPress={() => navigation.goBack()}>

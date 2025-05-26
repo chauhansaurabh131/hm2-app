@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Linking,
+  Alert,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,17 +18,55 @@ import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import {changeStack, logout} from '../../actions/authActions';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import ProfileAvatar from '../letterProfileComponent';
 
 const NewProfileBottomSheet = ({bottomSheetRef}) => {
   const navigation = useNavigation();
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const [planData, setPlanData] = useState(null);
   const [socket, setSocket] = useState(null);
   const {user} = useSelector(state => state.auth);
 
   const appType = user?.user?.appUsesType;
 
   const userImage = user?.user?.profilePic;
+
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchPlanData = async () => {
+      try {
+        const token = user?.tokens?.access?.token;
+        if (token) {
+          const response = await axios.get(
+            'https://stag.mntech.website/api/v1/user/user/checkPlan',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          setPlanData(response.data);
+          console.log('API Response:', response.data);
+        } else {
+          Alert.alert('Error', 'No access token found.');
+        }
+      } catch (error) {
+        console.error('API Error:', error);
+        Alert.alert('Error', 'Failed to fetch plan data.');
+      } finally {
+        console.log(' === err ===> ');
+      }
+    };
+
+    fetchPlanData();
+  }, []);
 
   const capitalizeFirstLetter = string => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -62,6 +101,17 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
     setConfirmationVisible(true);
   };
 
+  const onPrivacyScreenHandle = () => {
+    closeBottomSheet();
+    if (planData) {
+      navigation.navigate('BottomSheetPrivacySettingScreen', {
+        planData: planData.data,
+      }); // Pass data to Abc screen
+    } else {
+      Alert.alert('Error', 'No plan data available to pass.');
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -86,11 +136,20 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           {/*<TouchableOpacity onPress={closeBottomSheet}>*/}
           {/*  <Text>Profile Details</Text>*/}
           {/*</TouchableOpacity>*/}
+
           <View style={{marginHorizontal: 27}}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={styles.modalHeaderProfileStyle}
-            />
+            {hasValidImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={styles.modalHeaderProfileStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || name}
+                lastName={user?.user?.lastName}
+                textStyle={styles.modalHeaderProfileStyle}
+              />
+            )}
 
             <Text style={styles.userNameTextStyle}>{name}</Text>
 
@@ -162,15 +221,19 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
 
               <TouchableOpacity
                 style={styles.labelContainer}
+                // onPress={() => {
+                //   navigation.navigate('BottomSheetPrivacySettingScreen');
+                //   closeBottomSheet();
+                // }}
+
                 onPress={() => {
-                  navigation.navigate('PrivacyScreen');
-                  closeBottomSheet();
+                  onPrivacyScreenHandle();
                 }}>
                 <View style={styles.labelViewContainer}>
                   <View style={styles.imageContainer}>
                     <Image source={icons.logLogo} style={styles.privacyIcon} />
                   </View>
-                  <Text style={styles.labelText}>Privacy Policy</Text>
+                  <Text style={styles.labelText}>Privacy Settings</Text>
                 </View>
               </TouchableOpacity>
 

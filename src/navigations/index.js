@@ -94,6 +94,7 @@ import StepForAuthenticationOnScreen from '../screen/stepForAuthenticationOnScre
 import EmailNumberAuthenticationNumber from '../screen/emailNumberAuthenticationNumber';
 import LoginAuthenticationCodeScreen from '../screen/loginAuthenticationCodeScreen';
 import AuthenticationEnterOtpScreen from '../screen/authenticationEnterOtpScreen';
+import BottomSheetPrivacySettingScreen from '../screen/bottomSheetPrivacySettingScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -118,6 +119,11 @@ const MainNavigator = () => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="NewMainScreen">
+      {/*<Stack.Screen*/}
+      {/*  name="CreatingProfileScreen"*/}
+      {/*  component={CreatingProfileScreen}*/}
+      {/*/>*/}
+
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
@@ -796,6 +802,12 @@ const MainNavigator = () => {
         <Tab.Screen
           name="NewUserDetailsScreen"
           component={NewUserDetailsScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="BottomSheetPrivacySettingScreen"
+          component={BottomSheetPrivacySettingScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
       </Tab.Navigator>
