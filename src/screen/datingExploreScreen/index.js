@@ -29,6 +29,7 @@ import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import {useNavigation} from '@react-navigation/native';
 
 import axios from 'axios';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const imageData = [
   {id: '1', source: images.meet_new_friends_img, title: 'Meet New Friends'},
@@ -49,6 +50,7 @@ const DatingExploreScreen = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
+  const [unfriendVisible, setUnfriendVisible] = useState(false);
   const [selectedFirstName, setSelectedFirstName] = useState('');
   const [selectedFrinedId, setSelectedFriendId] = useState('');
   const [selectFriendRequestedId, setSelectFriendRequestId] = useState('');
@@ -132,6 +134,42 @@ const DatingExploreScreen = () => {
     // }
   };
 
+  const handleConfirmBlockUnfriend = async item => {
+    // console.log(' === handleConfirmBlockUnfriend ===> ', user?.user?.id);
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/friend/block-user?appUsesType=dating',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            user: user?.user?.id,
+            friend: item?.friendList?._id,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('User blocked/unfriended successfully:', data);
+
+        setFilteredUsers(prev => prev.filter(p => p._id !== item._id));
+        // navigation.goBack();
+        setUnfriendVisible(false);
+      } else {
+        console.error('Failed to block/unfriend:', data);
+      }
+    } catch (error) {
+      console.error('Error during API call:', error);
+      setUnfriendVisible(false);
+    }
+  };
+
   const renderItem = ({item}) => {
     // console.log(' === var ===> ', item);
     return (
@@ -151,12 +189,16 @@ const DatingExploreScreen = () => {
   const renderAcceptedItem = ({item}) => {
     const user = item.friendList || [];
     const profilePic = user?.profilePic;
-    const name = user?.name || 'No Name';
+    const name = user?.firstName || user?.name;
     const Occupation = item?.friendList?.datingData[0]?.Occupation;
     const selectedId = user?._id;
-    const friendRequestedId = item?._id;
+    const friendRequestedId = item?.friendList?._id || item?._id;
     const userDetails = item;
     const usersUniqueId = user?.userUniqueId;
+
+    // console.log(' === userDetails ===> ', userDetails?.friendList);
+
+    // console.log(' === var... ===> ', userDetails);
 
     // console.log(' === var ===> ', user?.userUniqueId);
 
@@ -187,16 +229,41 @@ const DatingExploreScreen = () => {
             paddingVertical: hp(10),
             position: 'relative',
           }}>
-          <Image
-            source={profilePic ? {uri: profilePic} : images.empty_male_Image}
-            style={{
-              width: wp(47), // Adjust the size as needed
-              height: hp(47),
-              borderRadius: 50,
-              marginRight: wp(10),
-              resizeMode: 'cover',
-            }}
-          />
+          {profilePic ? (
+            <Image
+              source={{uri: profilePic}}
+              style={{
+                width: wp(47),
+                height: hp(47),
+                borderRadius: 50,
+                marginRight: wp(10),
+                resizeMode: 'cover',
+              }}
+            />
+          ) : (
+            <ProfileAvatar
+              firstName={user?.firstName || user?.name}
+              lastName={user?.lastName}
+              textStyle={{
+                width: wp(47),
+                height: hp(47),
+                borderRadius: 50,
+                marginRight: wp(10),
+                resizeMode: 'cover',
+              }}
+              profileTexts={{fontSize: fontSize(17)}}
+            />
+          )}
+          {/*<Image*/}
+          {/*  source={profilePic ? {uri: profilePic} : images.empty_male_Image}*/}
+          {/*  style={{*/}
+          {/*    width: wp(47), // Adjust the size as needed*/}
+          {/*    height: hp(47),*/}
+          {/*    borderRadius: 50,*/}
+          {/*    marginRight: wp(10),*/}
+          {/*    resizeMode: 'cover',*/}
+          {/*  }}*/}
+          {/*/>*/}
           {/*source={profilePic ? {uri: profilePic} : images.empty_male_Image}*/}
           <View>
             <View style={{flexDirection: 'row'}}>
@@ -311,6 +378,12 @@ const DatingExploreScreen = () => {
     const isDeclined = clickedUsers[item._id]?.declined;
     const isAccepted = clickedUsers[item._id]?.accepted;
 
+    const profilePrivacy =
+      item?.user?.privacySettingCustom?.profilePhotoPrivacy === true ||
+      item?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    // console.log(' === item__ ===> ', item?.user?.privacySettingCustom);
+
     const capitalizeFirstLetter = str =>
       str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
 
@@ -397,10 +470,39 @@ const DatingExploreScreen = () => {
     return (
       <View style={style.requestRenderContainer}>
         <TouchableOpacity activeOpacity={0.6} onPress={onClicked}>
-          <Image
-            source={profilePic ? {uri: profilePic} : images.empty_male_Image}
-            style={style.renderUserProfileImage}
-          />
+          {/*<Image*/}
+          {/*  source={profilePic ? {uri: profilePic} : images.empty_male_Image}*/}
+          {/*  style={style.renderUserProfileImage}*/}
+          {/*/>*/}
+          {profilePic ? (
+            <>
+              <Image
+                source={{uri: profilePic}}
+                style={style.renderUserProfileImage}
+              />
+              {profilePrivacy && (
+                <Image
+                  source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                  style={{
+                    position: 'absolute',
+                    tintColor: '#fff',
+                    resizeMode: 'contain',
+                    width: hp(20),
+                    height: hp(20),
+                    left: 17,
+                    top: 17,
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <ProfileAvatar
+              firstName={user.firstName || user.name}
+              lastName={user.lastName}
+              textStyle={style.renderUserProfileImage}
+              profileTexts={{fontSize: fontSize(17)}}
+            />
+          )}
         </TouchableOpacity>
 
         <View style={style.requestRenderBodyContainer}>
@@ -548,6 +650,12 @@ const DatingExploreScreen = () => {
   };
 
   const handleConfirmBlock = async () => {
+    // console.log(
+    //   ' === handleConfirmBlock 333===> ',
+    //   userId,
+    //   selectFriendRequestedId,
+    // );
+
     try {
       setIsBlockModalVisible(false);
 
@@ -560,8 +668,8 @@ const DatingExploreScreen = () => {
             Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
-            user: userId,
-            request: selectFriendRequestedId,
+            user: selectFriendRequestedId,
+            request: userFullDetails?._id,
             status: 'removed',
           }),
         },
@@ -791,25 +899,25 @@ const DatingExploreScreen = () => {
 
   return (
     <SafeAreaView style={style.container}>
-      <View style={style.headerContainer}>
-        {/* Header */}
-        <View style={style.headersContainer}>
-          <Image source={images.happyMilanColorLogo} style={style.logo} />
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={{alignSelf: 'center'}}
-            onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImage}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/*<View style={style.headerContainer}>*/}
+      {/*  /!* Header *!/*/}
+      {/*  <View style={style.headersContainer}>*/}
+      {/*    <Image source={images.happyMilanColorLogo} style={style.logo} />*/}
+      {/*    <TouchableOpacity*/}
+      {/*      activeOpacity={0.7}*/}
+      {/*      style={{alignSelf: 'center'}}*/}
+      {/*      onPress={openBottomSheet}>*/}
+      {/*      <Image*/}
+      {/*        source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+      {/*        style={style.profileImage}*/}
+      {/*      />*/}
+      {/*    </TouchableOpacity>*/}
+      {/*  </View>*/}
+      {/*</View>*/}
 
-      <View>
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
-      </View>
+      {/*<View>*/}
+      {/*  <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
+      {/*</View>*/}
 
       {/* Category / Paired Buttons */}
       <View style={style.bodyContainer}>
@@ -943,7 +1051,7 @@ const DatingExploreScreen = () => {
               )}
               <RBSheet
                 ref={bottomSheetRef}
-                height={hp(270)} // Adjust height as needed
+                height={hp(430)} // Adjust height as needed
                 // openDuration={250}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
@@ -963,158 +1071,157 @@ const DatingExploreScreen = () => {
                     marginTop: hp(10),
                   }}>
                   <TouchableOpacity
-                    activeOpacity={0.5}
                     onPress={handleShare}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
+                    style={style.threeDotBottomSheetBody}>
                     <Image
                       source={icons.share_icon}
-                      style={{
-                        width: hp(20),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                        tintColor: 'black',
-                      }}
+                      style={style.threeDotBottomSheetIcon}
                     />
-                    <Text
-                      style={{
-                        color: colors.black,
-                        marginLeft: wp(20),
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
+                    <Text style={style.threeDotBottomSheetTittleText}>
                       Share Profile
                     </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => {
-                      bottomSheetRef.current.close(); // Use close() instead of Close()
-                      // setIsBlockModalVisible(true);
-                      ReportBottomSheetRef.current.open();
-                    }}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: hp(21),
-                    }}>
-                    <Image
-                      source={icons.report_icon}
-                      style={{
-                        width: hp(20),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: colors.black,
-                        marginLeft: wp(20),
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Report Profile
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    // onPress={() => {
-                    //   bottomSheetRef.current.close();
-                    //
-                    // }}
                     onPress={() => {
                       onCopyIdPress(selectedUniqueId);
                     }}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: hp(21),
-                    }}>
+                    style={style.threeDotBottomSheetContainers}>
                     <Image
-                      source={icons.copy_icon}
-                      style={{
-                        width: hp(20),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                      }}
+                      source={icons.copy_id_card_icon}
+                      style={style.threeDotBottomSheetIcon}
                     />
-                    <Text
-                      style={{
-                        color: colors.black,
-                        marginLeft: wp(20),
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
+                    <Text style={style.threeDotBottomSheetTittleText}>
                       Copy ID : {selectedUniqueId}
                     </Text>
                   </TouchableOpacity>
 
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 1,
+                      backgroundColor: '#EBEBEB',
+                      marginTop: hp(22),
+                    }}
+                  />
+
                   <TouchableOpacity
-                    activeOpacity={0.5}
+                    onPress={() => {
+                      bottomSheetRef.current.close(); // Use close() instead of Close()
+                      ReportBottomSheetRef.current.open();
+                    }}
+                    style={style.threeDotBottomSheetContainers}>
+                    <Image
+                      source={icons.new_report_icon}
+                      style={[style.threeDotBottomSheetIcon, {top: -8}]}
+                    />
+                    <View>
+                      <Text style={style.threeDotBottomSheetTittleText}>
+                        Report
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: fontSize(12),
+                          lineHeight: hp(16),
+                          fontFamily: fontFamily.poppins400,
+                          color: '#7B7B7B',
+                        }}>
+                        Your report will be anonymous.
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      bottomSheetRef.current.close(); // Use close() instead of Close()
+                      setUnfriendVisible(true);
+                    }}
+                    style={style.threeDotBottomSheetContainers}>
+                    <Image
+                      source={icons.block_icon}
+                      style={[style.threeDotBottomSheetIcon, {top: -8}]}
+                    />
+
+                    <View>
+                      <Text style={style.threeDotBottomSheetTittleText}>
+                        Block {selectedFirstName}
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: fontSize(12),
+                          lineHeight: hp(16),
+                          fontFamily: fontFamily.poppins400,
+                          color: '#7B7B7B',
+                        }}>
+                        You can't contact this user again.
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
                     onPress={() => {
                       bottomSheetRef.current.close(); // Use close() instead of Close()
                       setIsBlockModalVisible(true);
                     }}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: hp(21),
-                    }}>
+                    style={style.threeDotBottomSheetContainers}>
                     <Image
                       source={icons.unFriend_icon}
-                      style={{
-                        width: hp(20),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                      }}
+                      style={[style.threeDotBottomSheetIcon, {top: -8}]}
                     />
-                    <Text
-                      style={{
-                        color: colors.black,
-                        marginLeft: wp(20),
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Unfriend
-                    </Text>
+
+                    <View>
+                      <Text style={style.threeDotBottomSheetTittleText}>
+                        Unfriend
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: fontSize(12),
+                          lineHeight: hp(16),
+                          fontFamily: fontFamily.poppins400,
+                          color: '#7B7B7B',
+                        }}>
+                        This user will be permanently deleted.
+                      </Text>
+                    </View>
                   </TouchableOpacity>
 
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 1,
+                      backgroundColor: '#EBEBEB',
+                      marginTop: hp(22),
+                    }}
+                  />
+
                   <TouchableOpacity
-                    activeOpacity={0.5}
                     onPress={() => {
                       onSendMessagePress(userFullDetails);
                     }}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: hp(21),
-                    }}>
+                    style={style.threeDotBottomSheetContainers}>
                     <Image
                       source={icons.send_message_icon}
-                      style={{
-                        width: hp(14),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                      }}
+                      style={[style.threeDotBottomSheetIcon, {top: -8}]}
                     />
-                    <Text
-                      style={{
-                        color: colors.black,
-                        marginLeft: wp(20),
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Send Message
-                    </Text>
+
+                    <View>
+                      <Text style={style.threeDotBottomSheetTittleText}>
+                        Send Message
+                      </Text>
+
+                      <Text
+                        style={{
+                          fontSize: fontSize(12),
+                          lineHeight: hp(16),
+                          fontFamily: fontFamily.poppins400,
+                          color: '#7B7B7B',
+                        }}>
+                        Send a direct message.
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </RBSheet>
@@ -1588,17 +1695,162 @@ const DatingExploreScreen = () => {
                   </View>
                 </View>
               </Modal>
+
+              <Modal
+                visible={unfriendVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setUnfriendVisible(false)}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  }}>
+                  <View
+                    style={{
+                      width: wp(350),
+                      padding: 20,
+                      backgroundColor: 'white',
+                      borderRadius: 10,
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        color: 'black',
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        marginTop: 20,
+                      }}>
+                      Are you sure you want to
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        color: 'black',
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Block This User?
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginTop: hp(30),
+                      }}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          handleConfirmBlockUnfriend(userFullDetails);
+                        }}>
+                        <LinearGradient
+                          colors={['#2D46B9', '#8D1D8D']}
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 1}}
+                          style={{
+                            width: hp(122),
+                            height: hp(50),
+                            borderRadius: 50,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: 20,
+                          }}>
+                          <Text
+                            style={{
+                              color: colors.white,
+                              fontSize: fontSize(16),
+                              lineHeight: hp(24),
+                              fontFamily: fontFamily.poppins400,
+                            }}>
+                            Yes
+                          </Text>
+                        </LinearGradient>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          setUnfriendVisible(false);
+                        }}>
+                        <LinearGradient
+                          colors={['#0D4EB3', '#9413D0']}
+                          style={{
+                            width: wp(122),
+                            height: hp(50),
+                            borderRadius: 50,
+                            borderWidth: 1,
+                            justifyContent: 'center',
+                            borderColor: 'transparent', // Set border color to transparent
+                          }}>
+                          <View
+                            style={{
+                              borderRadius: 50, // <-- Inner Border Radius
+                              flex: 1,
+                              backgroundColor: colors.white,
+                              justifyContent: 'center',
+                              margin: isIOS ? 0 : 1,
+                            }}>
+                            <Text
+                              style={{
+                                textAlign: 'center',
+                                backgroundColor: 'transparent',
+                                color: colors.black,
+                                margin: 10,
+                                fontSize: fontSize(16),
+                                lineHeight: hp(24),
+                                fontFamily: fontFamily.poppins400,
+                              }}>
+                              No
+                            </Text>
+                          </View>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </Modal>
             </>
           )}
           {selectedText === 'Requests' && (
             // <View style={{marginTop: hp(34)}}>
-            <View>
-              <FlatList
-                data={users}
-                keyExtractor={item => item._id}
-                renderItem={requestRenderItem}
-              />
-            </View>
+
+            <>
+              {users?.length === 0 ? (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: hp(10),
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: '#999',
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    No Data Found
+                  </Text>
+                </View>
+              ) : (
+                <FlatList
+                  data={users}
+                  keyExtractor={item => item._id}
+                  renderItem={requestRenderItem}
+                />
+              )}
+            </>
+
+            // <View>
+            //   <FlatList
+            //     data={users}
+            //     keyExtractor={item => item._id}
+            //     renderItem={requestRenderItem}
+            //   />
+            // </View>
           )}
         </View>
       </View>

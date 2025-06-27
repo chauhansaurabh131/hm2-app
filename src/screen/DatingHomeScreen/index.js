@@ -27,6 +27,7 @@ import {colors} from '../../utils/colors';
 import axios from 'axios';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import AgeRangeSlider from '../../components/ageRangeSlider';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBaqU_1hOFIhVLm8su_caJheEChJCNBTyY';
 
@@ -205,8 +206,6 @@ const DatingHomeScreen = () => {
     }
   };
 
-  const userImage = user?.user?.profilePic;
-
   const userProfileCompleted = user?.user?.userProfileCompleted;
   const userPartnerFormPreCompleted = user?.user?.userPartnerPreCompleted;
 
@@ -266,6 +265,15 @@ const DatingHomeScreen = () => {
     }, []),
   );
 
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
+
+  const userImage = user?.user?.profilePic;
+
+  console.log(' === hasValidImage ===> ', user?.user?.profilePic);
+
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainer}>
@@ -280,12 +288,26 @@ const DatingHomeScreen = () => {
             // onPress={openTopSheetModal}
             onPress={openBottomSheet}
             style={{alignSelf: 'center'}}>
-            {userImage ? (
-              <Image source={{uri: userImage}} style={style.dropDownTopImage} />
-            ) : (
+            {/*{userImage ? (*/}
+            {/*  <Image source={{uri: userImage}} style={style.dropDownTopImage} />*/}
+            {/*) : (*/}
+            {/*  <Image*/}
+            {/*    source={images.empty_male_Image}*/}
+            {/*    style={style.dropDownTopImage}*/}
+            {/*  />*/}
+            {/*)}*/}
+
+            {hasValidImage ? (
               <Image
-                source={images.empty_male_Image}
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
                 style={style.dropDownTopImage}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={style.dropDownTopImage}
+                profileTexts={{fontSize: fontSize(10)}}
               />
             )}
           </TouchableOpacity>

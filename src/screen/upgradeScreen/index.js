@@ -525,34 +525,33 @@ const UpgradeScreen = () => {
           style={style.headerContainer}
           start={{x: 0, y: 0}}
           end={{x: 1.1, y: 0}}>
-          <View style={style.headerTittleStyle}>
-            <Image
-              source={icons.headerIconWhite}
-              style={style.headerLogoStyle}
-            />
+          {/*{user?.user?.appUsesType !== 'dating' && (*/}
+          {/*  <View style={style.headerTittleStyle}>*/}
+          {/*    <Image*/}
+          {/*      source={icons.headerIconWhite}*/}
+          {/*      style={style.headerLogoStyle}*/}
+          {/*    />*/}
 
-            {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
-            <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
-              {userImage ? (
-                <Image
-                  source={{uri: userImage}}
-                  style={style.profileImageStyle}
-                />
-              ) : (
-                <ProfileAvatar
-                  firstName={user?.user?.firstName}
-                  lastName={user?.user?.lastName}
-                  textStyle={style.profileImageStyle}
-                  profileTexts={{fontSize: fontSize(10)}}
-                />
-              )}
-
-              {/*<Image*/}
-              {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-              {/*  style={style.profileImageStyle}*/}
-              {/*/>*/}
-            </TouchableOpacity>
-          </View>
+          {/*    /!*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*!/*/}
+          {/*    <TouchableOpacity*/}
+          {/*      activeOpacity={0.7}*/}
+          {/*      onPress={openTopBottomSheet}>*/}
+          {/*      {userImage ? (*/}
+          {/*        <Image*/}
+          {/*          source={{uri: userImage}}*/}
+          {/*          style={style.profileImageStyle}*/}
+          {/*        />*/}
+          {/*      ) : (*/}
+          {/*        <ProfileAvatar*/}
+          {/*          firstName={user?.user?.firstName}*/}
+          {/*          lastName={user?.user?.lastName}*/}
+          {/*          textStyle={style.profileImageStyle}*/}
+          {/*          profileTexts={{fontSize: fontSize(10)}}*/}
+          {/*        />*/}
+          {/*      )}*/}
+          {/*    </TouchableOpacity>*/}
+          {/*  </View>*/}
+          {/*)}*/}
 
           <View>
             <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
@@ -560,7 +559,7 @@ const UpgradeScreen = () => {
 
           <View style={style.headerDescriptionContainer}>
             <Text style={style.headerTittleTextStyle}>
-              Hi Riya, Upgrade Your Profile
+              Hi {user?.user?.firstName}, Upgrade Your Profile
             </Text>
 
             <Text style={style.headerTittleDescriptionTextStyle}>

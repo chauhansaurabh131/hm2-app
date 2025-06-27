@@ -9,13 +9,17 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import {icons} from '../../assets';
 import axios from 'axios';
 import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import ProfileAvatar from '../letterProfileComponent';
+
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const DatingSwipeDataComponent = () => {
   const [cards, setCards] = useState([]);
@@ -268,6 +272,17 @@ const DatingSwipeDataComponent = () => {
   };
 
   const renderCard = card => {
+    // console.log(' === var ===> ', card);
+
+    const profilePrivacy =
+      card.privacySettingCustom?.profilePhotoPrivacy === true ||
+      card.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const hasValidImage =
+      card.profilePic &&
+      card.profilePic !== 'null' &&
+      card.profilePic.trim() !== '';
+
     return (
       <View
         style={{
@@ -283,11 +298,37 @@ const DatingSwipeDataComponent = () => {
           elevation: 2,
           height: hp(530),
         }}>
-        <Image
-          source={{uri: card.profilePic}}
-          style={{width: '100%', height: '100%', borderRadius: 20}}
-          resizeMode="cover"
-        />
+        {hasValidImage ? (
+          <>
+            <Image
+              source={{uri: card.profilePic}}
+              style={{width: '100%', height: '100%', borderRadius: 20}}
+              resizeMode="cover"
+            />
+            {profilePrivacy && (
+              <Image
+                source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                style={{
+                  position: 'absolute',
+                  tintColor: '#fff',
+                  resizeMode: 'contain',
+                  width: hp(50),
+                  height: hp(50),
+                  alignSelf: 'center',
+                  top: 250,
+                }}
+              />
+            )}
+          </>
+        ) : (
+          <ProfileAvatar
+            firstName={card.firstName || card.name}
+            lastName={card.lastName}
+            textStyle={{width: '100%', height: hp(530), borderRadius: 20}}
+            profileTexts={{fontSize: fontSize(60)}}
+          />
+        )}
+
         <LinearGradient
           colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
           style={{
@@ -301,7 +342,12 @@ const DatingSwipeDataComponent = () => {
             marginBottom: hp(13),
           }}
         />
-        <View style={{position: 'absolute', bottom: 90, left: 20}}>
+        <TouchableOpacity
+          style={{position: 'absolute', bottom: 90, left: 20}}
+          onPress={() => {
+            // console.log(' === card___ ===> ', card);
+            navigation.navigate('DatingUserDetailsScreen', {userData: card});
+          }}>
           <Text
             style={{
               color: colors.white,
@@ -325,7 +371,7 @@ const DatingSwipeDataComponent = () => {
               {card?.datingData[0]?.CurrentlyLiving || 'N.A'}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
         <View
           style={{
             position: 'absolute',
@@ -474,8 +520,66 @@ const DatingSwipeDataComponent = () => {
     <SafeAreaView style={{flex: 1}}>
       {cards.length === 0 ? (
         // <Text style={{color: 'black', marginTop: 50}}>Loading...</Text>
-        <View style={{justifyContent: 'center', marginTop: hp(310)}}>
-          <ActivityIndicator size="large" color={colors.blue} />
+        <View style={{justifyContent: 'center', flex: 1, marginTop: hp(290)}}>
+          {/*<ActivityIndicator size="large" color={colors.blue} />*/}
+          <View style={{height: hp(449), marginHorizontal: 17}}>
+            <ShimmerPlaceholder
+              style={{
+                width: '100%',
+                height: hp(530),
+                borderRadius: 20,
+                marginBottom: hp(13),
+              }}
+            />
+            <View style={{marginTop: -180, marginHorizontal: 17}}>
+              <ShimmerPlaceholder style={{width: 150, height: 25}} />
+
+              <View style={{marginTop: 10}}>
+                <ShimmerPlaceholder style={{width: 150, height: 10}} />
+              </View>
+
+              <View style={{marginTop: 50, flexDirection: 'row'}}>
+                <ShimmerPlaceholder
+                  style={{
+                    width: wp(69),
+                    height: hp(40),
+                    justifyContent: 'center',
+                    marginRight: 15,
+                    borderRadius: 20,
+                  }}
+                />
+                <ShimmerPlaceholder
+                  style={{
+                    width: wp(69),
+                    height: hp(40),
+                    justifyContent: 'center',
+                    marginRight: 15,
+                    borderRadius: 20,
+                  }}
+                />
+
+                <ShimmerPlaceholder
+                  style={{
+                    width: wp(69),
+                    height: hp(40),
+                    justifyContent: 'center',
+                    marginRight: 15,
+                    borderRadius: 20,
+                  }}
+                />
+
+                <ShimmerPlaceholder
+                  style={{
+                    width: wp(69),
+                    height: hp(40),
+                    justifyContent: 'center',
+                    marginRight: 10,
+                    borderRadius: 20,
+                  }}
+                />
+              </View>
+            </View>
+          </View>
         </View>
       ) : (
         <Swiper

@@ -27,9 +27,16 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../../utils/colors';
 import AgeRangeSlider from '../../../components/ageRangeSlider';
 
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import ProfileAvatar from '../../../components/letterProfileComponent';
+
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBaqU_1hOFIhVLm8su_caJheEChJCNBTyY';
 
 const MeetNewFriendsScreen = ({route}) => {
+  const {category} = route.params;
+
   const [bottomsheetVisible, setBottomSheVisible] = useState(false);
   const [ageProgress, setAgeProgress] = useState(0); // Initial progress value
   const [cards, setCards] = useState([]);
@@ -43,6 +50,8 @@ const MeetNewFriendsScreen = ({route}) => {
   const [filteredData, setFilteredData] = useState([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
+  // console.log(' === cards___ ===> ', cards);
+
   const bottomSheetRef = useRef(null);
 
   const navigation = useNavigation();
@@ -50,8 +59,6 @@ const MeetNewFriendsScreen = ({route}) => {
   const userImage = user?.user?.profilePic;
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
-
-  const {category} = route.params;
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -193,7 +200,7 @@ const MeetNewFriendsScreen = ({route}) => {
       setCards([]); // Reset cards on screen focus
       setCurrentPage(1); // Reset page number
       fetchData(1); // Fetch first page
-    }, []),
+    }, [category]),
   );
 
   const handleSend = async card => {
@@ -404,6 +411,15 @@ const MeetNewFriendsScreen = ({route}) => {
   const renderCard = card => {
     // console.log(' === card ===> ', card?.datingData[0]?.Ethnicity);
 
+    const profilePrivacy =
+      card.privacySettingCustom?.profilePhotoPrivacy === true ||
+      card.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const hasValidImage =
+      card.profilePic &&
+      card.profilePic !== 'null' &&
+      card.profilePic.trim() !== '';
+
     const capitalizeFirstLetter = str =>
       str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
 
@@ -431,11 +447,37 @@ const MeetNewFriendsScreen = ({route}) => {
           elevation: 2,
           height: hp(530),
         }}>
-        <Image
-          source={{uri: card?.profilePic}}
-          style={{width: '100%', height: '100%', borderRadius: 20}}
-          resizeMode="cover"
-        />
+        {hasValidImage ? (
+          <>
+            <Image
+              source={{uri: card?.profilePic}}
+              style={{width: '100%', height: '100%', borderRadius: 20}}
+              resizeMode="cover"
+            />
+            {profilePrivacy && (
+              <Image
+                source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+                style={{
+                  position: 'absolute',
+                  tintColor: '#fff',
+                  resizeMode: 'contain',
+                  width: hp(50),
+                  height: hp(50),
+                  alignSelf: 'center',
+                  top: 250,
+                }}
+              />
+            )}
+          </>
+        ) : (
+          <ProfileAvatar
+            firstName={card.firstName || card.name}
+            lastName={card.lastName}
+            textStyle={{width: '100%', height: hp(530), borderRadius: 20}}
+            profileTexts={{fontSize: fontSize(60)}}
+          />
+        )}
+
         <LinearGradient
           colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
           style={{
@@ -979,13 +1021,89 @@ const MeetNewFriendsScreen = ({route}) => {
       <View style={{flex: 1}}>
         {/*<NewMeetFriendComponent />*/}
         {loading ? (
-          <ActivityIndicator
-            size="large"
-            color="#0000ff"
-            style={{marginTop: 250}}
-          />
+          // <ActivityIndicator
+          //   size="large"
+          //   color="#0000ff"
+          //   style={{marginTop: 250}}
+          // />
+          <View style={{justifyContent: 'center', marginTop: hp(25)}}>
+            {/*<ActivityIndicator size="large" color={colors.blue} />*/}
+            <View style={{height: hp(449), marginHorizontal: hp(17)}}>
+              <ShimmerPlaceholder
+                style={{
+                  width: '100%',
+                  height: hp(530),
+                  borderRadius: 20,
+                  marginBottom: hp(13),
+                }}
+              />
+              <View style={{marginTop: -180, marginHorizontal: 17}}>
+                <ShimmerPlaceholder style={{width: 150, height: 25}} />
+
+                <View style={{marginTop: 10}}>
+                  <ShimmerPlaceholder style={{width: 150, height: 10}} />
+                </View>
+
+                <View style={{marginTop: 50, flexDirection: 'row'}}>
+                  <ShimmerPlaceholder
+                    style={{
+                      width: wp(69),
+                      height: hp(40),
+                      justifyContent: 'center',
+                      marginRight: 15,
+                      borderRadius: 20,
+                    }}
+                  />
+                  <ShimmerPlaceholder
+                    style={{
+                      width: wp(69),
+                      height: hp(40),
+                      justifyContent: 'center',
+                      marginRight: 15,
+                      borderRadius: 20,
+                    }}
+                  />
+
+                  <ShimmerPlaceholder
+                    style={{
+                      width: wp(69),
+                      height: hp(40),
+                      justifyContent: 'center',
+                      marginRight: 15,
+                      borderRadius: 20,
+                    }}
+                  />
+
+                  <ShimmerPlaceholder
+                    style={{
+                      width: wp(69),
+                      height: hp(40),
+                      justifyContent: 'center',
+                      marginRight: 10,
+                      borderRadius: 20,
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
         ) : !accessToken || cards.length === 0 ? (
-          <Text style={{color: 'black', marginTop: 50}}>No Match data</Text>
+          // <Text style={{color: 'black', marginTop: 50}}>No Match data</Text>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Image
+              source={icons.no_Profile_Found_img}
+              style={{width: hp(50), height: hp(50), resizeMode: 'contain'}}
+            />
+            <Text
+              style={{
+                color: colors.gray,
+                fontSize: fontSize(18),
+                marginTop: hp(10),
+              }}>
+              No Profiles Found
+            </Text>
+          </View>
         ) : (
           <View style={{marginTop: -40}}>
             <Swiper

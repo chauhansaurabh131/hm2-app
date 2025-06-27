@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -7,6 +7,7 @@ import {
   View,
   FlatList,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -22,6 +23,8 @@ import {
   updateDetails,
 } from '../../actions/homeActions';
 import RNBlobUtil from 'react-native-blob-util';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const UserEditProfileScreen = () => {
   const route = useRoute();
@@ -35,6 +38,20 @@ const UserEditProfileScreen = () => {
   const userId = user?.user?.id;
 
   const userProfilePic = user?.user?.userProfilePic || [];
+  const appType = user?.user?.appUsesType;
+  console.log(' === var ===> ', appType);
+
+  const [loading, setLoading] = useState(false);
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
+
+  // console.log(' === loading ===> ', loading);
+
+  // console.log(' === appType ===> ', appType);
 
   // console.log(' === userId ===> ', userId);
 
@@ -47,64 +64,34 @@ const UserEditProfileScreen = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const onRemoveImage = async index => {
+    const updatedImages = imageList.filter((_, i) => i !== index);
+    setImageList(updatedImages);
+
     const selectedImageData = userProfilePic[index];
     const deleteImageUrl = selectedImageData?.url;
     const deleteImageName = selectedImageData?.name;
 
     console.log(' === deleteImageUrl ===> ', deleteImageUrl);
     console.log(' === deleteImageName ===> ', deleteImageName);
+
     //
-    try {
-      // Dispatch the delete action and wait for it to complete
-      await dispatch(
-        deleteImage({
-          userId: userId,
-          profileImageUrl: deleteImageUrl,
-          name: deleteImageName,
-        }),
-      );
-
-      // After a successful API call, update imageList to remove the deleted image
-      const updatedImages = imageList.filter((_, i) => i !== index);
-      setImageList(updatedImages);
-
-      console.log('Image successfully deleted and removed from display');
-    } catch (error) {
-      console.error('Failed to delete image:', error);
-    }
-
     // try {
-    //   const response = await fetch(
-    //     `https://stag.mntech.website/api/v1/user/user/delete-profile-image/${userId}`,
-    //     {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${accessToken}`,
-    //       },
-    //       body: JSON.stringify({
-    //         profileImageUrl: deleteImageUrl,
-    //         name: deleteImageName, // Construct the path based on your example
-    //       }),
-    //     },
+    //   // Dispatch the delete action and wait for it to complete
+    //   await dispatch(
+    //     deleteImage({
+    //       userId: userId,
+    //       profileImageUrl: deleteImageUrl,
+    //       name: deleteImageName,
+    //     }),
     //   );
     //
-    //   if (response.ok) {
-    //     console.log('Image deleted successfully');
-    //     // Remove image from list in state
-    //     // setImageList(prevList => prevList.filter((_, i) => i !== index));
+    //   // After a successful API call, update imageList to remove the deleted image
+    //   const updatedImages = imageList.filter((_, i) => i !== index);
+    //   setImageList(updatedImages);
     //
-    //     const updatedImages = imageList.filter((_, i) => i !== index);
-    //     setImageList(updatedImages);
-    //   } else {
-    //     const errorData = await response.json();
-    //     console.error(
-    //       'Failed to delete image:',
-    //       errorData.message || response.statusText,
-    //     );
-    //   }
+    //   console.log('Image successfully deleted and removed from display');
     // } catch (error) {
-    //   console.error('Error deleting image:', error);
+    //   console.error('Failed to delete image:', error);
     // }
   };
 
@@ -125,75 +112,187 @@ const UserEditProfileScreen = () => {
     });
   };
 
-  const onSave = () => {
-    if (selectedImageIndex !== null) {
-      const selectedImage = imageList[selectedImageIndex];
-      console.log(' === selectedImage ===> ', selectedImage);
+  // const onSave = () => {
+  //   console.log('Save button clicked');
+  //   setLoading(true);
+  //
+  //   if (selectedImageIndex !== null) {
+  //     setLoading(true);
+  //     const selectedImage = imageList[selectedImageIndex];
+  //     console.log(' === selectedImage ===> ', selectedImage);
+  //
+  //     const imageName = selectedImage.split('/').pop(); // Extracts the filename from the URI
+  //     console.log('Selected image name:', imageName);
+  //
+  //     const fileExtension = selectedImage.split('.').pop().toLowerCase();
+  //     console.log('File extension:', fileExtension);
+  //
+  //     const contentType = getContentType(fileExtension);
+  //     console.log(' === getContentType ===> ', contentType);
+  //
+  //     // Check if the selected image is an S3 bucket URL or a local file URI
+  //     if (selectedImage.startsWith('https://happymilan-user-images.s3')) {
+  //       // If the image is from S3 bucket, call updateDetails API
+  //       // apiDispatch(
+  //       //   updateDetails(
+  //       //     {
+  //       //       profilePic: selectedImage,
+  //       //     },
+  //       //     () => {
+  //       //       navigation.navigate('MyProfileScreen');
+  //       //     },
+  //       //   ),
+  //       // );
+  //
+  //       apiDispatch(
+  //         updateDetails(
+  //           {
+  //             profilePic: selectedImage,
+  //           },
+  //           () => {
+  //             if (appType === 'dating') {
+  //               navigation.navigate('DatingProfileScreen');
+  //             } else if (appType === 'merriage') {
+  //               navigation.navigate('MyProfileScreen');
+  //             } else {
+  //               console.warn('Unknown app type:', appType);
+  //             }
+  //           },
+  //         ),
+  //       );
+  //       setLoading(false);
+  //     } else if (selectedImage.startsWith('file://')) {
+  //       // If the image is a local file URI, call addProfilePicture API
+  //       setLoading(true);
+  //       const callBack = async response => {
+  //         try {
+  //           const presignedUrl = response.data?.data?.url;
+  //
+  //           console.log(' === presignedUrl ===> ', presignedUrl);
+  //
+  //           const data = await RNBlobUtil.fetch(
+  //             'PUT',
+  //             presignedUrl,
+  //             {
+  //               'Content-Type': contentType,
+  //               'x-amz-acl': 'public-read',
+  //             },
+  //             RNBlobUtil.wrap(selectedImage), // Use the selected image's URI
+  //           );
+  //
+  //           console.log('Image uploaded successfully:', data);
+  //           // Optionally navigate or perform other actions
+  //
+  //           // navigation.navigate('MyProfileScreen');
+  //
+  //           if (appType === 'dating') {
+  //             navigation.navigate('DatingProfileScreen');
+  //           } else if (appType === 'merriage') {
+  //             navigation.navigate('MyProfileScreen');
+  //           } else {
+  //             console.warn('Unknown app type:', appType);
+  //           }
+  //           setLoading(false);
+  //         } catch (err) {
+  //           console.log(' === err ===> ', err);
+  //           setLoading(false);
+  //         }
+  //       };
+  //
+  //       dispatch(
+  //         addProfilePicture(
+  //           {
+  //             key: imageName, // Use the extracted image name as key
+  //             contentType: contentType,
+  //             isProfilePic: true,
+  //             profileType: 'profileImage',
+  //           },
+  //           callBack,
+  //         ),
+  //       );
+  //     } else {
+  //       console.log('Unknown image URL format');
+  //     }
+  //   } else {
+  //     console.log('No image selected');
+  //   }
+  // };
 
-      const imageName = selectedImage.split('/').pop(); // Extracts the filename from the URI
-      console.log('Selected image name:', imageName);
+  const onSave = async () => {
+    console.log('Save button clicked');
 
-      const fileExtension = selectedImage.split('.').pop().toLowerCase();
-      console.log('File extension:', fileExtension);
-
-      const contentType = getContentType(fileExtension);
-      console.log(' === getContentType ===> ', contentType);
-
-      // Check if the selected image is an S3 bucket URL or a local file URI
-      if (selectedImage.startsWith('https://happymilan-user-images.s3')) {
-        // If the image is from S3 bucket, call updateDetails API
-        apiDispatch(
-          updateDetails(
-            {
-              profilePic: selectedImage,
-            },
-            () => {
-              navigation.navigate('MyProfileScreen');
-            },
-          ),
-        );
-      } else if (selectedImage.startsWith('file://')) {
-        // If the image is a local file URI, call addProfilePicture API
-        const callBack = async response => {
-          try {
-            const presignedUrl = response.data?.data?.url;
-
-            console.log(' === presignedUrl ===> ', presignedUrl);
-
-            const data = await RNBlobUtil.fetch(
-              'PUT',
-              presignedUrl,
-              {
-                'Content-Type': contentType,
-                'x-amz-acl': 'public-read',
-              },
-              RNBlobUtil.wrap(selectedImage), // Use the selected image's URI
-            );
-
-            console.log('Image uploaded successfully:', data);
-            // Optionally navigate or perform other actions
-            navigation.navigate('MyProfileScreen');
-          } catch (err) {
-            console.log(' === err ===> ', err);
-          }
-        };
-
-        dispatch(
-          addProfilePicture(
-            {
-              key: imageName, // Use the extracted image name as key
-              contentType: contentType,
-              isProfilePic: true,
-              profileType: 'profileImage',
-            },
-            callBack,
-          ),
-        );
-      } else {
-        console.log('Unknown image URL format');
-      }
-    } else {
+    if (selectedImageIndex === null) {
       console.log('No image selected');
+      return;
+    }
+
+    setLoading(true); // Start loading
+
+    const selectedImage = imageList[selectedImageIndex];
+    const imageName = selectedImage.split('/').pop();
+    const fileExtension = selectedImage.split('.').pop().toLowerCase();
+    const contentType = getContentType(fileExtension);
+
+    try {
+      if (selectedImage.startsWith('https://happymilan-user-images.s3')) {
+        // S3 URL - update details only
+        await new Promise((resolve, reject) => {
+          apiDispatch(
+            updateDetails({profilePic: selectedImage}, () => {
+              resolve();
+            }),
+          );
+        });
+      } else if (selectedImage.startsWith('file://')) {
+        // Local file - upload to S3
+        await new Promise((resolve, reject) => {
+          dispatch(
+            addProfilePicture(
+              {
+                key: imageName,
+                contentType,
+                isProfilePic: true,
+                profileType: 'profileImage',
+              },
+              async response => {
+                try {
+                  const presignedUrl = response?.data?.data?.url;
+                  const uploadResult = await RNBlobUtil.fetch(
+                    'PUT',
+                    presignedUrl,
+                    {
+                      'Content-Type': contentType,
+                      'x-amz-acl': 'public-read',
+                    },
+                    RNBlobUtil.wrap(selectedImage),
+                  );
+
+                  console.log('Upload success:', uploadResult);
+                  resolve();
+                } catch (err) {
+                  console.log('Upload failed:', err);
+                  reject(err);
+                }
+              },
+            ),
+          );
+        });
+      } else {
+        console.log('Unsupported image URI');
+      }
+
+      // Navigate after successful operation
+      if (appType === 'dating') {
+        navigation.navigate('DatingProfileScreen');
+      } else if (appType === 'marriage') {
+        navigation.navigate('MyProfileScreen');
+      } else {
+        console.warn('Unknown app type:', appType);
+      }
+    } catch (error) {
+      console.error('Error during save:', error);
+    } finally {
+      setLoading(false); // Always stop loading
     }
   };
 
@@ -314,19 +413,38 @@ const UserEditProfileScreen = () => {
             style={{width: wp(96), height: hp(24), resizeMode: 'contain'}}
           />
 
-          <TouchableOpacity activeOpacity={0.7}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={{
-                width: hp(24),
-                height: hp(24),
-                borderRadius: 50,
-                marginRight: wp(3),
-                resizeMode: 'stretch',
-              }}
-            />
+          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
+            {userImage ? (
+              <Image
+                source={{uri: userImage}}
+                style={{
+                  width: hp(24),
+                  height: hp(24),
+                  borderRadius: 50,
+                  marginRight: wp(3),
+                  resizeMode: 'stretch',
+                }}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={{
+                  width: hp(24),
+                  height: hp(24),
+                  borderRadius: 50,
+                  marginRight: wp(3),
+                  resizeMode: 'stretch',
+                }}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
           </TouchableOpacity>
         </View>
+      </View>
+
+      <View>
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
       </View>
 
       <View
@@ -343,7 +461,7 @@ const UserEditProfileScreen = () => {
             fontFamily: fontFamily.poppins600,
             color: colors.black,
           }}>
-          Photos
+          Add Photos
         </Text>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -393,9 +511,17 @@ const UserEditProfileScreen = () => {
           numColumns={3}
         />
 
-        <TouchableOpacity activeOpacity={0.7} onPress={onSave}>
+        <TouchableOpacity
+          activeOpacity={selectedImageIndex !== null ? 0.7 : 1}
+          onPress={selectedImageIndex !== null ? onSave : null}
+          disabled={selectedImageIndex === null}
+          style={{opacity: selectedImageIndex !== null ? 1 : 0.6}}>
           <LinearGradient
-            colors={['#0D4EB3', '#9413D0']}
+            colors={
+              selectedImageIndex !== null
+                ? ['#0D4EB3', '#9413D0']
+                : ['#CCCCCC', '#AAAAAA']
+            }
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1.5}}
             style={{
@@ -407,15 +533,19 @@ const UserEditProfileScreen = () => {
               position: 'absolute',
               bottom: 30,
             }}>
-            <Text
-              style={{
-                color: colors.white,
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
-              }}>
-              Save Changes
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Save Changes
+              </Text>
+            )}
           </LinearGradient>
         </TouchableOpacity>
       </View>

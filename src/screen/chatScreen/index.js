@@ -29,10 +29,16 @@ const ChatScreen = ({navigation}) => {
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
+  console.log(' === var ===> ', user?.user?.appUsesType);
+
   const [userInput, setUserInput] = useState(''); // User input for search
   const [status, setStatus] = useState('Disconnected');
-  const [socket, setSocket] = useState(null);
+  // const [socket, setSocket] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
+
+  const [friends, setFriends] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -42,50 +48,218 @@ const ChatScreen = ({navigation}) => {
     topModalBottomSheetRef.current.open();
   };
 
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // Fetch the friends list when the screen is focused
+  //     dispatch(getAllFriends());
+  //   }, [dispatch]),
+  // );
+
+  // const {myAllFriends, isUserDataLoading} = useSelector(state => state.chat);
+  //
+  // const friends = myAllFriends.data?.results || [];
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     if (!accessToken) {
+  //       return;
+  //     }
+  //
+  //     const socketIo = io('https://stag.mntech.website', {
+  //       path: '/api/socket.io',
+  //       query: {token: accessToken},
+  //     });
+  //
+  //     socketIo.on('connect', () => {
+  //       console.log('Connected to socket_____');
+  //       socketIo.emit('userActive');
+  //     });
+  //
+  //     socketIo.on('MessagesOfFriends', data => {
+  //       console.log('📨 Received:', data);
+  //     });
+  //
+  //     socketIo.emit('MessagesOfFriends', data => {
+  //       console.log('Message Data :', data);
+  //     });
+  //
+  //     socketIo.on('onlineUser', data => {
+  //       console.log('Data from socket:', data);
+  //     });
+  //
+  //     socketIo.on('disconnect', () => {
+  //       setStatus('Disconnected');
+  //       console.log('Disconnected from socket');
+  //       socketIo.emit('userInActive');
+  //     });
+  //
+  //     setSocket(socketIo);
+  //
+  //     // Cleanup function: disconnect socket when screen loses focus
+  //     return () => {
+  //       if (socketIo) {
+  //         socketIo.disconnect();
+  //         setSocket(null);
+  //         console.log('Socket disconnected on screen blur');
+  //       }
+  //     };
+  //   }, [accessToken]),
+  // );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     if (!accessToken) {
+  //       return;
+  //     }
+  //     setIsConnecting(true);
+  //
+  //     const socketIo = io('https://stag.mntech.website', {
+  //       path: '/api/socket.io',
+  //       query: {token: accessToken},
+  //     });
+  //
+  //     console.log('📡 Trying to connect socket...');
+  //
+  //     socketIo.on('connect', () => {
+  //       console.log('✅ Connected to socket');
+  //
+  //       socketIo.emit('userActive');
+  //       socketIo.emit('MessagesOfFriends');
+  //     });
+  //
+  //     socketIo.on('MessagesOfFriends', data => {
+  //       setIsConnecting(false);
+  //       console.log('📨 Received:', data);
+  //       if (data?.data) {
+  //         setFriends(data.data);
+  //       }
+  //     });
+  //
+  //     socketIo.emit('MessagesOfFriends', data => {
+  //       console.log('Message Data :', data);
+  //     });
+  //
+  //     socketIo.on('onlineUser', data => {
+  //       console.log('👥 Online users:', data);
+  //     });
+  //
+  //     socketIo.on('disconnect', () => {
+  //       console.log('❌ Disconnected from socket');
+  //       setIsConnecting(false);
+  //       socketIo.emit('userInActive');
+  //     });
+  //
+  //     setSocket(socketIo);
+  //
+  //     return () => {
+  //       if (socketIo) {
+  //         socketIo.disconnect();
+  //         setSocket(null);
+  //         console.log('🛑 Socket disconnected on screen blur');
+  //       }
+  //     };
+  //   }, [accessToken]),
+  // );
+
   useFocusEffect(
     React.useCallback(() => {
-      // Fetch the friends list when the screen is focused
-      dispatch(getAllFriends());
-    }, [dispatch]),
+      if (!accessToken) {
+        return;
+      }
+      setIsConnecting(true);
+
+      const socketIo = io('https://stag.mntech.website', {
+        path: '/api/socket.io',
+        query: {token: accessToken},
+      });
+
+      console.log('📡 Trying to connect socket...');
+
+      socketIo.on('connect', () => {
+        console.log('✅ Connected to socket');
+
+        socketIo.emit('userActive');
+        socketIo.emit('MessagesOfFriends');
+      });
+
+      socketIo.on('MessagesOfFriends', data => {
+        setIsConnecting(false);
+        console.log('📨 Received friends list:', data);
+        if (data?.data) {
+          setFriends(data.data);
+        }
+      });
+
+      socketIo.emit('MessagesOfFriends', data => {
+        console.log('📤 Requesting friends messages:', data);
+      });
+
+      socketIo.on('onlineUser', data => {
+        console.log('👥 Online users:', data);
+      });
+
+      // ✅ Listen for "message" event instead of "newMessage"
+      socketIo.on('message', messageData => {
+        console.log('📩 Incoming message data:', messageData);
+
+        const {data, from} = messageData;
+        const messages = data?.sendMessage?.results;
+
+        if (!Array.isArray(messages) || messages.length === 0) {
+          console.warn('📭 No valid messages received');
+          return;
+        }
+
+        const lastMessage = messages[0];
+        const messageText = lastMessage.message;
+
+        // 🔄 Update the matching friend using the `from` field
+        setFriends(prevFriends => {
+          const updatedFriends = [...prevFriends];
+
+          const friendIndex = updatedFriends.findIndex(
+            f => f.friendId === from || f.friendList?._id === from,
+          );
+
+          if (friendIndex !== -1) {
+            const updatedFriend = {
+              ...updatedFriends[friendIndex],
+              lastMessage: {
+                ...updatedFriends[friendIndex].lastMessage,
+                message: messageText,
+              },
+              unreadCount: (updatedFriends[friendIndex].unreadCount || 0) + 1,
+            };
+
+            // Move updated friend to top
+            updatedFriends.splice(friendIndex, 1);
+            updatedFriends.unshift(updatedFriend);
+          } else {
+            console.warn('⚠️ Sender not found in friends list:', from);
+          }
+
+          return updatedFriends;
+        });
+      });
+
+      socketIo.on('disconnect', () => {
+        console.log('❌ Disconnected from socket');
+        setIsConnecting(false);
+        socketIo.emit('userInActive');
+      });
+
+      setSocket(socketIo);
+
+      return () => {
+        if (socketIo) {
+          socketIo.off('message');
+          socketIo.disconnect();
+          setSocket(null);
+          console.log('🛑 Socket disconnected on screen blur');
+        }
+      };
+    }, [accessToken]),
   );
-
-  const {myAllFriends, isUserDataLoading} = useSelector(state => state.chat);
-
-  const friends = myAllFriends.data?.results || [];
-
-  useEffect(() => {
-    if (!accessToken) {
-      return;
-    }
-
-    // Initialize socket connection
-    const socketIo = io('https://happymilan.tech', {
-      path: '/api/socket.io',
-      query: {token: accessToken},
-    });
-
-    socketIo.on('connect', () => {
-      console.log('Connected to socket');
-      socketIo.emit('userActive');
-    });
-
-    socketIo.on('onlineUser', data => {
-      console.log('Data from socket:', data);
-    });
-
-    socketIo.on('disconnect', () => {
-      setStatus('Disconnected');
-      console.log('Disconnected from socket');
-      socketIo.emit('userInActive');
-    });
-
-    setSocket(socketIo);
-
-    return () => {
-      socketIo.disconnect();
-      setSocket(null);
-    };
-  }, [accessToken]);
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -103,10 +277,12 @@ const ChatScreen = ({navigation}) => {
   });
 
   const FilterData = ({item}) => {
+    // console.log(' === item___ ===> ', item);
+
     const hasValidImage =
-      item.friendList.profilePic &&
-      item.friendList.profilePic !== 'null' &&
-      item.friendList.profilePic.trim() !== '';
+      item?.friendList?.profilePic &&
+      item?.friendList?.profilePic !== 'null' &&
+      item?.friendList?.profilePic.trim() !== '';
 
     if (!item || !item.friendList) {
       return null;
@@ -114,32 +290,32 @@ const ChatScreen = ({navigation}) => {
 
     const firstname = item.friendList.lastName;
 
-    const firstName = item.friendList.firstName
-      ? item.friendList.firstName.charAt(0).toUpperCase() +
-        item.friendList.firstName.slice(1).toLowerCase()
+    const firstName = item?.friendList?.firstName
+      ? item?.friendList?.firstName.charAt(0).toUpperCase() +
+        item?.friendList?.firstName.slice(1).toLowerCase()
       : '';
 
-    const lastName = item.friendList.lastName
-      ? item.friendList.lastName.charAt(0).toUpperCase() +
-        item.friendList.lastName.slice(1).toLowerCase()
+    const lastName = item?.friendList?.lastName
+      ? item?.friendList?.lastName.charAt(0).toUpperCase() +
+        item?.friendList?.lastName.slice(1).toLowerCase()
       : '';
 
-    const name = item.friendList.name
-      ? item.friendList.name.charAt(0).toUpperCase() +
-        item.friendList.name.slice(1).toLowerCase()
+    const name = item?.friendList?.name
+      ? item?.friendList?.name.charAt(0).toUpperCase() +
+        item?.friendList?.name.slice(1).toLowerCase()
       : '';
 
     // console.log(' === firstname ===> ', firstname);
 
-    const onlineStatusColor = item.friendList.isUserActive
+    const onlineStatusColor = item?.friendList?.isUserActive
       ? colors.blue
       : '#A7A7A7';
-    const onlineStatusText = item.friendList.isUserActive
+    const onlineStatusText = item?.friendList?.isUserActive
       ? 'Online'
       : 'Offline';
 
     const handleItemPress = userData => {
-      console.log(' === handleItemPress_chatScreen ===> ', userData);
+      // console.log(' === handleItemPress_chatScreen ===> ', userData);
 
       navigation.navigate('ChatUserScreen', {
         userData,
@@ -160,7 +336,7 @@ const ChatScreen = ({navigation}) => {
         }}>
         {hasValidImage ? (
           <Image
-            source={{uri: item.friendList.profilePic}}
+            source={{uri: item?.friendList?.profilePic}}
             style={{
               width: 47,
               height: 47,
@@ -170,8 +346,10 @@ const ChatScreen = ({navigation}) => {
           />
         ) : (
           <ProfileAvatar
-            firstName={firstName || lastName}
-            lastName={item.lastName}
+            firstName={
+              item?.friendList?.firstName || item?.friendList?.lastName
+            }
+            lastName={item?.friendList?.lastName}
             textStyle={{
               width: 47,
               height: 47,
@@ -193,6 +371,7 @@ const ChatScreen = ({navigation}) => {
               }}>
               {/*{item.friendList.firstName} {item.friendList.lastName}*/}
               {firstName || name} {lastName}
+              {/*{item?.friendList?.firstName}*/}
             </Text>
             <Text
               style={{
@@ -214,8 +393,46 @@ const ChatScreen = ({navigation}) => {
               fontFamily: fontFamily.poppins400,
               color: colors.black,
             }}>
-            Hi, I am busy, I’ll drop you a message after some time.
+            {/*Hi, I am busy, I’ll drop you a message after some time.*/}
+            {/*{item?.lastMessage?.message?.length > 40*/}
+            {/*  ? `${item.lastMessage.message.slice(0, 40)}...`*/}
+            {/*  : item.lastMessage.message}*/}
+
+            {item?.lastMessage?.message
+              ? item.lastMessage.message.length > 40
+                ? `${item.lastMessage.message.slice(0, 40)}...`
+                : item.lastMessage.message
+              : item?.lastMessage?.fileUrl
+              ? 'Image'
+              : ''}
           </Text>
+
+          {item?.unreadCount > 0 && (
+            <LinearGradient
+              colors={['#0D4EB3', '#9413D0']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              style={{
+                position: 'absolute',
+                right: 5,
+                bottom: 8,
+                width: hp(20),
+                height: hp(20),
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: fontSize(10),
+                  lineHeight: hp(12),
+                  fontWeight: 'bold',
+                }}>
+                {item?.unreadCount}
+              </Text>
+            </LinearGradient>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -224,26 +441,31 @@ const ChatScreen = ({navigation}) => {
   return (
     <SafeAreaView style={style.container}>
       <View style={{marginHorizontal: wp(17)}}>
-        <View style={style.headerContainerTittleStyle}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customerHeaderLogo}
-          />
+        {/*{user?.user?.appUsesType !== 'dating' && (*/}
+        {/*  <View style={style.headerContainerTittleStyle}>*/}
+        {/*    <Image*/}
+        {/*      source={images.happyMilanColorLogo}*/}
+        {/*      style={style.customerHeaderLogo}*/}
+        {/*    />*/}
 
-          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
-          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            {userImage ? (
-              <Image source={{uri: userImage}} style={style.profileLogoStyle} />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileLogoStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
+        {/*    /!*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*!/*/}
+        {/*    <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+        {/*      {userImage ? (*/}
+        {/*        <Image*/}
+        {/*          source={{uri: userImage}}*/}
+        {/*          style={style.profileLogoStyle}*/}
+        {/*        />*/}
+        {/*      ) : (*/}
+        {/*        <ProfileAvatar*/}
+        {/*          firstName={user?.user?.firstName}*/}
+        {/*          lastName={user?.user?.lastName}*/}
+        {/*          textStyle={style.profileLogoStyle}*/}
+        {/*          profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*        />*/}
+        {/*      )}*/}
+        {/*    </TouchableOpacity>*/}
+        {/*  </View>*/}
+        {/*)}*/}
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
@@ -298,7 +520,7 @@ const ChatScreen = ({navigation}) => {
       />
 
       <View style={{marginHorizontal: wp(26)}}>
-        {isUserDataLoading ? (
+        {isConnecting ? (
           // SHIMMER LOADER DATA
           <FlatList
             data={[1, 1, 1, 1, 1, 1, 1, 1]}
@@ -379,8 +601,18 @@ const ChatScreen = ({navigation}) => {
             </Text>
           </View>
         ) : (
+          // <FlatList
+          //   data={filteredFriends} // Use the filtered data
+          //   renderItem={FilterData}
+          //   keyExtractor={item =>
+          //     item.friendList?._id || item.id || Math.random().toString()
+          //   }
+          //   showsVerticalScrollIndicator={false}
+          //   ListFooterComponent={<View style={{height: hp(120)}} />}
+          // />
+
           <FlatList
-            data={filteredFriends} // Use the filtered data
+            data={friends} // Use the filtered data
             renderItem={FilterData}
             keyExtractor={item =>
               item.friendList?._id || item.id || Math.random().toString()

@@ -89,9 +89,14 @@ const RecentlyViewComponent = () => {
       item.user?.profilePic !== 'null' &&
       item.user?.profilePic.trim() !== '';
 
+    // const profilePrivacy =
+    //   item?.user?.privacySettingCustom?.profilePhotoPrivacy === true ||
+    //   item?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
     const profilePrivacy =
-      item?.user?.privacySettingCustom?.profilePhotoPrivacy === true ||
-      item?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+      (item?.user?.privacySettingCustom?.profilePhotoPrivacy === true ||
+        item?.user?.privacySettingCustom?.showPhotoToFriendsOnly === true) &&
+      item?.friendsDetails?.status !== 'accepted';
 
     const firstName = item?.user?.firstName
       ? item?.user?.firstName.charAt(0).toUpperCase() +

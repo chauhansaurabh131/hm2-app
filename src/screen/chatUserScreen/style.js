@@ -29,14 +29,14 @@ const style = StyleSheet.create({
     marginRight: wp(2),
   },
   userDetailsContainer: {
-    marginTop: hp(22),
+    marginTop: hp(10),
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
   },
   userProfileIcon: {
-    width: hp(47),
-    height: hp(47),
+    width: hp(40),
+    height: hp(40),
     borderRadius: 50,
     marginRight: wp(14),
   },

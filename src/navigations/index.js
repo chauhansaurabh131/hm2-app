@@ -95,6 +95,7 @@ import EmailNumberAuthenticationNumber from '../screen/emailNumberAuthentication
 import LoginAuthenticationCodeScreen from '../screen/loginAuthenticationCodeScreen';
 import AuthenticationEnterOtpScreen from '../screen/authenticationEnterOtpScreen';
 import BottomSheetPrivacySettingScreen from '../screen/bottomSheetPrivacySettingScreen';
+import DatingBlockAllScreen from '../screen/datingAllScreen/datingBlockAllScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -294,6 +295,12 @@ const MainNavigator = () => {
         <ExtraStack.Screen
           name="AuthenticationEnterOtpScreen"
           component={AuthenticationEnterOtpScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
+          name="DatingBlockAllScreen"
+          component={DatingBlockAllScreen}
           options={{headerShown: false}}
         />
       </ExtraStack.Navigator>

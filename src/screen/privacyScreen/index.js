@@ -219,6 +219,7 @@ const PrivacyScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'datingData',
       ];
     } else if (selectedPrivacy === 'privateProfile') {
       privacySettingCustom.privateProfile = [

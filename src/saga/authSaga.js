@@ -10,6 +10,7 @@ import navigations from '../navigations';
 import {SET_2FA_AUTO} from '../actions/actionTypes';
 import {authOtpVerifyFail, authOtpVerifySuccess} from '../actions/authActions';
 import {AsyncStorage} from 'react-native';
+import Toast from 'react-native-toast-message';
 
 // Register saga
 function* register(action) {
@@ -25,9 +26,45 @@ function* register(action) {
 }
 
 // Login saga
+// function* login(action) {
+//   try {
+//     const response = yield call(auth.login, action.data.payload);
+//     yield put(authAction.loginSuccess(response.data?.data));
+//
+//     yield setAsyncStorageData(
+//       TOKEN,
+//       `Bearer ${response?.data?.data?.tokens?.access?.token}`,
+//     );
+//
+//     yield setAsyncStorageData(
+//       REFRESH_TOKEN,
+//       `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
+//     );
+//
+//     action.data?.successCallback();
+//   } catch (error) {
+//     const statusCode = error?.response?.status;
+//     const errorMessage = error?.response?.data?.message || 'An error occurred.';
+//     const otpType = error?.response?.data?.otpType;
+//     const otpEmail = error?.response?.data?.email;
+//     const otpMobileNumber = error?.response?.data?.mobileNumber;
+//
+//     console.log(' === error status ===> ', statusCode);
+//     console.log(' === error message ===> ', errorMessage);
+//
+//     // Only trigger failure callback if it's not a 500 error
+//     if (statusCode !== 500 && errorMessage !== 'Incorrect email or password') {
+//       action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
+//     }
+//
+//     yield put(authAction.loginFail());
+//   }
+// }
+
 function* login(action) {
   try {
     const response = yield call(auth.login, action.data.payload);
+
     yield put(authAction.loginSuccess(response.data?.data));
 
     yield setAsyncStorageData(
@@ -42,32 +79,34 @@ function* login(action) {
 
     action.data?.successCallback();
   } catch (error) {
-    // console.log(' === error____ ===> ', error);
-    // const errorMessage = error?.response?.data?.message || 'An error occurred.';
-    // const otpType = error?.response?.data?.otpType;
-    // const otpEmail = error?.response?.data?.email;
-    // const otpMobileNumber = error?.response?.data?.mobileNumber;
-    //
-    // console.log(' === error?.response ===> ', error?.response?.data?.method);
-    //
-    // console.log(' === error___New ===> ', error);
-    //
-    // if (errorMessage !== 'Incorrect email or password') {
-    //   // action.data?.failureCallback();
-    //   action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
-    // }
-
     const statusCode = error?.response?.status;
     const errorMessage = error?.response?.data?.message || 'An error occurred.';
     const otpType = error?.response?.data?.otpType;
     const otpEmail = error?.response?.data?.email;
     const otpMobileNumber = error?.response?.data?.mobileNumber;
 
-    console.log(' === error status ===> ', statusCode);
-    console.log(' === error message ===> ', errorMessage);
+    console.log('=== error status ===>', statusCode);
+    console.log('=== error message ===>', errorMessage);
 
-    // Only trigger failure callback if it's not a 500 error
-    if (statusCode !== 500 && errorMessage !== 'Incorrect email or password') {
+    // 👇 Handle specific error scenarios
+    if (errorMessage === 'Incorrect email or password') {
+      console.log('❌ Wrong email or password');
+      // Optionally show toast
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Credentials',
+        text2: 'Incorrect email or password',
+      });
+    } else if (statusCode === 502) {
+      console.log('❗ Server is temporarily unavailable (502 error)');
+      // Optionally show toast or alert
+      Toast.show({
+        type: 'error',
+        text1: 'Server Error',
+        text2: 'Service temporarily unavailable. Please try again later.',
+      });
+    } else {
+      // ✅ For OTP or other handled errors
       action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
     }
 

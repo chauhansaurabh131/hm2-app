@@ -214,4 +214,26 @@ export const style = StyleSheet.create({
     fontFamily: fontFamily.poppins500,
     color: colors.black,
   },
+  threeDotBottomSheetBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  threeDotBottomSheetIcon: {
+    width: hp(17),
+    height: hp(17),
+    resizeMode: 'contain',
+    marginRight: hp(22),
+  },
+  threeDotBottomSheetTittleText: {
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
+    color: colors.black,
+  },
+  threeDotBottomSheetContainers: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: hp(20),
+    // backgroundColor: 'silver',
+  },
 });

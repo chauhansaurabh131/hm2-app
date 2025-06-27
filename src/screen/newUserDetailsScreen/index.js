@@ -513,7 +513,7 @@ const NewUserDetailsScreen = () => {
           body: JSON.stringify({
             user: userDetails?._id,
             request: requestId,
-            status: 'rejected', // Reject the friend request
+            status: 'removed', // Reject the friend request
           }),
         },
       );

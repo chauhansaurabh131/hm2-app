@@ -11,18 +11,18 @@ import FastImage from 'react-native-fast-image';
 
 const {width} = Dimensions.get('window');
 
-const ImagePaginationAndPinableComponent = ({images}) => {
+const ImagePaginationAndPinableComponent = ({images, onPageChange}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const flatListRef = useRef(null);
 
   const renderItem = ({item}) => {
     return (
-      <View style={{flex: 1, backgroundColor: 'black'}}>
+      <View style={{flex: 1, backgroundColor: 'grey'}}>
         <Pinchable>
           <FastImage
-            source={{uri: item}}
+            source={{uri: item.url}} // <- access item.url
             style={{width: width, height: '100%'}}
-            resizeMode="contain"
+            // resizeMode="contain"
           />
         </Pinchable>
       </View>
@@ -30,10 +30,13 @@ const ImagePaginationAndPinableComponent = ({images}) => {
   };
 
   const handleScroll = event => {
-    if (event && event.nativeEvent && event.nativeEvent.contentOffset) {
-      const contentOffsetX = event.nativeEvent.contentOffset.x;
-      const index = Math.round(contentOffsetX / width);
+    if (event?.nativeEvent?.contentOffset) {
+      const index = Math.round(event.nativeEvent.contentOffset.x / width);
       setCurrentPage(index);
+      // 👇 notify parent
+      if (onPageChange) {
+        onPageChange(index);
+      }
     }
   };
 

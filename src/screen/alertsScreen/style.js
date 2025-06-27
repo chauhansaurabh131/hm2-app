@@ -9,6 +9,7 @@ const style = StyleSheet.create({
   },
   bodyContainer: {
     marginHorizontal: 17,
+    // backgroundColor: 'green',
   },
   headerContainer: {
     flexDirection: 'row',

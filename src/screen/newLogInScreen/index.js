@@ -23,6 +23,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import messaging from '@react-native-firebase/messaging';
+import NetInfo from '@react-native-community/netinfo';
 
 const NewLogInScreen = () => {
   const [email, setEmail] = useState('');
@@ -117,8 +118,18 @@ const NewLogInScreen = () => {
   //   setPassword('');
   // };
 
-  const onPressLogin = () => {
+  const onPressLogin = async () => {
     Keyboard.dismiss();
+
+    const netState = await NetInfo.fetch();
+    if (!netState.isConnected) {
+      Toast.show({
+        type: 'error',
+        text1: 'No Internet Connection',
+        text2: 'Please check your network and try again',
+      });
+      return; // ⛔ Stop login flow
+    }
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();

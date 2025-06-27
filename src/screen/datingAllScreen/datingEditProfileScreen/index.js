@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -27,9 +28,14 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import DatePicker from 'react-native-date-picker';
 import {colors} from '../../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
+import ProfileAvatar from '../../../components/letterProfileComponent';
+import NewProfileBottomSheet from '../../../components/newProfileBottomSheet';
+import axios from 'axios';
 
 const DatingEditProfileScreen = () => {
   const {user, isUpdatingProfile} = useSelector(state => state.auth);
+
+  // console.log(' === var ===> ', user?.user?.id);
 
   console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
   // console.log(' === DatingEditProfileScreen ===> ', user?.user);
@@ -80,6 +86,12 @@ const DatingEditProfileScreen = () => {
 
   const screenWidth = Dimensions.get('window').width;
   const imageWidth = screenWidth / 3 - 10; // Divide screen width by 3 and add margin
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openTopBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   // Function to format the date
   const formatDate = date => {
@@ -355,9 +367,118 @@ const DatingEditProfileScreen = () => {
   const dataWithAddBox = [...selectedImages, {addImageBox: true}];
 
   // Function to remove an image from the list
-  const removeImage = indexToRemove => {
-    setSelectedImages(
-      selectedImages.filter((_, index) => index !== indexToRemove),
+  // const removeImage = (indexToRemove, indexToRemoveItem) => {
+  //   console.log(
+  //     ' === indexToRemove___ ===> ',
+  //     indexToRemove,
+  //     indexToRemoveItem,
+  //   );
+  //   // setSelectedImages(
+  //   //   selectedImages.filter((_, index) => index !== indexToRemove),
+  //   // );
+  // };
+
+  // const removeImage = async (indexToRemove, imageItem) => {
+  //   console.log(' === indexToRemove___ ===> ', indexToRemove, imageItem);
+  //   console.log(' === user{{{ ===> ', user?.user?.profilePic);
+  //   // console.log(' === imageItem+++ ===> ', imageItem?.url);
+  //
+  //   // If image has an _id (i.e. saved on the server), call delete API
+  //   if ((imageItem?._id, imageItem?.name, imageItem?.url)) {
+  //     try {
+  //       const response = await axios.post(
+  //         `https://stag.mntech.website/api/v1/user/user/delete-profile-image/${user?.user?.id}`,
+  //         {
+  //           profileImageUrl: imageItem?.url, // As per your curl example
+  //           name: imageItem?.name,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${user?.tokens?.access?.token}`, // make sure accessToken is available in scope
+  //             'Content-Type': 'application/json',
+  //           },
+  //         },
+  //       );
+  //       console.log('Image deleted successfully from server:', response.data);
+  //       apiDispatch(updateDetails());
+  //     } catch (error) {
+  //       console.error('Error deleting image from server:', error);
+  //       Alert.alert('Delete Failed', 'Could not delete image from server.');
+  //       return; // Stop further action if API fails
+  //     }
+  //   }
+  //
+  //   // Now remove from local list
+  //   setSelectedImages(prev =>
+  //     prev.filter((_, index) => index !== indexToRemove),
+  //   );
+  // };
+
+  const removeImage = async (indexToRemove, imageItem) => {
+    console.log(' === indexToRemove___ ===> ', indexToRemove, imageItem);
+    console.log(' === user{{{ ===> ', user?.user?.profilePic);
+
+    const isProfileImage = imageItem?.url === user?.user?.profilePic;
+
+    if (isProfileImage) {
+      console.log(
+        '🟡 Image is current profile picture. Clearing and deleting...',
+      );
+
+      // Step 1: Clear profilePic in Redux
+      apiDispatch(updateDetails({profilePic: ''}));
+
+      // Step 2: Wait a moment (simulate waiting for state update)
+      setTimeout(async () => {
+        try {
+          const response = await axios.post(
+            `https://stag.mntech.website/api/v1/user/user/delete-profile-image/${user?.user?.id}`,
+            {
+              profileImageUrl: imageItem?.url,
+              name: imageItem?.name,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${user?.tokens?.access?.token}`,
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+
+          console.log('✅ Profile picture deleted from server:', response.data);
+        } catch (error) {
+          console.error('❌ Error deleting profile picture:', error);
+          Alert.alert('Delete Failed', 'Could not delete image from server.');
+        }
+      }, 1000); // Wait 1 second
+    } else if (imageItem?._id && imageItem?.name && imageItem?.url) {
+      // For non-profile image deletion
+      try {
+        const response = await axios.post(
+          `https://stag.mntech.website/api/v1/user/user/delete-profile-image/${user?.user?.id}`,
+          {
+            profileImageUrl: imageItem?.url,
+            name: imageItem?.name,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user?.tokens?.access?.token}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        console.log('✅ Image deleted from server:', response.data);
+        apiDispatch(updateDetails());
+      } catch (error) {
+        console.error('❌ Error deleting image from server:', error);
+        Alert.alert('Delete Failed', 'Could not delete image from server.');
+        return;
+      }
+    }
+
+    // ✅ Always remove from UI
+    setSelectedImages(prev =>
+      prev.filter((_, index) => index !== indexToRemove),
     );
   };
 
@@ -379,15 +500,36 @@ const DatingEditProfileScreen = () => {
       });
   };
 
+  const reversePurposeMap = {
+    'Looking for Love': 'looking-for-love',
+    'Movie Date': 'movie-date',
+    'Meet New Friends': 'meet-new-friends',
+    Foodies: 'foodies',
+    'Travel Buddies': 'travel-buddies',
+    'Game Lover': 'game-lover',
+    'Chit-Chat': 'chit-chat',
+    Adventurous: 'adventurous',
+  };
+
+  const convertToApiFormat = (displayPurposes = []) => {
+    return displayPurposes.map(item => reversePurposeMap[item]).filter(Boolean); // Remove undefined values
+  };
+
   const handleAddPress = () => {
     console.log(' === selectedDate ===> ', selectedDate);
 
     const motherTongueString = selectedMotherTongue.join(', ');
 
     const currentDatingData = user?.user?.datingData[0];
+
+    console.log(' === selectedPurposes ===> ', selectedPurposes);
+
+    const interestedSelectedPurposes = convertToApiFormat(selectedPurposes);
+    console.log(' === interestedInApiFormat ===> ', interestedSelectedPurposes);
+
     const updatedDatingData = {
       ...currentDatingData,
-      interestedIn: selectedPurposes,
+      interestedIn: interestedSelectedPurposes,
       CurrentlyLiving: selectedCountry,
       Ethnicity: selectedEthnicity,
       educationLevel: selectedEducation,
@@ -609,6 +751,7 @@ const DatingEditProfileScreen = () => {
         ),
       );
     }
+    // apiDispatch(updateDetails());
   };
 
   const getContentType = fileExtension => {
@@ -625,55 +768,60 @@ const DatingEditProfileScreen = () => {
     }
   };
 
-  const renderItem = ({item, index}) => {
-    if (item.addImageBox) {
-      // Render "Add Image" box
-      return (
-        <TouchableOpacity onPress={openGallery}>
-          <View style={style.imageRenderImageAddContainer}>
-            <Text style={style.imageRenderAddPlus}>+</Text>
-          </View>
-        </TouchableOpacity>
-      );
-    }
+  // const renderItem = ({item, index}) => {
+  //   if (item.addImageBox) {
+  //     // Render "Add Image" box
+  //     return (
+  //       <TouchableOpacity onPress={openGallery}>
+  //         <View style={style.imageRenderImageAddContainer}>
+  //           <Text style={style.imageRenderAddPlus}>+</Text>
+  //         </View>
+  //       </TouchableOpacity>
+  //     );
+  //   }
+  //
+  //   // Render profile picture with "X" button to remove the image
+  //   return (
+  //     <SafeAreaView style={style.renderCancelIconContainer}>
+  //       <TouchableOpacity onPress={() => handleImagePress(index)}>
+  //         <View style={style.renderImageContainer}>
+  //           <Image
+  //             source={{uri: item.url}}
+  //             style={[
+  //               style.renderImageStyle,
+  //               selectedIndex === index
+  //                 ? {borderColor: '#007bff', borderWidth: 3}
+  //                 : null,
+  //             ]}
+  //             resizeMode="cover"
+  //           />
+  //
+  //           {/* Checkmark overlay if image is selected */}
+  //           {selectedIndex === index && (
+  //             <View style={style.selectedImageWaterMarkContainer}>
+  //               <Image
+  //                 source={icons.check_gradient_icon}
+  //                 style={style.selectedImageAddContainer}
+  //               />
+  //             </View>
+  //           )}
+  //
+  //           {/* Remove Button (X) */}
+  //           <TouchableOpacity
+  //             onPress={() => removeImage(index, item)}
+  //             style={style.imageRemoveButtonContainer}>
+  //             <Image source={icons.delete_icon} style={style.removeIconStyle} />
+  //           </TouchableOpacity>
+  //         </View>
+  //       </TouchableOpacity>
+  //     </SafeAreaView>
+  //   );
+  // };
 
-    // Render profile picture with "X" button to remove the image
-    return (
-      <SafeAreaView style={style.renderCancelIconContainer}>
-        <TouchableOpacity onPress={() => handleImagePress(index)}>
-          <View style={style.renderImageContainer}>
-            <Image
-              source={{uri: item.url}}
-              style={[
-                style.renderImageStyle,
-                selectedIndex === index
-                  ? {borderColor: '#007bff', borderWidth: 3}
-                  : null,
-              ]}
-              resizeMode="cover"
-            />
-
-            {/* Checkmark overlay if image is selected */}
-            {selectedIndex === index && (
-              <View style={style.selectedImageWaterMarkContainer}>
-                <Image
-                  source={icons.check_gradient_icon}
-                  style={style.selectedImageAddContainer}
-                />
-              </View>
-            )}
-
-            {/* Remove Button (X) */}
-            <TouchableOpacity
-              onPress={() => removeImage(index)}
-              style={style.imageRemoveButtonContainer}>
-              <Image source={icons.delete_icon} style={style.removeIconStyle} />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  };
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
 
   return (
     <SafeAreaView style={style.container}>
@@ -682,40 +830,61 @@ const DatingEditProfileScreen = () => {
 
         <TouchableOpacity
           activeOpacity={0.7}
-          // onPress={openTopSheetModal}
+          onPress={openTopBottomSheet}
           style={{alignSelf: 'center'}}>
-          {userImage ? (
-            <Image source={{uri: userImage}} style={style.topProfileIcon} />
-          ) : (
+          {/*{userImage ? (*/}
+          {/*  <Image source={{uri: userImage}} style={style.topProfileIcon} />*/}
+          {/*) : (*/}
+          {/*  <Image*/}
+          {/*    source={images.empty_male_Image}*/}
+          {/*    style={style.topProfileIcon}*/}
+          {/*  />*/}
+          {/*)}*/}
+
+          {hasValidImage ? (
             <Image
-              source={images.empty_male_Image}
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
               style={style.topProfileIcon}
+            />
+          ) : (
+            <ProfileAvatar
+              firstName={user?.user?.firstName || user?.user?.name}
+              lastName={user?.user?.lastName}
+              textStyle={style.topProfileIcon}
+              profileTexts={{fontSize: fontSize(10)}}
             />
           )}
         </TouchableOpacity>
       </View>
 
+      <View>
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+      </View>
+
       <View style={style.headerTittleContainer}>
         <Text style={style.editText}>Edit Profile</Text>
+
         <TouchableOpacity
           style={style.arrowContainer}
           onPress={() => navigation.goBack()}>
           <Image source={icons.back_arrow_icon} style={style.arrowIcon} />
         </TouchableOpacity>
       </View>
-      <Text style={style.headerSubText}>
-        Select Photo to{' '}
-        <Text style={style.textColor}>Set as profile picture</Text>
-      </Text>
-      <ScrollView>
+
+      {/*<Text style={style.headerSubText}>*/}
+      {/*  Select Photo to{' '}*/}
+      {/*  <Text style={style.textColor}>Set as profile picture</Text>*/}
+      {/*</Text>*/}
+
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={style.flatListContainer}>
-          <FlatList
-            data={dataWithAddBox}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderItem}
-            numColumns={3} // Display 3 images per row
-            contentContainerStyle={style.contentContainerStyle}
-          />
+          {/*<FlatList*/}
+          {/*  data={dataWithAddBox}*/}
+          {/*  keyExtractor={(item, index) => index.toString()}*/}
+          {/*  renderItem={renderItem}*/}
+          {/*  numColumns={3} // Display 3 images per row*/}
+          {/*  contentContainerStyle={style.contentContainerStyle}*/}
+          {/*/>*/}
         </View>
 
         <View

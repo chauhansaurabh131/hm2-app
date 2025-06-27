@@ -25,6 +25,10 @@ const AdminProfessionalDetailsScreen = (...params) => {
 
   const {isSendRequestLoading} = useSelector(state => state.auth);
 
+  const [loading, setLoading] = useState(false);
+
+  // console.log(' === isSendRequestLoading ===> ', isSendRequestLoading);
+
   const capitalizeFirstLetter = str =>
     str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
 
@@ -76,17 +80,38 @@ const AdminProfessionalDetailsScreen = (...params) => {
   };
 
   const handleSave = () => {
+    // const isValidRange = range => {
+    //   const regex = /^\d+(\.\d+)?-\d+(\.\d+)?$/;
+    //   return regex.test(range);
+    // };
+    //
+    // const getAverageFromRange = range => {
+    //   const [min, max] = range.split('-').map(Number);
+    //   return (min + max) / 2;
+    // };
+    //
+    // if (!isValidRange(salary)) {
+    //   console.error('Invalid salary format');
+    //   return;
+    // }
+    //
+    // const numericSalary = getAverageFromRange(salary);
+    //
+    // console.log(' === numeric salary ===> ', numericSalary);
+    setLoading(true);
+
     apiDispatch(
       professionalDetail(
         {
           jobTitle: currentDesignation,
           jobType: jobType,
           companyName: companyName,
-          currentSalary: salary,
+          currentSalary: salary, // ✅ must be a number
           workCity: workCity,
           workCountry: workCountry,
         },
         () => {
+          setLoading(false);
           setIsEditing(false);
         },
       ),
@@ -133,7 +158,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Annual Salary</Text>
-              <Text style={style.subTittleText}>{salary} Lac </Text>
+              <Text style={style.subTittleText}>{salary} Lac. </Text>
             </View>
 
             <View style={style.subTittleContainer}>
@@ -315,7 +340,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 ref={jobTypeBottomSheetRef}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
-                height={hp(170)} // Adjust height of Bottom Sheet
+                height={hp(280)} // Adjust height of Bottom Sheet
                 customStyles={{
                   draggableIcon: {
                     backgroundColor: colors.gray,
@@ -339,6 +364,24 @@ const AdminProfessionalDetailsScreen = (...params) => {
                   style={{marginTop: hp(15)}}
                   onPress={() => handleSelectJobType('Full-Time')}>
                   <Text style={style.bottomSheetOptionText}>Full-Time</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{marginTop: hp(15)}}
+                  onPress={() => handleSelectJobType('Contract')}>
+                  <Text style={style.bottomSheetOptionText}>Contract</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{marginTop: hp(15)}}
+                  onPress={() => handleSelectJobType('Internship')}>
+                  <Text style={style.bottomSheetOptionText}>Internship</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{marginTop: hp(15)}}
+                  onPress={() => handleSelectJobType('Remote')}>
+                  <Text style={style.bottomSheetOptionText}>Remote</Text>
                 </TouchableOpacity>
               </RBSheet>
 
@@ -414,7 +457,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 ref={salaryBottomSheetRef}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
-                height={hp(350)} // Adjust height of Bottom Sheet
+                height={hp(400)} // Adjust height of Bottom Sheet
                 customStyles={{
                   draggableIcon: {
                     backgroundColor: colors.gray,
@@ -433,62 +476,72 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 <ScrollView>
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('3')}>
-                    <Text style={style.bottomSheetOptionText}>3 Lac.</Text>
+                    onPress={() => handleSelectSalary('1-3')}>
+                    <Text style={style.bottomSheetOptionText}>1 - 3 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('4')}>
-                    <Text style={style.bottomSheetOptionText}>4 Lac.</Text>
+                    onPress={() => handleSelectSalary('3-5')}>
+                    <Text style={style.bottomSheetOptionText}>3 - 5 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('5')}>
-                    <Text style={style.bottomSheetOptionText}>5 Lac.</Text>
+                    onPress={() => handleSelectSalary('5-7')}>
+                    <Text style={style.bottomSheetOptionText}>5 - 7 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('6')}>
-                    <Text style={style.bottomSheetOptionText}>6 Lac.</Text>
+                    onPress={() => handleSelectSalary('7-9')}>
+                    <Text style={style.bottomSheetOptionText}>7 - 9 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('7')}>
-                    <Text style={style.bottomSheetOptionText}>7 Lac.</Text>
+                    onPress={() => handleSelectSalary('9-11')}>
+                    <Text style={style.bottomSheetOptionText}>9 - 11 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('8')}>
-                    <Text style={style.bottomSheetOptionText}>8 Lac.</Text>
+                    onPress={() => handleSelectSalary('11-13')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      11 - 13 Lac.
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('9')}>
-                    <Text style={style.bottomSheetOptionText}>9 Lac.</Text>
+                    onPress={() => handleSelectSalary('13-16')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      13 - 16 Lac.
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('10')}>
-                    <Text style={style.bottomSheetOptionText}>10 Lac.</Text>
+                    onPress={() => handleSelectSalary('16-20')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      16 - 20 Lac.
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('11')}>
-                    <Text style={style.bottomSheetOptionText}>11 Lac.</Text>
+                    onPress={() => handleSelectSalary('20-24')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      20 - 24 Lac.
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15), marginBottom: hp(25)}}
-                    onPress={() => handleSelectSalary('12')}>
-                    <Text style={style.bottomSheetOptionText}>12 Lac.</Text>
+                    onPress={() => handleSelectSalary('24-30')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      24 - 30 Lac.
+                    </Text>
                   </TouchableOpacity>
                 </ScrollView>
               </RBSheet>
@@ -615,7 +668,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0.5}}
                   style={style.saveButtonContainer}>
-                  {isSendRequestLoading ? (
+                  {loading ? (
                     <ActivityIndicator size="large" color={colors.white} />
                   ) : (
                     <Text style={style.bottomSheetAddButtonText}>

@@ -240,6 +240,7 @@ const AdminContactDetailsScreen = (...params) => {
                           borderTopWidth: 0,
                           marginTop: hp(51),
                           width: '100%',
+                          color: colors.black,
                         }}
                         value={mobileNumber}
                         onChangeText={setMobileNumber}
@@ -448,6 +449,7 @@ const AdminContactDetailsScreen = (...params) => {
                           borderTopWidth: 0,
                           marginTop: hp(51),
                           width: '100%',
+                          color: colors.black,
                         }}
                         value={homeNumber}
                         onChangeText={setHomeNumber}

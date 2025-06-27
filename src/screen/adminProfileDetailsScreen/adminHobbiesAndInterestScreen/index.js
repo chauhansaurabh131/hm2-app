@@ -29,16 +29,21 @@ const AdminHobbiesAndInterestScreen = (...params) => {
 
   const {isUpdatingProfile} = useSelector(state => state.auth);
 
-  console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
+  // console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
+
+  // console.log(' === userPersonalData ===> ', userPersonalData?.language);
 
   const initialHobbies = userPersonalData?.hobbies || [];
+  const initialLanguage = userPersonalData?.language || [];
 
   const [hobbies, setHobbies] = useState(initialHobbies); // State for selected hobbies
+  const [language, setLanguage] = useState(initialLanguage); // State for selected hobbies
   const [isEditing, setIsEditing] = useState(false);
   const refRBSheet = useRef(); // Reference for the Bottom Sheet
+  const refRBSheetLanguage = useRef(); // Reference for the Bottom Sheet
   const apiDispatch = useDispatch();
 
-  console.log(' === isEditing ===> ', isEditing);
+  // console.log(' === isEditing ===> ', isEditing);
 
   // List of all available hobbies for selection
   const availableHobbies = [
@@ -61,6 +66,15 @@ const AdminHobbiesAndInterestScreen = (...params) => {
     ),
   ];
 
+  const availableLanguage = [
+    'hindi',
+    'gujarati',
+    'english',
+    ...initialLanguage.filter(
+      lan => !['hindi', 'gujarati', 'english'].includes(lan.toLowerCase()),
+    ),
+  ];
+
   // Function to handle hobby selection/deselection
   const toggleHobby = hobby => {
     if (hobbies.includes(hobby)) {
@@ -73,12 +87,23 @@ const AdminHobbiesAndInterestScreen = (...params) => {
     // refRBSheet.current.close();
   };
 
+  const toggleLanguage = lan => {
+    if (language.includes(lan)) {
+      // Remove hobby if already selected
+      setLanguage(language.filter(item => item !== lan));
+    } else {
+      // Add hobby if not selected
+      setLanguage([...language, lan]);
+    }
+    // refRBSheetLanguage.current.close();
+  };
+
   // Function to handle Save button click
   const handleSave = () => {
     console.log('Selected Hobbies:', hobbies); // Log selected hobbies
 
     apiDispatch(
-      updateDetails({hobbies: hobbies}, () => {
+      updateDetails({hobbies: hobbies, language: language}, () => {
         setIsEditing(false);
       }),
     );
@@ -186,6 +211,50 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                 </View>
               ))}
             </View>
+
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                lineHeight: hp(24),
+                fontFamily: fontFamily.poppins500,
+                color: colors.black,
+              }}>
+              Select Language You Known
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                marginTop: hp(20),
+                marginBottom: hp(25),
+              }}>
+              {language.map((lan, index) => (
+                <View
+                  key={index}
+                  style={{
+                    borderColor: '#DEDEDE',
+                    borderWidth: 1,
+                    borderRadius: 25,
+                    paddingHorizontal: wp(18),
+                    paddingVertical: hp(8),
+                    marginRight: wp(10),
+                    marginBottom: hp(10),
+                    backgroundColor: colors.white,
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      fontFamily: fontFamily.poppins500,
+                      color: colors.black,
+                      lineHeight: hp(24),
+                    }}>
+                    {lan.charAt(0).toUpperCase() + lan.slice(1)}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         ) : (
           <>
@@ -224,7 +293,7 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                 style={{
                   flexDirection: 'row',
                   flexWrap: 'wrap',
-                  marginTop: hp(34),
+                  marginTop: hp(20),
                 }}>
                 {hobbies.map((hobby, index) => (
                   <TouchableOpacity
@@ -277,7 +346,7 @@ const AdminHobbiesAndInterestScreen = (...params) => {
 
               <RBSheet
                 ref={refRBSheet}
-                height={hp(350)}
+                height={hp(420)}
                 openDuration={250}
                 closeOnDragDown={true}
                 closeOnPressMask={true}
@@ -339,32 +408,154 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                 </View>
               </RBSheet>
 
-              {/*<TouchableOpacity activeOpacity={0.7} onPress={handleSave}>*/}
-              {/*  <LinearGradient*/}
-              {/*    colors={['#0F52BA', '#8225AF']}*/}
-              {/*    start={{x: 0, y: 0}}*/}
-              {/*    end={{x: 1, y: 0.5}}*/}
-              {/*    style={{*/}
-              {/*      width: '100%',*/}
-              {/*      height: hp(44),*/}
-              {/*      borderRadius: 50,*/}
-              {/*      alignItems: 'center',*/}
-              {/*      justifyContent: 'center',*/}
-              {/*      alignSelf: 'center',*/}
-              {/*      marginTop: hp(32),*/}
-              {/*      marginBottom: hp(25),*/}
-              {/*    }}>*/}
-              {/*    <Text*/}
-              {/*      style={{*/}
-              {/*        color: colors.white,*/}
-              {/*        fontSize: fontSize(16),*/}
-              {/*        lineHeight: hp(24),*/}
-              {/*        fontFamily: fontFamily.poppins400,*/}
-              {/*      }}>*/}
-              {/*      Save Changes*/}
-              {/*    </Text>*/}
-              {/*  </LinearGradient>*/}
-              {/*</TouchableOpacity>*/}
+              <TouchableOpacity
+                onPress={() => {
+                  refRBSheetLanguage.current.open();
+                }}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: hp(20),
+                }}>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    fontFamily: fontFamily.poppins500,
+                    color: colors.black,
+                    lineHeight: hp(24),
+                  }}>
+                  Select Language You Known
+                </Text>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={{
+                    width: hp(8),
+                    height: hp(15),
+                    marginRight: 8,
+                    tintColor: '#5F6368',
+                  }}
+                />
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginTop: hp(20),
+                }}>
+                {language.map((lan, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => toggleLanguage(lan)} // Remove hobby on press
+                    style={{
+                      borderColor: '#DEDEDE',
+                      borderWidth: 1,
+                      borderRadius: 25,
+                      paddingHorizontal: wp(15),
+                      paddingVertical: hp(10),
+                      marginRight: wp(10),
+                      marginBottom: hp(10),
+                      backgroundColor: colors.white,
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        fontFamily: fontFamily.poppins500,
+                        color: colors.black,
+                        lineHeight: hp(24),
+                      }}>
+                      {lan.charAt(0).toUpperCase() + lan.slice(1)}
+                    </Text>
+
+                    <View
+                      style={{
+                        marginLeft: 15,
+                        width: hp(16),
+                        height: hp(16),
+                        backgroundColor: '#5F6368',
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: 9,
+                          fontWeight: 'bold',
+                        }}>
+                        X
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <RBSheet
+                ref={refRBSheetLanguage}
+                height={hp(200)}
+                openDuration={250}
+                closeOnDragDown={true}
+                closeOnPressMask={true}
+                // onClose={() => setIsEditing(false)} // Close editing mode when bottom sheet closes
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    paddingHorizontal: wp(5),
+                  },
+                  draggableIcon: {
+                    backgroundColor: colors.gray,
+                  },
+                }}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: fontSize(16),
+                      fontFamily: fontFamily.poppins500,
+                      marginBottom: hp(10),
+                      color: colors.black,
+                      marginHorizontal: 17,
+                    }}>
+                    Edit Language
+                  </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 0.7,
+                      backgroundColor: '#E7E7E7',
+                    }}
+                  />
+
+                  <View style={{marginHorizontal: 17}}>
+                    {availableLanguage.map((lan, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => toggleLanguage(lan)} // Add/remove hobby on press
+                        style={{
+                          marginTop: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: fontSize(16),
+                            marginRight: wp(5),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins400,
+                            color: language.includes(lan)
+                              ? colors.gray
+                              : colors.black,
+                          }}>
+                          {lan.charAt(0).toUpperCase() + lan.slice(1)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </RBSheet>
 
               <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
                 <LinearGradient

@@ -29,6 +29,8 @@ const AccountsScreen = ({navigation}) => {
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
 
+  console.log(' === var ===> ', user?.user?.appUsesType);
+
   const userImage = user?.user?.profilePic;
 
   const topModalBottomSheetRef = useRef(null);
@@ -463,6 +465,49 @@ const AccountsScreen = ({navigation}) => {
             </View>
           </View>
         </TouchableHighlight>
+
+        <View style={style.descriptionBodyUnderlineStyle} />
+
+        {user?.user?.appUsesType === 'dating' && (
+          <TouchableHighlight
+            activeOpacity={0.6}
+            underlayColor="#F9FBFF"
+            onPress={() => {
+              navigation.navigate('DatingBlockAllScreen');
+            }}>
+            <View style={{marginHorizontal: 17, marginBottom: 15}}>
+              <View
+                // activeOpacity={0.5}
+                style={{marginTop: hp(16)}}
+                // onPress={() => {
+                //   navigation.navigate('EmailSmsAlertScreen');
+                // }}
+              >
+                <View style={style.bodyDescription}>
+                  <View style={{width: 25}}>
+                    <Image
+                      source={icons.block_icon}
+                      style={style.emailSmsIconStyle}
+                    />
+                  </View>
+
+                  <Image
+                    source={icons.rightSideIcon}
+                    style={style.sideArrowImageStyle}
+                  />
+                  <View style={style.credentialTittleContainer}>
+                    <Text style={style.credentialTittleText}>
+                      Blocked Profiles
+                    </Text>
+                    <Text style={style.credentialDescriptionTextStyle}>
+                      See your blocked profiles
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </TouchableHighlight>
+        )}
 
         <View style={style.descriptionBodyUnderlineStyle} />
 

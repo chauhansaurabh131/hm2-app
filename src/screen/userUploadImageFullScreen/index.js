@@ -6,14 +6,18 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import ImagePaginationAndPinableComponent from '../../components/imagePaginationAndPinableComponent';
+import ImagePaginationAndPinableComponentUser from '../../components/ImagePaginationAndPinableComponentUser';
 
 const UserUploadImageFullScreen = () => {
   const route = useRoute();
+
   const {allImages} = route.params;
   const navigation = useNavigation();
   const {user} = useSelector(state => state.auth);
 
   const [topModalVisible, setTopModalVisible] = useState(false);
+
+  // console.log(' === allImages ===> ', allImages);
 
   const userImage = user?.user?.profilePic;
 
@@ -26,9 +30,29 @@ const UserUploadImageFullScreen = () => {
   };
 
   // Determine the correct image array
-  const imageArray = Array.isArray(allImages)
+  // const imageArray = Array.isArray(allImages)
+  //   ? allImages
+  //   : allImages.userAllImage;
+
+  const rawArray = Array.isArray(allImages)
     ? allImages
-    : allImages.userAllImage;
+    : allImages?.userAllImage ?? [];
+
+  const getUniqueImagesByFilename = urls => {
+    const seenFilenames = new Set();
+    return urls.filter(url => {
+      const filename = url.split('/').pop(); // get last part of the URL
+      if (seenFilenames.has(filename)) {
+        return false;
+      }
+      seenFilenames.add(filename);
+      return true;
+    });
+  };
+
+  const imageArray = getUniqueImagesByFilename(rawArray);
+
+  console.log(' === imageArray ===> ', imageArray);
 
   return (
     <SafeAreaView style={style.container}>
@@ -56,7 +80,7 @@ const UserUploadImageFullScreen = () => {
       />
 
       {imageArray && imageArray.length > 0 ? (
-        <ImagePaginationAndPinableComponent images={imageArray} />
+        <ImagePaginationAndPinableComponentUser images={imageArray} />
       ) : (
         // Show message if no images are found
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

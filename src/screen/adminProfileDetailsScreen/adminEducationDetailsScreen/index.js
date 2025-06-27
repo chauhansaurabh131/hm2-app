@@ -114,25 +114,25 @@ const AdminEducationDetailsScreen = (...params) => {
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>College / University</Text>
               {/*<Text style={style.subTittleText}>{college} </Text>*/}
-              <Text style={style.subTittleText}>
+              <Text style={[style.subTittleText, {marginBottom: 10}]}>
                 {college?.length > 30 ? college.slice(0, 30) + '...' : college}
               </Text>
             </View>
 
-            <View style={style.subTittleContainer}>
-              <Text style={style.tittleText}>City</Text>
-              <Text style={style.subTittleText}>{city} </Text>
-            </View>
+            {/*<View style={style.subTittleContainer}>*/}
+            {/*  <Text style={style.tittleText}>City</Text>*/}
+            {/*  <Text style={style.subTittleText}>{city} </Text>*/}
+            {/*</View>*/}
 
-            <View style={style.subTittleContainer}>
-              <Text style={style.tittleText}>State</Text>
-              <Text style={style.subTittleText}>{state} </Text>
-            </View>
+            {/*<View style={style.subTittleContainer}>*/}
+            {/*  <Text style={style.tittleText}>State</Text>*/}
+            {/*  <Text style={style.subTittleText}>{state} </Text>*/}
+            {/*</View>*/}
 
-            <View style={[style.subTittleContainer, {marginBottom: hp(25)}]}>
-              <Text style={style.tittleText}>Country</Text>
-              <Text style={style.subTittleText}>{country} </Text>
-            </View>
+            {/*<View style={[style.subTittleContainer, {marginBottom: hp(25)}]}>*/}
+            {/*  <Text style={style.tittleText}>Country</Text>*/}
+            {/*  <Text style={style.subTittleText}>{country} </Text>*/}
+            {/*</View>*/}
           </View>
         ) : (
           <>
@@ -172,53 +172,53 @@ const AdminEducationDetailsScreen = (...params) => {
                 </TouchableOpacity>
               </View>
 
-              <View style={style.subTittleContainer}>
-                <Text style={style.tittleText}>City</Text>
+              {/*<View style={style.subTittleContainer}>*/}
+              {/*  <Text style={style.tittleText}>City</Text>*/}
 
-                <TouchableOpacity
-                  onPress={() => {
-                    cityBottomSheetRef.current.open();
-                  }}
-                  style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{city}</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={() => {*/}
+              {/*      cityBottomSheetRef.current.open();*/}
+              {/*    }}*/}
+              {/*    style={style.subTittleContainerStyle}>*/}
+              {/*    <Text style={style.subTittleText}>{city}</Text>*/}
+              {/*    <Image*/}
+              {/*      source={icons.rightSideIcon}*/}
+              {/*      style={style.rightSideIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*</View>*/}
 
-              <View style={style.subTittleContainer}>
-                <Text style={style.tittleText}>State</Text>
+              {/*<View style={style.subTittleContainer}>*/}
+              {/*  <Text style={style.tittleText}>State</Text>*/}
 
-                <TouchableOpacity
-                  onPress={() => {
-                    stateBottomSheetRef.current.open();
-                  }}
-                  style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{state}</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={() => {*/}
+              {/*      stateBottomSheetRef.current.open();*/}
+              {/*    }}*/}
+              {/*    style={style.subTittleContainerStyle}>*/}
+              {/*    <Text style={style.subTittleText}>{state}</Text>*/}
+              {/*    <Image*/}
+              {/*      source={icons.rightSideIcon}*/}
+              {/*      style={style.rightSideIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*</View>*/}
 
-              <View style={style.subTittleContainer}>
-                <Text style={style.tittleText}>Country</Text>
+              {/*<View style={style.subTittleContainer}>*/}
+              {/*  <Text style={style.tittleText}>Country</Text>*/}
 
-                <TouchableOpacity
-                  onPress={() => {
-                    countryBottomSheetRef.current.open();
-                  }}
-                  style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{country}</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={() => {*/}
+              {/*      countryBottomSheetRef.current.open();*/}
+              {/*    }}*/}
+              {/*    style={style.subTittleContainerStyle}>*/}
+              {/*    <Text style={style.subTittleText}>{country}</Text>*/}
+              {/*    <Image*/}
+              {/*      source={icons.rightSideIcon}*/}
+              {/*      style={style.rightSideIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*</View>*/}
 
               {/*DEGREE FOR BOTTOM SHEET*/}
               <RBSheet

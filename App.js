@@ -732,10 +732,18 @@
 //
 // export default App;
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import MainNavigator from './src/navigations';
-import {LogBox, Platform, PermissionsAndroid, Alert} from 'react-native';
+import {
+  LogBox,
+  Platform,
+  PermissionsAndroid,
+  Alert,
+  Text,
+  Animated,
+  StyleSheet,
+} from 'react-native';
 import {Provider} from 'react-redux';
 import {persistor, store} from './src/reducer/store';
 import {
@@ -747,10 +755,67 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import messaging from '@react-native-firebase/messaging';
 import notifee, {AndroidImportance} from '@notifee/react-native';
+import NetInfo from '@react-native-community/netinfo';
 
 LogBox.ignoreAllLogs();
 
 const App = () => {
+  const [isConnect, setIsConnect] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+  const translateY = useRef(new Animated.Value(100)).current;
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log(' === Connection Type ===> ', state.type);
+      console.log(' === isConnected ? ===> ', state.isConnected);
+
+      if (!state.isConnected) {
+        setIsConnect(false);
+        setShowMessage(true);
+        slideIn();
+
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
+      } else {
+        setIsConnect(true);
+        setShowMessage(true);
+        slideIn();
+
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
+        timerRef.current = setTimeout(() => {
+          slideOut();
+        }, 1500);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const slideIn = () => {
+    Animated.timing(translateY, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const slideOut = () => {
+    Animated.timing(translateY, {
+      toValue: 100,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setShowMessage(false));
+  };
+
   // useEffect(() => {
   //   RequestUserPermission();
   //   requestPermissions();
@@ -889,10 +954,46 @@ const App = () => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <MainNavigator />
+          {showMessage && (
+            <Animated.View
+              style={[
+                styles.banner,
+                {
+                  transform: [{translateY}],
+                  backgroundColor: isConnect ? '#4CAF50' : '#f44336',
+                },
+              ]}>
+              <Text style={styles.bannerText}>
+                {isConnect ? 'Connected to Internet' : 'No Internet Connection'}
+              </Text>
+            </Animated.View>
+          )}
         </PersistGate>
       </Provider>
     </SafeAreaProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  banner: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+  bannerText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
 
 export default App;

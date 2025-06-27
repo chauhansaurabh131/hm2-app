@@ -22,8 +22,10 @@ export const style = StyleSheet.create({
     marginTop: hp(2),
   },
   headerTittleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    height: hp(50),
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
     marginHorizontal: wp(17),
   },
   editText: {
@@ -33,12 +35,14 @@ export const style = StyleSheet.create({
     fontFamily: fontFamily.poppins700,
   },
   arrowContainer: {
-    width: hp(24),
-    height: hp(24),
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
     justifyContent: 'center',
-    alignSelf: 'center',
     alignItems: 'center',
-    marginRight: 3,
+    width: hp(30), // touchable area
+    height: '100%',
   },
   arrowIcon: {
     width: hp(16),

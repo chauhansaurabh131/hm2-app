@@ -112,14 +112,14 @@ const AdminAddressDetailsScreen = (...params) => {
       <View style={style.bodyContainer}>
         {!isEditing ? (
           <View style={style.bodyContainerStyle}>
-            <Text style={style.tittleText}>Current Address</Text>
-            {/*<Text style={style.subTittleText}>{residingAddress} </Text>*/}
-            <Text style={style.subTittleText}>
-              {residingAddress?.split(' ').slice(0, 5).join(' ') +
-                (residingAddress?.split(' ').length > 5 ? '...' : '')}{' '}
-            </Text>
+            {/*<Text style={style.tittleText}>Current Address</Text>*/}
+            {/*/!*<Text style={style.subTittleText}>{residingAddress} </Text>*!/*/}
+            {/*<Text style={style.subTittleText}>*/}
+            {/*  {residingAddress?.split(' ').slice(0, 5).join(' ') +*/}
+            {/*    (residingAddress?.split(' ').length > 5 ? '...' : '')}{' '}*/}
+            {/*</Text>*/}
 
-            <View style={style.subTittleContainer}>
+            <View style={style.tittleText}>
               <Text style={style.tittleText}>Country</Text>
               <Text style={style.subTittleText}>{currentCountry} </Text>
             </View>
@@ -137,24 +137,24 @@ const AdminAddressDetailsScreen = (...params) => {
         ) : (
           <>
             <View style={style.bodyContainerStyle}>
-              <Text style={style.tittleText}>Current Address</Text>
+              {/*<Text style={style.tittleText}>Current Address</Text>*/}
 
-              <TouchableOpacity
-                onPress={openBottomSheet}
-                style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>
-                  {residingAddress?.split(' ').slice(0, 5).join(' ') +
-                    (residingAddress?.split(' ').length > 5 ? '...' : '') ||
-                    'Write about yourself...'}
-                </Text>
+              {/*<TouchableOpacity*/}
+              {/*  onPress={openBottomSheet}*/}
+              {/*  style={style.subTittleContainerStyle}>*/}
+              {/*  <Text style={style.subTittleText}>*/}
+              {/*    {residingAddress?.split(' ').slice(0, 5).join(' ') +*/}
+              {/*      (residingAddress?.split(' ').length > 5 ? '...' : '') ||*/}
+              {/*      'Write about yourself...'}*/}
+              {/*  </Text>*/}
 
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.rightSideIcon}
-                />
-              </TouchableOpacity>
+              {/*  <Image*/}
+              {/*    source={icons.rightSideIcon}*/}
+              {/*    style={style.rightSideIcon}*/}
+              {/*  />*/}
+              {/*</TouchableOpacity>*/}
 
-              <View style={style.subTittleContainer}>
+              <View style={style.tittleText}>
                 <Text style={style.tittleText}>Country</Text>
 
                 <TouchableOpacity

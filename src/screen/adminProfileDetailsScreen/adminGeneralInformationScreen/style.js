@@ -175,9 +175,14 @@ export const style = StyleSheet.create({
   BODSetDateButton: {
     marginTop: 20,
     backgroundColor: colors.black,
-    paddingVertical: 10,
+    // paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 30,
+    width: '100%',
+    height: hp(44),
+    justifyContent: 'center',
+    // textAlign: 'center',
+    alignItems: 'center',
   },
   BODSetDateText: {
     color: '#fff',
@@ -207,13 +212,14 @@ export const style = StyleSheet.create({
     marginTop: 10,
   },
   BOTConfirmButtonContainer: {
-    width: 100,
-    height: 50,
+    width: '100%',
+    height: hp(44),
     backgroundColor: colors.black,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 25,
-    marginHorizontal: 5,
+    // marginHorizontal: 5,
+    marginTop: hp(10),
   },
   BOTConfirmText: {
     color: colors.white,
@@ -244,6 +250,7 @@ export const style = StyleSheet.create({
     borderLeftWidth: 0,
     fontSize: 20,
     paddingRight: 40,
+    color: colors.black,
   },
   BottomSheetTextInputText: {
     position: 'absolute',

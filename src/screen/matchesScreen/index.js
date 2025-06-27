@@ -325,29 +325,29 @@ const MatchesScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainer}>
-        <View style={style.headerContainerTittleStyle}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customerHeaderLogo}
-          />
+        {/*<View style={style.headerContainerTittleStyle}>*/}
+        {/*  <Image*/}
+        {/*    source={images.happyMilanColorLogo}*/}
+        {/*    style={style.customerHeaderLogo}*/}
+        {/*  />*/}
 
-          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
-          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            {userImage ? (
-              <Image
-                source={userImage ? {uri: userImage} : images.empty_male_Image}
-                style={style.profileLogoStyle}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileLogoStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
+        {/*  /!*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*!/*/}
+        {/*  <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+        {/*    {userImage ? (*/}
+        {/*      <Image*/}
+        {/*        source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+        {/*        style={style.profileLogoStyle}*/}
+        {/*      />*/}
+        {/*    ) : (*/}
+        {/*      <ProfileAvatar*/}
+        {/*        firstName={user?.user?.firstName}*/}
+        {/*        lastName={user?.user?.lastName}*/}
+        {/*        textStyle={style.profileLogoStyle}*/}
+        {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*      />*/}
+        {/*    )}*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
 
         <View>
           <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />

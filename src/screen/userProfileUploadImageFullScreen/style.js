@@ -31,7 +31,8 @@ const style = StyleSheet.create({
   cancelButton: {
     width: hp(44),
     height: hp(44),
-    backgroundColor: '#28272780',
+    // backgroundColor: '#28272780',
+    backgroundColor: colors.black,
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
@@ -41,8 +42,8 @@ const style = StyleSheet.create({
     // alignSelf: 'center',
   },
   cancelIcon: {
-    width: hp(14),
-    height: hp(14),
+    width: hp(16),
+    height: hp(16),
     resizeMode: 'contain',
     tintColor: colors.white,
   },

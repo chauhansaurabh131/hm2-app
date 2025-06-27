@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -10,6 +10,9 @@ import {
   KeyboardAvoidingView,
   Modal,
   Pressable,
+  Button,
+  ActivityIndicator,
+  Clipboard,
 } from 'react-native';
 import {colors} from '../../utils/colors';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
@@ -22,7 +25,7 @@ import RNBlobUtil from 'react-native-blob-util';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import * as Progress from 'react-native-progress';
 import moment from 'moment';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Video from 'react-native-video';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {MenuProvider} from 'react-native-popup-menu';
@@ -34,6 +37,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import EmojiSelector from 'react-native-emoji-selector';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import Toast from 'react-native-toast-message';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -48,6 +52,8 @@ const formatTime = timestamp => {
 
 const ChatUserScreen = ({route}) => {
   const {userData} = route.params;
+
+  console.log(' === userData ===> ', userData?.friendList?._id);
 
   // console.log(' === ChatUserScreen___ ===> ', userData);
 
@@ -77,6 +83,49 @@ const ChatUserScreen = ({route}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [deleteAllModal, setDeleteAllModal] = useState(false);
+  const [hasMessageConsent, setHasMessageConsent] = useState(null);
+
+  console.log(' === messages.length ===> ', messages.length);
+
+  const safetyTips = [
+    'Do not share your personal details, \nsuch as your bank account or address,\nuntil trust has been established',
+    'Avoid meeting at unknown places. If \nyou choose to go, inform a trusted\nperson about your plans.',
+    'Share your live location with your\nparents for easy tracking during\ndifficult times.',
+  ];
+
+  const [tipIndex, setTipIndex] = useState(0);
+
+  const handleNext = () => {
+    if (tipIndex < safetyTips.length - 1) {
+      setTipIndex(prev => prev + 1);
+    } else {
+      console.log('✅ User agreed to safety tips, proceed to start chat.');
+      handleConsentSubmit();
+      // Optional: Call handleConsentSubmit() here
+    }
+  };
+
+  // Reset tipIndex when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setTipIndex(0);
+    }, []),
+  );
+
+  const CopyId = () => {
+    Toast.show({
+      type: 'Copied',
+      text1: ' Message Copied!',
+      visibilityTime: 1000,
+    });
+  };
+
+  // console.log(' === messages ===> ', messages);
+  const lastMessageId = messages[messages.length - 1]?.id;
+  // console.log('Last Message ID:', lastMessageId);
 
   const threeDotBottomSheetRef = useRef();
   const topModalBottomSheetRef = useRef(null);
@@ -92,6 +141,85 @@ const ChatUserScreen = ({route}) => {
   const socketRef = useRef(null);
   const flatListRef = useRef(null);
   const dispatch = useDispatch();
+
+  const getMessageConsent = async () => {
+    try {
+      const friendId = userData?.friendList?._id;
+      const accessToken = user?.tokens?.access?.token;
+
+      if (!friendId || !accessToken) {
+        console.error('Missing friend ID or access token');
+        return;
+      }
+
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/message-consent/get-message-consent/${friendId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log('✅ Message Consent Response:', result);
+        setHasMessageConsent(result.data.length > 0); // true if data is not empty, false otherwise
+      } else {
+        console.error('❌ API Error:', result);
+        setHasMessageConsent(false);
+      }
+    } catch (error) {
+      console.error('❌ Fetch error:', error);
+      setHasMessageConsent(false);
+    }
+  };
+
+  useEffect(() => {
+    getMessageConsent();
+  }, []);
+
+  const handleConsentSubmit = async () => {
+    const senderId = userData?.userList?._id;
+    const receiverId = userData?.friendList?._id;
+    const accessToken = user?.tokens?.access?.token;
+
+    if (!senderId || !receiverId || !accessToken) {
+      console.error('Missing required IDs or token');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/message-consent/create-message-consent',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            senderId: senderId,
+            receiverId: receiverId,
+            primaryConsent: true,
+          }),
+        },
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log('✅ Consent submitted:', result);
+        // After successful consent, refetch message consent
+        setHasMessageConsent(true);
+      } else {
+        console.error('❌ Failed to submit consent:', result);
+      }
+    } catch (error) {
+      console.error('❌ API error:', error);
+    }
+  };
 
   const handleBlockProfilePress = () => {
     setIsBlockModalVisible(true); // Open the modal when block profile is pressed
@@ -140,7 +268,7 @@ const ChatUserScreen = ({route}) => {
       });
 
       socket.on('connect', () => {
-        console.log('Connected to server');
+        console.log('Connected to server=====');
         socket.emit('userActive');
       });
 
@@ -156,12 +284,42 @@ const ChatUserScreen = ({route}) => {
         }
       });
 
-      socket.on('message', async data => {
-        // console.log(' === message ===> ', JSON.stringify(data.data, null, 2));
+      socket.on('MessagesOfFriends', data => {
+        console.log('=== MessagesOfFriends_______ ===>', data);
+      });
 
+      socket.on('message', async data => {
+        // console.log(
+        //   ' === +++++message+++ ===> ',
+        //   JSON.stringify(data.data, null, 2),
+        // );
+
+        // console.log(' === +++++message+++ ===> ', data.data);
+
+        // socket.emit('message');
+
+        // if (data?.data?.message === 'messages received') {
+        //   setMessages(prevMessages => {
+        //     const newMessages = data.data.sendMessage.results.filter(
+        //       newMsg => !prevMessages.some(prevMsg => prevMsg.id === newMsg.id),
+        //     );
+        //     return [...prevMessages, ...newMessages].sort(
+        //       (a, b) => new Date(a.sendAt) - new Date(b.sendAt),
+        //     );
+        //   });
         if (data?.data?.message === 'messages received') {
+          const results = data?.data?.sendMessage?.results;
+
+          if (!Array.isArray(results)) {
+            console.warn(
+              '⚠️ sendMessage.results is missing or not an array:',
+              data?.data?.sendMessage,
+            );
+            return;
+          }
+
           setMessages(prevMessages => {
-            const newMessages = data.data.sendMessage.results.filter(
+            const newMessages = results.filter(
               newMsg => !prevMessages.some(prevMsg => prevMsg.id === newMsg.id),
             );
             return [...prevMessages, ...newMessages].sort(
@@ -232,6 +390,16 @@ const ChatUserScreen = ({route}) => {
         flatListRef.current.scrollToEnd({animated: true});
       });
 
+      // const payload = {
+      //   to: userData?.userList?._id,
+      //   from: userData?.friendList?._id || userData?.friendList?.[0]?._id,
+      //   messageId: messages[messages.length - 1]?.id,
+      // };
+      //
+      // console.log('Emitting readMessage with payload:', payload);
+      //
+      // socket.on('readMessage', payload);
+
       socket.on('disconnect', reason => {
         console.log('Disconnected from server:', reason);
         socket.emit('userInactive');
@@ -255,6 +423,40 @@ const ChatUserScreen = ({route}) => {
         flatListRef.current.scrollToEnd({animated: true});
       });
 
+      // ✅ Add this block here
+      // socket.on('messageDeleted', data => {
+      //   console.log('Message deleted from server:', data.messageId);
+      //   setMessages(prev => prev.filter(msg => msg.id !== data.messageId));
+      // });
+
+      socket.on('messageDeleted', data => {
+        console.log('🗑️ Message deleted from server:', data.messageId);
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === data.messageId
+              ? {
+                  ...msg,
+                  message: 'This message was deleted',
+                  type: 'deleted',
+                }
+              : msg,
+          ),
+        );
+      });
+
+      socket.on('chatDeleted', data => {
+        const isCurrentChat =
+          (data.from === userData?.friendList?._id &&
+            data.to === userData?.userList?._id) ||
+          (data.to === userData?.friendList?._id &&
+            data.from === userData?.userList?._id);
+
+        if (isCurrentChat) {
+          console.log('🔄 Chat deleted by other user');
+          setMessages([]);
+        }
+      });
+
       socketRef.current = socket;
 
       return () => {
@@ -263,6 +465,32 @@ const ChatUserScreen = ({route}) => {
       };
     }
   }, [accessToken, userData]);
+
+  useEffect(() => {
+    if (!socketRef.current || messages.length === 0) {
+      return;
+    }
+
+    const lastMessageId = messages[messages.length - 1]?.id;
+    const payload = {
+      to: userData?.userList?._id,
+      from: userData?.friendList?._id || userData?.friendList?.[0]?._id,
+      messageId: lastMessageId,
+    };
+
+    if (lastMessageId) {
+      console.log('Emitting readMessage with payload:', payload);
+      socketRef.current.emit('readMessage', payload);
+    } else {
+      console.log('Last message ID is undefined, not emitting readMessage');
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({animated: true});
+    }
+  }, [messages]);
 
   const handleEmojiSelect = emoji => {
     setMessage(message + emoji);
@@ -513,18 +741,35 @@ const ChatUserScreen = ({route}) => {
   };
 
   const onViewProfilePress = () => {
+    // console.log(' === var ===> ', user?.user?.appUsesType);
+    const appUsesType = user?.user?.appUsesType;
+
     threeDotBottomSheetRef.current.close();
 
     const matchesUserData = {
       firstName: userData?.friendList?.firstName,
-      id: userData?.friendList?._id,
+      id: userData?.friendList?._id || userData?.id,
       userData: userData,
     };
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
-    // console.log(' === onViewProfilePress ===> ', userData);
+
+    console.log(' === matchesUserData ===> ', matchesUserData);
+
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+
+    if (appUsesType === 'dating') {
+      // navigation.navigate('DatingUserDetailsScreen', {matchesUserData});
+      // console.log(' === var ===> ', userData?.friendList);
+      navigation.navigate('DatingUserDetailsScreen', {
+        userData: userData?.friendList,
+      });
+    } else {
+      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    }
   };
 
   const renderItem = ({item, index}) => {
+    // JSON.stringify(data.data, null, 2)
+
     const previousItem = messages[index - 1];
     const dateHeader = getDateHeader(item, previousItem);
 
@@ -541,7 +786,25 @@ const ChatUserScreen = ({route}) => {
             {dateHeader}
           </Text>
         )}
-        <View
+        <TouchableOpacity
+          onLongPress={() => {
+            if (item.from === userData?.userList?._id) {
+              setSelectedMessage(item);
+              setShowModal(true);
+              // console.log(' === item ===> ', item.message);
+              console.log(' === item ===> ', item);
+              console.log(' === From ===> ', item?.from, item?.to, item?.id);
+              console.log(
+                'Pressed bubble with background color: #FBF4FF (my message)',
+              );
+            } else {
+              console.log(
+                'Pressed bubble with background color: #EDF4FF (other user message)',
+              );
+            }
+          }}
+          delayLongPress={500}
+          activeOpacity={0.6}
           style={{
             flexDirection: 'row',
             alignSelf:
@@ -635,18 +898,6 @@ const ChatUserScreen = ({route}) => {
                   </View>
                 </TouchableOpacity>
 
-                {/*  progress={*/}
-                {/*  audioProgress[item.fileUrl]*/}
-                {/*    ? audioProgress[item.fileUrl].progress*/}
-                {/*    : 0*/}
-                {/*}*/}
-
-                {/*  progress={*/}
-                {/*  audioProgress[item.fileUrl.split('?')[0]]*/}
-                {/*    ? audioProgress[item.fileUrl.split('?')[0]].progress*/}
-                {/*    : 0*/}
-                {/*}*/}
-
                 <Progress.Bar
                   progress={
                     audioProgress[item.fileUrl]
@@ -692,9 +943,25 @@ const ChatUserScreen = ({route}) => {
               </View>
             )}
 
-            <Text style={{fontSize: fontSize(14), color: 'black'}}>
-              {item.message}
-            </Text>
+            {/*<Text style={{fontSize: fontSize(14), color: 'black'}}>*/}
+            {/*  {item.message}*/}
+            {/*</Text>*/}
+
+            {item.type === 'deleted' ? (
+              <Text
+                style={{
+                  fontSize: fontSize(14),
+                  color: '#999',
+                  fontStyle: 'italic',
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                {item.message}
+              </Text>
+            ) : (
+              <Text style={{fontSize: fontSize(14), color: 'black'}}>
+                {item.message}
+              </Text>
+            )}
 
             {item.type !== 'audio' && (
               <Text
@@ -708,7 +975,7 @@ const ChatUserScreen = ({route}) => {
               </Text>
             )}
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -754,29 +1021,66 @@ const ChatUserScreen = ({route}) => {
       userData?.friendList?.profilePic) ||
     userData?.friendList[0]?.profilePic.trim() !== '';
 
+  const toastConfigs = {
+    Copied: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333', // Toast background color
+          // padding: 10,
+          borderRadius: 100,
+          marginHorizontal: 20,
+          // marginTop: -200,
+          width: wp(180),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+  };
+
   return (
     <MenuProvider>
       <SafeAreaView style={style.container}>
+        <View
+          style={{
+            flex: 1,
+            zIndex: 99,
+            position: 'absolute',
+            alignSelf: 'center',
+            // top: -130,
+          }}>
+          <Toast config={toastConfigs} />
+        </View>
         <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
           <View style={style.headerContainer}>
-            <View style={style.headerImageAndIconStyle}>
-              <Image
-                source={images.happyMilanColorLogo}
-                style={style.logoStyle}
-              />
-              <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-                {userImage ? (
-                  <Image source={{uri: userImage}} style={style.profileIcon} />
-                ) : (
-                  <Image
-                    source={images.profileDisplayImage}
-                    style={style.profileIcon}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
+            {/*<View style={style.headerImageAndIconStyle}>*/}
+            {/*  <Image*/}
+            {/*    source={images.happyMilanColorLogo}*/}
+            {/*    style={style.logoStyle}*/}
+            {/*  />*/}
+            {/*  <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+            {/*    {userImage ? (*/}
+            {/*      <Image source={{uri: userImage}} style={style.profileIcon} />*/}
+            {/*    ) : (*/}
+            {/*      <Image*/}
+            {/*        source={images.profileDisplayImage}*/}
+            {/*        style={style.profileIcon}*/}
+            {/*      />*/}
+            {/*    )}*/}
+            {/*  </TouchableOpacity>*/}
+            {/*</View>*/}
 
-            <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+            {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
 
             <View style={style.userDetailsContainer}>
               <TouchableOpacity
@@ -785,15 +1089,14 @@ const ChatUserScreen = ({route}) => {
                   width: hp(24),
                   height: hp(24),
                   marginTop: -5,
-                  marginRight: wp(13),
+                  marginRight: wp(5),
                 }}>
                 <Image
                   source={icons.back_arrow_icon}
                   style={{
-                    width: hp(14),
-                    height: hp(14),
+                    width: hp(16),
+                    height: hp(16),
                     resizeMode: 'contain',
-
                     top: 4,
                   }}
                 />
@@ -824,17 +1127,6 @@ const ChatUserScreen = ({route}) => {
                 />
               )}
 
-              {/*{userData && (*/}
-              {/*  <Image*/}
-              {/*    source={{*/}
-              {/*      uri:*/}
-              {/*        userData?.friendList?.profilePic ||*/}
-              {/*        userData?.friendList[0]?.profilePic,*/}
-              {/*    }}*/}
-              {/*    style={style.userProfileIcon}*/}
-              {/*  />*/}
-              {/*)}*/}
-
               <View style={style.detailsContainer}>
                 <Text style={style.userNameTextStyle}>
                   {userData
@@ -863,21 +1155,6 @@ const ChatUserScreen = ({route}) => {
                     userData?.friendList[0]?.isOnline}
                 </Text>
               </View>
-              {/*<TouchableOpacity activeOpacity={0.5}>*/}
-              {/*  <Image*/}
-              {/*    source={icons.three_dots_icon}*/}
-              {/*    style={style.threeDotIcon}*/}
-              {/*  />*/}
-              {/*</TouchableOpacity>*/}
-
-              {/*<View>*/}
-              {/*  <ChatThreeDotComponent*/}
-              {/*    onViewProfilePress={() => {*/}
-              {/*      navigation.navigate('UserDetailsScreen', {userData});*/}
-              {/*    }}*/}
-              {/*    onBlockProfilePress={handleBlockProfilePress}*/}
-              {/*  />*/}
-              {/*</View>*/}
 
               <TouchableOpacity
                 onPress={() => {
@@ -900,7 +1177,7 @@ const ChatUserScreen = ({route}) => {
             ref={threeDotBottomSheetRef}
             closeOnDragDown={true} // Allows drag to close
             closeOnPressMask={true} // Allows closing when clicking outside the sheet
-            height={hp(130)} // Adjust height of Bottom Sheet
+            height={hp(180)} // Adjust height of Bottom Sheet
             customStyles={{
               container: {
                 borderTopLeftRadius: 20,
@@ -914,13 +1191,6 @@ const ChatUserScreen = ({route}) => {
                 marginTop: 10,
               }}>
               <TouchableOpacity
-                // onPress={() => {
-                //   threeDotBottomSheetRef.current.close();
-                //   navigation.navigate('NewUserDetailsScreen', {
-                //     matchesUserData: userData?.friendList?._id,
-                //   });
-                // }}
-
                 onPress={() => {
                   onViewProfilePress();
                 }}
@@ -993,38 +1263,44 @@ const ChatUserScreen = ({route}) => {
                 </Text>
               </TouchableOpacity>
 
-              {/*<TouchableOpacity*/}
-              {/*  style={{*/}
-              {/*    flexDirection: 'row',*/}
-              {/*    alignItems: 'center',*/}
-              {/*    marginTop: hp(10),*/}
-              {/*  }}>*/}
-              {/*  <View*/}
-              {/*    style={{*/}
-              {/*      width: hp(30),*/}
-              {/*      height: hp(30),*/}
-              {/*      justifyContent: 'center',*/}
-              {/*    }}>*/}
-              {/*    <Image*/}
-              {/*      source={icons.report_icon}*/}
-              {/*      style={{*/}
-              {/*        width: hp(16),*/}
-              {/*        height: hp(16),*/}
-              {/*        resizeMode: 'contain',*/}
-              {/*      }}*/}
-              {/*    />*/}
-              {/*  </View>*/}
-              {/*  <Text*/}
-              {/*    style={{*/}
-              {/*      color: colors.black,*/}
-              {/*      marginLeft: wp(5),*/}
-              {/*      fontSize: fontSize(14),*/}
-              {/*      lineHeight: hp(21),*/}
-              {/*      fontFamily: fontFamily.poppins400,*/}
-              {/*    }}>*/}
-              {/*    Report*/}
-              {/*  </Text>*/}
-              {/*</TouchableOpacity>*/}
+              <TouchableOpacity
+                onPress={() => {
+                  threeDotBottomSheetRef.current.close();
+                  // handleBlockProfilePress();
+                  setDeleteAllModal(true);
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: hp(10),
+                }}>
+                <View
+                  style={{
+                    width: hp(30),
+                    height: hp(30),
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.clear_delete_icon}
+                    style={{
+                      width: hp(16),
+                      height: hp(16),
+                      resizeMode: 'contain',
+                      tintColor: colors.black,
+                    }}
+                  />
+                </View>
+                <Text
+                  style={{
+                    color: colors.black,
+                    marginLeft: wp(5),
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Clear Chat
+                </Text>
+              </TouchableOpacity>
             </View>
           </RBSheet>
 
@@ -1149,20 +1425,174 @@ const ChatUserScreen = ({route}) => {
             onBackButtonPress={toggleModal}
           />
 
-          <FlatList
-            ref={flatListRef}
-            data={messages.filter(msg => !msg.isTemporary)}
-            renderItem={renderItem}
-            contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: 'flex-end',
-              paddingHorizontal: wp(17),
-            }}
-            onContentSizeChange={() =>
-              flatListRef.current.scrollToEnd({animated: true})
-            }
-            onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
-          />
+          {hasMessageConsent === null ? (
+            <View
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <ActivityIndicator size="large" color={colors.black} />
+            </View>
+          ) : hasMessageConsent === false ? (
+            // <View
+            //   style={{
+            //     backgroundColor: 'white',
+            //     flex: 1,
+            //     justifyContent: 'center',
+            //     alignItems: 'center',
+            //   }}>
+            //   <View
+            //     style={{
+            //       width: '90%',
+            //       height: hp(272),
+            //       backgroundColor: '#E5BDF8',
+            //       borderRadius: 15,
+            //       alignItems: 'center',
+            //     }}>
+            //     <Text style={{color: 'black'}}>Safety Tips</Text>
+            //
+            //     <TouchableOpacity
+            //       style={{marginTop: 50}}
+            //       onPress={handleConsentSubmit}>
+            //       <Text style={{backgroundColor: 'red'}}>Next</Text>
+            //     </TouchableOpacity>
+            //   </View>
+            // </View>
+            <View
+              style={{
+                backgroundColor: 'white',
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  width: '90%',
+                  height: hp(272),
+                  backgroundColor: '#FAF0FF',
+                  borderRadius: 15,
+                  alignItems: 'center',
+                  borderWidth: 1.5,
+                  borderColor: '#E5BDF8',
+                  paddingHorizontal: 15,
+                }}>
+                {/* Header */}
+                <View style={{flexDirection: 'row', marginTop: hp(25)}}>
+                  <Image
+                    source={icons.blub_icon}
+                    style={{
+                      width: hp(15),
+                      height: hp(16),
+                      resizeMode: 'contain',
+                      marginRight: hp(10),
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colors.black,
+                      fontSize: fontSize(14),
+                      lineHeight: hp(20),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    Safety Tips
+                  </Text>
+                </View>
+
+                {/* Tip Text */}
+                <View style={{marginTop: hp(40), paddingHorizontal: 10}}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins400,
+                      textAlign: 'center',
+                    }}>
+                    {safetyTips[tipIndex]}
+                  </Text>
+                </View>
+
+                {/* Pagination Dots */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    marginTop: 25,
+                    gap: 8,
+                  }}>
+                  {safetyTips.map((_, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        width: hp(10),
+                        height: hp(10),
+                        borderRadius: 5,
+                        backgroundColor:
+                          tipIndex === index ? '#8225AF' : '#D3C1E4',
+                      }}
+                    />
+                  ))}
+                </View>
+
+                {/* Button */}
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  style={{
+                    marginTop: hp(25),
+                    backgroundColor: '#0F52BA',
+                    borderRadius: 50,
+                    paddingVertical: 10,
+                    paddingHorizontal: 30,
+                  }}
+                  onPress={handleNext}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: fontSize(14),
+                      lineHeight: hp(18),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    {tipIndex === safetyTips.length - 1
+                      ? 'I agree, start chat'
+                      : 'Next'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : messages.length === 0 ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: hp(20),
+              }}>
+              <Image
+                source={icons.new_no_message_icon}
+                style={{width: hp(212), height: hp(170), resizeMode: 'contain'}}
+              />
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(18),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                No Messages
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              ref={flatListRef}
+              data={messages.filter(msg => !msg.isTemporary)}
+              renderItem={renderItem}
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: 'flex-end',
+                paddingHorizontal: wp(17),
+              }}
+              onContentSizeChange={() =>
+                flatListRef.current.scrollToEnd({animated: true})
+              }
+              onLayout={() => flatListRef.current.scrollToEnd({animated: true})}
+            />
+          )}
+
           <Modal
             visible={isModalVisible}
             transparent={true}
@@ -1227,168 +1657,187 @@ const ChatUserScreen = ({route}) => {
             </View>
           </Modal>
 
-          <View style={{height: isEmojiPickerOpen ? '40%' : 'auto'}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 17,
-                marginBottom: hp(16),
-              }}>
+          {hasMessageConsent !== false && (
+            <View style={{height: isEmojiPickerOpen ? '40%' : 'auto'}}>
               <View
                 style={{
-                  width: wp(320),
                   flexDirection: 'row',
-                  alignItems: 'center',
-                  borderColor: '#DDDDDD',
-                  borderRadius: 25,
-                  borderWidth: 1,
-                  paddingHorizontal: 10,
+                  justifyContent: 'space-between',
+                  marginHorizontal: 17,
+                  marginBottom: hp(16),
                 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    if (!recordingDuration) {
-                      // console.log('Clicked smile_emoji_icon');
-                      // Add any additional actions here if needed
-                      setEmojiPickerOpen(true);
-                    }
+                <View
+                  style={{
+                    width: wp(320),
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    borderColor: '#DDDDDD',
+                    borderRadius: 25,
+                    borderWidth: 1,
+                    paddingHorizontal: 10,
                   }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (!recordingDuration) {
+                        // console.log('Clicked smile_emoji_icon');
+                        // Add any additional actions here if needed
+                        setEmojiPickerOpen(true);
+                      }
+                    }}>
+                    <Image
+                      source={
+                        recordingDuration
+                          ? icons.red_mic_icon
+                          : icons.smile_emoji_icon
+                      }
+                      style={{
+                        width: hp(18),
+                        height: hp(18),
+                        marginLeft: 8,
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flex: 1,
+                      alignItems: 'center',
+                    }}>
+                    {selectedImage && (
+                      <View
+                        style={{
+                          width: 55,
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          source={{uri: selectedImage}}
+                          style={{
+                            width: hp(40),
+                            height: hp(40),
+                            borderRadius: 5,
+                            marginRight: 5,
+                            marginLeft: 5,
+                          }}
+                        />
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedImage(null);
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: isIOS ? 7 : 8,
+                            right: isIOS ? 8 : 12,
+                          }}>
+                          <Image
+                            source={icons.x_cancel_icon}
+                            style={{
+                              width: wp(10),
+                              height: hp(8),
+                              tintColor: colors.white,
+                              resizeMode: 'contain',
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                    <TextInput
+                      style={{flex: 1, height: 50, color: 'black', padding: 10}}
+                      placeholder="Message"
+                      placeholderTextColor={'black'}
+                      multiline={true}
+                      numberOfLines={4}
+                      value={message || recordingDuration}
+                      editable={!recordingDuration} // Disable editing when recording
+                      onChangeText={text => {
+                        setMessage(text);
+                        handleTyping(text);
+                      }}
+                      onBlur={handleStopTyping}
+                      onFocus={() => handleTyping(message)}
+                    />
+                  </View>
+                  {recordingDuration ? (
+                    // Display "X" button when recording
+                    <TouchableOpacity
+                      style={{
+                        width: hp(20),
+                        height: hp(20),
+                        // borderWidth: 1,
+                        borderRadius: 50,
+                        marginRight: 15,
+                        backgroundColor: 'red',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        setRecordingDuration(null); // Clear recording
+                        setMessage(''); // Clear the TextInput
+                        setSelectedImage(null); // Clear selected image if any
+                        setRecordedAudio(null); // Clear recorded audio if any
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: 12,
+                          fontWeight: 'bold',
+                        }}>
+                        X
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    // Show camera icon when not recording
+                    <TouchableOpacity onPress={handleSelectImage}>
+                      <Image
+                        source={icons.simple_camera_icon}
+                        style={{
+                          width: 22.5,
+                          height: 20,
+                          marginLeft: 10,
+                          resizeMode: 'contain',
+                          tintColor: colors.black,
+                          marginRight: 5,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <TouchableOpacity
+                  // onPressIn={handleMicIconPressIn}
+                  // onPressOut={handleMicIconPressOut}
+                  onPress={handleIconPress}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  {/*<Image*/}
+                  {/*  source={*/}
+                  {/*    message.trim() || selectedImage || recordedAudio*/}
+                  {/*      ? icons.send_icon*/}
+                  {/*      : icons.mic_icon*/}
+                  {/*  }*/}
+                  {/*  style={{width: hp(26), height: hp(26), resizeMode: 'contain'}}*/}
+                  {/*/>*/}
+
                   <Image
                     source={
-                      recordingDuration
-                        ? icons.red_mic_icon
-                        : icons.smile_emoji_icon
+                      message.trim() || selectedImage
+                        ? icons.send_icon
+                        : icons.send_icon
                     }
                     style={{
-                      width: hp(18),
-                      height: hp(18),
-                      marginLeft: 8,
+                      width: hp(26),
+                      height: hp(26),
                       resizeMode: 'contain',
                     }}
                   />
                 </TouchableOpacity>
-                <View
-                  style={{flexDirection: 'row', flex: 1, alignItems: 'center'}}>
-                  {selectedImage && (
-                    <View
-                      style={{
-                        width: 55,
-                        height: 50,
-                        justifyContent: 'center',
-                      }}>
-                      <Image
-                        source={{uri: selectedImage}}
-                        style={{
-                          width: hp(40),
-                          height: hp(40),
-                          borderRadius: 5,
-                          marginRight: 5,
-                          marginLeft: 5,
-                        }}
-                      />
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedImage(null);
-                        }}
-                        style={{
-                          position: 'absolute',
-                          top: isIOS ? 7 : 8,
-                          right: isIOS ? 8 : 12,
-                        }}>
-                        <Image
-                          source={icons.x_cancel_icon}
-                          style={{
-                            width: wp(10),
-                            height: hp(8),
-                            tintColor: colors.white,
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  <TextInput
-                    style={{flex: 1, height: 50, color: 'black', padding: 10}}
-                    placeholder="Message"
-                    placeholderTextColor={'black'}
-                    multiline={true}
-                    numberOfLines={4}
-                    value={message || recordingDuration}
-                    editable={!recordingDuration} // Disable editing when recording
-                    onChangeText={text => {
-                      setMessage(text);
-                      handleTyping(text);
-                    }}
-                    onBlur={handleStopTyping}
-                    onFocus={() => handleTyping(message)}
-                  />
-                </View>
-                {recordingDuration ? (
-                  // Display "X" button when recording
-                  <TouchableOpacity
-                    style={{
-                      width: hp(20),
-                      height: hp(20),
-                      // borderWidth: 1,
-                      borderRadius: 50,
-                      marginRight: 15,
-                      backgroundColor: 'red',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                    onPress={() => {
-                      setRecordingDuration(null); // Clear recording
-                      setMessage(''); // Clear the TextInput
-                      setSelectedImage(null); // Clear selected image if any
-                      setRecordedAudio(null); // Clear recorded audio if any
-                    }}>
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                      }}>
-                      X
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  // Show camera icon when not recording
-                  <TouchableOpacity onPress={handleSelectImage}>
-                    <Image
-                      source={icons.simple_camera_icon}
-                      style={{
-                        width: 22.5,
-                        height: 20,
-                        marginLeft: 10,
-                        resizeMode: 'contain',
-                        tintColor: colors.black,
-                        marginRight: 5,
-                      }}
-                    />
-                  </TouchableOpacity>
-                )}
               </View>
-              <TouchableOpacity
-                onPressIn={handleMicIconPressIn}
-                onPressOut={handleMicIconPressOut}
-                onPress={handleIconPress}
-                style={{
-                  width: 50,
-                  height: 50,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Image
-                  source={
-                    message.trim() || selectedImage || recordedAudio
-                      ? icons.send_icon
-                      : icons.mic_icon
-                  }
-                  style={{width: hp(26), height: hp(26), resizeMode: 'contain'}}
-                />
-              </TouchableOpacity>
             </View>
-          </View>
+          )}
 
           <Modal
             transparent={true}
@@ -1415,6 +1864,441 @@ const ChatUserScreen = ({route}) => {
                 </Pressable>
               </View>
             </Pressable>
+          </Modal>
+
+          <Modal visible={showModal} transparent={true} animationType="fade">
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#00000088',
+              }}>
+              <View
+                style={{
+                  // padding: 20,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  width: '90%',
+                }}>
+                {selectedMessage?.type === 'image' ? (
+                  <Text
+                    style={{
+                      color: colors.black,
+                      textAlign: 'center',
+                      marginTop: hp(24),
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    Delete image?
+                  </Text>
+                ) : selectedMessage?.type === 'video' ? (
+                  <Text
+                    style={{
+                      color: colors.black,
+                      textAlign: 'center',
+                      marginTop: hp(24),
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins500,
+                    }}>
+                    Delete video?
+                  </Text>
+                ) : (
+                  <>
+                    <Text
+                      style={{
+                        color: colors.black,
+                        // textAlign: 'center',
+                        marginTop: hp(15),
+                        fontSize: fontSize(14),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                        marginLeft: hp(17),
+                      }}>
+                      Select an option
+                    </Text>
+
+                    {/*<View*/}
+                    {/*  style={{*/}
+                    {/*    width: '90%',*/}
+                    {/*    height: hp(66),*/}
+                    {/*    backgroundColor: '#EDF4FF',*/}
+                    {/*    alignItems: 'center',*/}
+                    {/*    justifyContent: 'center',*/}
+                    {/*    alignSelf: 'center',*/}
+                    {/*    borderRadius: 14,*/}
+                    {/*    marginTop: hp(20),*/}
+                    {/*  }}>*/}
+                    {/*  <Text*/}
+                    {/*    style={{*/}
+                    {/*      color: 'black',*/}
+                    {/*      fontSize: fontSize(14),*/}
+                    {/*      lineHeight: hp(18),*/}
+                    {/*      fontFamily: fontFamily.poppins500,*/}
+                    {/*    }}>*/}
+                    {/*    {selectedMessage?.message?.length > 35*/}
+                    {/*      ? `${selectedMessage.message.slice(0, 35)}...`*/}
+                    {/*      : selectedMessage?.message}*/}
+                    {/*  </Text>*/}
+                    {/*</View>*/}
+                  </>
+                )}
+
+                {selectedMessage?.type === 'image' ? (
+                  <View
+                    style={{
+                      alignSelf: 'center',
+                      marginTop: hp(28),
+                      marginBottom: hp(31),
+                      flexDirection: 'row',
+                      width: '90%',
+                      justifyContent: 'space-between',
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        width: '50%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}
+                      onPress={() => {
+                        // ✅ Corrected socket emit
+                        socketRef.current.emit('DeleteMessage', {
+                          to: selectedMessage?.to,
+                          from: selectedMessage?.from,
+                          messageId: selectedMessage?.id,
+                          messageDeletedAll: true,
+                        });
+
+                        // ✅ Optional local deletion
+                        setMessages(prevMessages =>
+                          prevMessages.filter(
+                            msg => msg.id !== selectedMessage?.id,
+                          ),
+                        );
+
+                        setShowModal(false);
+                        setSelectedMessage(null);
+                      }}>
+                      <Text
+                        style={{
+                          color: '#0F52BA',
+                          fontSize: fontSize(16),
+                          lineHeight: hp(24),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        Delete
+                      </Text>
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        height: hp(27),
+                        width: 1,
+                        backgroundColor: '#DEDEDE',
+                      }}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        width: '50%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}
+                      onPress={() => setShowModal(false)}>
+                      <Text
+                        style={{
+                          color: colors.black,
+                          fontSize: fontSize(16),
+                          lineHeight: hp(24),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : selectedMessage?.type === 'video' ? (
+                  <View
+                    style={{
+                      alignSelf: 'center',
+                      marginTop: hp(28),
+                      marginBottom: hp(31),
+                      flexDirection: 'row',
+                      width: '90%',
+                      justifyContent: 'space-between',
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        width: '50%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}
+                      onPress={() => {
+                        // ✅ Corrected socket emit
+                        socketRef.current.emit('DeleteMessage', {
+                          to: selectedMessage?.to,
+                          from: selectedMessage?.from,
+                          messageId: selectedMessage?.id,
+                          messageDeletedAll: true,
+                        });
+
+                        // ✅ Optional local deletion
+                        setMessages(prevMessages =>
+                          prevMessages.filter(
+                            msg => msg.id !== selectedMessage?.id,
+                          ),
+                        );
+
+                        setShowModal(false);
+                        setSelectedMessage(null);
+                      }}>
+                      <Text
+                        style={{
+                          color: '#0F52BA',
+                          fontSize: fontSize(16),
+                          lineHeight: hp(24),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        Delete
+                      </Text>
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        height: hp(27),
+                        width: 1,
+                        backgroundColor: '#DEDEDE',
+                      }}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        width: '50%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                      }}
+                      onPress={() => setShowModal(false)}>
+                      <Text
+                        style={{
+                          color: colors.black,
+                          fontSize: fontSize(16),
+                          lineHeight: hp(24),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                      padding: 20,
+                    }}>
+                    {/* Left empty space */}
+                    <View style={{flex: 1}} />
+
+                    {/* Right-side modal content */}
+                    <View style={{width: 180, alignItems: 'flex-end'}}>
+                      <TouchableOpacity
+                        style={{marginBottom: 15}}
+                        onPress={() => {
+                          // ✅ Corrected socket emit
+                          socketRef.current.emit('DeleteMessage', {
+                            to: selectedMessage?.to,
+                            from: selectedMessage?.from,
+                            messageId: selectedMessage?.id,
+                            messageDeletedAll: true,
+                          });
+
+                          // ✅ Optional local deletion
+                          setMessages(prevMessages =>
+                            prevMessages.filter(
+                              msg => msg.id !== selectedMessage?.id,
+                            ),
+                          );
+
+                          setShowModal(false);
+                          setSelectedMessage(null);
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'right',
+                            fontSize: fontSize(16),
+                            lineHeight: hp(20),
+                            fontFamily: fontFamily.poppins400,
+                            color: colors.black,
+                          }}>
+                          Delete Message for All
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          marginBottom: 15,
+
+                          color: colors.black,
+                        }}
+                        onPress={() => {
+                          Clipboard.setString(selectedMessage?.message);
+                          CopyId();
+                          setShowModal(false);
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'right',
+                            fontSize: fontSize(16),
+                            lineHeight: hp(20),
+                            fontFamily: fontFamily.poppins400,
+                            color: colors.black,
+                          }}>
+                          Copy Message
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{marginBottom: 5}}
+                        onPress={() => setShowModal(false)}>
+                        <Text
+                          style={{
+                            textAlign: 'right',
+                            color: '#0F52BA',
+                            fontSize: fontSize(16),
+                            lineHeight: hp(20),
+                            fontFamily: fontFamily.poppins400,
+                          }}>
+                          Cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </View>
+            </View>
+          </Modal>
+
+          <Modal
+            visible={deleteAllModal}
+            transparent={true}
+            animationType="fade">
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#00000088',
+              }}>
+              <View
+                style={{
+                  // padding: 20,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  width: '90%',
+                }}>
+                <Text
+                  style={{
+                    color: colors.black,
+                    textAlign: 'center',
+                    marginTop: hp(24),
+                    fontSize: fontSize(12),
+                    lineHeight: hp(14),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Are you sure want clear all chat?
+                </Text>
+
+                {/*<View*/}
+                {/*  style={{*/}
+                {/*    width: '90%',*/}
+                {/*    height: hp(66),*/}
+                {/*    backgroundColor: '#EDF4FF',*/}
+                {/*    alignItems: 'center',*/}
+                {/*    justifyContent: 'center',*/}
+                {/*    alignSelf: 'center',*/}
+                {/*    borderRadius: 14,*/}
+                {/*    marginTop: hp(20),*/}
+                {/*  }}>*/}
+                {/*  <Text*/}
+                {/*    style={{*/}
+                {/*      color: 'black',*/}
+                {/*      fontSize: fontSize(14),*/}
+                {/*      lineHeight: hp(18),*/}
+                {/*      fontFamily: fontFamily.poppins500,*/}
+                {/*    }}>*/}
+                {/*    {selectedMessage?.message?.length > 35*/}
+                {/*      ? `${selectedMessage.message.slice(0, 35)}...`*/}
+                {/*      : selectedMessage?.message}*/}
+                {/*  </Text>*/}
+                {/*</View>*/}
+
+                <View
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: hp(45),
+                    marginBottom: hp(31),
+                    flexDirection: 'row',
+                    width: '90%',
+                    justifyContent: 'space-between',
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      width: '50%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      alignSelf: 'center',
+                    }}
+                    onPress={() => {
+                      // ✅ Corrected socket emit
+                      socketRef.current.emit('DeleteChat', {
+                        from: userData?.userList?._id,
+                        to: userData?.friendList?._id,
+                        deleteChat: true,
+                      });
+
+                      // socketRef.current.emit('chatDeleted');
+                      console.log('DeleteChat event emitted'); // ✅ Add this
+
+                      setMessages([]);
+                      setDeleteAllModal(false);
+                    }}>
+                    <Text
+                      style={{
+                        color: '#0F52BA',
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Yes Clear
+                    </Text>
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      height: hp(27),
+                      width: 1,
+                      backgroundColor: '#DEDEDE',
+                    }}
+                  />
+                  <TouchableOpacity
+                    style={{
+                      width: '50%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      alignSelf: 'center',
+                    }}
+                    onPress={() => setDeleteAllModal(false)}>
+                    <Text
+                      style={{
+                        color: colors.black,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
           </Modal>
         </KeyboardAvoidingView>
       </SafeAreaView>

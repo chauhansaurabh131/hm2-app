@@ -1,358 +1,339 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
-  Alert,
+  ActivityIndicator,
   FlatList,
   View,
+  StyleSheet,
   Image,
   TouchableOpacity,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {icons, images} from '../../assets';
-import {style} from '../searchUserDataScreen/style';
-import {fontSize, hp} from '../../utils/helpers';
-import ProfileAvatar from '../../components/letterProfileComponent';
-import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import LinearGradient from 'react-native-linear-gradient';
 
-const Abc = ({route}) => {
-  const {data} = route.params;
+const Abc = () => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
-  const userId = user?.user?.id;
 
-  // console.log(' === var ===> ', user?.user?.id);
-
-  const [searchUserData, setSearchUserData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
+  const [notification, setNotification] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [declinedRequests, setDeclinedRequests] = useState({});
+  const [requestResponses, setRequestResponses] = useState({});
 
   useEffect(() => {
-    fetchUserData(1);
-  }, []);
-
-  const fetchUserData = async (pageNumber = 1) => {
-    if (!accessToken || isFetching) {
-      return;
-    }
-    if (totalPages && pageNumber > totalPages) {
+    if (!accessToken) {
       return;
     }
 
-    setIsFetching(true);
+    const fetchNotification = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/notification/get-notification-byid',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
 
-    const url = `https://stag.mntech.website/api/v1/user/search/search-user?page=${pageNumber}`;
-    const requestBody = {
-      minAge: data.minAge,
-      maxAge: data.maxAge,
-      maritalStatus: data.maritalStatus,
-      religion: data.religion,
-      motherTongue: data.motherTongue,
-      minHeight: data.minHeight,
-      maxHeight: data.maxHeight,
-      currentCountry: data.currentCountry,
-      state: [],
-      currentCity: data.currentCity,
+        if (!response.ok) {
+          throw new Error('Failed to fetch notifications');
+        }
+
+        const data = await response.json();
+        console.log('Notification data:', data);
+        setNotification(data.data?.results || []);
+      } catch (error) {
+        console.error('Error fetching notification:', error.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
+    fetchNotification();
+  }, [accessToken]);
+
+  const handleFriendRequestResponse = async (
+    userId,
+    requestId,
+    status,
+    notificationId,
+  ) => {
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            user: userId,
+            request: requestId,
+            status,
+          }),
         },
-        body: JSON.stringify(requestBody),
-      });
+      );
 
-      const responseData = await response.json();
-      const users = responseData?.data ?? [];
-
-      if (pageNumber === 1) {
-        setSearchUserData(users);
-      } else {
-        setSearchUserData(prev => [...prev, ...users]);
+      if (!response.ok) {
+        throw new Error('Failed to respond to friend request');
       }
 
-      if (responseData?.totalPages) {
-        setTotalPages(responseData.totalPages);
-      }
+      const data = await response.json();
+      console.log('Friend request response:', data);
 
-      setPage(pageNumber);
-
-      if (users.length === 0 || pageNumber >= responseData?.totalPages) {
-        console.log('No more data. Stopping further API calls.');
-        setTotalPages(pageNumber); // Lock further fetches
-      }
+      setRequestResponses(prev => ({...prev, [notificationId]: status}));
     } catch (error) {
-      console.error('Error fetching data:', error);
-      Alert.alert('Error', 'Failed to fetch user data.');
-    } finally {
-      setIsFetching(false);
+      console.error('Error responding to friend request:', error.message);
     }
   };
 
-  const loadMoreData = () => {
-    if (!isFetching && (!totalPages || page < totalPages)) {
-      fetchUserData(page + 1);
-    }
-  };
+  const handleFriendRequestAccepted = async (
+    userId,
+    requestId,
+    status,
+    notificationId,
+  ) => {
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            user: userId,
+            request: requestId,
+            status: status,
+          }),
+        },
+      );
 
-  const onThreeDotPress = item => {
-    console.log(' === onThreeDotPress ===> ', item?._id);
-    console.log(
-      ' === onThreeDotPress_unfriend_id ===> ',
-      item?.friendsDetails?._id,
-    );
-    // handleConfirmBlock(item?._id); // Call the API directly here
-  };
-
-  const SearchUserDataRenderItem = ({item}) => {
-    // console.log(
-    //   ' === SearchUserDataRenderItem___ ===> ',
-    //   item?.friendsDetails?.status,
-    // );
-
-    const planName = item?.subscriptionDetails?.selectedPlan
-      ? item?.subscriptionDetails?.selectedPlan.charAt(0).toUpperCase() +
-        item?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
-      : '';
-
-    const hasValidImage =
-      item.profilePic &&
-      item.profilePic !== 'null' &&
-      item.profilePic.trim() !== '';
-
-    const profilePrivacy =
-      item.privacySettingCustom?.profilePhotoPrivacy === true ||
-      item.privacySettingCustom?.showPhotoToFriendsOnly === true;
-
-    const {selectedPlan, status} = item?.subscriptionDetails || {};
-
-    // Determine if the selected plan is 'gold' (for the crown icon)
-    const isGoldPlan = selectedPlan === 'gold';
-    const isSilverPlan = selectedPlan === 'silver';
-    const isPlatinumPlan = selectedPlan === 'Platinum';
-
-    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
-
-    const starIconSource = item?.userShortListDetails?.id
-      ? icons.black_check_icon // Check icon if shortlisted
-      : icons.black_start_icon; // Star icon if not shortlisted
-
-    // console.log(' === uniqueId ===> ', item?.userUniqueId);
-
-    const userUniqueId = item?.userUniqueId;
-
-    const name = item.name
-      ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase()
-      : '';
-
-    const friendStatusData = item?.friendsDetails?.status;
-
-    const jobTitle = item?.userProfessional?.jobTitle
-      ? item?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
-        item?.userProfessional?.jobTitle.slice(1).toLowerCase()
-      : '';
-
-    const currentCity = item?.address?.currentCity
-      ? item?.address?.currentCity.charAt(0).toUpperCase() +
-        item?.address?.currentCity.slice(1).toLowerCase()
-      : '';
-
-    const currentCountry = item?.address?.currentCountry
-      ? item?.address?.currentCountry.charAt(0).toUpperCase() +
-        item?.address?.currentCountry.slice(1).toLowerCase()
-      : '';
-
-    const calculateAge = dateOfBirth => {
-      const birthDate = new Date(dateOfBirth);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-
-      if (
-        monthDifference < 0 ||
-        (monthDifference === 0 && today.getDate() < birthDate.getDate())
-      ) {
-        age--;
+      if (!response.ok) {
+        throw new Error('Failed to respond to friend request');
       }
-      return age;
-    };
 
-    const age = calculateAge(item.dateOfBirth);
+      const data = await response.json();
+      console.log('Friend request response:', data);
 
-    const imageCount = Array.isArray(item?.userProfilePic)
-      ? item.userProfilePic.length
-      : 0;
+      // ✅ Mark as declined
+      setRequestResponses(prev => ({...prev, [notificationId]: status}));
+    } catch (error) {
+      console.error('Error responding to friend request:', error.message);
+    }
+  };
 
-    const userAllImage = Array.isArray(item?.userProfilePic)
-      ? item.userProfilePic.map(pic => pic.url)
-      : [];
+  const handleClearNotifications = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/notification/delete-notification-byid',
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to clear notifications');
+      }
+
+      console.log('Notifications cleared');
+      setNotification([]); // Clear UI list
+    } catch (error) {
+      console.error('Error clearing notifications:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const groupNotificationsByDate = notifications => {
+    const grouped = {};
+
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const isSameDay = (d1, d2) =>
+      d1.getDate() === d2.getDate() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getFullYear() === d2.getFullYear();
+
+    notifications.forEach(item => {
+      const date = new Date(item.createdAt);
+      let label = '';
+
+      if (isSameDay(date, today)) {
+        label = 'Today';
+      } else if (isSameDay(date, yesterday)) {
+        label = 'Yesterday';
+      } else {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        label = `${day}-${month}-${year}`;
+      }
+
+      if (!grouped[label]) {
+        grouped[label] = [];
+      }
+
+      grouped[label].push(item);
+    });
+
+    // Flatten to an array with headers
+    const finalList = [];
+    Object.entries(grouped).forEach(([label, items]) => {
+      finalList.push({type: 'header', label});
+      items.forEach(item => {
+        finalList.push({type: 'item', data: item});
+      });
+    });
+
+    return finalList;
+  };
+
+  const groupedData = groupNotificationsByDate(notification);
+
+  const renderItem = ({item}) => {
+    if (item.type === 'header') {
+      return (
+        <View style={{marginVertical: 10}}>
+          <Text
+            style={{
+              fontSize: fontSize(14),
+              fontFamily: fontFamily.poppins600,
+              color: '#888',
+            }}>
+            {item.label}
+          </Text>
+        </View>
+      );
+    }
+
+    const notification = item.data;
 
     return (
-      <View style={style.flatListContainer}>
-        {/*<Image*/}
-        {/*  source={*/}
-        {/*    item.profilePic ? {uri: item.profilePic} : images.empty_male_Image*/}
-        {/*  }*/}
-        {/*  style={style.flatListImageBody}*/}
-        {/*  resizeMode={'cover'}*/}
-        {/*/>*/}
-
-        {hasValidImage ? (
-          <>
-            <Image
-              source={{uri: item.profilePic}}
-              style={style.flatListImageBody}
-            />
-            {profilePrivacy && item?.friendsDetails?.status !== 'accepted' && (
-              <Image
-                source={icons.logLogo} // make sure you have a `lock` icon inside `icons`
+      <View style={{flex: 1}}>
+        <View style={{flexDirection: 'row', padding: 10, flex: 1}}>
+          <Image
+            source={{uri: notification?.otherUserId?.profilePic}}
+            style={{width: 50, height: 50, borderRadius: 25, marginRight: 10}}
+          />
+          <View style={{flex: 1}}>
+            <TouchableOpacity>
+              <View
                 style={{
-                  position: 'absolute',
-                  tintColor: '#fff',
-                  resizeMode: 'contain',
-                  width: hp(33),
-                  height: hp(44),
-                  alignSelf: 'center',
-                  marginTop: hp(200),
-                }}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            <ProfileAvatar
-              firstName={item.firstName || item.name}
-              lastName={item.lastName}
-              textStyle={{
-                width: '100%',
-                height: hp(449),
-                borderRadius: 18,
-                marginBottom: hp(13),
-              }}
-              profileTexts={{fontSize: fontSize(60), marginTop: -80}}
-            />
-          </>
-        )}
-
-        <LinearGradient
-          colors={['transparent', 'rgba(0, 0, 0, 0.9)']}
-          style={style.imageBottomShadow}
-        />
-        <View style={style.imageBodyDetailContainer}>
-          <View style={style.onlineTextBody}>
-            <Text style={style.onlineText}>Online</Text>
-          </View>
-
-          <TouchableOpacity>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={style.nameText}>{name || 'No Name Available'}</Text>
-              {subPlan && (
-                <View
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: 3,
+                }}>
+                <Text
                   style={{
-                    height: 22,
-                    backgroundColor: 'orange',
-                    marginLeft: 11,
-                    borderRadius: 50,
-                    flexDirection: 'row',
-                    paddingHorizontal: 7,
+                    color: colors.black,
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins600,
                   }}>
-                  <Image
-                    source={icons.crownIcon}
-                    style={{
-                      width: 11,
-                      height: 11,
-                      tintColor: 'white',
-                      alignSelf: 'center',
-                      resizeMode: 'contain',
-                    }}
-                  />
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: fontSize(12),
-                      fontWeight: 'bold',
-                      alignSelf: 'center',
-                      marginLeft: 3,
-                    }}>
-                    {planName}
-                  </Text>
-                </View>
-              )}
-            </View>
+                  {notification?.otherUserId?.name}
+                </Text>
+              </View>
 
-            <View style={{flexDirection: 'row', marginTop: 3}}>
-              <Text style={style.userAge}>{age || 'N/A'} yrs,</Text>
-              <Text style={style.userHeightStyle}>{item?.height}</Text>
-
-              <View style={style.verticalLineStyle} />
-
-              <Text style={style.jobTittleText}>{jobTitle || 'N/A'}</Text>
-            </View>
-
-            <View style={style.userAddressDetailsContainer}>
-              <Text style={style.currentCityStyle}>
-                {currentCity || 'N/A'},
-              </Text>
-
-              <Text style={style.currentCountryStyle}>
-                {' '}
-                {currentCountry || 'N/A'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <View style={style.imageBottomImageContainer}>
-            <Image
-              source={images.gradient_button_background_img}
-              style={style.gradientImageContainer}
-            />
-            <TouchableOpacity
-              activeOpacity={0.5}
-              // onPress={openModal}
-              style={style.gradientImageButton}>
-              <Image source={icons.couple_icon} style={style.coupleImage} />
-              <Text style={style.matchesText}>
-                {/*85% Match*/}
-                {item?.matchPercentage}% Match
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(12),
+                  lineHeight: hp(18),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                {requestResponses[notification.id] === 'accepted'
+                  ? 'Accepted your request'
+                  : requestResponses[notification.id] === 'rejected'
+                  ? 'Declined your request'
+                  : notification.title}
               </Text>
             </TouchableOpacity>
 
-            <View style={style.bottomImageContainer}>
-              {(!profilePrivacy ||
-                item?.friendsDetails?.status === 'accepted') && (
-                <TouchableOpacity
-                  style={style.cameraImageContainer}
-                  activeOpacity={0.5}>
-                  <Image
-                    source={icons.new_camera_icon}
-                    style={style.cameraImage}
-                  />
-                  <Text style={{color: colors.white}}>{imageCount}</Text>
-                </TouchableOpacity>
+            {/* Accept / Not Now buttons */}
+            {notification.title === 'Sent you a request' &&
+              !requestResponses[notification.id] && (
+                <View style={{flexDirection: 'row', marginTop: 6}}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleFriendRequestResponse(
+                        notification?.userId,
+                        notification?.reqId,
+                        'rejected',
+                        notification?.id,
+                      )
+                    }
+                    activeOpacity={0.5}
+                    style={{
+                      backgroundColor: '#EEEEEE',
+                      borderRadius: 20,
+                      width: 96,
+                      height: 40,
+                      justifyContent: 'center',
+                      marginRight: 14,
+                    }}>
+                    <Text
+                      style={{
+                        color: 'black',
+                        textAlign: 'center',
+                        fontSize: fontSize(14),
+                        lineHeight: hp(21),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Not now
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() =>
+                      handleFriendRequestAccepted(
+                        notification?.userId,
+                        notification?.reqId,
+                        'accepted',
+                        notification?.id,
+                      )
+                    }>
+                    <LinearGradient
+                      colors={['#9413D0', '#0D4EB3']}
+                      start={{x: 1, y: 0}}
+                      end={{x: 0, y: 0}}
+                      style={{
+                        borderRadius: 20,
+                        justifyContent: 'center',
+                        width: 96,
+                        height: 40,
+                      }}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          textAlign: 'center',
+                          fontSize: fontSize(14),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins400,
+                        }}>
+                        Accept
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               )}
-
-              <TouchableOpacity
-                activeOpacity={0.5}
-                style={style.starIconContainer}>
-                <Image source={starIconSource} style={style.startIcon} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={style.threeDotContainer}
-                onPress={() => {
-                  onThreeDotPress(item);
-                }}>
-                <Image
-                  source={icons.new_three_dot}
-                  style={style.threeDotImage}
-                />
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </View>
@@ -360,29 +341,29 @@ const Abc = ({route}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <FlatList
-        data={searchUserData}
-        keyExtractor={item => item._id}
-        renderItem={SearchUserDataRenderItem}
-        onEndReached={loadMoreData}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isFetching ? (
-            <View style={{alignItems: 'center', padding: 20}}>
-              <Text style={{color: 'black'}}>Loading more...</Text>
-            </View>
-          ) : !isFetching && searchUserData.length === 0 ? (
-            <View style={{alignItems: 'center', padding: 20}}>
-              <Text style={{color: 'gray'}}>No user found.</Text>
-            </View>
-          ) : page >= totalPages && searchUserData.length > 0 ? (
-            <View style={{alignItems: 'center', padding: 20}}>
-              <Text style={{color: 'gray'}}>No more data to load.</Text>
-            </View>
-          ) : null
-        }
-      />
+    <SafeAreaView style={{flex: 1, padding: 16, backgroundColor: 'white'}}>
+      <TouchableOpacity
+        style={{marginBottom: 10}}
+        onPress={handleClearNotifications}>
+        <Text>Clear Notification</Text>
+      </TouchableOpacity>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : notification.length > 0 ? (
+        <FlatList
+          data={groupedData}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => {
+            if (item.type === 'header') {
+              return `header-${item.label}`;
+            }
+            return item.data?.id?.toString() ?? index.toString();
+          }}
+        />
+      ) : (
+        <Text>No notification data</Text>
+      )}
     </SafeAreaView>
   );
 };

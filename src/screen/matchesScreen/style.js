@@ -8,7 +8,7 @@ const style = StyleSheet.create({
     backgroundColor: colors.white,
   },
   headerContainer: {
-    height: hp(122),
+    height: hp(80),
   },
   headerContainerTittleStyle: {
     flexDirection: 'row',

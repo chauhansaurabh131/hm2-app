@@ -197,6 +197,10 @@ export const icons = {
   new_show_password_icon: require('./icons/new_show_password_icon.png'),
   new_secure_Eye_icon: require('./icons/new_secure_Eye_icon.png'),
   recent_view_icon: require('./icons/recent_viewed.png'),
+  new_no_message_icon: require('./icons/new_no_message.png'),
+  blub_icon: require('./icons/blub_icon.png'),
+  plus_button_gradient: require('./icons/plus_button_gradient.png'),
+  no_notification_icon: require('./icons/no_notification_icon.png'),
 };
 
 export const gif = {

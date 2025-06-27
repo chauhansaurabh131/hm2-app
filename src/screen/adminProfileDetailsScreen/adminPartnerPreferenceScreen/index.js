@@ -615,10 +615,12 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     {minAge} - {maxAge}
                   </Text>
 
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+                  <View style={{position: 'absolute', right: 5, top: -3}}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
 
@@ -642,10 +644,13 @@ const AdminPartnerPreferenceScreen = (...params) => {
                   <Text style={style.subTittleText}>
                     {minPreferHeight} - {maxPreferHeight}
                   </Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+
+                  <View style={{position: 'absolute', right: 5, top: -3}}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
 
@@ -669,10 +674,21 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     justifyContent: 'space-between',
                   }}>
                   <Text style={style.tittleTexts}>Select Prefer Country</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+
+                  <View
+                    style={{
+                      position: 'absolute',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      right: 5,
+                      top: 35,
+                    }}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
 
                 <View
@@ -751,10 +767,21 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     justifyContent: 'space-between',
                   }}>
                   <Text style={style.tittleTexts}>Select Prefer State</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+
+                  <View
+                    style={{
+                      position: 'absolute',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      right: 5,
+                      top: 35,
+                    }}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
 
                 <View
@@ -833,10 +860,21 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     justifyContent: 'space-between',
                   }}>
                   <Text style={style.tittleTexts}>Select Prefer City</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+
+                  <View
+                    style={{
+                      position: 'absolute',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      alignItems: 'center',
+                      right: 5,
+                      top: 35,
+                    }}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
 
                 <View
@@ -913,10 +951,13 @@ const AdminPartnerPreferenceScreen = (...params) => {
                   }}
                   style={style.subTittleContainerStyle}>
                   <Text style={style.subTittleText}>{preferDiet}</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+
+                  <View style={{position: 'absolute', right: 5, top: -3}}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
 
@@ -932,7 +973,10 @@ const AdminPartnerPreferenceScreen = (...params) => {
               <View
                 style={[
                   style.subTittleContainer,
-                  {marginTop: hp(26), marginHorizontal: 17},
+                  {
+                    marginTop: hp(26),
+                    marginHorizontal: 17,
+                  },
                 ]}>
                 <Text style={style.tittleText}>Select Annual Income</Text>
 
@@ -944,10 +988,13 @@ const AdminPartnerPreferenceScreen = (...params) => {
                   <Text style={style.subTittleText}>
                     {minAnnualIncome} - {maxAnnualIncome} Lacs
                   </Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
+
+                  <View style={{position: 'absolute', right: 5, top: -3}}>
+                    <Image
+                      source={icons.rightSideIcon}
+                      style={style.rightSideIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
 

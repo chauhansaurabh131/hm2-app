@@ -67,7 +67,7 @@ const HomeScreen = ({route}) => {
     dispatch(getSuccessStories());
   }, [dispatch]);
 
-  console.log(' === storiesData ===> ', storiesData?.data?.totalResults);
+  // console.log(' === storiesData ===> ', storiesData?.data?.totalResults);
 
   const userImage = user?.user?.profilePic;
 
@@ -127,9 +127,9 @@ const HomeScreen = ({route}) => {
 
   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
 
-  console.log(' === userProfileCompleted ===> ', userProfileCompleted);
+  // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
 
-  console.log(' === userPartnerPreCompleted ===> ', userPartnerPreCompleted);
+  // console.log(' === userPartnerPreCompleted ===> ', userPartnerPreCompleted);
 
   useEffect(() => {
     if (userPartnerPreCompleted === false) {

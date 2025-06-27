@@ -30,7 +30,7 @@ const MyProfileScreen = () => {
 
   // console.log(' === userData.... ===> ', userData?.writeBoutYourSelf);
 
-  console.log(' === userData--+++ ===> ', userData);
+  // console.log(' === userData--+++ ===> ', userData);
 
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -62,6 +62,8 @@ const MyProfileScreen = () => {
 
   const {dataCount} = useSelector(state => state.home);
 
+  console.log(' === dataCount ===> ', dataCount);
+
   useFocusEffect(
     useCallback(() => {
       setTopModalVisible(false);
@@ -84,6 +86,8 @@ const MyProfileScreen = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  // console.log(' === user?.user____ ===> ', user?.user);
+
   const firstName = capitalizeFirstLetter(user?.user?.firstName);
   const lastName = capitalizeFirstLetter(user?.user?.lastName);
   const jobTitle = capitalizeFirstLetter(
@@ -105,14 +109,21 @@ const MyProfileScreen = () => {
   };
   const age = calculateAge(user?.user?.dateOfBirth);
 
-  console.log(' === user?.user?.dateOfBirth ===> ', user?.user?.dateOfBirth);
-  console.log(' === age ===> ', age);
+  // console.log(' === user?.user?.dateOfBirth ===> ', user?.user?.dateOfBirth);
+  // console.log(' === age ===> ', age);
 
   const height = user.user?.height;
 
-  const imageCount = Array.isArray(user?.user?.userProfilePic)
-    ? user?.user?.userProfilePic.length
-    : 0;
+  // const imageCount = Array.isArray(user?.user?.userProfilePic)
+  //   ? user?.user?.userProfilePic.length
+  //   : 0;
+
+  const imageList = Array.isArray(user?.user?.userProfilePic)
+    ? user.user.userProfilePic.filter(img => !img.isDeleted)
+    : [];
+
+  const uniqueUrls = new Set(imageList.map(img => img.url));
+  const imageCount = uniqueUrls.size;
 
   // const userAllImage = Array.isArray(user?.user?.userProfilePic)
   //   ? user?.user?.userProfilePic.map(pic => pic.url)
@@ -274,10 +285,6 @@ const MyProfileScreen = () => {
                       alignItems: 'center',
                       flexDirection: 'row',
                     }}
-                    // onPress={() => {
-                    //   // navigation.navigate('UserUploadImageFullScreen');
-                    //   // navigation.navigate('SetProfilePictureScreen');
-                    // }}
                     onPress={userAllImageShare}>
                     <Image
                       source={icons.new_camera_icon}

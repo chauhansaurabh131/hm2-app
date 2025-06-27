@@ -170,23 +170,25 @@ const MatchesInReceivedScreen = () => {
   };
 
   const handleDecline = (userID, requestedId) => {
-    dispatch(
-      accepted_Decline_Request(
-        {
-          user: userId,
-          request: requestedId,
-          status: 'rejected',
-        },
-        () => {
-          setRequestStatus('declined');
-          setData(prevData =>
-            prevData.map(item =>
-              item?._id === requestedId ? {...item, status: 'declined'} : item,
-            ),
-          );
-        },
-      ),
-    );
+    console.log(' === var ===> ', userId, requestedId);
+
+    // dispatch(
+    //   accepted_Decline_Request(
+    //     {
+    //       user: userId,
+    //       request: requestedId,
+    //       status: 'rejected',
+    //     },
+    //     () => {
+    //       setRequestStatus('declined');
+    //       setData(prevData =>
+    //         prevData.map(item =>
+    //           item?._id === requestedId ? {...item, status: 'declined'} : item,
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
   };
 
   const onCopyIdPress = async selectedUniqueId => {
