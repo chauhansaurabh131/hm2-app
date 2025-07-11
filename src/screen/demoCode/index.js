@@ -215,23 +215,8 @@ const DemoCode = () => {
       {isConnecting ? (
         <ActivityIndicator size="large" color={colors.blue} />
       ) : (
-        <FlatList
-          data={friends}
-          keyExtractor={item => item.friendId}
-          renderItem={renderFriendItem}
-        />
+        <Text>skvl</Text>
       )}
-
-      <TouchableOpacity
-        style={{
-          padding: 15,
-          backgroundColor: '#eee',
-          alignItems: 'center',
-          marginTop: 10,
-        }}
-        onPress={() => {}}>
-        <Text style={{color: 'black', fontSize: 18}}>Next Page</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };

@@ -28,7 +28,7 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 17, marginTop: hp(43)}}>
+      <View style={{marginHorizontal: 17}}>
         {/* Use the NewBottomSheetMultipleValueSelect component */}
         <NewBottomSheetMultipleValueSelect
           label="Select Hobbies"

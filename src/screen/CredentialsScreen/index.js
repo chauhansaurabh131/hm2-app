@@ -29,7 +29,9 @@ const CredentialsScreen = () => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef();
   const bottomSheetEmailChangeRef = useRef();
+  const bottomSheetMobileNumberChangeRef = useRef();
   const bottomSheetEmailChangeSubmitRef = useRef();
+  const bottomSheetMobileNumberChangeSubmitRef = useRef();
   const passwordBottomSheetRef = useRef();
   const bottomSheetPasswordChangeRef2 = useRef(null);
   const [selectedCredential, setSelectedCredential] = useState(null);
@@ -59,6 +61,8 @@ const CredentialsScreen = () => {
   const [timer, setTimer] = useState(120); // 2 minutes
   const [loader, setLoader] = useState(false);
   const inputRefs = useRef([]);
+
+  const isMobileValid = newMobile.length === 10;
 
   // console.log(' === currentEmail ===> ', currentEmail);
 
@@ -223,6 +227,59 @@ const CredentialsScreen = () => {
       });
   };
 
+  const onChangeNumberNumberPress = () => {
+    // bottomSheetMobileNumberChangeRef.current.close();
+    // bottomSheetMobileNumberChangeSubmitRef.current.open();
+
+    const enteredOtp = otp.join('');
+    console.log('=== enteredOtp ===> ', enteredOtp);
+    setLoader(true);
+
+    const payload = {
+      mobileNumber: {
+        currentMobileNumber: currentMobile,
+        newMobileNumber: newMobile,
+        otp: enteredOtp,
+      },
+    };
+
+    fetch(
+      'https://stag.mntech.website/api/v1/user/auth/verify-otp-change-email',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      },
+    )
+      .then(response => response.json())
+      .then(data => {
+        console.log('✅ Success:', data);
+
+        if (data?.data?.success === true) {
+          // ✅ OTP is valid
+          setLoader(false);
+          apiDispatch(updateDetails());
+          bottomSheetMobileNumberChangeRef.current.close();
+          bottomSheetMobileNumberChangeSubmitRef.current.open();
+          setOtp(['', '', '', '']);
+        } else {
+          // ❌ OTP is invalid or other server-side issue
+          setLoader(false);
+          setOtp(['', '', '', '']);
+          alert(data?.data?.message || 'Something went wrong.');
+        }
+      })
+      .catch(error => {
+        console.error('❌ Error:', error);
+        setLoader(false);
+        setOtp(['', '', '', '']);
+        alert('Network error. Please try again.');
+      });
+  };
+
   const handleSubmit = async () => {
     console.log('=== newEmail ===>', newEmail);
     setLoader(true);
@@ -366,13 +423,57 @@ const CredentialsScreen = () => {
     ? `*******${String(currentMobile).slice(-3)}`
     : 'N/A';
 
-  const onMobileChangePress = () => {
-    // setVerificationCodeSent(true);
+  const onMobileChangePress = async () => {
+    // apiDispatch(updateDetails({mobileNumber: newMobile}));
 
-    apiDispatch(updateDetails({mobileNumber: newMobile}));
+    // bottomSheetMobileNumberChangeRef.current.open();
+    //
+    // bottomSheetRef.current.close();
+    // passwordBottomSheetRef.current.close();
 
-    bottomSheetRef.current.close();
-    passwordBottomSheetRef.current.close();
+    console.log(' === var ===> ', currentMobile, newMobile);
+
+    setLoader(true);
+
+    try {
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/auth/send-otp-change-email',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            mobileNumber: {
+              currentMobileNumber: currentMobile,
+              newMobileNumber: newMobile,
+            },
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('OTP sent successfully:', data);
+        setLoader(false);
+
+        // Open OTP verification bottom sheet
+        bottomSheetMobileNumberChangeRef.current.open();
+
+        // Optionally close other bottom sheets
+        bottomSheetRef.current.close();
+        passwordBottomSheetRef.current.close();
+      } else {
+        console.warn('Failed to send OTP:', data.message || data);
+        setLoader(false);
+        // Show error message to user if needed
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      setLoader(false);
+    }
   };
 
   const handleVerificationSubmit = () => {
@@ -398,9 +499,7 @@ const CredentialsScreen = () => {
       case 'email':
         return (
           <View style={style.bottomSheetContainer}>
-            <View style={{marginHorizontal: 30}}>
-              <Text style={style.bottomSheetTittleText}>Update Email</Text>
-            </View>
+            <Text style={style.bottomSheetTittleText}>Update Email</Text>
 
             <View
               style={{
@@ -411,8 +510,15 @@ const CredentialsScreen = () => {
               }}
             />
 
-            <View style={[style.bottomSheetBodyContainer, {marginTop: 15}]}>
-              <Text style={style.bottomSheetBodyTitleText}>Current Email</Text>
+            <View
+              style={[
+                style.bottomSheetBodyContainer,
+                {marginTop: 15, marginHorizontal: hp(30)},
+              ]}>
+              <Text
+                style={[style.bottomSheetBodyTitleText, {marginTop: hp(10)}]}>
+                Current Email
+              </Text>
 
               <TextInput
                 placeholder={currentEmail}
@@ -421,7 +527,10 @@ const CredentialsScreen = () => {
                 style={style.textInputContainer}
               />
 
-              <Text style={style.bottomSheetBodyTitleText}>New Email</Text>
+              <Text
+                style={[style.bottomSheetBodyTitleText, {marginTop: hp(21)}]}>
+                New Email
+              </Text>
 
               <TextInput
                 onChangeText={handleEmailChange}
@@ -489,61 +598,79 @@ const CredentialsScreen = () => {
                     }}
                   />
 
-                  <View style={{marginTop: 15}}>
-                    <Text style={style.bottomSheetBodyTitleText}>
-                      Current Mobile Number
+                  <View style={{marginHorizontal: hp(30), marginTop: hp(15)}}>
+                    <View>
+                      <Text
+                        style={[
+                          style.bottomSheetBodyTitleText,
+                          {marginTop: hp(10)},
+                        ]}>
+                        Current Mobile Number
+                      </Text>
+                    </View>
+
+                    <View>
+                      <TextInput
+                        placeholder={maskedMobileString}
+                        placeholderTextColor={'black'}
+                        editable={false}
+                        style={style.textInputContainer}
+                      />
+                    </View>
+
+                    <Text
+                      style={[
+                        style.bottomSheetBodyTitleText,
+                        {marginTop: hp(21)},
+                      ]}>
+                      New Mobile Number
                     </Text>
-                  </View>
 
-                  <TextInput
-                    placeholder={maskedMobileString}
-                    placeholderTextColor={'black'}
-                    editable={false}
-                    style={style.textInputContainer}
-                  />
+                    <TextInput
+                      onChangeText={handleNewMobileChange} // Handle changes in the new mobile number
+                      placeholder={'Type'}
+                      keyboardType="numeric" // Show numeric keyboard
+                      maxLength={10}
+                      value={newMobile}
+                      style={style.textInputContainer}
+                    />
 
-                  <Text style={style.bottomSheetBodyTitleText}>
-                    New Mobile Number
-                  </Text>
+                    <View style={style.bottomSheetButtonContainer}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => bottomSheetRef.current.close()}>
+                        <LinearGradient
+                          colors={['#0D4EB3', '#9413D0']}
+                          style={style.bottomSheetNotNowContainer}>
+                          <View style={style.notNowButtonContainer}>
+                            <Text style={style.notNowButtonTextStyle}>
+                              Not Now
+                            </Text>
+                          </View>
+                        </LinearGradient>
+                      </TouchableOpacity>
 
-                  <TextInput
-                    onChangeText={handleNewMobileChange} // Handle changes in the new mobile number
-                    placeholder={'Type'}
-                    keyboardType="numeric" // Show numeric keyboard
-                    maxLength={10}
-                    value={newMobile}
-                    style={style.textInputContainer}
-                  />
-
-                  <View style={style.bottomSheetButtonContainer}>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => bottomSheetRef.current.close()}>
-                      <LinearGradient
-                        colors={['#0D4EB3', '#9413D0']}
-                        style={style.bottomSheetNotNowContainer}>
-                        <View style={style.notNowButtonContainer}>
-                          <Text style={style.notNowButtonTextStyle}>
-                            Not Now
+                      <TouchableOpacity
+                        activeOpacity={0.5}
+                        onPress={() => {
+                          // setVerificationCodeSent(true);
+                          onMobileChangePress();
+                        }}>
+                        <LinearGradient
+                          colors={['#0D4EB3', '#9413D0']}
+                          start={{x: 0, y: 0}}
+                          end={{x: 1, y: 0}}
+                          // style={style.submitButtonContainer}
+                          style={[
+                            style.submitButtonContainer,
+                            {opacity: isMobileValid ? 1 : 0.5}, // visually show it's disabled
+                          ]}>
+                          <Text style={style.submitButtonTextStyle}>
+                            Submit
                           </Text>
-                        </View>
-                      </LinearGradient>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      activeOpacity={0.5}
-                      onPress={() => {
-                        // setVerificationCodeSent(true);
-                        onMobileChangePress();
-                      }}>
-                      <LinearGradient
-                        colors={['#0D4EB3', '#9413D0']}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}
-                        style={style.submitButtonContainer}>
-                        <Text style={style.submitButtonTextStyle}>Submit</Text>
-                      </LinearGradient>
-                    </TouchableOpacity>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </>
@@ -635,9 +762,7 @@ const CredentialsScreen = () => {
   const renderBottomSheetEmailChangeContent = () => {
     return (
       <View style={style.bottomSheetContainer}>
-        <View style={{marginHorizontal: 30}}>
-          <Text style={style.bottomSheetTittleText}>Verify Email</Text>
-        </View>
+        <Text style={style.bottomSheetTittleText}>Verify Email</Text>
 
         <View
           style={{
@@ -691,7 +816,7 @@ const CredentialsScreen = () => {
                 setTimer(120);
                 setResendAvailable(false);
                 // You can also trigger resend OTP API here
-                // resendOtpEmail();
+                handleSubmit();
               }}>
               <Text style={{color: colors.black, fontWeight: 'bold'}}>
                 Resend OTP
@@ -741,12 +866,14 @@ const CredentialsScreen = () => {
     );
   };
 
-  const renderPasswordBottomSheetContent = () => {
+  const maskedMobileStrings = currentMobileString
+    ? `*******${String(newMobile).slice(-3)}`
+    : 'N/A';
+
+  const renderBottomSheetMobileNumberChangeContent = () => {
     return (
       <View style={style.bottomSheetContainer}>
-        <View style={{marginHorizontal: 30}}>
-          <Text style={style.bottomSheetTittleText}>Update Password</Text>
-        </View>
+        <Text style={style.bottomSheetTittleText}>Verify Mobile Number</Text>
 
         <View
           style={{
@@ -757,7 +884,121 @@ const CredentialsScreen = () => {
           }}
         />
 
-        <View style={[style.bottomSheetBodyContainer, {marginTop: 15}]}>
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: hp(34),
+            fontSize: fontSize(14),
+            lineHeight: hp(18),
+            fontFamily: fontFamily.poppins400,
+            color: '#AEAEAE',
+          }}>
+          OTP sent on{' '}
+          <Text style={{color: colors.black}}>
+            {' '}
+            {maskEmail(maskedMobileStrings)}
+          </Text>
+        </Text>
+
+        <View style={styles.container}>
+          <View style={styles.otpContainer}>
+            {otp.map((digit, index) => (
+              <TextInput
+                key={index}
+                value={digit}
+                onChangeText={value => handleOtpChange(value, index)}
+                keyboardType="numeric"
+                maxLength={1}
+                secureTextEntry={false}
+                style={[
+                  styles.otpInput,
+                  digit ? styles.activeInput : styles.inactiveInput,
+                  digit ? styles.digitStyle : styles.placeholderStyle,
+                ]}
+                ref={ref => (inputRefs.current[index] = ref)}
+                placeholder="0"
+                placeholderTextColor="#D9D9D9"
+              />
+            ))}
+          </View>
+        </View>
+
+        <View style={{alignSelf: 'center', top: -5}}>
+          {resendAvailable ? (
+            <TouchableOpacity
+              onPress={() => {
+                setTimer(120);
+                setResendAvailable(false);
+                // You can also trigger resend OTP API here
+                onMobileChangePress();
+              }}>
+              <Text style={{color: colors.black, fontWeight: 'bold'}}>
+                Resend OTP
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={{color: colors.lightGray}}>
+              Resend in{' '}
+              <Text style={{color: colors.black}}>{formatTime(timer)} Min</Text>
+            </Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={{marginTop: hp(45)}}
+          activeOpacity={0.7}
+          onPress={onChangeNumberNumberPress}>
+          <LinearGradient
+            colors={['#0F52BA', '#8225AF']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1.2}}
+            style={{
+              width: '85%',
+              height: hp(50),
+              borderRadius: 50,
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              // marginTop: hp(75),
+            }}>
+            {loader ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Verify Code
+              </Text>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const renderPasswordBottomSheetContent = () => {
+    return (
+      <View style={style.bottomSheetContainer}>
+        <Text style={style.bottomSheetTittleText}>Update Password</Text>
+
+        <View
+          style={{
+            width: '100%',
+            height: 0.7,
+            backgroundColor: '#E7E7E7',
+            marginTop: 20,
+          }}
+        />
+
+        <View
+          style={[
+            style.bottomSheetBodyContainer,
+            {marginTop: hp(21), marginHorizontal: hp(30)},
+          ]}>
           <Text style={style.bottomSheetBodyTitleText}>
             Enter Current Password
           </Text>
@@ -792,7 +1033,9 @@ const CredentialsScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={style.bottomSheetBodyTitleText}>New Password</Text>
+          <Text style={[style.bottomSheetBodyTitleText, {marginTop: hp(21)}]}>
+            New Password
+          </Text>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TextInput
@@ -822,7 +1065,9 @@ const CredentialsScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={style.bottomSheetBodyTitleText}>Confirm Password</Text>
+          <Text style={[style.bottomSheetBodyTitleText, {marginTop: hp(21)}]}>
+            Confirm Password
+          </Text>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TextInput
@@ -855,7 +1100,11 @@ const CredentialsScreen = () => {
           </View>
 
           <View style={style.bottomSheetButtonContainer}>
-            <TouchableOpacity activeOpacity={0.7} onPress={handleSubmit}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                passwordBottomSheetRef.current.close();
+              }}>
               <LinearGradient
                 colors={['#0D4EB3', '#9413D0']}
                 style={style.bottomSheetNotNowContainer}>
@@ -1049,6 +1298,31 @@ const CredentialsScreen = () => {
       </RBSheet>
 
       <RBSheet
+        ref={bottomSheetMobileNumberChangeRef}
+        height={hp(430)}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        onOpen={() => {
+          setTimer(120); // Start timer when opened
+          setResendAvailable(false);
+        }}
+        onClose={() => {
+          setTimer(120); // Reset timer when closed
+          setResendAvailable(false);
+        }}
+        customStyles={{
+          draggableIcon: {
+            backgroundColor: '#ffffff',
+          },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {renderBottomSheetMobileNumberChangeContent()}
+      </RBSheet>
+
+      <RBSheet
         ref={bottomSheetEmailChangeSubmitRef}
         height={hp(350)}
         closeOnDragDown={true}
@@ -1091,6 +1365,77 @@ const CredentialsScreen = () => {
             // onPress={onChangeEmailPress}
             onPress={() => {
               bottomSheetEmailChangeSubmitRef.current.close();
+            }}>
+            <LinearGradient
+              colors={['#0F52BA', '#8225AF']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1.2}}
+              style={{
+                width: hp(120),
+                height: hp(50),
+                borderRadius: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+                // marginTop: hp(75),
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Ok
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
+
+      <RBSheet
+        ref={bottomSheetMobileNumberChangeSubmitRef}
+        height={hp(350)}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        customStyles={{
+          draggableIcon: {
+            backgroundColor: '#ffffff',
+          },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        {/*{renderBottomSheetEmailChangeContent()}*/}
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <Image
+            source={icons.confirm_check_icon}
+            style={{
+              tintColor: '#0F52BA',
+              marginTop: hp(45),
+              height: hp(40),
+              width: hp(40),
+              resizeMode: 'contain',
+            }}
+          />
+          <Text
+            style={{
+              marginTop: hp(48),
+              fontSize: fontSize(18),
+              lineHeight: hp(26),
+              fontFamily: fontFamily.poppins400,
+              color: colors.black,
+            }}>
+            Mobile Number has been updated
+          </Text>
+
+          <TouchableOpacity
+            style={{marginTop: hp(45)}}
+            activeOpacity={0.7}
+            // onPress={onChangeEmailPress}
+            onPress={() => {
+              bottomSheetMobileNumberChangeSubmitRef.current.close();
             }}>
             <LinearGradient
               colors={['#0F52BA', '#8225AF']}

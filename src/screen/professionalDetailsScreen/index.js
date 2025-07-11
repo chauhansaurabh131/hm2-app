@@ -45,7 +45,7 @@ const ProfessionalsDetailsScreen = ({
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17)}}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{marginTop: 30}}>
+          <View>
             <FloatingLabelInput
               label="Current Designation"
               value={jobTitle}
@@ -83,6 +83,12 @@ const ProfessionalsDetailsScreen = ({
               onValueChange={setSalary}
               bottomSheetHeight={getDropdownHeight('Annual Salary')} // Dynamic height
             />
+
+            {/*<FloatingLabelInput*/}
+            {/*  label="Annual Salary"*/}
+            {/*  value={salary}*/}
+            {/*  onChangeText={setSalary}*/}
+            {/*/>*/}
           </View>
 
           <View style={{marginTop: hp(37)}}>

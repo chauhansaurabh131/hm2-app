@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  ActivityIndicator,
   SafeAreaView,
   ScrollView,
   Text,
@@ -21,6 +22,7 @@ import {fontFamily, fontSize, hp} from '../../utils/helpers';
 import HeightRangeSlider from '../../components/heightRangeSlider';
 import NewBottomSheetMultipleValueSelect from '../../components/newBottomSheetMultipleValueSelect';
 import NewBottomSheetSingleValueSelect from '../../components/newBottomSheetSingleValueSelect';
+import {colors} from '../../utils/colors';
 
 const PartnerPreferencesScreen = () => {
   const [countryList, setCountryList] = useState([]);
@@ -50,6 +52,7 @@ const PartnerPreferencesScreen = () => {
   const [preferDiet, setPreferDiet] = useState([]);
   const [annualIncome, setAnnualIncome] = useState([7, 12]); // Initial age range
   const [preferHobbies, setPreferHobbies] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const apiDispatch = useDispatch();
@@ -159,6 +162,7 @@ const PartnerPreferencesScreen = () => {
     console.log(' === preferDiet ===> ', preferDiet);
     console.log(' === annualIncome[0] ===> ', annualIncome[0]);
     console.log(' === annualIncome[1] ===> ', annualIncome[1]);
+    setLoading(true);
 
     // const incomeValue = annualIncome[0]; // You can use annualIncome[0] (min), annualIncome[1] (max), or calculate the average
 
@@ -174,6 +178,8 @@ const PartnerPreferencesScreen = () => {
       income: {min: annualIncome[0], max: annualIncome[1]}, // Send a single numeric value for income
       hobbies: preferHobbies,
     };
+
+    setLoading(true);
     // First API Call: partnerReferences
     dispatch(
       partnerReferences(payload, () => {
@@ -185,6 +191,7 @@ const PartnerPreferencesScreen = () => {
             },
             () => {
               // On success of updateDetails, navigate to HomeTabs
+              setLoading(false);
               navigation.navigate('HomeTabs');
             },
           ),
@@ -228,11 +235,11 @@ const PartnerPreferencesScreen = () => {
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainer}>
-        <AppColorLogo />
+        {/*<AppColorLogo />*/}
         <Text style={style.headingText}>Add Partner Preference</Text>
       </View>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={style.bodyContainer}>
           <View style={{alignItems: 'center'}}>
             <AgeRangeSlider
@@ -483,7 +490,11 @@ const PartnerPreferencesScreen = () => {
         <TouchableOpacity
           onPress={onDashboardPress}
           style={style.dashboardButton}>
-          <Text style={style.dashboardText}>Dashboard</Text>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.white} />
+          ) : (
+            <Text style={style.dashboardText}>Dashboard</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

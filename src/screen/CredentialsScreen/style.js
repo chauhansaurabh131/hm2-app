@@ -123,16 +123,17 @@ const style = StyleSheet.create({
     lineHeight: hp(24),
     marginTop: hp(5),
     fontFamily: fontFamily.poppins500,
+    marginHorizontal: hp(30),
   },
   bottomSheetBodyContainer: {
     flex: 1,
-    marginHorizontal: wp(30),
+    // marginHorizontal: wp(30),
   },
   bottomSheetBodyTitleText: {
     color: colors.black,
     fontSize: fontSize(14),
-    lineHeight: hp(21),
-    marginTop: hp(21),
+    // lineHeight: hp(25),
+    // marginTop: hp(21),
     fontFamily: fontFamily.poppins500,
   },
   textInputContainer: {

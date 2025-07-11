@@ -90,7 +90,7 @@ const GeneralInformationDetailsScreen = ({
     <SafeAreaView style={style.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginHorizontal: wp(17)}}>
-          <View style={{marginTop: 30}}>
+          <View>
             <NewDropDownTextInput
               placeholder="Gender"
               dropdownData={genderDropdownData}

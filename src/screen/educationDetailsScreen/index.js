@@ -61,7 +61,7 @@ const EducationDetailsScreen = ({
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17)}}>
-        <View style={{marginTop: 30}}>
+        <View>
           <NewDropDownTextInput
             placeholder="Degree"
             dropdownData={degreeDropdownData}

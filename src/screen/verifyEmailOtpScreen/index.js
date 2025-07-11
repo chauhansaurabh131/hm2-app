@@ -140,7 +140,7 @@ const VerifyEmailOtpScreen = ({route}) => {
         const response = await axios.post(
           'https://stag.mntech.website/api/v1/user/auth/send-verify-otp-email',
           {
-            countryCodeId: '680b21192ce1b8556e4774c1', // replace with actual ID if required
+            countryCodeId: '68709f07e33fd998c7105ad5', // replace with actual ID if required
             mobileNumber: email,
           },
           {

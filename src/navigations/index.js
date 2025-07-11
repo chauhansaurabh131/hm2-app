@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
@@ -78,7 +78,6 @@ import SearchFilterScreen from '../screen/searchFilterScreen';
 import SearchUserDataScreen from '../screen/searchUserDataScreen';
 import NewUserDetailsScreen from '../screen/newUserDetailsScreen';
 import RemainingDataUiScreen from '../screen/editRemainingFillUpData/remainingDataUiScreen';
-import GeneralInformationDetailsScreen from '../screen/generalInformationDetailsScreen';
 import EditGeneralScreen from '../screen/editRemainingFillUpData/editGeneralScreen';
 import EditLocationScreen from '../screen/editRemainingFillUpData/editLocationScreen';
 import EditContactScreen from '../screen/editRemainingFillUpData/editContactScreen';
@@ -99,32 +98,19 @@ import DatingBlockAllScreen from '../screen/datingAllScreen/datingBlockAllScreen
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-const ExtrasStack = createNativeStackNavigator();
 const ExtraStack = createStackNavigator();
 
-const MainNavigator = () => {
-  const [isDatingSelected, setIsDatingSelected] = useState(false);
+export const navigationRef = React.createRef();
 
+const MainNavigator = () => {
   const {isLoggedIn, appUsesType, user} = useSelector(state => state.auth);
 
-  // console.log(' === user ===> ', user?.user?.appUsesType);
-
   const appType = user?.user?.appUsesType;
-
-  console.log(' === appType ===> ', appType);
-
-  console.log(' === appType ===> ', appUsesType);
-  // console.log(' === isDating ===> ', appUsesType === 'dating');
 
   const AuthStack = () => (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="NewMainScreen">
-      {/*<Stack.Screen*/}
-      {/*  name="CreatingProfileScreen"*/}
-      {/*  component={CreatingProfileScreen}*/}
-      {/*/>*/}
-
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
@@ -173,10 +159,7 @@ const MainNavigator = () => {
         name="NumberRegistrationScreen"
         component={NumberRegistrationScreen}
       />
-      {/*<Stack.Screen*/}
-      {/*  name="GeneralInformationScreen"*/}
-      {/*  component={AddPersonalInfo}*/}
-      {/*/>*/}
+
       <Stack.Screen
         name="NumberRegistrationTextInput"
         component={NumberRegistrationTextInput}
@@ -244,12 +227,6 @@ const MainNavigator = () => {
           options={{headerShown: false}}
         />
 
-        {/*<ExtraStack.Screen*/}
-        {/*  name="HomeTabs"*/}
-        {/*  component={HomeTabs}*/}
-        {/*  options={{headerShown: false}}*/}
-        {/*/>*/}
-
         <ExtraStack.Screen
           name="PrivacyScreen"
           component={PrivacyScreen}
@@ -306,105 +283,6 @@ const MainNavigator = () => {
       </ExtraStack.Navigator>
     );
   };
-
-  const UsersChatsScreen = ({route}) => {
-    const {selectedBox} = route.params ?? {};
-    return (
-      <ExtrasStack.Navigator>
-        <ExtrasStack.Screen
-          name="ChatUserScreen"
-          component={ChatUserScreen}
-          initialParams={{
-            selectedBox: selectedBox,
-            userData: route.params?.userData,
-          }}
-          options={{headerShown: false}}
-        />
-      </ExtrasStack.Navigator>
-    );
-  };
-
-  // const HomeStack = () => {
-  //   return (
-  //     <Stack.Navigator
-  //       screenOptions={{headerShown: false}}
-  //       initialRouteName={'HomeTabs'}>
-  //       <Stack.Screen name="DemoCode" component={DemoCode} />
-  //       <Stack.Screen name="Abc" component={Abc} />
-  //       <Stack.Screen name="ExploreScreen" component={ExploreScreen} />
-  //       <Stack.Screen name={'DatingHomeScreen'} component={DatingHomeScreen} />
-  //       <Stack.Screen
-  //         name={'DatingExploreScreen'}
-  //         component={DatingExploreScreen}
-  //       />
-  //       <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
-  //       <Stack.Screen name={'ChatUserScreen'} component={ChatUserScreen} />
-  //       <Stack.Screen
-  //         name={'DemoPractiveCodeScreen'}
-  //         component={DemoPractiveCodeScreen}
-  //       />
-  //       <Stack.Screen
-  //         name="CreatingProfileScreen"
-  //         component={CreatingProfileScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'GeneralInformationScreen'}
-  //         component={AddPersonalInfo}
-  //       />
-  //       <Stack.Screen
-  //         name={'SetProfilePictureScreen'}
-  //         component={SetProfilePictureScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'SelectImageScreen'}
-  //         component={SelectImageScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'AddProfilePictureScreen'}
-  //         component={AddProfilePictureScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'PartnerPreferencesScreen'}
-  //         component={PartnerPreferencesScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'UserDetailsScreen'}
-  //         component={UserDetailsScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'ConnectToWebScreen'}
-  //         component={ConnectToWebScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'SuccessStoryPageScreen'}
-  //         component={SuccessStoryPageScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'SuccessStoryEditInformationScreen'}
-  //         component={SuccessStoryEditInformationScreen}
-  //       />
-  //       <Stack.Screen
-  //         name="DatingCreatingProfile"
-  //         component={DatingCreatingProfile}
-  //       />
-  //       `
-  //       <Stack.Screen
-  //         name={'AddDatingPersonalInfo'}
-  //         component={AddDatingPersonalInfo}
-  //       />
-  //       <Stack.Screen
-  //         name={'DatingPartnerPreferenceScreen'}
-  //         component={DatingPartnerPreferenceScreen}
-  //       />
-  //       <Stack.Screen
-  //         name={'DatingEditProfileScreen'}
-  //         component={DatingEditProfileScreen}
-  //       />
-  //       <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
-  //       <Stack.Screen name={'Message'} component={Message} />
-  //     </Stack.Navigator>
-  //   );
-  // };
 
   const HomeStack = () => {
     return (
@@ -474,10 +352,7 @@ const MainNavigator = () => {
           name={'ConnectToWebScreen'}
           component={ConnectToWebScreen}
         />
-        {/*<Stack.Screen*/}
-        {/*  name={'SuccessStoryPageScreen'}*/}
-        {/*  component={SuccessStoryPageScreen}*/}
-        {/*/>*/}
+
         <Stack.Screen
           name={'SuccessStoryEditInformationScreen'}
           component={SuccessStoryEditInformationScreen}
@@ -521,11 +396,6 @@ const MainNavigator = () => {
           name={'VerifyIdentityScreen'}
           component={VerifyIdentityScreen}
         />
-
-        {/*<Stack.Screen*/}
-        {/*  name={'NewUserDetailsScreen'}*/}
-        {/*  component={NewUserDetailsScreen}*/}
-        {/*/>*/}
 
         <Stack.Screen
           name={'RemainingDataUiScreen'}
@@ -571,11 +441,6 @@ const MainNavigator = () => {
           name={'ChangeNameRequestScreen'}
           component={ChangeNameRequestScreen}
         />
-
-        {/*<Stack.Screen*/}
-        {/*  name={'DatingSearchFilterScreen'}*/}
-        {/*  component={DatingSearchFilterScreen}*/}
-        {/*/>*/}
       </Stack.Navigator>
     );
   };
@@ -747,29 +612,6 @@ const MainNavigator = () => {
           options={{tabBarButton: () => null, headerShown: false}}
         />
 
-        {/*<Tab.Screen*/}
-        {/*  name="AccountsScreen"*/}
-        {/*  component={AccountsScreen}*/}
-        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
-        {/*/>*/}
-
-        {/*<Tab.Screen*/}
-        {/*  name="CredentialsScreen"*/}
-        {/*  component={CredentialsScreen}*/}
-        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
-        {/*/>*/}
-
-        {/*<Tab.Screen*/}
-        {/*  name="HideDeleteProfileScreen"*/}
-        {/*  component={HideDeleteProfileScreen}*/}
-        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
-        {/*/>*/}
-        {/*<Tab.Screen*/}
-        {/*  name="PrivacyScreen"*/}
-        {/*  component={PrivacyScreen}*/}
-        {/*  options={{tabBarButton: () => null, headerShown: false}}*/}
-        {/*/>*/}
-
         <Tab.Screen
           name="AccountsScreen"
           component={ExtraScreens}
@@ -823,7 +665,7 @@ const MainNavigator = () => {
 
   return useMemo(
     () => (
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         {isLoggedIn ? <HomeStack /> : <AuthStack />}
       </NavigationContainer>
     ),

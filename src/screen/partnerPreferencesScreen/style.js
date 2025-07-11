@@ -17,6 +17,7 @@ const style = StyleSheet.create({
     lineHeight: hp(30),
     fontFamily: fontFamily.poppins600,
     textAlign: 'center',
+    marginBottom: hp(10),
   },
   bodyContainer: {
     marginHorizontal: wp(17),

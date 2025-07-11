@@ -62,7 +62,7 @@ const AddressDetailsScreen = ({
         {/*  />*/}
         {/*</View>*/}
 
-        <View style={{marginTop: hp(30)}}>
+        <View>
           <NewDropDownTextInput
             placeholder="Country"
             dropdownData={currentCountryDropDown}

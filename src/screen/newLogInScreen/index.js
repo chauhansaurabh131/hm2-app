@@ -170,7 +170,7 @@ const NewLogInScreen = () => {
 
         console.log('Logging in with Mobile Number:', mobileNumber);
         loginPayload = {
-          countryCodeId: '680b21192ce1b8556e4774c1',
+          countryCodeId: '68709f07e33fd998c7105ad5',
           mobileNumber,
           password: trimmedPassword,
           deviceToken: fcmToken,

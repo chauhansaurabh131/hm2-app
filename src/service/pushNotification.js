@@ -1,6 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import {Platform} from 'react-native';
+import {navigationRef} from '../navigations';
 
 export async function RequestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -20,12 +21,43 @@ const checkToken = async () => {
   }
 };
 
+// export const NoificationListner = () => {
+//   messaging().onNotificationOpenedApp(remoteMessage => {
+//     console.log(
+//       ' === Notification caused app to open from background state: ===> ',
+//       remoteMessage.notification,
+//     );
+//   });
+//
+//   messaging()
+//     .getInitialNotification()
+//     .then(remoteMessage => {
+//       if (remoteMessage) {
+//         console.log(
+//           ' === Notification caused app to open from quit state: ===> ',
+//           remoteMessage.notification,
+//         );
+//       }
+//     });
+//
+//   messaging().onMessage(async remoteMessage => {
+//     console.log(
+//       ' === notification on froground state..... ===> ',
+//       remoteMessage,
+//     );
+//   });
+// };
+
 export const NoificationListner = () => {
   messaging().onNotificationOpenedApp(remoteMessage => {
     console.log(
-      ' === Notification caused app to open from background state: ===> ',
+      'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
+    if (remoteMessage?.data?.screen) {
+      // Navigate to the specified screen
+      navigationRef.current?.navigate(remoteMessage.data.screen);
+    }
   });
 
   messaging()
@@ -33,17 +65,18 @@ export const NoificationListner = () => {
     .then(remoteMessage => {
       if (remoteMessage) {
         console.log(
-          ' === Notification caused app to open from quit state: ===> ',
+          'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
+        if (remoteMessage?.data?.screen) {
+          // Navigate to the specified screen
+          navigationRef.current?.navigate(remoteMessage.data.screen);
+        }
       }
     });
 
   messaging().onMessage(async remoteMessage => {
-    console.log(
-      ' === notification on froground state..... ===> ',
-      remoteMessage,
-    );
+    console.log('notification on foreground state:', remoteMessage);
   });
 };
 

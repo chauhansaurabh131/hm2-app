@@ -744,7 +744,7 @@ import {
   Animated,
   StyleSheet,
 } from 'react-native';
-import {Provider} from 'react-redux';
+import {Provider, useSelector} from 'react-redux'; // Keep this import
 import {persistor, store} from './src/reducer/store';
 import {
   ForegroundMessages,
@@ -756,14 +756,19 @@ import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import messaging from '@react-native-firebase/messaging';
 import notifee, {AndroidImportance} from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
+import {SocketProvider} from './src/utils/context/SocketContext';
 
 LogBox.ignoreAllLogs();
 
-const App = () => {
+// Create a separate component for the main app logic
+const MainApp = () => {
   const [isConnect, setIsConnect] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const translateY = useRef(new Animated.Value(100)).current;
   const timerRef = useRef(null);
+
+  const {user} = useSelector(state => state.auth);
+  // console.log(' === user----- ===> ', user?.user);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -816,22 +821,15 @@ const App = () => {
     }).start(() => setShowMessage(false));
   };
 
-  // useEffect(() => {
-  //   RequestUserPermission();
-  //   requestPermissions();
-  // }, []);
-
   useEffect(() => {
     requestPermissionsAndroid();
-
     NoificationListner();
-
     ForegroundMessages();
     RequestUserPermission();
     requestPermissions();
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('FCM message received:', remoteMessage); // Log to see if it's triggered
+      console.log('FCM message received:', remoteMessage);
       onDisplayNotification(remoteMessage);
     });
 
@@ -840,7 +838,6 @@ const App = () => {
 
   const onDisplayNotification = async remoteMessage => {
     try {
-      // Create a notification channel (if not already created)
       const channelId = await notifee.createChannel({
         id: 'default',
         name: 'Default Channel',
@@ -848,13 +845,12 @@ const App = () => {
         importance: AndroidImportance.HIGH,
       });
 
-      // Display the notification
       await notifee.displayNotification({
         title: remoteMessage.notification.title || 'Default Title',
         body: remoteMessage.notification.body || 'Default message content',
         android: {
           channelId,
-          smallIcon: 'ic_launcher', // Ensure you have a valid icon here
+          smallIcon: 'ic_launcher',
           pressAction: {
             id: 'default',
           },
@@ -905,7 +901,6 @@ const App = () => {
         }
       }
 
-      // Request microphone permission
       const audioPermission = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       );
@@ -929,14 +924,12 @@ const App = () => {
   };
 
   const requestPermissionsAndroid = async () => {
-    // Ensure we're on Android 13 or higher
     if (Platform.OS === 'android' && Platform.Version >= 33) {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // Alert.alert('Permission Granted');
         console.log(' === Permission Granted ===> ');
       } else {
         Alert.alert('Permission Denied');
@@ -950,24 +943,32 @@ const App = () => {
   };
 
   return (
+    <>
+      <MainNavigator />
+      {showMessage && (
+        <Animated.View
+          style={[
+            styles.banner,
+            {
+              transform: [{translateY}],
+              backgroundColor: isConnect ? '#4CAF50' : '#f44336',
+            },
+          ]}>
+          <Text style={styles.bannerText}>
+            {isConnect ? 'Connected to Internet' : 'No Internet Connection'}
+          </Text>
+        </Animated.View>
+      )}
+    </>
+  );
+};
+
+const App = () => {
+  return (
     <SafeAreaProvider>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <MainNavigator />
-          {showMessage && (
-            <Animated.View
-              style={[
-                styles.banner,
-                {
-                  transform: [{translateY}],
-                  backgroundColor: isConnect ? '#4CAF50' : '#f44336',
-                },
-              ]}>
-              <Text style={styles.bannerText}>
-                {isConnect ? 'Connected to Internet' : 'No Internet Connection'}
-              </Text>
-            </Animated.View>
-          )}
+          <MainApp />
         </PersistGate>
       </Provider>
     </SafeAreaProvider>

@@ -75,6 +75,7 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
 
   return (
     <TouchableOpacity
+      style={{marginTop: hp(15)}}
       disabled={index > activeIndex + 1}
       activeOpacity={1}
       onPress={() => onPressIcon(index)}>
@@ -428,6 +429,8 @@ const AddPersonalInfo = ({navigation}) => {
     } else if (activeIndex === 4) {
       // Call addressDetails API for Address Details
 
+      console.log(' === salary--+++ ===> ', salary);
+
       // Extract only the numeric part of the salary (e.g., '2 lakh' => 2)
       const numericSalary = parseInt(salary.replace(/\D/g, ''), 10); // This removes all non-digit characters
 
@@ -489,41 +492,17 @@ const AddPersonalInfo = ({navigation}) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <Image
-        source={images.happyMilanColorLogo}
-        style={{
-          width: wp(96),
-          height: hp(24),
-          resizeMode: 'stretch',
-          marginTop: hp(15),
-          marginLeft: wp(18),
-          marginBottom: hp(20),
-        }}
-      />
-
-      <View style={{height: hp(48)}}>
-        <FlatList
-          horizontal
-          scrollEnabled={false}
-          contentContainerStyle={{
-            flex: 1,
-            height: hp(48),
-            // justifyContent: 'space-evenly',
-            justifyContent: 'space-between',
-            marginHorizontal: 18,
-            marginTop: 20,
-          }}
-          data={PersonalInfoPhases}
-          renderItem={({item, index}) =>
-            renderIcons({
-              item,
-              index,
-              activeIndex,
-              onPressIcon: navigateToScreen,
-            })
-          }
-        />
-      </View>
+      {/*<Image*/}
+      {/*  source={images.happyMilanColorLogo}*/}
+      {/*  style={{*/}
+      {/*    width: wp(96),*/}
+      {/*    height: hp(24),*/}
+      {/*    resizeMode: 'stretch',*/}
+      {/*    marginTop: hp(15),*/}
+      {/*    marginLeft: wp(18),*/}
+      {/*    marginBottom: hp(20),*/}
+      {/*  }}*/}
+      {/*/>*/}
 
       <View
         style={{
@@ -534,13 +513,12 @@ const AddPersonalInfo = ({navigation}) => {
         <Text
           style={{
             color: colors.black,
-            marginTop: hp(37),
-            // backgroundColor: 'red',
-            // alignItems: 'center',
+            marginTop: hp(10),
             textAlign: 'center',
             fontSize: fontSize(20),
             lineHeight: hp(30),
             fontFamily: fontFamily.poppins600,
+            marginBottom: hp(10),
           }}>
           {PersonalInfoPhases[activeIndex].phaseName}
         </Text>
@@ -563,6 +541,70 @@ const AddPersonalInfo = ({navigation}) => {
         {/*  </TouchableOpacity>*/}
         {/*)}*/}
       </View>
+
+      <View style={{height: hp(48)}}>
+        <FlatList
+          horizontal
+          scrollEnabled={false}
+          contentContainerStyle={{
+            flex: 1,
+            // height: hp(48),
+            // justifyContent: 'space-evenly',
+            justifyContent: 'space-between',
+            marginHorizontal: 18,
+            // marginTop: 20,
+          }}
+          data={PersonalInfoPhases}
+          renderItem={({item, index}) =>
+            renderIcons({
+              item,
+              index,
+              activeIndex,
+              onPressIcon: navigateToScreen,
+            })
+          }
+        />
+      </View>
+      <View style={{height: 20}} />
+
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    // flexDirection: 'row',*/}
+      {/*    // justifyContent: 'space-between',*/}
+      {/*    marginHorizontal: 17,*/}
+      {/*  }}>*/}
+      {/*  <Text*/}
+      {/*    style={{*/}
+      {/*      color: colors.black,*/}
+      {/*      marginTop: hp(37),*/}
+      {/*      // backgroundColor: 'red',*/}
+      {/*      // alignItems: 'center',*/}
+      {/*      textAlign: 'center',*/}
+      {/*      fontSize: fontSize(20),*/}
+      {/*      lineHeight: hp(30),*/}
+      {/*      fontFamily: fontFamily.poppins600,*/}
+      {/*    }}>*/}
+      {/*    {PersonalInfoPhases[activeIndex].phaseName}*/}
+      {/*  </Text>*/}
+
+      {/*  /!*{activeIndex > 0 && (*!/*/}
+      {/*  /!*  <TouchableOpacity*!/*/}
+      {/*  /!*    onPress={() => {*!/*/}
+      {/*  /!*      navigation.navigate('HomeTabs');*!/*/}
+      {/*  /!*    }}>*!/*/}
+      {/*  /!*    <Text*!/*/}
+      {/*  /!*      style={{*!/*/}
+      {/*  /!*        fontSize: fontSize(14),*!/*/}
+      {/*  /!*        lineHeight: hp(21),*!/*/}
+      {/*  /!*        fontFamily: fontFamily.poppins400,*!/*/}
+      {/*  /!*        color: colors.blue,*!/*/}
+      {/*  /!*        marginTop: hp(15),*!/*/}
+      {/*  /!*      }}>*!/*/}
+      {/*  /!*      Skip*!/*/}
+      {/*  /!*    </Text>*!/*/}
+      {/*  /!*  </TouchableOpacity>*!/*/}
+      {/*  /!*)}*!/*/}
+      {/*</View>*/}
 
       {RenderComp && (
         <RenderComp

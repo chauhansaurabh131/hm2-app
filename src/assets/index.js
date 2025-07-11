@@ -201,6 +201,7 @@ export const icons = {
   blub_icon: require('./icons/blub_icon.png'),
   plus_button_gradient: require('./icons/plus_button_gradient.png'),
   no_notification_icon: require('./icons/no_notification_icon.png'),
+  circle_cancel_icon: require('./icons/circle_cancel_icon.png'),
 };
 
 export const gif = {
