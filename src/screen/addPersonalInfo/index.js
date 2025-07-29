@@ -513,7 +513,7 @@ const AddPersonalInfo = ({navigation}) => {
         <Text
           style={{
             color: colors.black,
-            marginTop: hp(10),
+            marginTop: hp(25),
             textAlign: 'center',
             fontSize: fontSize(20),
             lineHeight: hp(30),

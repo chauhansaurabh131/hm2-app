@@ -299,6 +299,7 @@ const PartnerPreferencesScreen = () => {
               options={Prefer_Country}
               onSelect={handleSelect} // Pass the onSelect handler to capture selected values
               bottomSheetHeight={hp(450)}
+              maxSelections={5}
             />
           </View>
 
@@ -308,6 +309,7 @@ const PartnerPreferencesScreen = () => {
               options={Prefer_State}
               onSelect={handleStateSelect} // Pass the onSelect handler to capture selected values
               bottomSheetHeight={hp(450)}
+              maxSelections={5}
             />
           </View>
 
@@ -317,6 +319,7 @@ const PartnerPreferencesScreen = () => {
               options={Prefer_City}
               onSelect={handleCitySelect} // Pass the onSelect handler to capture selected values
               bottomSheetHeight={hp(450)}
+              maxSelections={5}
             />
           </View>
 
@@ -363,6 +366,7 @@ const PartnerPreferencesScreen = () => {
               options={Prefer_hobbies}
               onSelect={handleHobbiesSelect} // Pass the onSelect handler to capture selected values
               bottomSheetHeight={hp(500)}
+              maxSelections={5}
             />
           </View>
 

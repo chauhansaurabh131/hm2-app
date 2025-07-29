@@ -7,16 +7,19 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import {style} from './style';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
 import ProfileAvatar from '../../../components/letterProfileComponent';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import NewProfileBottomSheet from '../../../components/newProfileBottomSheet';
 import {useEffect, useState} from 'react';
 import {colors} from '../../../utils/colors';
+import LinearGradient from 'react-native-linear-gradient';
+import CommonGradientButton from '../../../components/commonGradientButton';
 
 const DatingBlockAllScreen = () => {
   const navigation = useNavigation();
@@ -28,6 +31,8 @@ const DatingBlockAllScreen = () => {
 
   const [blockedProfiles, setBlockedProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const topModalBottomSheetRef = useRef(null);
 
@@ -67,6 +72,8 @@ const DatingBlockAllScreen = () => {
   }, []);
 
   const onUnblockedPress = async item => {
+    console.log(' === var ===> ', item);
+
     try {
       const payload = {
         user: item?.friend?._id, // logged-in user's ID
@@ -92,6 +99,7 @@ const DatingBlockAllScreen = () => {
         console.log('✅ Unblocked successfully:', data);
         // Refresh the list or remove the unblocked profile
         setBlockedProfiles(prev => prev.filter(p => p._id !== item._id));
+        setModalVisible(false);
       } else {
         console.error('❌ Unblock failed:', data);
       }
@@ -127,7 +135,11 @@ const DatingBlockAllScreen = () => {
         </View>
 
         <TouchableOpacity
-          onPress={() => onUnblockedPress(item)}
+          // onPress={() => onUnblockedPress(item)}
+          onPress={() => {
+            setSelectedItem(item);
+            setModalVisible(true);
+          }}
           style={style.unblockButton}>
           <Text style={style.unblockText}>Unblock</Text>
         </TouchableOpacity>
@@ -212,6 +224,195 @@ const DatingBlockAllScreen = () => {
           }
         />
       )}
+
+      {/*<Modal*/}
+      {/*  transparent={true}*/}
+      {/*  animationType="none"*/}
+      {/*  visible={modalVisible}*/}
+      {/*  onRequestClose={() => setModalVisible(false)}>*/}
+      {/*  <View*/}
+      {/*    style={{*/}
+      {/*      flex: 1,*/}
+      {/*      justifyContent: 'center',*/}
+      {/*      backgroundColor: 'rgba(0,0,0,0.5)',*/}
+      {/*      alignItems: 'center',*/}
+      {/*    }}>*/}
+      {/*    <View*/}
+      {/*      style={{*/}
+      {/*        backgroundColor: 'white',*/}
+      {/*        borderRadius: 15,*/}
+      {/*        alignItems: 'center',*/}
+      {/*        width: '95%',*/}
+      {/*      }}>*/}
+      {/*      <Text*/}
+      {/*        style={{*/}
+      {/*          fontSize: fontSize(18),*/}
+      {/*          lineHeight: hp(24),*/}
+      {/*          fontFamily: fontFamily.poppins400,*/}
+      {/*          color: colors.black,*/}
+      {/*          marginTop: hp(51),*/}
+      {/*        }}>*/}
+      {/*        Confirm unblocking{' '}*/}
+      {/*        {selectedItem?.friend?.firstName || selectedItem?.friend?.name}?*/}
+      {/*      </Text>*/}
+
+      {/*      <View*/}
+      {/*        style={{*/}
+      {/*          flexDirection: 'row',*/}
+      {/*          marginTop: hp(38),*/}
+      {/*          justifyContent: 'space-evenly',*/}
+      {/*          marginBottom: hp(39),*/}
+      {/*          // backgroundColor: 'grey',*/}
+      {/*          // marginHorizontal: 34,*/}
+      {/*        }}>*/}
+      {/*        <TouchableOpacity*/}
+      {/*          activeOpacity={0.7}*/}
+      {/*          onPress={() => {*/}
+      {/*            setModalVisible(false);*/}
+      {/*          }}>*/}
+      {/*          <LinearGradient*/}
+      {/*            colors={['#0D4EB3', '#9413D0']}*/}
+      {/*            style={{*/}
+      {/*              width: wp(126),*/}
+      {/*              height: hp(50),*/}
+      {/*              borderRadius: 50,*/}
+      {/*              borderWidth: 1,*/}
+      {/*              justifyContent: 'center',*/}
+      {/*              borderColor: 'transparent', // Set border color to transparent*/}
+      {/*            }}>*/}
+      {/*            <View*/}
+      {/*              style={{*/}
+      {/*                borderRadius: 50, // <-- Inner Border Radius*/}
+      {/*                flex: 1,*/}
+      {/*                backgroundColor: colors.white,*/}
+      {/*                justifyContent: 'center',*/}
+      {/*                margin: isIOS ? 0 : 1,*/}
+      {/*              }}>*/}
+      {/*              <Text*/}
+      {/*                style={{*/}
+      {/*                  textAlign: 'center',*/}
+      {/*                  backgroundColor: 'transparent',*/}
+      {/*                  color: colors.black,*/}
+      {/*                  margin: 10,*/}
+      {/*                  fontSize: fontSize(14),*/}
+      {/*                  lineHeight: hp(21),*/}
+      {/*                  fontFamily: fontFamily.poppins600,*/}
+      {/*                }}>*/}
+      {/*                Cancel*/}
+      {/*              </Text>*/}
+      {/*            </View>*/}
+      {/*          </LinearGradient>*/}
+      {/*        </TouchableOpacity>*/}
+
+      {/*        <CommonGradientButton*/}
+      {/*          // onPress={onHideProfilePress}*/}
+      {/*          buttonName={'Yes, Hide'}*/}
+      {/*          containerStyle={{*/}
+      {/*            width: hp(126),*/}
+      {/*            height: hp(50),*/}
+      {/*            borderRadius: 50,*/}
+      {/*          }}*/}
+      {/*        />*/}
+      {/*      </View>*/}
+      {/*    </View>*/}
+      {/*  </View>*/}
+      {/*</Modal>*/}
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              // height: hp(264),
+              backgroundColor: 'white',
+              // padding: 20,
+              borderRadius: 20,
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: fontSize(18),
+                lineHeight: hp(30),
+                color: colors.black,
+                marginTop: hp(51),
+                fontFamily: fontFamily.poppins400,
+              }}>
+              Confirm unblocking{' '}
+              {selectedItem?.friend?.firstName || selectedItem?.friend?.name}?
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                marginTop: hp(38),
+                justifyContent: 'space-evenly',
+                marginBottom: hp(39),
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => {
+                  setModalVisible(false);
+                }}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  style={{
+                    width: wp(126),
+                    height: hp(50),
+                    borderRadius: 50,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    borderColor: 'transparent', // Set border color to transparent
+                  }}>
+                  <View
+                    style={{
+                      borderRadius: 50, // <-- Inner Border Radius
+                      flex: 1,
+                      backgroundColor: colors.white,
+                      justifyContent: 'center',
+                      margin: isIOS ? 0 : 1,
+                    }}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        backgroundColor: 'transparent',
+                        color: colors.black,
+                        margin: 10,
+                        fontSize: fontSize(14),
+                        lineHeight: hp(21),
+                        fontFamily: fontFamily.poppins600,
+                      }}>
+                      Cancel
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <CommonGradientButton
+                onPress={() => {
+                  onUnblockedPress(selectedItem);
+                }}
+                buttonName={'Yes'}
+                containerStyle={{
+                  width: hp(126),
+                  height: hp(50),
+                  borderRadius: 50,
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

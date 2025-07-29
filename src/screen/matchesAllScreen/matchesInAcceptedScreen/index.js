@@ -11,6 +11,7 @@ import {
   Clipboard,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
@@ -50,6 +51,10 @@ const MatchesInAcceptedScreen = () => {
   const [aboutText, setAboutText] = useState('');
   const [isReportModalVisible, setReportModalVisible] = useState(false);
   const [isUnFriendModalVisible, setIsUnFriendModalVisible] = useState(false);
+  const [percentageLoader, setPercentageLoader] = useState(null);
+  const [percentageMatchData, setPercentageMatchData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [step, setStep] = useState(1);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -63,6 +68,72 @@ const MatchesInAcceptedScreen = () => {
   const ReportBottomSheetRef = useRef();
 
   // console.log(' === accessToken ===> ', accessToken);
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleNext = () => {
+    if (step < 4) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  const capitalizeFirstLetter = str => {
+    if (!str) {
+      return '';
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
+  const openModal = async item => {
+    console.log(' === openModal___ ===> ', item?.friendList?._id);
+
+    try {
+      // setLoading(true); // Show loading indicator
+      setPercentageLoader(item._id);
+
+      // Call the API to get match details
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?.friendList?._id}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const matchData = await response.json();
+
+      if (response.ok) {
+        console.log('Match data:', matchData);
+        // Here you can process the match data and update your modal content
+        // For example, you might want to store it in state:
+        // setMatchDetails(matchData);
+        setPercentageMatchData(matchData?.data[0]);
+
+        setPercentageLoader(null);
+        setModalVisible(true); // Open the modal after data is fetched
+        setStep(1); // Reset step to 1 when modal opens
+      } else {
+        console.error('Failed to fetch match data:', matchData);
+        Alert.alert('Error', 'Failed to fetch match details');
+      }
+    } catch (error) {
+      console.error('Error fetching match data:', error);
+      Alert.alert('Error', 'Failed to fetch match details');
+    } finally {
+      setLoading(false); // Hide loading indicator
+      setPercentageLoader(null);
+    }
+  };
 
   const openBottomSheet = () => {
     sheetRef.current.close();
@@ -422,6 +493,7 @@ const MatchesInAcceptedScreen = () => {
     setReportReasons([]);
     setQuestionText('Why are you reporting this?'); // Reset question text when going back
     setIsAboutClicked(false); // Reset "About" state
+    handleBack();
   };
 
   // Handle the "Submit" action for "About" section
@@ -693,13 +765,30 @@ const MatchesInAcceptedScreen = () => {
                 />
                 <TouchableOpacity
                   activeOpacity={0.5}
-                  // onPress={openModal}
-                  style={style.gradientButtonImageContainer}>
-                  <Image source={icons.couple_icon} style={style.coupleIcon} />
-                  <Text style={style.gradientImageTextContainer}>
-                    {/*85% Match*/}
-                    {item.friendList?.matchPercentage || 0}% Match
-                  </Text>
+                  onPress={() => {
+                    openModal(item);
+                  }}
+                  style={style.gradientButtonImageContainer}
+                  disabled={percentageLoader !== null}>
+                  {percentageLoader === item._id ? (
+                    <ActivityIndicator
+                      size="small"
+                      color="#FFFFFF"
+                      style={{
+                        marginLeft: hp(35),
+                      }}
+                    />
+                  ) : (
+                    <>
+                      <Image
+                        source={icons.couple_icon}
+                        style={style.coupleIcon}
+                      />
+                      <Text style={style.gradientImageTextContainer}>
+                        {item.friendList?.matchPercentage || 0}% Match
+                      </Text>
+                    </>
+                  )}
                 </TouchableOpacity>
 
                 <View style={style.bottomSecondDataContainer}>
@@ -1235,6 +1324,336 @@ const MatchesInAcceptedScreen = () => {
             </View>
           </View>
         </View>
+      </Modal>
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}>
+        {/*<TouchableWithoutFeedback onPress={closeModal}>*/}
+
+        <View style={style.modalContainer}>
+          <View style={style.modalBodyStyle}>
+            <View style={style.modalTittleContainer}>
+              <Text style={style.tittleTextModal}>
+                Your Match :
+                <Text style={style.tittleTextNum}>
+                  {' '}
+                  {percentageMatchData?.matchPercentage}%
+                </Text>
+              </Text>
+
+              <TouchableOpacity
+                style={style.cancelIconContainer}
+                onPress={closeModal}>
+                <Image source={icons.x_cancel_icon} style={style.cancelIcon} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={style.matchImageContainer}>
+              <Image
+                source={{uri: user?.user?.profilePic}}
+                style={style.firstImageStyle}
+              />
+
+              <Image
+                source={{uri: percentageMatchData?.profilePic}}
+                style={style.secondImageStyle}
+              />
+            </View>
+
+            <View style={style.matchNameContainer}>
+              <Image source={icons.couple_icon} style={style.coupleIcons} />
+
+              <Text style={style.matchName}>
+                You &{' '}
+                {capitalizeFirstLetter(
+                  percentageMatchData?.firstName || percentageMatchData?.name,
+                )}{' '}
+                Matched
+              </Text>
+            </View>
+
+            <View style={style.underLineStyle} />
+
+            <Text style={style.modalBodyDescription}>
+              Based on Your Partner Preference
+            </Text>
+
+            <View style={style.modalBodyContainer}>
+              {step === 1 && (
+                <>
+                  <Text style={style.tittleTextStyle}>
+                    {percentageMatchData?.matchedFields?.[0]?.field
+                      ? capitalizeFirstLetter(
+                          percentageMatchData.matchedFields[0].field,
+                        )
+                      : 'N/A'}
+                  </Text>
+
+                  <View style={style.subTittleContainer}>
+                    <Text style={style.subTittleText}>
+                      {percentageMatchData?.matchedFields?.[0]?.expected?.min ??
+                        'N/A'}{' '}
+                      to{' '}
+                      {percentageMatchData?.matchedFields?.[0]?.expected?.max ??
+                        'N/A'}
+                    </Text>
+
+                    <Image
+                      source={
+                        percentageMatchData?.matchedFields?.[0]?.isMatched
+                          ? icons.check_gradient_icon
+                          : icons.circle_cancel_icon
+                      }
+                      style={style.checkIcon}
+                    />
+                  </View>
+
+                  <View style={style.subTittleUpperContainer}>
+                    <Text style={style.tittleTextStyle}>
+                      {percentageMatchData?.matchedFields?.[1]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[1].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View style={style.subTittleContainer}>
+                      <Text style={style.subTittleText}>
+                        {percentageMatchData?.matchedFields?.[1]?.expected
+                          ?.min ?? 'N/A'}{' '}
+                        to{' '}
+                        {percentageMatchData?.matchedFields?.[1]?.expected
+                          ?.max ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[1]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={style.checkIcon}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={style.subTittleUpperContainer}>
+                    <Text style={style.tittleTextStyle}>
+                      {percentageMatchData?.matchedFields?.[2]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[2].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View style={style.subTittleContainer}>
+                      <Text style={style.subTittleText}>
+                        {percentageMatchData?.matchedFields?.[2]?.expected
+                          ?.min ?? 'N/A'}{' '}
+                        to{' '}
+                        {percentageMatchData?.matchedFields?.[2]?.expected
+                          ?.max ?? 'N/A'}{' '}
+                        Lacs.
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[2]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={style.checkIcon}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={style.subTittleUpperContainer}>
+                    <Text style={style.tittleTextStyle}>
+                      {percentageMatchData?.matchedFields?.[3]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[3].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View style={style.subTittleContainer}>
+                      <Text style={style.subTittleText}>
+                        {percentageMatchData?.matchedFields?.[3]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[3]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={style.checkIcon}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <Text style={style.tittleTextStyle}>
+                    {percentageMatchData?.matchedFields?.[4]?.field
+                      ? capitalizeFirstLetter(
+                          percentageMatchData.matchedFields[4].field,
+                        )
+                      : 'N/A'}
+                  </Text>
+
+                  <View style={style.subTittleContainer}>
+                    <Text style={style.subTittleText}>
+                      {percentageMatchData?.matchedFields?.[4]?.expected
+                        ?.map(item => capitalizeFirstLetter(item))
+                        ?.join(', ') ?? 'N/A'}
+                    </Text>
+
+                    <Image
+                      source={
+                        percentageMatchData?.matchedFields?.[4]?.isMatched
+                          ? icons.check_gradient_icon
+                          : icons.circle_cancel_icon
+                      }
+                      style={style.checkIcon}
+                    />
+                  </View>
+
+                  <View style={style.subTittleUpperContainer}>
+                    <Text style={style.tittleTextStyle}>
+                      {percentageMatchData?.matchedFields?.[5]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[5].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View style={style.subTittleContainer}>
+                      <Text style={style.subTittleText}>
+                        {percentageMatchData?.matchedFields?.[5]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[5]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={style.checkIcon}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={style.subTittleUpperContainer}>
+                    <Text style={style.tittleTextStyle}>
+                      {percentageMatchData?.matchedFields?.[6]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[6].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View style={style.subTittleContainer}>
+                      <Text style={style.subTittleText}>
+                        {percentageMatchData?.matchedFields?.[6]?.expected
+                          ?.map(capitalizeFirstLetter)
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[6]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={style.checkIcon}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={style.subTittleUpperContainer}>
+                    <Text style={style.tittleTextStyle}>
+                      {percentageMatchData?.matchedFields?.[7]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[7].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View style={style.subTittleContainer}>
+                      <Text style={style.subTittleText}>
+                        {percentageMatchData?.matchedFields?.[7]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[7]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={style.checkIcon}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+
+            <View style={style.modalBottomNavigationContainer}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleBackArrow}
+                disabled={step === 1}
+                style={style.previousBackIconContainer}>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={[
+                    style.previousBackIcon,
+                    {tintColor: step === 1 ? '#E4E4E4' : 'black'},
+                  ]}
+                />
+              </TouchableOpacity>
+
+              <View style={style.bottomPagination}>
+                {[1, 2].map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => setStep(item)}
+                    style={[
+                      style.bottomPaginationStyle,
+                      {backgroundColor: step === item ? '#0F52BA' : '#ECECEC'},
+                    ]}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity
+                onPress={handleNext}
+                disabled={step === 2}
+                style={style.nextIconContainer}>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={[
+                    style.nextIcon,
+                    {tintColor: step === 2 ? '#E4E4E4' : 'black'},
+                  ]}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        {/*</TouchableWithoutFeedback>*/}
       </Modal>
     </SafeAreaView>
   );

@@ -16,7 +16,7 @@ export const style = StyleSheet.create({
     fontFamily: fontFamily.poppins600,
     color: colors.black,
     textAlign: 'center',
-    marginTop: hp(75),
+    marginTop: hp(100),
   },
   bodyHeightStyle: {
     marginTop: hp(60),
@@ -29,7 +29,7 @@ export const style = StyleSheet.create({
     height: hp(50),
     borderRadius: 50,
     backgroundColor: 'black',
-    marginTop: hp(50),
+    marginTop: hp(90),
     justifyContent: 'center',
     marginBottom: 50,
   },

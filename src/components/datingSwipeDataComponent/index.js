@@ -49,12 +49,14 @@ const DatingSwipeDataComponent = () => {
 
         const responseData = response.data?.data[0]?.paginatedResults || [];
 
+        console.log(' === var ===> ', responseData);
+
         if (responseData.length > 0) {
           setCards(prevCards => [...prevCards, ...responseData]); // Append new data
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
+        // Alert.alert('Error', 'Something went wrong. Please try again...');
       }
       setLoading(false);
     }
@@ -288,8 +290,8 @@ const DatingSwipeDataComponent = () => {
         style={{
           justifyContent: 'center',
           borderRadius: 20,
-          borderWidth: 2,
-          borderColor: '#E8E8E8',
+          // borderWidth: 2,
+          // borderColor: '#E8E8E8',
           backgroundColor: '#FFF',
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 1},
@@ -518,10 +520,8 @@ const DatingSwipeDataComponent = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      {cards.length === 0 ? (
-        // <Text style={{color: 'black', marginTop: 50}}>Loading...</Text>
-        <View style={{justifyContent: 'center', flex: 1, marginTop: hp(290)}}>
-          {/*<ActivityIndicator size="large" color={colors.blue} />*/}
+      {loading ? (
+        <View style={{justifyContent: 'center', marginTop: hp(20)}}>
           <View style={{height: hp(449), marginHorizontal: 17}}>
             <ShimmerPlaceholder
               style={{
@@ -581,20 +581,44 @@ const DatingSwipeDataComponent = () => {
             </View>
           </View>
         </View>
+      ) : cards.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={icons.no_Profile_Found_img}
+            style={{width: 100, height: 100}}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSize(16),
+              lineHeight: hp(24),
+              fontFamily: fontFamily.poppins600,
+              marginTop: hp(20),
+            }}>
+            No Profile Found
+          </Text>
+        </View>
       ) : (
-        <Swiper
-          ref={swiperRef}
-          cards={cards}
-          renderCard={renderCard}
-          onSwipedAll={onSwipedAll}
-          onSwiped={onSwiped}
-          stackSize={2}
-          backgroundColor="white"
-          cardIndex={0}
-          animateOverlayLabelsOpacity
-          verticalSwipe={false}
-          horizontalSwipe={true}
-        />
+        <View style={{marginTop: -40}}>
+          <Swiper
+            ref={swiperRef}
+            cards={cards}
+            renderCard={renderCard}
+            onSwipedAll={onSwipedAll}
+            onSwiped={onSwiped}
+            stackSize={2}
+            backgroundColor="white"
+            cardIndex={0}
+            animateOverlayLabelsOpacity
+            verticalSwipe={false}
+            horizontalSwipe={true}
+          />
+        </View>
       )}
     </SafeAreaView>
   );

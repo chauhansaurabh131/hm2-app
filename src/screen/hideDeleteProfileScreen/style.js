@@ -77,7 +77,7 @@ const style = StyleSheet.create({
     width: '100%',
     borderWidth: 0.7,
     borderColor: '#E7E7E7',
-    marginTop: hp(13),
+    marginTop: hp(32),
   },
 
   deleteButtonStyle: {
@@ -144,16 +144,17 @@ const style = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalBodyStyle: {
-    width: wp(375),
-    height: hp(291),
+    width: '90%',
+    // height: hp(291),
     backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
+    // padding: 20,
+    borderRadius: 20,
     justifyContent: 'center',
   },
   modalTittleContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: hp(51),
   },
   modalTittleText: {
     fontSize: fontSize(24),
@@ -173,6 +174,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginTop: hp(43),
+    marginBottom: hp(39),
   },
   confirmButtonStyle: {
     width: hp(126),

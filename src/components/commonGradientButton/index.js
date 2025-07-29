@@ -14,7 +14,7 @@ const CommonGradientButton = ({
   containerStyle,
   buttonTextStyle,
   buttonName,
-  disable,
+  disabled,
   onPress,
   loading,
 }) => {
@@ -23,10 +23,10 @@ const CommonGradientButton = ({
       <TouchableOpacity
         activeOpacity={0.7}
         // disabled={disable}
-        disabled={disable || loading}
+        disabled={disabled || loading}
         onPress={onPress}>
         <LinearGradient
-          colors={['#0D4EB3', '#9413D0']}
+          colors={disabled ? ['#0D4EB3', '#9413D0'] : ['#0D4EB3', '#9413D0']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1.5}}
           style={[
@@ -38,6 +38,7 @@ const CommonGradientButton = ({
               alignItems: 'center',
               alignSelf: 'center',
               justifyContent: 'center',
+              opacity: disabled ? 0.5 : 1,
             },
             containerStyle,
           ]}>
@@ -64,7 +65,7 @@ const CommonGradientButton = ({
                   color: colors.white,
                   fontSize: hp(16),
                   lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
+                  fontFamily: fontFamily.poppins500,
                   textAlign: 'center',
                 },
                 buttonTextStyle,

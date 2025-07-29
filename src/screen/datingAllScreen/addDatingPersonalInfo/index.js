@@ -223,17 +223,35 @@ const AddDatingPersonalInfo = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <Image
-        source={images.happyMilanColorLogo}
+      {/*<Image*/}
+      {/*  source={images.happyMilanColorLogo}*/}
+      {/*  style={{*/}
+      {/*    width: wp(96),*/}
+      {/*    height: hp(24),*/}
+      {/*    resizeMode: 'stretch',*/}
+      {/*    marginTop: hp(15),*/}
+      {/*    marginLeft: wp(18),*/}
+      {/*    marginBottom: hp(20),*/}
+      {/*  }}*/}
+      {/*/>*/}
+
+      <View
         style={{
-          width: wp(96),
-          height: hp(24),
-          resizeMode: 'stretch',
-          marginTop: hp(15),
-          marginLeft: wp(18),
-          marginBottom: hp(20),
-        }}
-      />
+          marginHorizontal: 17,
+        }}>
+        <Text
+          style={{
+            color: colors.black,
+            marginTop: hp(25),
+            textAlign: 'center',
+            fontSize: fontSize(20),
+            lineHeight: hp(30),
+            fontFamily: fontFamily.poppins600,
+          }}>
+          {PersonalInfoPhases[activeIndex].phaseName}
+        </Text>
+      </View>
+
       <View style={{height: hp(48)}}>
         <FlatList
           horizontal
@@ -244,7 +262,7 @@ const AddDatingPersonalInfo = ({navigation}) => {
             justifyContent: 'space-evenly',
             // justifyContent: 'space-between',
             marginHorizontal: wp(70),
-            marginTop: 20,
+            marginTop: hp(30),
           }}
           data={PersonalInfoPhases}
           renderItem={({item, index}) =>
@@ -258,22 +276,22 @@ const AddDatingPersonalInfo = ({navigation}) => {
         />
       </View>
 
-      <View
-        style={{
-          marginHorizontal: 17,
-        }}>
-        <Text
-          style={{
-            color: colors.black,
-            marginTop: hp(37),
-            textAlign: 'center',
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
-            fontFamily: fontFamily.poppins600,
-          }}>
-          {PersonalInfoPhases[activeIndex].phaseName}
-        </Text>
-      </View>
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    marginHorizontal: 17,*/}
+      {/*  }}>*/}
+      {/*  <Text*/}
+      {/*    style={{*/}
+      {/*      color: colors.black,*/}
+      {/*      marginTop: hp(37),*/}
+      {/*      textAlign: 'center',*/}
+      {/*      fontSize: fontSize(20),*/}
+      {/*      lineHeight: hp(30),*/}
+      {/*      fontFamily: fontFamily.poppins600,*/}
+      {/*    }}>*/}
+      {/*    {PersonalInfoPhases[activeIndex].phaseName}*/}
+      {/*  </Text>*/}
+      {/*</View>*/}
 
       {RenderComp && (
         <RenderComp

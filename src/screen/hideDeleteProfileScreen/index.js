@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -31,10 +32,15 @@ const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectDurationModal, setSelectDurationModal] = useState(false);
-  const [selectedDuration, setSelectedDuration] = useState('');
+  const [selectUnDurationModal, setSelectUnDurationModal] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState(null);
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null); // Start as null to track no selection
   const [selectedDelete, setSelectedDelete] = useState(null);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [customReason, setCustomReason] = useState('');
+
+  // console.log(' === selectedOption ===> ', selectedOption);
 
   const bottomSheetRef = useRef(null);
   const deleteBottomSheetRef = useRef(null);
@@ -45,6 +51,55 @@ const HideDeleteProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const token = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
+  const isProfileHide = user?.user?.profileHideAndDelete[0]?.isProfileHide;
+
+  const deleteReasons = {
+    FOUND_SUITABLE_PARTNER: {
+      label: 'I’ve found a suitable partner.',
+      value: 'found-suitable-partner',
+    },
+    MARRIED_OR_ENGAGED: {
+      label: 'I’m now married or engaged',
+      value: 'married-or-engaged',
+    },
+    TAKING_BREAK: {
+      label: 'Taking a break from matchmaking',
+      value: 'taking-break',
+    },
+    PRIVACY_OR_SAFETY_CONCERNS: {
+      label: 'I have privacy or safety concerns.',
+      value: 'privacy-or-safety-concerns',
+    },
+    DIFFICULT_TO_USE: {
+      label: 'I found the app/website difficult to use.',
+      value: 'difficult-to-use',
+    },
+    TOO_MANY_UNRELATED_MATCHES: {
+      label: 'I received too many unrelated matches.',
+      value: 'too-many-unrelated-matches',
+    },
+    DID_NOT_GET_EXPECTED_RESPONSES: {
+      label: 'Did not get expected responses',
+      value: 'did-not-get-expected-responses',
+    },
+    TOO_COSTLY_OR_NOT_VALUABLE: {
+      label: 'The platform is too costly or not valuable',
+      value: 'too-costly-or-not-valuable',
+    },
+    OTHER: {
+      label: 'Other (Please Specify)',
+      value: 'other',
+    },
+  };
+
+  const getDeleteReasonLabel = value => {
+    const found = Object.values(deleteReasons).find(
+      item => item.value === value,
+    );
+    return found?.label || 'Select Reason';
+  };
+
+  // console.log(' === user++ ===> ', isProfileHide);
 
   const topModalBottomSheetRef = useRef(null);
 
@@ -52,14 +107,28 @@ const HideDeleteProfileScreen = () => {
     topModalBottomSheetRef.current.open();
   };
 
-  const handleOptionSelect = option => {
-    setSelectedOption(option); // Update selected option
-    bottomSheetRef.current.close(); // Close the bottom sheet
+  const handleOptionSelect = duration => {
+    const formattedText = formatDurationText(duration);
+    setSelectedDuration(duration); // Store the original value if needed for API calls
+    setSelectedOption(formattedText); // Store the formatted text for display
+    bottomSheetRef.current.close();
   };
 
-  const handleDeleteOptionSelect = option => {
-    setSelectedDelete(option); // Update selected option
-    deleteBottomSheetRef.current.close(); // Close the bottom sheet
+  // const handleDeleteOptionSelect = option => {
+  //   setSelectedDelete(option); // Update selected option
+  //   deleteBottomSheetRef.current.close(); // Close the bottom sheet
+  // };
+
+  const handleDeleteOptionSelect = value => {
+    setSelectedDelete(value);
+    deleteBottomSheetRef.current.close();
+
+    if (value === 'other') {
+      setShowOtherInput(true);
+    } else {
+      setShowOtherInput(false);
+      setCustomReason('');
+    }
   };
 
   const toggleModal = () => {
@@ -78,6 +147,23 @@ const HideDeleteProfileScreen = () => {
   const handleDurationChange = value => {
     const label = getLabelFromValue(value);
     setSelectedDuration(label);
+  };
+
+  const formatDurationText = duration => {
+    switch (duration) {
+      case 'oneWeek':
+        return 'One Week';
+      case 'twoWeek':
+        return 'Two Weeks';
+      case 'oneMonth':
+        return 'One Month';
+      case 'threeMonth':
+        return 'Three Months';
+      case 'sixMonth':
+        return 'Six Months';
+      default:
+        return duration;
+    }
   };
 
   const SELECT_DURATION = [
@@ -104,37 +190,99 @@ const HideDeleteProfileScreen = () => {
     // console.log(' === Deleted Account ===> ');
   };
 
+  // const onDeleteAccountPress = async () => {
+  //   console.log(' === ID ===> ', user?.user.id);
+  //   try {
+  //     const response = await axios.delete(
+  //       'https://stag.mntech.website/api/v1/user/user/', // Adjust the URL as needed
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Include the authentication token
+  //           'Content-Type': 'application/json',
+  //         },
+  //       },
+  //     );
+  //
+  //     if (response.status === 200) {
+  //       // Successfully deleted
+  //       setModalVisible(false); // Close the delete confirmation modal
+  //       dispatch(logout(), () => dispatch(changeStack()));
+  //     }
+  //   } catch (error) {
+  //     // Log detailed error response
+  //     console.error('Error deleting account:', {
+  //       status: error.response?.status,
+  //       data: error.response?.data,
+  //       message: error.message,
+  //     });
+  //     Alert.alert('Failed to delete account. Please try again later.'); // Show error message
+  //   }
+  // };
+
+  // const onDeleteAccountPress = () => {
+  //   console.log('Selected Reason Value:', selectedDelete);
+  //
+  //   if (selectedDelete === 'other') {
+  //     console.log('Custom Reason:', customReason);
+  //   }
+  //
+  //   setModalVisible(false);
+  // };
+
   const onDeleteAccountPress = async () => {
-    console.log(' === ID ===> ', user?.user.id);
+    console.log('Selected Reason Value:', selectedDelete);
+
+    let payload = {
+      profileHideAndDelete: {
+        isProfileDelete: true,
+      },
+    };
+
+    if (selectedDelete === 'other') {
+      console.log('Custom Reason:', customReason);
+      payload.profileHideAndDelete.reason = 'delete profile';
+    } else {
+      payload.profileHideAndDelete.reasonForProfileDelete = selectedDelete;
+    }
+
+    const token = user?.tokens?.access?.token;
+
     try {
-      const response = await axios.delete(
-        'https://stag.mntech.website/api/v1/user/user/', // Adjust the URL as needed
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/auth/update-user',
         {
+          method: 'PUT',
           headers: {
-            Authorization: `Bearer ${token}`, // Include the authentication token
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify(payload),
         },
       );
 
-      if (response.status === 200) {
-        // Successfully deleted
-        setModalVisible(false); // Close the delete confirmation modal
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Account deletion request successful:', data);
         dispatch(logout(), () => dispatch(changeStack()));
+        // Show success message or navigate
+      } else {
+        console.error('Failed to delete account:', data);
+        // Handle API error
       }
     } catch (error) {
-      // Log detailed error response
-      console.error('Error deleting account:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-      });
-      Alert.alert('Failed to delete account. Please try again later.'); // Show error message
+      console.error('Network error:', error);
     }
+
+    setModalVisible(false);
   };
 
   const selectSetDurationModalOPen = () => {
     setSelectDurationModal(true);
+  };
+
+  const selectSetUnDurationModalOPen = () => {
+    setSelectUnDurationModal(true);
   };
 
   const SelectSetDurationModalClose = () => {
@@ -142,25 +290,52 @@ const HideDeleteProfileScreen = () => {
   };
 
   const onHideProfilePress = () => {
-    // setSelectDurationModal(false);
     // console.log('Selected Duration:', selectedDuration);
-    if (!selectedDuration) {
-      Alert.alert(
-        'Please select a duration',
-        'You need to select a duration before hiding your profile.',
-      );
-    } else {
-      // console.log('Selected Duration:', selectedDuration);
-      apiDispatch(
-        updateDetails({
+    // if (!selectedDuration) {
+    //   Alert.alert(
+    //     'Please select a duration',
+    //     'You need to select a duration before hiding your profile.',
+    //   );
+    // } else {
+    //   apiDispatch(
+    //     updateDetails({
+    //       profileHideAndDelete: {
+    //         // timeForProfileHide: selectedDuration,
+    //         isProfileHide: true,
+    //       },
+    //     }),
+    //   );
+    //   setSelectDurationModal(false);
+    // }
+
+    apiDispatch(
+      updateDetails(
+        {
           profileHideAndDelete: {
-            timeForProfileHide: selectedDuration,
+            // timeForProfileHide: selectedDuration,
             isProfileHide: true,
           },
-        }),
-      );
-      setSelectDurationModal(false);
-    }
+        },
+        () => {
+          setSelectDurationModal(false);
+        },
+      ),
+    );
+  };
+
+  const onUnHideProfilePress = () => {
+    apiDispatch(
+      updateDetails(
+        {
+          profileHideAndDelete: {
+            isProfileHide: false,
+          },
+        },
+        () => {
+          setSelectUnDurationModal(false);
+        },
+      ),
+    );
   };
 
   return (
@@ -235,161 +410,29 @@ const HideDeleteProfileScreen = () => {
             {/*<Text style={style.tittleDescriptionTextStyle}>inaccessible</Text>*/}
           </View>
 
-          {/*<DropDownTextInputComponent*/}
-          {/*  data={SELECT_DURATION}*/}
-          {/*  placeholder={'Select Duration'}*/}
-          {/*  searchPlaceholder={'Search Select Duration'}*/}
-          {/*  height={55}*/}
-          {/*  placeholderStyle={{color: colors.black, marginLeft: 15}}*/}
-          {/*  onChange={handleDurationChange}*/}
-          {/*/>*/}
-
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={{
-                marginTop: 10,
-                width: '100%',
-                height: 50,
-                borderColor: '#E5E5E5',
-                borderWidth: 1,
-                borderRadius: 50,
-                paddingLeft: 20,
-                flex: 1,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-              onPress={() => bottomSheetRef.current.open()} // Open the bottom sheet
-            >
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                {selectedOption || 'Select Duration'}
-              </Text>
-              <Image
-                source={icons.drooDownLogo}
-                style={{
-                  width: 14,
-                  height: 8,
-                  marginRight: 21,
-                  tintColor: colors.black,
-                  resizeMode: 'contain',
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <RBSheet
-            ref={bottomSheetRef}
-            height={hp(300)}
-            openDuration={250}
-            customStyles={{
-              draggableIcon: {
-                backgroundColor: '#ffffff',
-              },
-              container: {
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-              },
-            }}>
-            <View>
-              <Text
-                style={{
-                  marginTop: hp(23),
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                  marginBottom: hp(21),
-                  marginHorizontal: 30,
-                }}>
-                Select Duration
-              </Text>
-
-              <View
-                style={{
-                  width: '100%',
-                  height: 0.7,
-                  backgroundColor: '#E7E7E7',
-                }}
-              />
-
-              <View style={{marginHorizontal: 30}}>
-                <TouchableOpacity
-                  // style={{marginTop: 10}}
-                  onPress={() => handleOptionSelect('1 Month')}>
-                  <Text
-                    style={{
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: colors.black,
-                      marginTop: 24,
-                    }}>
-                    1 Month{' '}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => handleOptionSelect('3 Month')}>
-                  <Text
-                    style={{
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: colors.black,
-                      marginTop: 24,
-                    }}>
-                    3 Month
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => handleOptionSelect('6 Month')}>
-                  <Text
-                    style={{
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: colors.black,
-                      marginTop: 24,
-                    }}>
-                    6 Month
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleOptionSelect('Till I activate')}>
-                  <Text
-                    style={{
-                      fontSize: fontSize(16),
-                      lineHeight: hp(24),
-                      fontFamily: fontFamily.poppins400,
-                      color: colors.black,
-                      marginTop: 24,
-                    }}>
-                    Till I activate
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </RBSheet>
-
           {/*<View style={{flex: 1, alignItems: 'flex-end'}}>*/}
           <View style={{flex: 1}}>
-            <CommonGradientButton
-              onPress={selectSetDurationModalOPen}
-              buttonName={'Hide'}
-              disabled={!selectedOption}
-              containerStyle={{
-                width: '100%',
-                height: hp(50),
-                marginTop: hp(15),
-              }}
-            />
+            {isProfileHide ? (
+              <CommonGradientButton
+                onPress={selectSetUnDurationModalOPen}
+                buttonName={'Unhide Profile'}
+                containerStyle={{
+                  width: '100%',
+                  height: hp(50),
+                  marginTop: hp(15),
+                }}
+              />
+            ) : (
+              <CommonGradientButton
+                onPress={selectSetDurationModalOPen}
+                buttonName={'Hide Profile'}
+                containerStyle={{
+                  width: '100%',
+                  height: hp(50),
+                  marginTop: hp(15),
+                }}
+              />
+            )}
           </View>
         </View>
 
@@ -411,17 +454,6 @@ const HideDeleteProfileScreen = () => {
               and paid memberships permanently.
             </Text>
 
-            {/*<DropDownTextInputComponent*/}
-            {/*  data={SELECT_REASON}*/}
-            {/*  placeholder={'Select Reason'}*/}
-            {/*  searchPlaceholder={'Search Select Reason'}*/}
-            {/*  height={55}*/}
-            {/*  placeholderStyle={{*/}
-            {/*    color: colors.black,*/}
-            {/*    marginLeft: hp(15),*/}
-            {/*  }}*/}
-            {/*/>*/}
-
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity
                 activeOpacity={0.9}
@@ -438,18 +470,19 @@ const HideDeleteProfileScreen = () => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}
-                onPress={() => deleteBottomSheetRef.current.open()} // Open the bottom sheet
-              >
+                onPress={() => deleteBottomSheetRef.current.open()}>
                 <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                   style={{
                     fontSize: fontSize(16),
                     lineHeight: hp(24),
                     fontFamily: fontFamily.poppins400,
                     color: colors.black,
+                    flex: 1,
                   }}>
-                  {selectedDelete || 'Select Reason'}
+                  {getDeleteReasonLabel(selectedDelete)}
                 </Text>
-                {/* Display selected option or "Open" */}
                 <Image
                   source={icons.drooDownLogo}
                   style={{
@@ -462,10 +495,36 @@ const HideDeleteProfileScreen = () => {
               </TouchableOpacity>
             </View>
 
+            {showOtherInput && (
+              <View
+                style={{
+                  // marginHorizontal: 17,
+                  marginTop: hp(25),
+                  borderWidth: 1,
+                  borderColor: '#D3D3D3',
+                  borderRadius: 10,
+                  padding: 10,
+                }}>
+                <TextInput
+                  placeholder="Describe Here"
+                  multiline
+                  numberOfLines={4}
+                  value={customReason}
+                  onChangeText={setCustomReason}
+                  style={{
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                    textAlignVertical: 'top',
+                    color: colors.black,
+                  }}
+                />
+              </View>
+            )}
+
             <RBSheet
               ref={deleteBottomSheetRef}
-              height={300}
-              openDuration={250}
+              height={hp(550)}
+              // openDuration={250}
               customStyles={{
                 draggableIcon: {
                   backgroundColor: '#ffffff',
@@ -475,10 +534,10 @@ const HideDeleteProfileScreen = () => {
                   borderTopRightRadius: 20,
                 },
               }}>
-              <View>
+              <View style={{flex: 1}}>
                 <Text
                   style={{
-                    marginTop: hp(23),
+                    marginTop: hp(15),
                     fontSize: fontSize(16),
                     lineHeight: hp(24),
                     fontFamily: fontFamily.poppins400,
@@ -498,80 +557,41 @@ const HideDeleteProfileScreen = () => {
                 />
 
                 <View style={{marginHorizontal: 30}}>
-                  <TouchableOpacity
-                    // style={{marginTop: 10}}
-                    onPress={() =>
-                      handleDeleteOptionSelect(' Found my match on HappyMilan')
-                    }>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                        color: colors.black,
-                        marginTop: 24,
-                      }}>
-                      Found my match on HappyMilan
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleDeleteOptionSelect(
-                        'Found my match through other sources',
-                      )
-                    }>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                        color: colors.black,
-                        marginTop: 24,
-                      }}>
-                      Found my match through other sources
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() =>
-                      handleDeleteOptionSelect('I changed my decision')
-                    }>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                        color: colors.black,
-                        marginTop: 24,
-                      }}>
-                      I changed my decision
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() => handleDeleteOptionSelect('I will do later')}>
-                    <Text
-                      style={{
-                        fontSize: fontSize(16),
-                        lineHeight: hp(24),
-                        fontFamily: fontFamily.poppins400,
-                        color: colors.black,
-                        marginTop: 24,
-                      }}>
-                      I will do later
-                    </Text>
-                  </TouchableOpacity>
+                  {Object.values(deleteReasons).map((reason, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleDeleteOptionSelect(reason.value)}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(16),
+                          fontFamily: fontFamily.poppins400,
+                          color: colors.black,
+                          marginTop: hp(24),
+                        }}>
+                        {reason.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
               </View>
             </RBSheet>
 
             <TouchableOpacity
-              onPress={handleDeleteButtonPress}
+              onPress={!selectedDelete ? null : handleDeleteButtonPress} // Disable press when no reason selected
               activeOpacity={0.7}
-              style={{flex: 1, alignItems: 'flex-end', marginTop: hp(15)}}>
+              disabled={!selectedDelete} // Disable touch when no reason selected
+              style={{
+                flex: 1,
+                alignItems: 'flex-end',
+                marginTop: hp(24),
+                marginBottom: 50,
+              }}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={
+                  !selectedDelete
+                    ? ['#0D4EB3', '#9413D0']
+                    : ['#0D4EB3', '#9413D0']
+                } // Gray when disabled
                 start={{x: 0, y: 0}}
                 end={{x: 0.9, y: 0.7}}
                 style={{
@@ -579,6 +599,7 @@ const HideDeleteProfileScreen = () => {
                   height: hp(50),
                   borderRadius: 50,
                   justifyContent: 'center',
+                  opacity: !selectedDelete ? 0.6 : 1, // Reduce opacity when disabled
                 }}>
                 <Text
                   style={{
@@ -588,7 +609,7 @@ const HideDeleteProfileScreen = () => {
                     lineHeight: hp(24),
                     fontFamily: fontFamily.poppins400,
                   }}>
-                  Delete
+                  Delete Profile
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -607,10 +628,10 @@ const HideDeleteProfileScreen = () => {
           <View style={style.modalBodyContainer}>
             <View style={style.modalBodyStyle}>
               <View style={style.modalTittleContainer}>
-                <Text style={style.modalTittleText}>Are you sure want</Text>
+                {/*<Text style={style.modalTittleText}>Are you sure want</Text>*/}
 
                 <Text style={style.modalTittleDescriptionText}>
-                  Delete Your Profile?
+                  Proceed to Delete your profile?
                 </Text>
               </View>
 
@@ -646,7 +667,7 @@ const HideDeleteProfileScreen = () => {
                           lineHeight: hp(21),
                           fontFamily: fontFamily.poppins600,
                         }}>
-                        Not Now
+                        Cancel
                       </Text>
                     </View>
                   </LinearGradient>
@@ -682,40 +703,41 @@ const HideDeleteProfileScreen = () => {
             }}>
             <View
               style={{
-                width: wp(340),
-                height: hp(264),
+                width: '90%',
+                // height: hp(264),
                 backgroundColor: 'white',
-                padding: 20,
-                borderRadius: 10,
+                // padding: 20,
+                borderRadius: 20,
                 justifyContent: 'center',
               }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(24),
-                  lineHeight: hp(36),
-                  color: colors.black,
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                Are you sure want
-              </Text>
+              {/*<Text*/}
+              {/*  style={{*/}
+              {/*    textAlign: 'center',*/}
+              {/*    fontSize: fontSize(24),*/}
+              {/*    lineHeight: hp(36),*/}
+              {/*    color: colors.black,*/}
+              {/*    fontFamily: fontFamily.poppins400,*/}
+              {/*  }}>*/}
+              {/*  Are you sure want*/}
+              {/*</Text>*/}
               <Text
                 style={{
                   textAlign: 'center',
                   fontSize: fontSize(18),
                   lineHeight: hp(30),
                   color: colors.black,
-                  marginTop: hp(3),
+                  marginTop: hp(51),
                   fontFamily: fontFamily.poppins400,
                 }}>
-                Hide Your Profile?
+                Proceed to Hide your profile?
               </Text>
 
               <View
                 style={{
                   flexDirection: 'row',
-                  marginTop: 50,
+                  marginTop: hp(38),
                   justifyContent: 'space-evenly',
+                  marginBottom: hp(39),
                   // backgroundColor: 'grey',
                   // marginHorizontal: 34,
                 }}>
@@ -733,7 +755,7 @@ const HideDeleteProfileScreen = () => {
                       width: wp(126),
                       height: hp(50),
                       borderRadius: 50,
-                      borderWidth: 1,
+                      borderWidth: 1.5,
                       justifyContent: 'center',
                       borderColor: 'transparent', // Set border color to transparent
                     }}>
@@ -755,7 +777,7 @@ const HideDeleteProfileScreen = () => {
                           lineHeight: hp(21),
                           fontFamily: fontFamily.poppins600,
                         }}>
-                        Not Now
+                        Cancel
                       </Text>
                     </View>
                   </LinearGradient>
@@ -764,6 +786,111 @@ const HideDeleteProfileScreen = () => {
                 <CommonGradientButton
                   onPress={onHideProfilePress}
                   buttonName={'Yes, Hide'}
+                  containerStyle={{
+                    width: hp(126),
+                    height: hp(50),
+                    borderRadius: 50,
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={selectUnDurationModal}
+          onRequestClose={SelectSetDurationModalClose}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}>
+            <View
+              style={{
+                width: '90%',
+                // height: hp(264),
+                backgroundColor: 'white',
+                // padding: 20,
+                borderRadius: 20,
+                justifyContent: 'center',
+              }}>
+              {/*<Text*/}
+              {/*  style={{*/}
+              {/*    textAlign: 'center',*/}
+              {/*    fontSize: fontSize(24),*/}
+              {/*    lineHeight: hp(36),*/}
+              {/*    color: colors.black,*/}
+              {/*    fontFamily: fontFamily.poppins400,*/}
+              {/*  }}>*/}
+              {/*  Are you sure want*/}
+              {/*</Text>*/}
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: fontSize(18),
+                  lineHeight: hp(30),
+                  color: colors.black,
+                  marginTop: hp(51),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Proceed to Unhide your profile?
+              </Text>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: hp(38),
+                  marginBottom: hp(39),
+                  justifyContent: 'space-evenly',
+                  // backgroundColor: 'grey',
+                  // marginHorizontal: 34,
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setSelectUnDurationModal(false);
+                  }}>
+                  <LinearGradient
+                    colors={['#0D4EB3', '#9413D0']}
+                    style={{
+                      width: wp(126),
+                      height: hp(50),
+                      borderRadius: 50,
+                      borderWidth: 1.5,
+                      justifyContent: 'center',
+                      borderColor: 'transparent', // Set border color to transparent
+                    }}>
+                    <View
+                      style={{
+                        borderRadius: 50, // <-- Inner Border Radius
+                        flex: 1,
+                        backgroundColor: colors.white,
+                        justifyContent: 'center',
+                        margin: isIOS ? 0 : 1,
+                      }}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          backgroundColor: 'transparent',
+                          color: colors.black,
+                          margin: 10,
+                          fontSize: fontSize(14),
+                          lineHeight: hp(21),
+                          fontFamily: fontFamily.poppins600,
+                        }}>
+                        Cancel
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                <CommonGradientButton
+                  onPress={onUnHideProfilePress}
+                  buttonName={'Yes, Unhide'}
                   containerStyle={{
                     width: hp(126),
                     height: hp(50),

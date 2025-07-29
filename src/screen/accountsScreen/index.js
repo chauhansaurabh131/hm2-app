@@ -428,45 +428,45 @@ const AccountsScreen = ({navigation}) => {
 
         <View style={style.descriptionBodyUnderlineStyle} />
 
-        <TouchableHighlight
-          activeOpacity={0.6}
-          underlayColor="#F9FBFF"
-          onPress={() => {
-            navigation.navigate('EmailSmsAlertScreen');
-          }}>
-          <View style={{marginHorizontal: 17, marginBottom: 15}}>
-            <View
-              // activeOpacity={0.5}
-              style={{marginTop: hp(16)}}
-              // onPress={() => {
-              //   navigation.navigate('EmailSmsAlertScreen');
-              // }}
-            >
-              <View style={style.bodyDescription}>
-                <View style={{width: 25}}>
-                  <Image
-                    source={icons.notification_icon}
-                    style={style.emailSmsIconStyle}
-                  />
-                </View>
+        {/*<TouchableHighlight*/}
+        {/*  activeOpacity={0.6}*/}
+        {/*  underlayColor="#F9FBFF"*/}
+        {/*  onPress={() => {*/}
+        {/*    navigation.navigate('EmailSmsAlertScreen');*/}
+        {/*  }}>*/}
+        {/*  <View style={{marginHorizontal: 17, marginBottom: 15}}>*/}
+        {/*    <View*/}
+        {/*      // activeOpacity={0.5}*/}
+        {/*      style={{marginTop: hp(16)}}*/}
+        {/*      // onPress={() => {*/}
+        {/*      //   navigation.navigate('EmailSmsAlertScreen');*/}
+        {/*      // }}*/}
+        {/*    >*/}
+        {/*      <View style={style.bodyDescription}>*/}
+        {/*        <View style={{width: 25}}>*/}
+        {/*          <Image*/}
+        {/*            source={icons.notification_icon}*/}
+        {/*            style={style.emailSmsIconStyle}*/}
+        {/*          />*/}
+        {/*        </View>*/}
 
-                <Image
-                  source={icons.rightSideIcon}
-                  style={style.sideArrowImageStyle}
-                />
-                <View style={style.credentialTittleContainer}>
-                  <Text style={style.credentialTittleText}>Notifications</Text>
-                  <Text style={style.credentialDescriptionTextStyle}>
-                    Manage how and when you receive alerts.{'\n'}Choose between
-                    email, SMS, or app notifications.
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableHighlight>
+        {/*        <Image*/}
+        {/*          source={icons.rightSideIcon}*/}
+        {/*          style={style.sideArrowImageStyle}*/}
+        {/*        />*/}
+        {/*        <View style={style.credentialTittleContainer}>*/}
+        {/*          <Text style={style.credentialTittleText}>Notifications</Text>*/}
+        {/*          <Text style={style.credentialDescriptionTextStyle}>*/}
+        {/*            Manage how and when you receive alerts.{'\n'}Choose between*/}
+        {/*            email, SMS, or app notifications.*/}
+        {/*          </Text>*/}
+        {/*        </View>*/}
+        {/*      </View>*/}
+        {/*    </View>*/}
+        {/*  </View>*/}
+        {/*</TouchableHighlight>*/}
 
-        <View style={style.descriptionBodyUnderlineStyle} />
+        {/*<View style={style.descriptionBodyUnderlineStyle} />*/}
 
         {user?.user?.appUsesType === 'dating' && (
           <TouchableHighlight

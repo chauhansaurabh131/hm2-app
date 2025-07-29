@@ -132,7 +132,7 @@ const DatingCreatingProfile = () => {
   return (
     <SafeAreaView style={style.container}>
       <View style={style.bodyContainer}>
-        <AppColorLogo />
+        {/*<AppColorLogo />*/}
         <Text style={style.headingTextStyle}>I’m Looking for?</Text>
 
         <View style={style.bodyHeightStyle}>

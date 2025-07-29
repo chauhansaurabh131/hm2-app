@@ -25,10 +25,10 @@ function* register(action) {
   }
 }
 
-// Login saga
 // function* login(action) {
 //   try {
 //     const response = yield call(auth.login, action.data.payload);
+//
 //     yield put(authAction.loginSuccess(response.data?.data));
 //
 //     yield setAsyncStorageData(
@@ -49,11 +49,28 @@ function* register(action) {
 //     const otpEmail = error?.response?.data?.email;
 //     const otpMobileNumber = error?.response?.data?.mobileNumber;
 //
-//     console.log(' === error status ===> ', statusCode);
-//     console.log(' === error message ===> ', errorMessage);
+//     console.log('=== error status ===>', statusCode);
+//     console.log('=== error message ===>', errorMessage);
 //
-//     // Only trigger failure callback if it's not a 500 error
-//     if (statusCode !== 500 && errorMessage !== 'Incorrect email or password') {
+//     // 👇 Handle specific error scenarios
+//     if (errorMessage === 'Incorrect email or password') {
+//       console.log('❌ Wrong email or password');
+//       // Optionally show toast
+//       Toast.show({
+//         type: 'error',
+//         text1: 'Invalid Credentials',
+//         text2: 'Incorrect email or password',
+//       });
+//     } else if (statusCode === 502) {
+//       console.log('❗ Server is temporarily unavailable (502 error)');
+//       // Optionally show toast or alert
+//       Toast.show({
+//         type: 'error',
+//         text1: 'Server Error',
+//         text2: 'Service temporarily unavailable. Please try again later.',
+//       });
+//     } else {
+//       // ✅ For OTP or other handled errors
 //       action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
 //     }
 //
@@ -77,6 +94,7 @@ function* login(action) {
       `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
     );
 
+    // 🔹 Call success callback to proceed in app
     action.data?.successCallback();
   } catch (error) {
     const statusCode = error?.response?.status;
@@ -88,25 +106,27 @@ function* login(action) {
     console.log('=== error status ===>', statusCode);
     console.log('=== error message ===>', errorMessage);
 
-    // 👇 Handle specific error scenarios
     if (errorMessage === 'Incorrect email or password') {
-      console.log('❌ Wrong email or password');
-      // Optionally show toast
       Toast.show({
         type: 'error',
         text1: 'Invalid Credentials',
         text2: 'Incorrect email or password',
       });
     } else if (statusCode === 502) {
-      console.log('❗ Server is temporarily unavailable (502 error)');
-      // Optionally show toast or alert
       Toast.show({
         type: 'error',
         text1: 'Server Error',
         text2: 'Service temporarily unavailable. Please try again later.',
       });
+    } else if (errorMessage === 'Your account has been deleted.') {
+      // ❌ Don't navigate, just show toast or alert
+      Toast.show({
+        type: 'error',
+        text1: 'Account Deleted',
+        text2: 'This account has been deleted. Please contact support.',
+      });
     } else {
-      // ✅ For OTP or other handled errors
+      // ✅ All other errors like OTP verification
       action.data?.failureCallback(otpType, otpEmail, otpMobileNumber);
     }
 

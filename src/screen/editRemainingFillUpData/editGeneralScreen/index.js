@@ -263,7 +263,7 @@ const EditGeneralScreen = ({navigation}) => {
                     marginBottom: 10,
                     color: colors.black,
                     lineHeight: 30,
-                    fontFamily: 'poppins_medium',
+                    fontFamily: fontFamily.poppins500,
                   }}>
                   {aboutText?.split(' ').slice(0, 5).join(' ') +
                     (aboutText?.split(' ').length > 5 ? '...' : '') ||

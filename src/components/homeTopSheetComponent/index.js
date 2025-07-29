@@ -390,7 +390,7 @@ const HomeTopSheetComponent = ({
                   width: wp(122),
                   height: hp(50),
                   borderRadius: 50,
-                  borderWidth: 1,
+                  borderWidth: 1.5,
                   justifyContent: 'center',
                   borderColor: 'transparent', // Set border color to transparent
                 }}>

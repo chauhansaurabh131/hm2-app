@@ -36,6 +36,7 @@ export const style = StyleSheet.create({
     fontFamily: fontFamily.poppins500,
     alignSelf: 'center',
     marginTop: hp(50),
+    marginBottom: 70,
   },
   selectedBackGroundColorStyle: {
     width: '100%',

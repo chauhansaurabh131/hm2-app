@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   Image,
   Keyboard,
+  Linking,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -77,6 +78,26 @@ const NewSignUpScreen = () => {
   //     return true;
   //   }
   // };
+
+  const openPrivacyPolicy = async () => {
+    const url = 'https://happymilan.vercel.app/privacypolicy';
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      console.warn("Can't open URL:", url);
+    }
+  };
+
+  const openTermAndCondition = async () => {
+    const url = 'https://happymilan.vercel.app/termsofuse';
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      console.warn("Can't open URL:", url);
+    }
+  };
 
   // Validate Email or Mobile
   const validateEmailOrMobile = () => {
@@ -276,33 +297,68 @@ const NewSignUpScreen = () => {
               <Text
                 style={{
                   color: colors.black,
-                  fontSize: fontSize(12),
-                  lineHeight: hp(18),
+                  fontSize: fontSize(14),
+                  lineHeight: hp(20),
                   fontFamily: fontFamily.poppins400,
                 }}>
                 By creating account, I Agree to Happy Milan
               </Text>
-              <View>
-                <Text
-                  style={{
-                    color: colors.blue,
-                    fontSize: fontSize(12),
-                    lineHeight: hp(18),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
-                  Privacy Policy
+              {/*<View>*/}
+              {/*  <Text*/}
+              {/*    style={{*/}
+              {/*      color: colors.blue,*/}
+              {/*      fontSize: fontSize(14),*/}
+              {/*      lineHeight: hp(20),*/}
+              {/*      fontFamily: fontFamily.poppins400,*/}
+              {/*    }}>*/}
+              {/*    Privacy Policy*/}
+              {/*    <Text*/}
+              {/*      style={{*/}
+              {/*        color: colors.black,*/}
+              {/*        fontSize: fontSize(14),*/}
+              {/*        lineHeight: hp(20),*/}
+              {/*        fontFamily: fontFamily.poppins400,*/}
+              {/*      }}>*/}
+              {/*      {' '}*/}
+              {/*      and{' '}*/}
+              {/*    </Text>*/}
+              {/*    <Text>T&C</Text>*/}
+              {/*  </Text>*/}
+              {/*</View>*/}
+
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity onPress={openPrivacyPolicy}>
                   <Text
                     style={{
-                      color: colors.black,
-                      fontSize: fontSize(12),
-                      lineHeight: hp(18),
+                      color: colors.blue,
+                      fontSize: fontSize(14),
+                      lineHeight: hp(20),
                       fontFamily: fontFamily.poppins400,
                     }}>
-                    {' '}
-                    and{' '}
+                    Privacy Policy
                   </Text>
-                  <Text>T&C</Text>
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: colors.black,
+                    fontSize: fontSize(14),
+                    lineHeight: hp(20),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  {' '}
+                  and{' '}
                 </Text>
+                <TouchableOpacity onPress={openTermAndCondition}>
+                  <Text
+                    style={{
+                      color: colors.blue,
+                      fontSize: fontSize(14),
+                      lineHeight: hp(20),
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    T&C
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -337,8 +393,8 @@ const NewSignUpScreen = () => {
               }}>
               <Text
                 style={{
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
                   textAlign: 'center',
                   color: colors.black,
                   fontFamily: fontFamily.poppins400,
@@ -370,28 +426,6 @@ const NewSignUpScreen = () => {
                   }}
                 />
               </TouchableOpacity>
-
-              {/*<TouchableOpacity*/}
-              {/*  style={{*/}
-              {/*    width: hp(44),*/}
-              {/*    height: hp(44),*/}
-              {/*    borderRadius: hp(50),*/}
-              {/*    borderColor: '#D4D4D4',*/}
-              {/*    borderWidth: 1,*/}
-              {/*    marginRight: wp(20),*/}
-              {/*    justifyContent: 'center',*/}
-              {/*    alignItems: 'center',*/}
-              {/*    marginLeft: wp(24),*/}
-              {/*  }}>*/}
-              {/*  <Image*/}
-              {/*    source={icons.facebookLogo}*/}
-              {/*    style={{*/}
-              {/*      height: hp(17.6),*/}
-              {/*      width: hp(17.6),*/}
-              {/*      resizeMode: 'contain',*/}
-              {/*    }}*/}
-              {/*  />*/}
-              {/*</TouchableOpacity>*/}
             </View>
 
             <View
@@ -416,7 +450,15 @@ const NewSignUpScreen = () => {
               onPress={() => {
                 navigation.navigate('NewLogInScreen');
               }}>
-              <Text style={{color: colors.black}}>Member Login</Text>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Member Login
+              </Text>
               <View>
                 <Image
                   source={images.profileVectorLogo}

@@ -771,7 +771,7 @@ const DatingHomeScreen = () => {
         </View>
       </Modal>
 
-      <View style={{backgroundColor: 'green', marginTop: -40}}>
+      <View style={{backgroundColor: 'white', flex: 1}}>
         <DatingSwipeDataComponent />
       </View>
     </SafeAreaView>

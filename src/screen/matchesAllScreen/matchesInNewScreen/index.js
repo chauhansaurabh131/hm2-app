@@ -54,10 +54,10 @@ const MatchesInNewScreen = () => {
   const [percentageLoader, setPercentageLoader] = useState(null);
   const [percentageMatchData, setPercentageMatchData] = useState([]);
 
-  console.log(
-    ' === percentageMatchData---- ===> ',
-    percentageMatchData?.matchedFields,
-  );
+  // console.log(
+  //   ' === percentageMatchData---- ===> ',
+  //   percentageMatchData?.matchedFields,
+  // );
 
   const ReportBottomSheetRef = useRef();
 
@@ -1161,109 +1161,6 @@ const MatchesInNewScreen = () => {
                   </View>
                 </>
               )}
-
-              {/*{step === 3 && (*/}
-              {/*  <>*/}
-              {/*    <Text style={style.tittleTextStyle}>Degree</Text>*/}
-
-              {/*    <View style={style.subTittleContainer}>*/}
-              {/*      <Text style={style.subTittleText}>BCA, Bsc, MBA</Text>*/}
-
-              {/*      <Image*/}
-              {/*        source={icons.check_gradient_icon}*/}
-              {/*        style={style.checkIcon}*/}
-              {/*      />*/}
-              {/*    </View>*/}
-
-              {/*    <View style={style.subTittleUpperContainer}>*/}
-              {/*      <Text style={style.tittleTextStyle}>Profession</Text>*/}
-
-              {/*      <View style={style.subTittleContainer}>*/}
-              {/*        <Text style={style.subTittleText}>*/}
-              {/*          Software, Medical Officer*/}
-              {/*        </Text>*/}
-
-              {/*        <Image*/}
-              {/*          source={icons.check_gradient_icon}*/}
-              {/*          style={style.checkIcon}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    </View>*/}
-
-              {/*    <View style={style.subTittleUpperContainer}>*/}
-              {/*      <Text style={style.tittleTextStyle}>Annual Income</Text>*/}
-
-              {/*      <View style={style.subTittleContainer}>*/}
-              {/*        <Text style={style.subTittleText}>10 to 35 lac</Text>*/}
-
-              {/*        <Image*/}
-              {/*          source={icons.check_gradient_icon}*/}
-              {/*          style={style.checkIcon}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    </View>*/}
-
-              {/*    <View style={style.subTittleUpperContainer}>*/}
-              {/*      <Text style={style.tittleTextStyle}>Job Type</Text>*/}
-
-              {/*      <View style={style.subTittleContainer}>*/}
-              {/*        <Text style={style.subTittleText}>*/}
-              {/*          Government, Private*/}
-              {/*        </Text>*/}
-
-              {/*        <Image*/}
-              {/*          source={icons.check_gradient_icon}*/}
-              {/*          style={style.checkIcon}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    </View>*/}
-              {/*  </>*/}
-              {/*)}*/}
-
-              {/*{step === 4 && (*/}
-              {/*  <>*/}
-              {/*    <Text style={style.tittleTextStyle}>Prefer Diet</Text>*/}
-
-              {/*    <View style={style.subTittleContainer}>*/}
-              {/*      <Text style={style.subTittleText}>Vegetarian, All</Text>*/}
-
-              {/*      <Image*/}
-              {/*        source={icons.check_gradient_icon}*/}
-              {/*        style={style.checkIcon}*/}
-              {/*      />*/}
-              {/*    </View>*/}
-
-              {/*    <View style={style.subTittleUpperContainer}>*/}
-              {/*      <Text style={style.tittleTextStyle}>Creative</Text>*/}
-
-              {/*      <View style={style.subTittleContainer}>*/}
-              {/*        <Text style={style.subTittleText}>*/}
-              {/*          Writing, Painting, Reading*/}
-              {/*        </Text>*/}
-
-              {/*        <Image*/}
-              {/*          source={icons.check_gradient_icon}*/}
-              {/*          style={style.checkIcon}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    </View>*/}
-
-              {/*    <View style={style.subTittleUpperContainer}>*/}
-              {/*      <Text style={style.tittleTextStyle}>Fun</Text>*/}
-
-              {/*      <View style={style.subTittleContainer}>*/}
-              {/*        <Text style={style.subTittleText}>*/}
-              {/*          Watching Movie, Traveling*/}
-              {/*        </Text>*/}
-
-              {/*        <Image*/}
-              {/*          source={icons.check_gradient_icon}*/}
-              {/*          style={style.checkIcon}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    </View>*/}
-              {/*  </>*/}
-              {/*)}*/}
             </View>
 
             <View style={style.modalBottomNavigationContainer}>

@@ -125,7 +125,7 @@ export const style = StyleSheet.create({
     width: wp(122),
     height: hp(50),
     borderRadius: 50,
-    borderWidth: 1,
+    borderWidth: 1.5,
     justifyContent: 'center',
     borderColor: 'transparent',
   },

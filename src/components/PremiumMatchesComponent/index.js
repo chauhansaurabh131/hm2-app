@@ -529,7 +529,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
         item?.address.currentCity.slice(1).toLowerCase()
       : '';
 
-    const currentCountry = item?.defaultFields?.address?.currentCountry
+    const currentCountry = item?.address?.currentCountry
       ? item?.address.currentCountry.charAt(0).toUpperCase() +
         item?.address.currentCountry.slice(1).toLowerCase()
       : '';

@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {fontSize, hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import {icons} from '../../assets';
 
@@ -32,7 +32,7 @@ const NewTextInputComponent = ({
       <TextInput
         style={[
           styles.textInput,
-          LeftIconName && RightIconName ? {paddingHorizontal: 10} : {},
+          LeftIconName && RightIconName ? {paddingHorizontal: 5} : {},
         ]}
         value={value}
         onChangeText={onChangeText}
@@ -77,10 +77,15 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     height: hp(50),
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     fontSize: fontSize(16),
     color: '#333',
-    width: wp(400),
+    // width: wp(400),
+    marginLeft: hp(13),
+    paddingRight: hp(15),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins400,
+    top: 3,
   },
   iconRight: {
     marginRight: 15,

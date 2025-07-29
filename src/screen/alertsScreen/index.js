@@ -326,27 +326,27 @@ const AlertsScreen = () => {
             }}>
             All Notifications
           </Text>
-          <TouchableOpacity
-            onPress={handleClearNotifications}
-            disabled={notifications.length === 0}
-            style={{
-              flexDirection: 'row',
-              opacity: notifications.length === 0 ? 0.4 : 1,
-            }}>
-            <Text
+          {notifications.length > 0 && (
+            <TouchableOpacity
+              onPress={handleClearNotifications}
               style={{
-                fontSize: fontSize(14),
-                fontFamily: fontFamily.poppins400,
-                color: colors.blue,
-                marginRight: 4,
+                flexDirection: 'row',
               }}>
-              Clear
-            </Text>
-            <Image
-              source={icons.clear_delete_icon}
-              style={{width: 16, height: 16, tintColor: colors.blue}}
-            />
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: fontSize(14),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.blue,
+                  marginRight: 4,
+                }}>
+                Clear
+              </Text>
+              {/*<Image
+      source={icons.clear_delete_icon}
+      style={{width: 16, height: 16, tintColor: colors.blue}}
+    />*/}
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

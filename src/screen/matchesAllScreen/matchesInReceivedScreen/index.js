@@ -44,12 +44,16 @@ const MatchesInReceivedScreen = () => {
   const [blockedFriendId, setBlockedFriendId] = useState('');
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [reportReasons, setReportReasons] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [step, setStep] = useState(1);
   const [questionText, setQuestionText] = useState(
     'Why are you reporting this?',
   );
   const [isAboutClicked, setIsAboutClicked] = useState(false);
   const [aboutText, setAboutText] = useState('');
   const [isReportModalVisible, setReportModalVisible] = useState(false);
+  const [percentageMatchData, setPercentageMatchData] = useState([]);
+  const [percentageLoader, setPercentageLoader] = useState(null);
 
   const navigation = useNavigation();
   const {user} = useSelector(state => state.auth);
@@ -60,6 +64,74 @@ const MatchesInReceivedScreen = () => {
   const ReportBottomSheetRef = useRef();
 
   const dispatch = useDispatch();
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleNext = () => {
+    if (step < 4) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  const capitalizeFirstLetter = str => {
+    if (!str) {
+      return '';
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
+  const openModal = async item => {
+    // console.log(' === openModal___ ===> ', item?._id, item?.firstName);
+
+    console.log(' === var ===> ', item?.user?._id);
+
+    try {
+      // setLoading(true); // Show loading indicator
+      setPercentageLoader(item._id);
+
+      // Call the API to get match details
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?.user?._id}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const matchData = await response.json();
+
+      if (response.ok) {
+        console.log('Match data:', matchData);
+        // Here you can process the match data and update your modal content
+        // For example, you might want to store it in state:
+        // setMatchDetails(matchData);
+        setPercentageMatchData(matchData?.data[0]);
+
+        setPercentageLoader(null);
+        setModalVisible(true); // Open the modal after data is fetched
+        setStep(1); // Reset step to 1 when modal opens
+      } else {
+        console.error('Failed to fetch match data:', matchData);
+        Alert.alert('Error', 'Failed to fetch match details');
+      }
+    } catch (error) {
+      console.error('Error fetching match data:', error);
+      Alert.alert('Error', 'Failed to fetch match details');
+    } finally {
+      setLoading(false); // Hide loading indicator
+      setPercentageLoader(null);
+    }
+  };
 
   const ShowToast = () => {
     Toast.show({
@@ -172,23 +244,23 @@ const MatchesInReceivedScreen = () => {
   const handleDecline = (userID, requestedId) => {
     console.log(' === var ===> ', userId, requestedId);
 
-    // dispatch(
-    //   accepted_Decline_Request(
-    //     {
-    //       user: userId,
-    //       request: requestedId,
-    //       status: 'rejected',
-    //     },
-    //     () => {
-    //       setRequestStatus('declined');
-    //       setData(prevData =>
-    //         prevData.map(item =>
-    //           item?._id === requestedId ? {...item, status: 'declined'} : item,
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
+    dispatch(
+      accepted_Decline_Request(
+        {
+          user: userId,
+          request: requestedId,
+          status: 'rejected',
+        },
+        () => {
+          setRequestStatus('declined');
+          setData(prevData =>
+            prevData.map(item =>
+              item?._id === requestedId ? {...item, status: 'declined'} : item,
+            ),
+          );
+        },
+      ),
+    );
   };
 
   const onCopyIdPress = async selectedUniqueId => {
@@ -386,6 +458,7 @@ const MatchesInReceivedScreen = () => {
     setReportReasons([]);
     setQuestionText('Why are you reporting this?'); // Reset question text when going back
     setIsAboutClicked(false); // Reset "About" state
+    handleBack();
   };
 
   // Handle the "Submit" action for "About" section
@@ -638,14 +711,6 @@ const MatchesInReceivedScreen = () => {
         <View style={style.renderContainer}>
           <TouchableOpacity activeOpacity={1}>
             <View>
-              {/*<Image*/}
-              {/*  source={*/}
-              {/*    profilePic ? {uri: profilePic} : images.empty_male_Image*/}
-              {/*  }*/}
-              {/*  style={style.userImageStyle}*/}
-              {/*  resizeMode={'cover'}*/}
-              {/*/>*/}
-
               {hasValidImage ? (
                 <>
                   <Image
@@ -779,35 +844,48 @@ const MatchesInReceivedScreen = () => {
                   />
                   <TouchableOpacity
                     activeOpacity={0.5}
-                    // onPress={openModal}
+                    onPress={() => {
+                      openModal(item);
+                    }}
                     style={{
                       position: 'absolute',
                       left: 10,
-                      // top: 12,
                       flexDirection: 'row',
                       justifyContent: 'center',
-                    }}>
-                    <Image
-                      source={icons.couple_icon}
-                      style={{
-                        width: hp(16),
-                        height: hp(14),
-                        resizeMode: 'contain',
-                        tintColor: 'white',
-                      }}
-                    />
-                    <Text
-                      style={{
-                        color: 'white',
-                        marginLeft: 9,
-                        fontSize: fontSize(10),
-                        lineHeight: hp(15),
-                        fontFamily: fontFamily.poppins600,
-                        top: 1,
-                      }}>
-                      {/*85% Match*/}
-                      {item?.matchPercentage}% Match
-                    </Text>
+                    }}
+                    disabled={percentageLoader !== null}>
+                    {percentageLoader === item._id ? (
+                      <ActivityIndicator
+                        size="small"
+                        color="#FFFFFF"
+                        style={{
+                          marginLeft: hp(35),
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <Image
+                          source={icons.couple_icon}
+                          style={{
+                            width: hp(16),
+                            height: hp(14),
+                            resizeMode: 'contain',
+                            tintColor: 'white',
+                          }}
+                        />
+                        <Text
+                          style={{
+                            color: 'white',
+                            marginLeft: 9,
+                            fontSize: fontSize(10),
+                            lineHeight: hp(15),
+                            fontFamily: fontFamily.poppins600,
+                            top: 1,
+                          }}>
+                          {item?.matchPercentage}% Match
+                        </Text>
+                      </>
+                    )}
                   </TouchableOpacity>
 
                   <View
@@ -899,86 +977,6 @@ const MatchesInReceivedScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
-
-        {/*<View*/}
-        {/*  style={{*/}
-        {/*    alignItems: 'center',*/}
-        {/*    flexDirection: 'row',*/}
-        {/*    justifyContent: 'center',*/}
-        {/*    marginTop: 15,*/}
-        {/*  }}>*/}
-        {/*  {requestStatus === 'declined' ? (*/}
-        {/*    <View style={{flexDirection: 'row'}}>*/}
-        {/*      <Text*/}
-        {/*        style={{*/}
-        {/*          fontSize: fontSize(16),*/}
-        {/*          lineHeight: hp(24),*/}
-        {/*          fontFamily: fontFamily.poppins500,*/}
-        {/*          color: colors.black,*/}
-        {/*          marginRight: 15,*/}
-        {/*        }}>*/}
-        {/*        Declined Request*/}
-        {/*      </Text>*/}
-        {/*      <Image*/}
-        {/*        source={icons.matched_declined_icon}*/}
-        {/*        tintColor={'#BE6D6B'}*/}
-        {/*        style={{width: hp(22), height: hp(22), resizeMode: 'contain'}}*/}
-        {/*      />*/}
-        {/*    </View>*/}
-        {/*  ) : requestStatus === 'accepted' ? (*/}
-        {/*    <View style={{flexDirection: 'row'}}>*/}
-        {/*      <Text*/}
-        {/*        style={{*/}
-        {/*          fontSize: fontSize(16),*/}
-        {/*          lineHeight: hp(24),*/}
-        {/*          fontFamily: fontFamily.poppins500,*/}
-        {/*          color: colors.black,*/}
-        {/*          marginRight: 15,*/}
-        {/*        }}>*/}
-        {/*        Accepted Request*/}
-        {/*      </Text>*/}
-        {/*      <Image*/}
-        {/*        source={icons.matches_accp_icon}*/}
-        {/*        tintColor={'#17C270'}*/}
-        {/*        style={{width: hp(22), height: hp(22), resizeMode: 'contain'}}*/}
-        {/*      />*/}
-        {/*    </View>*/}
-        {/*  ) : (*/}
-        {/*    <>*/}
-        {/*      <Text*/}
-        {/*        style={{*/}
-        {/*          fontSize: fontSize(16),*/}
-        {/*          lineHeight: hp(24),*/}
-        {/*          fontFamily: fontFamily.poppins500,*/}
-        {/*          color: colors.black,*/}
-        {/*        }}>*/}
-        {/*        Want to accept?*/}
-        {/*      </Text>*/}
-
-        {/*      <TouchableOpacity*/}
-        {/*        onPress={() => handleAccept(item?.friend?._id, item?._id)}>*/}
-        {/*        <Image*/}
-        {/*          source={icons.received_accept_icon}*/}
-        {/*          style={{*/}
-        {/*            width: hp(63),*/}
-        {/*            height: hp(40),*/}
-        {/*            resizeMode: 'contain',*/}
-        {/*            marginRight: 15,*/}
-        {/*            marginLeft: 18,*/}
-        {/*          }}*/}
-        {/*        />*/}
-        {/*      </TouchableOpacity>*/}
-
-        {/*      <TouchableOpacity*/}
-        {/*        onPress={() => handleDecline(item?.friend?._id, item?._id)}>*/}
-        {/*        <Image*/}
-        {/*          source={icons.received_declined_icon}*/}
-        {/*          style={{width: hp(63), height: hp(40), resizeMode: 'contain'}}*/}
-        {/*        />*/}
-        {/*      </TouchableOpacity>*/}
-        {/*    </>*/}
-        {/*  )}*/}
-        {/*</View>*/}
 
         <View
           style={{
@@ -1887,6 +1885,620 @@ const MatchesInReceivedScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
+      </Modal>
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}>
+        {/*<TouchableWithoutFeedback onPress={closeModal}>*/}
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 10,
+              width: wp(340),
+              height: hp(550),
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(25),
+                marginHorizontal: 20,
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(20),
+                  lineHeight: hp(30),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                }}>
+                Your Match :
+                <Text
+                  style={{
+                    color: colors.blue,
+                    fontSize: fontSize(20),
+                    lineHeight: hp(30),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  {' '}
+                  {percentageMatchData?.matchPercentage}%
+                </Text>
+              </Text>
+
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  right: -5,
+                  height: hp(25),
+                  width: hp(25),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  top: -15,
+                }}
+                onPress={closeModal}>
+                <Image
+                  source={icons.x_cancel_icon}
+                  style={{
+                    width: hp(13),
+                    height: hp(13),
+                    tintColor: 'black',
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                marginTop: hp(26),
+                flexDirection: 'row',
+                alignSelf: 'center',
+              }}>
+              <Image
+                source={{uri: user?.user?.profilePic}}
+                style={{
+                  width: hp(64),
+                  height: hp(64),
+                  borderRadius: 50,
+                  marginRight: -15,
+                  zIndex: 1,
+                }}
+              />
+
+              <Image
+                source={{uri: percentageMatchData?.profilePic}}
+                style={{width: hp(64), height: hp(64), borderRadius: 50}}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                alignItems: 'center',
+                marginTop: hp(15),
+              }}>
+              <Image
+                source={icons.couple_icon}
+                style={{
+                  width: hp(16),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  tintColor: '#8225AF',
+                  marginRight: wp(10),
+                }}
+              />
+
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(12),
+                  lineHeight: hp(18),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                You &{' '}
+                {capitalizeFirstLetter(
+                  percentageMatchData?.firstName || percentageMatchData?.name,
+                )}{' '}
+                Matched
+              </Text>
+            </View>
+
+            <View
+              style={{
+                width: '100%',
+                borderWidth: 0.8,
+                borderColor: '#EAEAEA',
+                marginTop: hp(17),
+              }}
+            />
+
+            <Text
+              style={{
+                color: colors.blue,
+                fontSize: fontSize(12),
+                lineHeight: hp(18),
+                fontFamily: fontFamily.poppins500,
+                textAlign: 'center',
+                marginTop: hp(17),
+              }}>
+              Based on Your Partner Preference
+            </Text>
+
+            <View style={{marginHorizontal: 20, marginTop: hp(13)}}>
+              {step === 1 && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: fontSize(12),
+                      lineHeight: hp(18),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                    }}>
+                    {percentageMatchData?.matchedFields?.[0]?.field
+                      ? capitalizeFirstLetter(
+                          percentageMatchData.matchedFields[0].field,
+                        )
+                      : 'N/A'}
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(14),
+                        lineHeight: hp(22),
+                        fontFamily: fontFamily.poppins700,
+                        color: colors.black,
+                        width: '90%',
+                      }}>
+                      {percentageMatchData?.matchedFields?.[0]?.expected?.min ??
+                        'N/A'}{' '}
+                      to{' '}
+                      {percentageMatchData?.matchedFields?.[0]?.expected?.max ??
+                        'N/A'}
+                    </Text>
+
+                    <Image
+                      source={
+                        percentageMatchData?.matchedFields?.[0]?.isMatched
+                          ? icons.check_gradient_icon
+                          : icons.circle_cancel_icon
+                      }
+                      style={{
+                        width: hp(18),
+                        height: hp(18),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[1]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[1].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[1]?.expected
+                          ?.min ?? 'N/A'}{' '}
+                        to{' '}
+                        {percentageMatchData?.matchedFields?.[1]?.expected
+                          ?.max ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[1]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[2]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[2].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[2]?.expected
+                          ?.min ?? 'N/A'}{' '}
+                        to{' '}
+                        {percentageMatchData?.matchedFields?.[2]?.expected
+                          ?.max ?? 'N/A'}{' '}
+                        Lacs.
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[2]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[3]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[3].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[3]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[3]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: fontSize(12),
+                      lineHeight: hp(18),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                    }}>
+                    {percentageMatchData?.matchedFields?.[4]?.field
+                      ? capitalizeFirstLetter(
+                          percentageMatchData.matchedFields[4].field,
+                        )
+                      : 'N/A'}
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(14),
+                        lineHeight: hp(22),
+                        fontFamily: fontFamily.poppins700,
+                        color: colors.black,
+                        width: '90%',
+                      }}>
+                      {percentageMatchData?.matchedFields?.[4]?.expected
+                        ?.map(item => capitalizeFirstLetter(item))
+                        ?.join(', ') ?? 'N/A'}
+                    </Text>
+
+                    <Image
+                      source={
+                        percentageMatchData?.matchedFields?.[4]?.isMatched
+                          ? icons.check_gradient_icon
+                          : icons.circle_cancel_icon
+                      }
+                      style={{
+                        width: hp(18),
+                        height: hp(18),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[5]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[5].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[5]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[5]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[6]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[6].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[6]?.expected
+                          ?.map(capitalizeFirstLetter)
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[6]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[7]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[7].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[7]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[7]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                width: '70%',
+                position: 'absolute',
+                bottom: 25,
+                justifyContent: 'space-evenly',
+                alignSelf: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleBackArrow}
+                disabled={step === 1}
+                style={{width: wp(30), alignItems: 'center'}}>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={[
+                    {
+                      width: hp(12),
+                      height: hp(24),
+                      resizeMode: 'contain',
+                      transform: [{rotate: '180deg'}],
+                    },
+                    {tintColor: step === 1 ? '#E4E4E4' : 'black'},
+                  ]}
+                />
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                {[1, 2].map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => setStep(item)}
+                    style={[
+                      {
+                        width: 14,
+                        height: 14,
+                        borderRadius: 50,
+                        marginHorizontal: 10,
+                      },
+                      {backgroundColor: step === item ? '#0F52BA' : '#ECECEC'},
+                    ]}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity
+                onPress={handleNext}
+                disabled={step === 2}
+                style={{width: wp(30), alignItems: 'center'}}>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={[
+                    {width: hp(12), height: hp(24), resizeMode: 'contain'},
+                    {tintColor: step === 2 ? '#E4E4E4' : 'black'},
+                  ]}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        {/*</TouchableWithoutFeedback>*/}
       </Modal>
     </SafeAreaView>
   );

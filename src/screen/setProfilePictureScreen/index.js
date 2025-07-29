@@ -304,9 +304,9 @@ const SetProfilePictureScreen = ({route}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17)}}>
-        <AppColorLogo />
-      </View>
+      {/*<View style={{marginHorizontal: wp(17)}}>*/}
+      {/*  <AppColorLogo />*/}
+      {/*</View>*/}
       <Text style={styles.titleText}>Select Photo as Profile Picture</Text>
       <View style={styles.container}>
         {images.length > 0 && (
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     lineHeight: hp(30),
     textAlign: 'center',
     fontFamily: fontFamily.poppins600,
-    marginTop: hp(10),
+    marginTop: hp(20),
     marginBottom: hp(43),
   },
   container: {

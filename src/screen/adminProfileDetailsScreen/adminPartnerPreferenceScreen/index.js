@@ -1,6 +1,7 @@
 import React, {useRef, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   SafeAreaView,
   Text,
@@ -111,15 +112,33 @@ const AdminPartnerPreferenceScreen = (...params) => {
     setMaxAnnualIncome(range[1]); // Update maxAge
   };
 
+  // const toggleCountry = countries => {
+  //   if (country.includes(countries)) {
+  //     // Remove hobby if already selected
+  //     setCountry(country.filter(item => item !== countries));
+  //   } else {
+  //     // Add hobby if not selected
+  //     setCountry([...country, countries]);
+  //   }
+  //   // refRBSheet.current.close(); // Close BottomSheet after selection
+  // };
   const toggleCountry = countries => {
     if (country.includes(countries)) {
-      // Remove hobby if already selected
+      // Remove country if already selected
       setCountry(country.filter(item => item !== countries));
     } else {
-      // Add hobby if not selected
+      // Check if already 5 countries are selected
+      if (country.length >= 5) {
+        Alert.alert(
+          'Maximum Selection Reached',
+          'You can select a maximum of 5 country.',
+          [{text: 'OK'}],
+        );
+        return; // Exit the function without adding
+      }
+      // Add country if not selected and under limit
       setCountry([...country, countries]);
     }
-    // refRBSheet.current.close(); // Close BottomSheet after selection
   };
 
   const toggleState = states => {
@@ -127,6 +146,15 @@ const AdminPartnerPreferenceScreen = (...params) => {
       // Remove hobby if already selected
       setState(state.filter(item => item !== states));
     } else {
+      if (state.length >= 5) {
+        Alert.alert(
+          'Maximum Selection Reached',
+          'You can select a maximum of 5 state.',
+          [{text: 'OK'}],
+        );
+        return; // Exit the function without adding
+      }
+
       // Add hobby if not selected
       setState([...state, states]);
     }
@@ -138,6 +166,14 @@ const AdminPartnerPreferenceScreen = (...params) => {
       // Remove hobby if already selected
       setCity(city.filter(item => item !== cites));
     } else {
+      if (city.length >= 5) {
+        Alert.alert(
+          'Maximum Selection Reached',
+          'You can select a maximum of 5 city.',
+          [{text: 'OK'}],
+        );
+        return; // Exit the function without adding
+      }
       // Add hobby if not selected
       setCity([...city, cites]);
     }
@@ -154,6 +190,15 @@ const AdminPartnerPreferenceScreen = (...params) => {
       // Remove hobby if already selected
       setHobbies(hobbies.filter(item => item !== hobby));
     } else {
+      if (hobbies.length >= 5) {
+        Alert.alert(
+          'Maximum Selection Reached',
+          'You can select a maximum of 5 hobbies.',
+          [{text: 'OK'}],
+        );
+        return; // Exit the function without adding
+      }
+
       // Add hobby if not selected
       setHobbies([...hobbies, hobby]);
     }
@@ -271,52 +316,6 @@ const AdminPartnerPreferenceScreen = (...params) => {
   ];
 
   const handleSave = () => {
-    // Save data to your backend or perform any other necessary action
-
-    // const payload = {
-    //   age: {min: minAge, max: maxAge},
-    //   height: {min: minPreferHeight, max: maxPreferHeight},
-    //   country: country,
-    //   state: state,
-    //   city: city,
-    //   diet: preferDiet,
-    //   income: {min: minAnnualIncome, max: maxAnnualIncome},
-    //   hobbies: hobbies,
-    //   // country: Array.isArray(country)
-    //   //   ? country.map(con => con.trim()).filter(Boolean)
-    //   //   : country
-    //   //       .split(',')
-    //   //       .map(con => con.trim())
-    //   //       .filter(Boolean),
-    //
-    //   // city: Array.isArray(preferCity) ? preferCity : [preferCity],
-    //   // state: Array.isArray(preferState)
-    //   //   ? preferState.map(state => state.trim()).filter(Boolean) // Trim and remove empty entries
-    //   //   : preferState
-    //   //       .split(',')
-    //   //       .map(state => state.trim())
-    //   //       .filter(Boolean),
-    //
-    //   // income: Number(preferIncome),
-    //   // diet: Array.isArray(preferDiet)
-    //   //   ? preferDiet.map(diet => diet.trim()).filter(Boolean)
-    //   //   : [preferDiet.trim()].filter(Boolean),
-    //   // hobbies: Array.isArray(preferHobbies)
-    //   //   ? preferHobbies.map(hobby => hobby.trim()).filter(Boolean)
-    //   //   : [preferHobbies].filter(Boolean),
-    //
-    //   // hobbies: Array.isArray(preferHobbies)
-    //   //   ? preferHobbies.map(hobby => hobby.trim()).filter(Boolean) // Trim and remove empty entries
-    //   //   : preferHobbies
-    //   //       .split(',')
-    //   //       .map(hobby => hobby.trim())
-    //   //       .filter(Boolean),
-    // };
-
-    // console.log(' === payload ===> ', payload);
-    // dispatch(partnerReferences(payload), () => {
-    //   setIsEditing(false);
-    // });
     setLoading(true);
     dispatch(
       partnerReferences(
@@ -682,7 +681,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                       alignSelf: 'center',
                       alignItems: 'center',
                       right: 5,
-                      top: 35,
+                      // top: 35,
                     }}>
                     <Image
                       source={icons.rightSideIcon}
@@ -775,7 +774,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                       alignSelf: 'center',
                       alignItems: 'center',
                       right: 5,
-                      top: 35,
+                      // top: 35,
                     }}>
                     <Image
                       source={icons.rightSideIcon}
@@ -868,7 +867,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                       alignSelf: 'center',
                       alignItems: 'center',
                       right: 5,
-                      top: 35,
+                      // top: 35,
                     }}>
                     <Image
                       source={icons.rightSideIcon}

@@ -71,7 +71,7 @@ const CredentialsScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
 
-  // console.log(' === user ===> ', user?.tokens?.access?.token);
+  console.log(' === user ===> ', user?.user);
 
   useEffect(() => {
     let interval;

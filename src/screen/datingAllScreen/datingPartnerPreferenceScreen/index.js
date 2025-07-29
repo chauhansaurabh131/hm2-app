@@ -174,11 +174,11 @@ const DatingPartnerPreferenceScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17), flex: 1}}>
-        <AppColorLogo />
+        {/*<AppColorLogo />*/}
         <Text
           style={{
             color: 'black',
-            marginTop: hp(20),
+            marginTop: hp(30),
             fontSize: fontSize(20),
             lineHeight: hp(30),
             fontFamily: fontFamily.poppins600,

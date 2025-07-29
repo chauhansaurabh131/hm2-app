@@ -144,7 +144,6 @@
 //     color: 'black',
 //     fontSize: fontSize(20),
 //     lineHeight: 30, // Ensure hp(30) returns a valid number
-//     fontFamily: 'poppins_medium', // Ensure this font family is correctly loaded
 //   },
 //   icon: {
 //     position: 'absolute',
@@ -330,7 +329,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: fontSize(20),
     lineHeight: 30, // Ensure hp(30) returns a valid number
-    fontFamily: 'poppins_medium', // Ensure this font family is correctly loaded
+    fontFamily: fontFamily.poppins500, // Ensure this font family is correctly loaded
   },
   icon: {
     position: 'absolute',

@@ -272,7 +272,7 @@ const NewLogInScreen = () => {
               color: colors.black,
               fontSize: fontSize(24),
               lineHeight: hp(36),
-              fontFamily: fontFamily.poppins500,
+              fontFamily: fontFamily.poppins600,
               alignSelf: 'center',
               marginTop: hp(80),
             }}>
@@ -313,8 +313,8 @@ const NewLogInScreen = () => {
                   alignSelf: 'center',
                   color: colors.blue,
                   marginTop: hp(40),
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
                   fontFamily: fontFamily.poppins400,
                 }}>
                 Reset Password
@@ -351,8 +351,8 @@ const NewLogInScreen = () => {
               }}>
               <Text
                 style={{
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
                   textAlign: 'center',
                   color: colors.black,
                   fontFamily: fontFamily.poppins400,
@@ -430,8 +430,8 @@ const NewLogInScreen = () => {
               <Text
                 style={{
                   color: colors.black,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
                   fontFamily: fontFamily.poppins400,
                 }}>
                 New Member?{' '}
@@ -444,8 +444,8 @@ const NewLogInScreen = () => {
                 <Text
                   style={{
                     color: colors.blue,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
                     fontFamily: fontFamily.poppins400,
                   }}>
                   Sign Up

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers'; // Ensure you have these utils
 import {icons} from '../../assets'; // Assuming icons are defined for your assets
@@ -19,6 +20,7 @@ const NewBottomSheetMultipleValueSelect = ({
   options = [],
   onSelect,
   bottomSheetHeight,
+  maxSelections = 5,
 }) => {
   const [selectedValues, setSelectedValues] = useState([]); // State to store selected values
   const bottomSheetRef = useRef(null); // Reference to the bottom sheet
@@ -29,19 +31,51 @@ const NewBottomSheetMultipleValueSelect = ({
   };
 
   // Function to handle value selection from the bottom sheet
+  // const handleSelect = value => {
+  //   const updatedSelectedValues = selectedValues.includes(value)
+  //     ? selectedValues.filter(item => item !== value) // Remove if already selected
+  //     : [...selectedValues, value]; // Add if not selected
+  //
+  //   setSelectedValues(updatedSelectedValues);
+  //
+  //   // Only update parent state if onSelect is defined
+  //   if (onSelect) {
+  //     onSelect(updatedSelectedValues);
+  //   }
+  //
+  //   // Delay closing the bottom sheet slightly to avoid race conditions
+  //   setTimeout(() => {
+  //     bottomSheetRef.current.close();
+  //   }, 100);
+  // };
+
   const handleSelect = value => {
-    const updatedSelectedValues = selectedValues.includes(value)
-      ? selectedValues.filter(item => item !== value) // Remove if already selected
-      : [...selectedValues, value]; // Add if not selected
+    const isSelected = selectedValues.includes(value);
+    let updatedSelectedValues;
+
+    if (isSelected) {
+      // Remove if already selected
+      updatedSelectedValues = selectedValues.filter(item => item !== value);
+    } else {
+      // Check if maximum selections reached
+      if (selectedValues.length >= maxSelections) {
+        Alert.alert(
+          'Maximum Selection Reached',
+          `You can select a maximum of ${maxSelections} items.`,
+          [{text: 'OK'}],
+        );
+        return;
+      }
+      // Add new selection
+      updatedSelectedValues = [...selectedValues, value];
+    }
 
     setSelectedValues(updatedSelectedValues);
 
-    // Only update parent state if onSelect is defined
     if (onSelect) {
       onSelect(updatedSelectedValues);
     }
 
-    // Delay closing the bottom sheet slightly to avoid race conditions
     setTimeout(() => {
       bottomSheetRef.current.close();
     }, 100);

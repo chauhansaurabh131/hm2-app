@@ -124,33 +124,33 @@ const NewStartExploreScreen = () => {
         </TouchableOpacity>
 
         {/* SOCIAL */}
-        <TouchableOpacity onPress={() => setSelectedOption('social')}>
-          {selectedOption === 'social' ? (
-            <LinearGradient
-              colors={['#0F52BA', '#8225AF']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 0}}
-              style={style.selectedSecondBackGroundStyle}>
-              <OptionContent
-                icon={icons.long_term_icon}
-                title="Social"
-                description="By creating this profile, you can find friends and "
-                secondDescription="connect with groups for trips and activities."
-                selected={true} // Pass selected prop
-              />
-            </LinearGradient>
-          ) : (
-            <View style={style.selectedSecondBackGroundStyle}>
-              <OptionContent
-                icon={icons.long_term_icon}
-                title="Social"
-                description="By creating this profile, you can find friends and "
-                secondDescription="connect with groups for trips and activities."
-                selected={false} // Pass selected prop
-              />
-            </View>
-          )}
-        </TouchableOpacity>
+        {/*<TouchableOpacity onPress={() => setSelectedOption('social')}>*/}
+        {/*  {selectedOption === 'social' ? (*/}
+        {/*    <LinearGradient*/}
+        {/*      colors={['#0F52BA', '#8225AF']}*/}
+        {/*      start={{x: 0, y: 0}}*/}
+        {/*      end={{x: 1, y: 0}}*/}
+        {/*      style={style.selectedSecondBackGroundStyle}>*/}
+        {/*      <OptionContent*/}
+        {/*        icon={icons.long_term_icon}*/}
+        {/*        title="Social"*/}
+        {/*        description="By creating this profile, you can find friends and "*/}
+        {/*        secondDescription="connect with groups for trips and activities."*/}
+        {/*        selected={true} // Pass selected prop*/}
+        {/*      />*/}
+        {/*    </LinearGradient>*/}
+        {/*  ) : (*/}
+        {/*    <View style={style.selectedSecondBackGroundStyle}>*/}
+        {/*      <OptionContent*/}
+        {/*        icon={icons.long_term_icon}*/}
+        {/*        title="Social"*/}
+        {/*        description="By creating this profile, you can find friends and "*/}
+        {/*        secondDescription="connect with groups for trips and activities."*/}
+        {/*        selected={false} // Pass selected prop*/}
+        {/*      />*/}
+        {/*    </View>*/}
+        {/*  )}*/}
+        {/*</TouchableOpacity>*/}
 
         {/* Start Explore Button */}
         {selectedOption && (

@@ -213,10 +213,11 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
   },
   subTittleText: {
-    fontSize: fontSize(16),
-    lineHeight: hp(24),
+    fontSize: fontSize(14),
+    lineHeight: hp(22),
     fontFamily: fontFamily.poppins700,
     color: colors.black,
+    width: '90%',
   },
   checkIcon: {
     width: hp(18),
@@ -230,7 +231,7 @@ const style = StyleSheet.create({
     // width: '90%',
     width: '70%',
     position: 'absolute',
-    bottom: 30,
+    bottom: 25,
     justifyContent: 'space-evenly',
     alignSelf: 'center',
   },
