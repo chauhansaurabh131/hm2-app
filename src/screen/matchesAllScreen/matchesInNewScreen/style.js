@@ -284,7 +284,7 @@ const style = StyleSheet.create({
   },
   subPlanContainer: {
     height: 22,
-    backgroundColor: 'orange',
+    // backgroundColor: 'orange',
     marginLeft: 11,
     borderRadius: 50,
     flexDirection: 'row',

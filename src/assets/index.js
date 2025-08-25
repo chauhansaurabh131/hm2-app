@@ -45,6 +45,7 @@ export const images = {
   gradient_button_background_img: require('./images/gradient_background_img.png'),
   add_Stories_img: require('./images/add_stroies_image.png'),
   gradient_header_background_img: require('./images/gradient_header_background_img.png'),
+  gradient_border_button_img: require('./images/gradientBorder_button.png'),
 };
 
 export const icons = {
@@ -202,6 +203,9 @@ export const icons = {
   plus_button_gradient: require('./icons/plus_button_gradient.png'),
   no_notification_icon: require('./icons/no_notification_icon.png'),
   circle_cancel_icon: require('./icons/circle_cancel_icon.png'),
+  red_cancel_icon: require('./icons/red_cancel_icon.png'),
+  no_plan_found_icon: require('./icons/no_plan_found.png'),
+  blue_screen_eye: require('./icons/blue_sceen_eye.png'),
 };
 
 export const gif = {

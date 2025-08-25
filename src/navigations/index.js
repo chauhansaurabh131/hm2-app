@@ -95,6 +95,7 @@ import LoginAuthenticationCodeScreen from '../screen/loginAuthenticationCodeScre
 import AuthenticationEnterOtpScreen from '../screen/authenticationEnterOtpScreen';
 import BottomSheetPrivacySettingScreen from '../screen/bottomSheetPrivacySettingScreen';
 import DatingBlockAllScreen from '../screen/datingAllScreen/datingBlockAllScreen';
+import PlanCancelScreen from '../screen/planCancelScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -246,6 +247,12 @@ const MainNavigator = () => {
         />
 
         <ExtraStack.Screen
+          name="PlanCancelScreen"
+          component={PlanCancelScreen}
+          options={{headerShown: false}}
+        />
+
+        <ExtraStack.Screen
           name="KycDetailsScreen"
           component={KycDetailsScreen}
           options={{headerShown: false}}
@@ -292,6 +299,7 @@ const MainNavigator = () => {
         <Stack.Screen name="DemoCode" component={DemoCode} />
 
         <Stack.Screen name="Abc" component={Abc} />
+        <Stack.Screen name="Message" component={Message} />
 
         <Stack.Screen name={'HomeTabs'} component={HomeTabs} />
 
@@ -374,7 +382,7 @@ const MainNavigator = () => {
           component={DatingEditProfileScreen}
         />
         <Stack.Screen name={'QRCodeScreen'} component={QRCodeScreen} />
-        <Stack.Screen name={'Message'} component={Message} />
+
         <Stack.Screen
           name={'UserUploadImageFullScreen'}
           component={UserUploadImageFullScreen}

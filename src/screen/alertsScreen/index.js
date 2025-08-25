@@ -35,6 +35,8 @@ const AlertsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [requestResponses, setRequestResponses] = useState({});
 
+  console.log(' === notifications__ ===> ', notifications);
+
   // Fetch notifications page-wise
   const fetchNotifications = async (pageNumber = 1, isRefresh = false) => {
     if (!accessToken || loading) {
@@ -147,6 +149,70 @@ const AlertsScreen = () => {
     }
   };
 
+  const onDeclineNumberRequestedPress = async item => {
+    try {
+      console.log(' === onDeclineNumberRequestedPress ===> ', item?.reqId);
+
+      const res = await fetch(
+        `https://stag.mntech.website/api/v1/user/mobile-number-request/reject/${item?.reqId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+      console.log('Reject Response ===> ', data);
+
+      if (res.ok) {
+        // ✅ Optionally update UI state to hide buttons
+        setRequestResponses(prev => ({
+          ...prev,
+          [item.id]: 'rejected',
+        }));
+      } else {
+        console.error('Reject API failed:', data?.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Reject API error:', error.message);
+    }
+  };
+
+  const onAcceptedNumberRequestedPress = async item => {
+    try {
+      console.log(' === onAcceptedNumberRequestedPress ===> ', item?.reqId);
+
+      const res = await fetch(
+        `https://stag.mntech.website/api/v1/user/mobile-number-request/accept/${item?.reqId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+      console.log('Reject Response ===> ', data);
+
+      if (res.ok) {
+        // ✅ Optionally update UI state to hide buttons
+        setRequestResponses(prev => ({
+          ...prev,
+          [item.id]: 'accepted',
+        }));
+      } else {
+        console.error('Reject API failed:', data?.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Reject API error:', error.message);
+    }
+  };
+
   const getCompactTimeAgo = createdAt => {
     const now = new Date();
     const past = new Date(createdAt);
@@ -177,7 +243,39 @@ const AlertsScreen = () => {
     navigation.navigate('NewUserDetailsScreen', {matchesUserData: userData});
   };
 
+  const getSubtitleText = (item, requestState) => {
+    // Friend request
+    if (item.title === 'Sent you a request') {
+      if (requestState === 'accepted') {
+        return 'Accepted your request';
+      }
+      if (requestState === 'rejected') {
+        return 'Declined your request';
+      }
+      return 'Sent you a request';
+    }
+
+    // Mobile number request
+    if (item.title === 'Mobile Number Request') {
+      if (requestState === 'rejected') {
+        return 'Request Rejected';
+      }
+      // If you add accept later, you can handle it:
+      if (requestState === 'accepted') {
+        return 'Request Accepted';
+      }
+      return 'Mobile Number Request';
+    }
+
+    // Fallback to original title
+    return item.title || '';
+  };
+
   const renderItem = ({item}) => {
+    const requestState = requestResponses[item.id];
+
+    console.log(' === requestState ===> ', requestState);
+
     const name = item?.otherUserId?.name
       ? item?.otherUserId?.name.charAt(0).toUpperCase() +
         item?.otherUserId?.name.slice(1).toLowerCase()
@@ -217,6 +315,7 @@ const AlertsScreen = () => {
               }}>
               {name}
             </Text>
+
             <Text
               style={{
                 color: colors.black,
@@ -224,78 +323,125 @@ const AlertsScreen = () => {
                 lineHeight: hp(18),
                 fontFamily: fontFamily.poppins400,
               }}>
-              {requestResponses[notificationId] === 'accepted'
-                ? 'Accepted your request'
-                : requestResponses[notificationId] === 'rejected'
-                ? 'Declined your request'
-                : item.title}
+              {getSubtitleText(item, requestState)}
             </Text>
           </TouchableOpacity>
 
-          {item.title === 'Sent you a request' &&
-            !requestResponses[notificationId] && (
-              <View style={{flexDirection: 'row', marginTop: 6}}>
-                <TouchableOpacity
-                  onPress={() =>
-                    handleFriendRequestResponse(
-                      item.userId,
-                      item.reqId,
-                      'rejected',
-                      notificationId,
-                    )
-                  }
+          {item.title === 'Sent you a request' && !requestState && (
+            <View style={{flexDirection: 'row', marginTop: 6}}>
+              <TouchableOpacity
+                onPress={() =>
+                  handleFriendRequestResponse(
+                    item.userId,
+                    item.reqId,
+                    'rejected',
+                    notificationId,
+                  )
+                }
+                style={{
+                  backgroundColor: '#EEEEEE',
+                  borderRadius: 20,
+                  width: 96,
+                  height: 40,
+                  justifyContent: 'center',
+                  marginRight: 14,
+                }}>
+                <Text
                   style={{
-                    backgroundColor: '#EEEEEE',
+                    color: 'black',
+                    textAlign: 'center',
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Decline
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() =>
+                  handleFriendRequestResponse(
+                    item.userId,
+                    item.reqId,
+                    'accepted',
+                    notificationId,
+                  )
+                }>
+                <LinearGradient
+                  colors={['#9413D0', '#0D4EB3']}
+                  start={{x: 1, y: 0}}
+                  end={{x: 0, y: 0}}
+                  style={{
                     borderRadius: 20,
+                    justifyContent: 'center',
                     width: 96,
                     height: 40,
-                    justifyContent: 'center',
-                    marginRight: 14,
                   }}>
                   <Text
                     style={{
-                      color: 'black',
+                      color: 'white',
                       textAlign: 'center',
                       fontSize: fontSize(14),
                       lineHeight: hp(21),
                       fontFamily: fontFamily.poppins400,
                     }}>
-                    Decline
+                    Accept
                   </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() =>
-                    handleFriendRequestResponse(
-                      item.userId,
-                      item.reqId,
-                      'accepted',
-                      notificationId,
-                    )
-                  }>
-                  <LinearGradient
-                    colors={['#9413D0', '#0D4EB3']}
-                    start={{x: 1, y: 0}}
-                    end={{x: 0, y: 0}}
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {item.title === 'Mobile Number Request' && !requestState && (
+            <View style={{flexDirection: 'row', marginTop: 6}}>
+              <TouchableOpacity
+                onPress={() => onDeclineNumberRequestedPress(item)}
+                style={{
+                  backgroundColor: '#EEEEEE',
+                  borderRadius: 20,
+                  width: 96,
+                  height: 40,
+                  justifyContent: 'center',
+                  marginRight: 14,
+                }}>
+                <Text
+                  style={{
+                    color: 'black',
+                    textAlign: 'center',
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Decline
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => onAcceptedNumberRequestedPress(item)}>
+                <LinearGradient
+                  colors={['#9413D0', '#0D4EB3']}
+                  start={{x: 1, y: 0}}
+                  end={{x: 0, y: 0}}
+                  style={{
+                    borderRadius: 20,
+                    justifyContent: 'center',
+                    width: 96,
+                    height: 40,
+                  }}>
+                  <Text
                     style={{
-                      borderRadius: 20,
-                      justifyContent: 'center',
-                      width: 96,
-                      height: 40,
+                      color: 'white',
+                      textAlign: 'center',
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontFamily: fontFamily.poppins400,
                     }}>
-                    <Text
-                      style={{
-                        color: 'white',
-                        textAlign: 'center',
-                        fontSize: fontSize(14),
-                        lineHeight: hp(21),
-                        fontFamily: fontFamily.poppins400,
-                      }}>
-                      Accept
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-            )}
+                    Accept
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <Text style={{color: '#D1D1D1', fontSize: fontSize(12)}}>

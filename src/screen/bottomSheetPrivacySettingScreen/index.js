@@ -69,7 +69,7 @@ const PROFILE_TYPES = {
 
 const BottomSheetPrivacySettingScreen = ({route}) => {
   const {planData} = route.params;
-  console.log(' === planData ===> ', planData);
+  // console.log(' === planData ===> ', planData);
 
   const [selectedPrivacy, setSelectedPrivacy] = useState('');
   const [checkedOptions, setCheckedOptions] = useState({});
@@ -231,6 +231,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'email',
       ];
     } else if (selectedPrivacy === 'privateProfile') {
       privacySettingCustom.privateProfile = [
@@ -267,6 +268,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'email',
       ];
       // Automatically set showPhotoToFriendsOnly to true for privateProfile
       privacySettingCustom.showPhotoToFriendsOnly = true;
@@ -326,6 +328,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'email',
       ];
     }
 

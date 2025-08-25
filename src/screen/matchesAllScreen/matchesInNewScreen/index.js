@@ -581,9 +581,12 @@ const MatchesInNewScreen = () => {
       ? item.userProfessional?.workCountry.charAt(0).toUpperCase() +
         item.userProfessional?.workCountry.slice(1).toLowerCase()
       : '';
+
     const imageCount = Array.isArray(item?.userProfilePic)
       ? item.userProfilePic.length
       : 0;
+
+    console.log(' === imageCount ===> ', imageCount);
 
     const calculateAge = dateOfBirth => {
       const birthDate = new Date(dateOfBirth);
@@ -688,7 +691,15 @@ const MatchesInNewScreen = () => {
                   </Text>
 
                   {subPlan && (
-                    <View style={style.subPlanContainer}>
+                    <View
+                      style={{
+                        height: 22,
+                        backgroundColor: crownTintColor,
+                        marginLeft: 11,
+                        borderRadius: 50,
+                        flexDirection: 'row',
+                        paddingHorizontal: 7,
+                      }}>
                       <Image source={icons.crownIcon} style={style.crowIcon} />
                       <Text style={style.planNameText}>{planName}</Text>
                     </View>
@@ -760,7 +771,7 @@ const MatchesInNewScreen = () => {
                 </TouchableOpacity>
 
                 <View style={style.cardBottomRightCon}>
-                  {!profilePrivacy && (
+                  {!profilePrivacy && imageCount > 0 && (
                     <TouchableOpacity
                       style={style.imageCountCon}
                       activeOpacity={0.5}
@@ -769,7 +780,6 @@ const MatchesInNewScreen = () => {
                         source={icons.new_camera_icon}
                         style={style.cameraImg}
                       />
-
                       <Text style={{color: colors.white}}>{imageCount}</Text>
                     </TouchableOpacity>
                   )}

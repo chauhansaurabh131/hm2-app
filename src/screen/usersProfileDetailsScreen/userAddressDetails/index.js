@@ -19,6 +19,12 @@ const UserAddressDetails = (...params) => {
   const UserData = params[0]?.friendList;
 
   const MatchesScreenData = params[0];
+
+  console.log(
+    ' === MatchesScreenData__ ===> ',
+    MatchesScreenData?.privacySettingCustom?.address,
+  );
+
   const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
@@ -116,28 +122,60 @@ const UserAddressDetails = (...params) => {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : planStatus === 'active' ? (
-          <>
-            <Text style={style.detailTittleText}>Current City</Text>
+          MatchesScreenData?.privacySettingCustom?.address ? (
+            <View
+              style={{
+                width: '100%',
+                height: 244,
+                backgroundColor: '#F7F7F7',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 19,
+                marginTop: 5,
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(18),
+                  lineHeight: hp(26),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                Private Address
+              </Text>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  marginTop: 2,
+                }}>
+                This user has hidden their address details
+              </Text>
+            </View>
+          ) : (
+            <>
+              <Text style={style.detailTittleText}>Current City</Text>
+              <Text style={style.detailSubTittleText}>
+                {currentCity || 'N/A'}
+              </Text>
 
-            <Text style={style.detailSubTittleText}>
-              {currentCity || 'N/A'}
-            </Text>
+              <Text style={style.detailsTittleTextStyle}>
+                Current Residing Country
+              </Text>
+              <Text style={style.detailSubTittleText}>
+                {currentCountry || 'N/A'}
+              </Text>
 
-            <Text style={style.detailsTittleTextStyle}>
-              Current Residing Country
-            </Text>
-
-            <Text style={style.detailSubTittleText}>
-              {currentCountry || 'N/A'}
-            </Text>
-
-            <Text style={style.detailsTittleTextStyle}>Permanent Address</Text>
-
-            <Text style={style.detailSubTittleText}>
-              {currentCity || 'N/A'}, {currentResidenceAddress || 'N/A'},{' '}
-              {currentCountry || 'N/A'}
-            </Text>
-          </>
+              <Text style={style.detailsTittleTextStyle}>
+                Permanent Address
+              </Text>
+              <Text style={style.detailSubTittleText}>
+                {currentCity || 'N/A'}, {currentResidenceAddress || 'N/A'},{' '}
+                {currentCountry || 'N/A'}
+              </Text>
+            </>
+          )
         ) : (
           <View>
             <LinearGradient

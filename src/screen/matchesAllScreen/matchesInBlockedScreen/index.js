@@ -506,6 +506,13 @@ const MatchesInBlockedScreen = () => {
   };
 
   const renderBlockedUser = ({item}) => {
+    const planName = item?.friend?.subscriptionDetails?.selectedPlan
+      ? item?.friend?.subscriptionDetails?.selectedPlan
+          .charAt(0)
+          .toUpperCase() +
+        item?.friend?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
+      : '';
+
     const hasValidImage =
       item?.friend?.profilePic &&
       item?.friend?.profilePic !== 'null' &&
@@ -514,6 +521,24 @@ const MatchesInBlockedScreen = () => {
     const profilePrivacy =
       item?.friend?.privacySettingCustom?.profilePhotoPrivacy === true ||
       item?.friend?.privacySettingCustom?.showPhotoToFriendsOnly === true;
+
+    const {selectedPlan, status} = item?.friend?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
 
     const profileImage = item?.friend?.profilePic;
 
@@ -634,9 +659,29 @@ const MatchesInBlockedScreen = () => {
                   onPress={() => {
                     handlePress(item);
                   }}>
-                  <Text style={style.userNameTextStyle}>
-                    {firstName || name} {lastName}
-                  </Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={style.userNameTextStyle}>
+                      {firstName || name} {lastName}
+                    </Text>
+
+                    {subPlan && (
+                      <View
+                        style={{
+                          height: 22,
+                          backgroundColor: crownTintColor,
+                          marginLeft: 11,
+                          borderRadius: 50,
+                          flexDirection: 'row',
+                          paddingHorizontal: 7,
+                        }}>
+                        <Image
+                          source={icons.crownIcon}
+                          style={style.crowIcon}
+                        />
+                        <Text style={style.planNameText}>{planName}</Text>
+                      </View>
+                    )}
+                  </View>
 
                   <View
                     style={[

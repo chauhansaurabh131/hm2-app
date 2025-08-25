@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -45,6 +46,8 @@ const MyProfileScreen = () => {
   const navigation = useNavigation();
   const topModalBottomSheetRef = useRef(null);
 
+  const [planDetails, setPlanDetails] = useState('');
+
   // const imageUrls = userData?.userProfilePic.map(pic => pic.url);
 
   const profileImage = user?.user?.profilePic;
@@ -54,15 +57,51 @@ const MyProfileScreen = () => {
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
   };
+  const {dataCount} = useSelector(state => state.home);
+  console.log(' === dataCount ===> ', dataCount);
+  const accessToken = user?.tokens?.access?.token;
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      if (!accessToken) {
+        console.warn('No access token found');
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('User Plan:', data);
+          setPlanDetails(data?.data);
+        } else {
+          console.error('API Error:', data);
+          Alert.alert('Error', data.message || 'Something went wrong');
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        Alert.alert('Network Error', 'Unable to fetch user plan');
+      }
+    };
+
+    fetchUserPlan();
+  }, [accessToken]);
 
   useEffect(() => {
     // dataCountingList();
     dispatch(dataCountingList());
   }, []);
-
-  const {dataCount} = useSelector(state => state.home);
-
-  console.log(' === dataCount ===> ', dataCount);
 
   useFocusEffect(
     useCallback(() => {
@@ -124,6 +163,17 @@ const MyProfileScreen = () => {
 
   const uniqueUrls = new Set(imageList.map(img => img.url));
   const imageCount = uniqueUrls.size;
+
+  const getBackgroundColor = () => {
+    const planName = planDetails?.planId?.planName?.toLowerCase();
+    if (planName === 'silver') {
+      return 'gray';
+    }
+    if (planName === 'gold') {
+      return 'orange';
+    }
+    return '#f0f0f0'; // default
+  };
 
   // const userAllImage = Array.isArray(user?.user?.userProfilePic)
   //   ? user?.user?.userProfilePic.map(pic => pic.url)
@@ -245,9 +295,50 @@ const MyProfileScreen = () => {
                 height: 130,
               }}>
               <View style={{marginLeft: wp(18.16)}}>
-                <Text style={style.userNameTextStyle}>
-                  {firstName} {lastName}
-                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={style.userNameTextStyle}>
+                    {firstName} {lastName}
+                  </Text>
+
+                  {planDetails?.planId?.planName && (
+                    <View
+                      style={{
+                        backgroundColor: getBackgroundColor(),
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        padding: 2, // internal padding
+                        borderRadius: 50,
+                        alignSelf: 'flex-start', // ensures the box only takes needed width
+                        paddingHorizontal: 10,
+                        marginLeft: wp(7),
+                      }}>
+                      <Image
+                        source={icons.crownIcon}
+                        style={{
+                          width: hp(10),
+                          height: hp(10),
+                          marginRight: 5,
+                          tintColor: 'white',
+                        }}
+                        resizeMode="contain"
+                      />
+                      <Text
+                        style={{
+                          fontSize: fontSize(12),
+                          color: 'white',
+                          fontFamily: fontFamily.poppins400,
+                          top: 2,
+                        }}>
+                        {planDetails?.planId?.planName
+                          ? planDetails.planId.planName
+                              .charAt(0)
+                              .toUpperCase() +
+                            planDetails.planId.planName.slice(1).toLowerCase()
+                          : 'Plan Name'}
+                      </Text>
+                    </View>
+                  )}
+                </View>
 
                 <View
                   style={[

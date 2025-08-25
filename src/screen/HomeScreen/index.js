@@ -36,6 +36,8 @@ import RemainingDataUiScreen from '../editRemainingFillUpData/remainingDataUiScr
 import DemoCode from '../demoCode';
 import RecentlyViewComponent from '../../components/recentlyViewComponent';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import Abc from '../abc';
+import HomeCardProfileComponent from '../../components/homeCardProfileComponent';
 
 const HomeScreen = ({route}) => {
   const [showMeAllStories, setShowMeAllStories] = useState(false);
@@ -44,6 +46,8 @@ const HomeScreen = ({route}) => {
   const [isCompleteModalVisible, setCompleteModalModalVisible] =
     useState(false);
   const [activeLine, setActiveLine] = useState(1);
+  const [planDetails, setPlanDetails] = useState('');
+
   const [status, setStatus] = useState('Disconnected');
   const socketRef = useRef(null);
 
@@ -53,6 +57,8 @@ const HomeScreen = ({route}) => {
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
+
+  console.log(' === user?.user---= ===> ', user?.user);
 
   const {storiesData} = useSelector(state => state.home);
 
@@ -66,6 +72,43 @@ const HomeScreen = ({route}) => {
   useEffect(() => {
     dispatch(getSuccessStories());
   }, [dispatch]);
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      if (!accessToken) {
+        console.warn('No access token found');
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('User Plan:', data);
+          setPlanDetails(data?.data);
+        } else {
+          console.error('API Error:', data);
+          // Alert.alert('Error', data.message || 'Something went wrong');
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        // Alert.alert('Network Error', 'Unable to fetch user plan');
+      }
+    };
+
+    fetchUserPlan();
+  }, [accessToken]);
 
   // console.log(' === storiesData ===> ', storiesData?.data?.totalResults);
 
@@ -199,8 +242,11 @@ const HomeScreen = ({route}) => {
     }, [userProfileCompleted, userPartnerPreCompleted]),
   );
 
-  const capitalizeFirstLetter = string => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  const capitalizeFirstLetter = str => {
+    if (!str || typeof str !== 'string') {
+      return '';
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
   const firstName = capitalizeFirstLetter(
@@ -469,191 +515,197 @@ const HomeScreen = ({route}) => {
         <View style={{marginTop: hp(15)}}>
           <NewAddStoryScreen />
         </View>
+      </View>
 
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={showModal}
-          onRequestClose={() => {
-            setShowModal(!showModal);
+      <LinearGradient
+        colors={['white', 'transparent']}
+        style={{
+          height: 15,
+          width: '100%',
+          position: 'absolute',
+          top: 100, // 👈 exactly below header
+          left: 0,
+          right: 0,
+          zIndex: 1,
+        }}
+      />
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => {
+          setShowModal(!showModal);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
           }}>
           <View
             style={{
-              flex: 1,
-              justifyContent: 'center',
+              width: wp(340),
+              height: hp(470),
+              backgroundColor: 'white',
+              borderRadius: 14,
               alignItems: 'center',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
             }}>
-            <View
+            <Image source={images.modal_top_img} style={{width: '100%'}} />
+
+            <Text
               style={{
-                width: wp(340),
-                height: hp(470),
-                backgroundColor: 'white',
-                borderRadius: 14,
-                alignItems: 'center',
+                fontSize: fontSize(20),
+                lineHeight: hp(30),
+                fontFamily: fontFamily.poppins600,
+                color: colors.white,
+                marginTop: -60,
               }}>
-              <Image source={images.modal_top_img} style={{width: '100%'}} />
+              Congratulations
+            </Text>
+
+            <View style={{marginTop: 70, alignItems: 'center'}}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(24),
+                  lineHeight: hp(36),
+                  fontFamily: fontFamily.poppins600,
+                }}>
+                {getDisplayText()}
+              </Text>
 
               <Text
                 style={{
-                  fontSize: fontSize(20),
-                  lineHeight: hp(30),
-                  fontFamily: fontFamily.poppins600,
-                  color: colors.white,
-                  marginTop: -60,
+                  marginHorizontal: wp(31),
+                  fontFamily: fontFamily.poppins400,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  color: colors.black,
+                  textAlign: 'center',
+                  marginTop: hp(27),
                 }}>
-                Congratulations
+                {getDisplayDescriptionText()}
               </Text>
 
-              <View style={{marginTop: 70, alignItems: 'center'}}>
-                <Text
-                  style={{
-                    color: colors.black,
-                    fontSize: fontSize(24),
-                    lineHeight: hp(36),
-                    fontFamily: fontFamily.poppins600,
-                  }}>
-                  {getDisplayText()}
-                </Text>
-
-                <Text
-                  style={{
-                    marginHorizontal: wp(31),
-                    fontFamily: fontFamily.poppins400,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    color: colors.black,
-                    textAlign: 'center',
-                    marginTop: hp(27),
-                  }}>
-                  {getDisplayDescriptionText()}
-                </Text>
-
-                <View
-                  style={{
-                    marginTop: 50,
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                  }}>
-                  {[1, 2, 3].map((line, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        width: wp(50),
-                        borderWidth: 1,
-                        borderColor:
-                          activeLine === line ? '#8225AF' : '#E8E8E8',
-                        marginHorizontal: 5,
-                      }}
-                    />
-                  ))}
-                </View>
-              </View>
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={handleButtonClick}
+              <View
                 style={{
-                  // backgroundColor: 'red',
-                  flex: 1,
-                  position: 'absolute',
-                  bottom: 35,
+                  marginTop: 50,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
                 }}>
-                <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0.5}}
-                  style={{
-                    marginTop: hp(50),
-                    width: wp(176),
-                    height: hp(50),
-                    borderRadius: 25,
-                    justifyContent: 'center',
-                  }}>
-                  <Text
+                {[1, 2, 3].map((line, index) => (
+                  <View
+                    key={index}
                     style={{
-                      color: colors.white,
-                      textAlign: 'center',
-                      fontSize: fontSize(16),
-                      lineHeight: hp(26),
-                      fontFamily: fontFamily.poppins500,
-                    }}>
-                    {getButtpnText()}
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
+                      width: wp(50),
+                      borderWidth: 1,
+                      borderColor: activeLine === line ? '#8225AF' : '#E8E8E8',
+                      marginHorizontal: 5,
+                    }}
+                  />
+                ))}
+              </View>
             </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleButtonClick}
+              style={{
+                // backgroundColor: 'red',
+                flex: 1,
+                position: 'absolute',
+                bottom: 35,
+              }}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0.5}}
+                style={{
+                  marginTop: hp(50),
+                  width: wp(176),
+                  height: hp(50),
+                  borderRadius: 25,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    textAlign: 'center',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(26),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  {getButtpnText()}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      </View>
+        </View>
+      </Modal>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginHorizontal: 17}}>
-          <View style={style.cardContainer}>
-            <LinearGradient
-              colors={['#0D4EB3', '#9413D0']}
-              start={{x: 0, y: 0}}
-              end={{x: 0, y: 1.5}}
-              style={style.cardBodyStyle}>
-              <View style={style.cardViewStyle}>
-                {/*<Image*/}
-                {/*  source={*/}
-                {/*    profilePicUrl*/}
-                {/*      ? {uri: profilePicUrl}*/}
-                {/*      : images.empty_male_Image*/}
-                {/*  }*/}
-                {/*  style={style.imageStyle}*/}
-                {/*/>*/}
+          <HomeCardProfileComponent />
+          {/*<View style={style.cardContainer}>*/}
+          {/*  <LinearGradient*/}
+          {/*    colors={['#0D4EB3', '#9413D0']}*/}
+          {/*    start={{x: 0, y: 0}}*/}
+          {/*    end={{x: 0, y: 1.5}}*/}
+          {/*    style={style.cardBodyStyle}>*/}
+          {/*    <View style={style.cardViewStyle}>*/}
+          {/*      {profilePicUrl ? (*/}
+          {/*        <Image*/}
+          {/*          source={{uri: profilePicUrl}}*/}
+          {/*          style={style.imageStyle}*/}
+          {/*        />*/}
+          {/*      ) : (*/}
+          {/*        <ProfileAvatar*/}
+          {/*          firstName={user?.user?.firstName}*/}
+          {/*          lastName={user?.user?.lastName}*/}
+          {/*          textStyle={style.imageStyle}*/}
+          {/*        />*/}
+          {/*      )}*/}
+          {/*      <View style={style.cardTextContainer}>*/}
+          {/*        /!*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*!/*/}
+          {/*        <Text style={style.cardUserTextStyle}>*/}
+          {/*          /!*{firstName} {lastName}*!/*/}
+          {/*          {name}*/}
+          {/*        </Text>*/}
 
-                {profilePicUrl ? (
-                  <Image
-                    source={{uri: profilePicUrl}}
-                    style={style.imageStyle}
-                  />
-                ) : (
-                  <ProfileAvatar
-                    firstName={user?.user?.firstName}
-                    lastName={user?.user?.lastName}
-                    textStyle={style.imageStyle}
-                  />
-                )}
-                <View style={style.cardTextContainer}>
-                  {/*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*/}
-                  <Text style={style.cardUserTextStyle}>
-                    {/*{firstName} {lastName}*/}
-                    {name}
-                  </Text>
+          {/*        <View style={style.cardSubTittleContainer}>*/}
+          {/*          <Text style={style.cardSubTittleTextStyle}>*/}
+          {/*            {UserUniqueId}*/}
+          {/*          </Text>*/}
+          {/*          <View style={style.cardCenterLineStyle} />*/}
+          {/*          <Text style={style.cardSubTittleTextStyle}>*/}
+          {/*            {capitalizeFirstLetter(planDetails?.planId?.planName) ||*/}
+          {/*              'Free'}{' '}*/}
+          {/*            Profile*/}
+          {/*          </Text>*/}
+          {/*        </View>*/}
 
-                  <View style={style.cardSubTittleContainer}>
-                    <Text style={style.cardSubTittleTextStyle}>
-                      {UserUniqueId}
-                    </Text>
-                    <View style={style.cardCenterLineStyle} />
-                    <Text style={style.cardSubTittleTextStyle}>
-                      FREE Profile
-                    </Text>
-                  </View>
-
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      navigation.navigate('Upgrader');
-                    }}
-                    style={style.cardButtonContainer}>
-                    <View style={style.cardButtonBodyStyle}>
-                      <View style={style.cardButtonTextContainer}>
-                        <Text style={style.cardButtonTextStyle}>Upgrade</Text>
-                        <Image
-                          source={icons.crownIcon}
-                          style={style.cardButtonImageStyle}
-                        />
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </LinearGradient>
-          </View>
+          {/*        <TouchableOpacity*/}
+          {/*          activeOpacity={0.7}*/}
+          {/*          onPress={() => {*/}
+          {/*            navigation.navigate('Upgrader');*/}
+          {/*          }}*/}
+          {/*          style={style.cardButtonContainer}>*/}
+          {/*          <View style={style.cardButtonBodyStyle}>*/}
+          {/*            <View style={style.cardButtonTextContainer}>*/}
+          {/*              <Text style={style.cardButtonTextStyle}>Upgrade</Text>*/}
+          {/*              <Image*/}
+          {/*                source={icons.crownIcon}*/}
+          {/*                style={style.cardButtonImageStyle}*/}
+          {/*              />*/}
+          {/*            </View>*/}
+          {/*          </View>*/}
+          {/*        </TouchableOpacity>*/}
+          {/*      </View>*/}
+          {/*    </View>*/}
+          {/*  </LinearGradient>*/}
+          {/*</View>*/}
         </View>
 
         {/*TOP SHEET*/}

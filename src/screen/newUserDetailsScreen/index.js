@@ -1248,6 +1248,15 @@ const NewUserDetailsScreen = () => {
 
   const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
 
+  let crownTintColor = 'white'; // Default to white
+  if (isGoldPlan) {
+    crownTintColor = 'orange'; // Gold plan -> orange tint
+  } else if (isSilverPlan) {
+    crownTintColor = 'silver'; // Silver plan -> silver tint
+  } else if (isPlatinumPlan) {
+    crownTintColor = 'green'; // Platinum plan -> red tint
+  }
+
   const hasValidImage =
     userDetails.profilePic &&
     userDetails.profilePic !== 'null' &&
@@ -1285,9 +1294,23 @@ const NewUserDetailsScreen = () => {
 
   const age = calculateAge(userDetails?.dateOfBirth);
 
-  const imageCount = Array.isArray(userDetails?.userProfilePic)
-    ? userDetails?.userProfilePic.length
-    : 0;
+  // const imageCount = Array.isArray(userDetails?.userProfilePic)
+  //   ? userDetails?.userProfilePic.length
+  //   : 0;
+
+  const uniqueProfilePics = Array.isArray(userDetails?.userProfilePic)
+    ? userDetails.userProfilePic.filter(
+        (pic, index, self) =>
+          index ===
+          self.findIndex(
+            p => p.name.split('/').pop() === pic.name.split('/').pop(),
+          ),
+      )
+    : [];
+
+  const imageCount = uniqueProfilePics.length;
+
+  console.log(' === imageCount+++ ===> ', imageCount);
 
   const userAllImageShare = () => {
     const allImages = userDetails?.userProfilePic?.map(image => image.url);
@@ -1429,7 +1452,7 @@ const NewUserDetailsScreen = () => {
                       // width: 57,
                       // width: '100%',
                       height: 22,
-                      backgroundColor: 'orange',
+                      backgroundColor: crownTintColor,
                       marginLeft: 11,
                       marginTop: 5,
                       borderRadius: 50,

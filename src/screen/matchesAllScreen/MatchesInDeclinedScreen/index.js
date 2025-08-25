@@ -645,6 +645,15 @@ const MatchesInDeclinedScreen = () => {
 
     const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
 
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
+
     const profilePic = item?.user?.profilePic;
 
     const uniqueId = item?.user?.userUniqueId;
@@ -795,7 +804,7 @@ const MatchesInDeclinedScreen = () => {
                       <View
                         style={{
                           height: 22,
-                          backgroundColor: 'orange',
+                          backgroundColor: crownTintColor,
                           marginLeft: 11,
                           borderRadius: 50,
                           flexDirection: 'row',

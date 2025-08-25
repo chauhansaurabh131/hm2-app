@@ -6783,6 +6783,11 @@ react-native-communications@2.2.1:
   resolved "https://registry.npmjs.org/react-native-communications/-/react-native-communications-2.2.1.tgz"
   integrity sha512-5+C0X9mopI0+qxyQHzOPEi5v5rxNBQjxydPPiKMQSlX1RBIcJ8uTcqUPssQ9Mo8p6c1IKIWJUSqCj4jAmD0qVQ==
 
+react-native-config@^1.5.5:
+  version "1.5.5"
+  resolved "https://registry.npmjs.org/react-native-config/-/react-native-config-1.5.5.tgz"
+  integrity sha512-dGdLnBU0cd5xL5bF0ROTmHYbsstZnQKOEPfglvZi1vStvAjpld14X25K6mY3KGPTMWAzx6TbjKeq5dR+ILuMMA==
+
 react-native-date-picker@^4.4.2:
   version "4.4.2"
   resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-4.4.2.tgz"

@@ -10,6 +10,7 @@ import {
   Share,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
@@ -40,6 +41,8 @@ const SearchUserDataScreen = ({route}) => {
   const [selectedUniqueId, setSelectedUniqueId] = useState('');
   const [selectedUnfriendId, setSelectedUnfriendId] = useState('');
   const [allDataShare, setAllDataShare] = useState('');
+  const [percentageLoader, setPercentageLoader] = useState(null);
+  const [percentageMatchData, setPercentageMatchData] = useState([]);
 
   const openBottomSheets = status => {
     setFriendStatus(status); // update friend status
@@ -73,6 +76,9 @@ const SearchUserDataScreen = ({route}) => {
   const topModalBottomSheetRef = useRef(null);
   const ReportBottomSheetRef = useRef();
   const [totalDocs, setTotalDocs] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   // useEffect(() => {
   //   if (friendStatus === 'green') {
@@ -86,6 +92,72 @@ const SearchUserDataScreen = ({route}) => {
 
   const closeBottomSheet = () => {
     sheetRef.current.close();
+  };
+
+  const openModal = async item => {
+    console.log(' === openModal___ ===> ', item?._id, item?.firstName);
+
+    try {
+      // setLoading(true); // Show loading indicator
+      setPercentageLoader(item._id);
+
+      // Call the API to get match details
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item._id}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const matchData = await response.json();
+
+      if (response.ok) {
+        console.log('Match data:', matchData);
+        // Here you can process the match data and update your modal content
+        // For example, you might want to store it in state:
+        // setMatchDetails(matchData);
+        setPercentageMatchData(matchData?.data[0]);
+
+        setPercentageLoader(null);
+        setModalVisible(true); // Open the modal after data is fetched
+        setStep(1); // Reset step to 1 when modal opens
+      } else {
+        console.error('Failed to fetch match data:', matchData);
+        Alert.alert('Error', 'Failed to fetch match details');
+      }
+    } catch (error) {
+      console.error('Error fetching match data:', error);
+      Alert.alert('Error', 'Failed to fetch match details');
+    } finally {
+      setLoading(false); // Hide loading indicator
+      setPercentageLoader(null);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleNext = () => {
+    if (step < 4) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
+  const capitalizeFirstLetter = str => {
+    if (!str) {
+      return '';
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
   const ShowToast = () => {
@@ -511,6 +583,7 @@ const SearchUserDataScreen = ({route}) => {
     setReportReasons([]);
     setQuestionText('Why are you reporting this?'); // Reset question text when going back
     setIsAboutClicked(false); // Reset "About" state
+    handleBack();
   };
 
   // Handle the "Submit" action for "About" section
@@ -957,12 +1030,30 @@ const SearchUserDataScreen = ({route}) => {
             <TouchableOpacity
               activeOpacity={0.5}
               // onPress={openModal}
+              onPress={() => {
+                openModal(item);
+              }}
               style={style.gradientImageButton}>
-              <Image source={icons.couple_icon} style={style.coupleImage} />
-              <Text style={style.matchesText}>
-                {/*85% Match*/}
-                {item?.matchPercentage}% Match
-              </Text>
+              {/*<Image source={icons.couple_icon} style={style.coupleImage} />*/}
+              {/*<Text style={style.matchesText}>*/}
+              {/*  {item?.matchPercentage}% Match*/}
+              {/*</Text>*/}
+              {percentageLoader === item._id ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#FFFFFF"
+                  style={{
+                    marginLeft: hp(35),
+                  }}
+                />
+              ) : (
+                <>
+                  <Image source={icons.couple_icon} style={style.coupleImage} />
+                  <Text style={style.matchesText}>
+                    {item?.matchPercentage}% Match
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
 
             <View style={style.bottomImageContainer}>
@@ -1258,12 +1349,27 @@ const SearchUserDataScreen = ({route}) => {
             <TouchableOpacity
               activeOpacity={0.5}
               // onPress={openModal}
-              style={style.gradientImageButton}>
-              <Image source={icons.couple_icon} style={style.coupleImage} />
-              <Text style={style.matchesText}>
-                {/*85% Match*/}
-                {item?.matchPercentage}% Match
-              </Text>
+              onPress={() => {
+                openModal(item);
+              }}
+              style={style.gradientImageButton}
+              disabled={percentageLoader !== null}>
+              {percentageLoader === item._id ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#FFFFFF"
+                  style={{
+                    marginLeft: hp(35),
+                  }}
+                />
+              ) : (
+                <>
+                  <Image source={icons.couple_icon} style={style.coupleImage} />
+                  <Text style={style.matchesText}>
+                    {item?.matchPercentage}% Match
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
 
             <View style={style.bottomImageContainer}>
@@ -2223,6 +2329,617 @@ const SearchUserDataScreen = ({route}) => {
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 10,
+              width: wp(340),
+              height: hp(550),
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp(25),
+                marginHorizontal: 20,
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(20),
+                  lineHeight: hp(30),
+                  fontFamily: fontFamily.poppins500,
+                  color: colors.black,
+                }}>
+                Your Match :
+                <Text
+                  style={{
+                    color: colors.blue,
+                    fontSize: fontSize(20),
+                    lineHeight: hp(30),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  {' '}
+                  {percentageMatchData?.matchPercentage}%
+                </Text>
+              </Text>
+
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  right: -5,
+                  height: hp(25),
+                  width: hp(25),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  top: -15,
+                }}
+                onPress={closeModal}>
+                <Image
+                  source={icons.x_cancel_icon}
+                  style={{
+                    width: hp(13),
+                    height: hp(13),
+                    tintColor: 'black',
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                marginTop: hp(26),
+                flexDirection: 'row',
+                alignSelf: 'center',
+              }}>
+              <Image
+                source={{uri: user?.user?.profilePic}}
+                style={{
+                  width: hp(64),
+                  height: hp(64),
+                  borderRadius: 50,
+                  marginRight: -15,
+                  zIndex: 1,
+                }}
+              />
+
+              <Image
+                source={{uri: percentageMatchData?.profilePic}}
+                style={{width: hp(64), height: hp(64), borderRadius: 50}}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignSelf: 'center',
+                alignItems: 'center',
+                marginTop: hp(15),
+              }}>
+              <Image
+                source={icons.couple_icon}
+                style={{
+                  width: hp(16),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  tintColor: '#8225AF',
+                  marginRight: wp(10),
+                }}
+              />
+
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(12),
+                  lineHeight: hp(18),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                You &{' '}
+                {capitalizeFirstLetter(
+                  percentageMatchData?.firstName || percentageMatchData?.name,
+                )}{' '}
+                Matched
+              </Text>
+            </View>
+
+            <View
+              style={{
+                width: '100%',
+                borderWidth: 0.8,
+                borderColor: '#EAEAEA',
+                marginTop: hp(17),
+              }}
+            />
+
+            <Text
+              style={{
+                color: colors.blue,
+                fontSize: fontSize(12),
+                lineHeight: hp(18),
+                fontFamily: fontFamily.poppins500,
+                textAlign: 'center',
+                marginTop: hp(17),
+              }}>
+              Based on Your Partner Preference
+            </Text>
+
+            <View style={{marginHorizontal: 20, marginTop: hp(13)}}>
+              {step === 1 && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: fontSize(12),
+                      lineHeight: hp(18),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                    }}>
+                    {percentageMatchData?.matchedFields?.[0]?.field
+                      ? capitalizeFirstLetter(
+                          percentageMatchData.matchedFields[0].field,
+                        )
+                      : 'N/A'}
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(14),
+                        lineHeight: hp(22),
+                        fontFamily: fontFamily.poppins700,
+                        color: colors.black,
+                        width: '90%',
+                      }}>
+                      {percentageMatchData?.matchedFields?.[0]?.expected?.min ??
+                        'N/A'}{' '}
+                      to{' '}
+                      {percentageMatchData?.matchedFields?.[0]?.expected?.max ??
+                        'N/A'}
+                    </Text>
+
+                    <Image
+                      source={
+                        percentageMatchData?.matchedFields?.[0]?.isMatched
+                          ? icons.check_gradient_icon
+                          : icons.circle_cancel_icon
+                      }
+                      style={{
+                        width: hp(18),
+                        height: hp(18),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[1]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[1].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[1]?.expected
+                          ?.min ?? 'N/A'}{' '}
+                        to{' '}
+                        {percentageMatchData?.matchedFields?.[1]?.expected
+                          ?.max ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[1]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[2]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[2].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[2]?.expected
+                          ?.min ?? 'N/A'}{' '}
+                        to{' '}
+                        {percentageMatchData?.matchedFields?.[2]?.expected
+                          ?.max ?? 'N/A'}{' '}
+                        Lacs.
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[2]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[3]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[3].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[3]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[3]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+
+              {step === 2 && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: fontSize(12),
+                      lineHeight: hp(18),
+                      fontFamily: fontFamily.poppins400,
+                      color: colors.black,
+                    }}>
+                    {percentageMatchData?.matchedFields?.[4]?.field
+                      ? capitalizeFirstLetter(
+                          percentageMatchData.matchedFields[4].field,
+                        )
+                      : 'N/A'}
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(14),
+                        lineHeight: hp(22),
+                        fontFamily: fontFamily.poppins700,
+                        color: colors.black,
+                        width: '90%',
+                      }}>
+                      {percentageMatchData?.matchedFields?.[4]?.expected
+                        ?.map(item => capitalizeFirstLetter(item))
+                        ?.join(', ') ?? 'N/A'}
+                    </Text>
+
+                    <Image
+                      source={
+                        percentageMatchData?.matchedFields?.[4]?.isMatched
+                          ? icons.check_gradient_icon
+                          : icons.circle_cancel_icon
+                      }
+                      style={{
+                        width: hp(18),
+                        height: hp(18),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[5]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[5].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[5]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[5]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[6]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[6].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[6]?.expected
+                          ?.map(capitalizeFirstLetter)
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[6]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginTop: hp(10)}}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins400,
+                        color: colors.black,
+                      }}>
+                      {percentageMatchData?.matchedFields?.[7]?.field
+                        ? capitalizeFirstLetter(
+                            percentageMatchData.matchedFields[7].field,
+                          )
+                        : 'N/A'}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(14),
+                          lineHeight: hp(22),
+                          fontFamily: fontFamily.poppins700,
+                          color: colors.black,
+                          width: '90%',
+                        }}>
+                        {percentageMatchData?.matchedFields?.[7]?.expected
+                          ?.map(item => capitalizeFirstLetter(item))
+                          ?.join(', ') ?? 'N/A'}
+                      </Text>
+
+                      <Image
+                        source={
+                          percentageMatchData?.matchedFields?.[7]?.isMatched
+                            ? icons.check_gradient_icon
+                            : icons.circle_cancel_icon
+                        }
+                        style={{
+                          width: hp(18),
+                          height: hp(18),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                width: '70%',
+                position: 'absolute',
+                bottom: 25,
+                justifyContent: 'space-evenly',
+                alignSelf: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={handleBackArrow}
+                disabled={step === 1}
+                style={{width: wp(30), alignItems: 'center'}}>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={[
+                    {
+                      width: hp(12),
+                      height: hp(24),
+                      resizeMode: 'contain',
+                      transform: [{rotate: '180deg'}],
+                    },
+                    {tintColor: step === 1 ? '#E4E4E4' : 'black'},
+                  ]}
+                />
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                {[1, 2].map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => setStep(item)}
+                    style={[
+                      {
+                        width: 14,
+                        height: 14,
+                        borderRadius: 50,
+                        marginHorizontal: 10,
+                      },
+                      {backgroundColor: step === item ? '#0F52BA' : '#ECECEC'},
+                    ]}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity
+                onPress={handleNext}
+                disabled={step === 2}
+                style={{width: wp(30), alignItems: 'center'}}>
+                <Image
+                  source={icons.rightSideIcon}
+                  style={[
+                    {width: hp(12), height: hp(24), resizeMode: 'contain'},
+                    {tintColor: step === 2 ? '#E4E4E4' : 'black'},
+                  ]}
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </View>

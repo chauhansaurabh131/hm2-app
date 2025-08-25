@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
+  Modal,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -9,21 +10,35 @@ import {
 } from 'react-native';
 import {style} from './style';
 import {useSelector} from 'react-redux';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../../utils/colors';
 import {icons} from '../../../assets';
+import {useNavigation} from '@react-navigation/native';
+import GradientButton from '../../../components/GradientButton';
 
 const UserContactDetail = (...params) => {
   const UserData = params[0]?.friendList;
+  const MatchesScreenData = params[0];
 
-  // console.log(' === UserData ===> ', UserData?.email);
-
+  const navigation = useNavigation();
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
-  const [planStatus, setPlanStatus] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Loader state
 
+  const [planStatus, setPlanStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [accessibleContact, setAccessibleContact] = useState(null); // NEW STATE
+  const [numberSendRequestModal, setNumberSendRequestModal] = useState(false);
+  const [numberSendRequestLimitModal, setNumberSendRequestLimitModal] =
+    useState(false);
+  const [loading, setLoading] = useState(false);
+
+  console.log(
+    ' === accessibleContact ===> ',
+    accessibleContact?.results[0]?.targetUserId?.mobileNumber,
+  );
+
+  // ✅ First API: get-user-subscription
   useEffect(() => {
     const fetchSubscription = async () => {
       if (!accessToken) {
@@ -31,8 +46,7 @@ const UserContactDetail = (...params) => {
         return;
       }
 
-      setIsLoading(true); // Start loading
-
+      setIsLoading(true);
       try {
         const response = await fetch(
           'https://stag.mntech.website/api/v1/user/subscription/get-user-subscription',
@@ -51,31 +65,102 @@ const UserContactDetail = (...params) => {
 
         const result = await response.json();
         console.log('User subscription data:', result);
-
         setPlanStatus(result?.data?.status);
       } catch (error) {
         console.error('Error fetching subscription:', error);
       } finally {
-        setIsLoading(false); // End loading
+        setIsLoading(false);
       }
     };
 
     fetchSubscription();
   }, [accessToken]);
 
-  const MatchesScreenData = params[0];
+  // ✅ Second API: accessible-ById/{id}
+  const fetchAccessibleById = async () => {
+    if (!accessToken || !MatchesScreenData?._id) {
+      return;
+    }
 
+    try {
+      const response = await fetch(
+        `https://stag.mntech.website/api/v1/user/mobile-number-request/accessible-ById/${MatchesScreenData._id}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Accessible by ID data:', result);
+
+      setAccessibleContact(result?.data || null);
+    } catch (error) {
+      console.error('Error fetching accessible by ID:', error);
+    }
+  };
+
+  const handleRequestMobileNumber = async () => {
+    if (!accessToken || !MatchesScreenData?._id) {
+      console.warn('Missing accessToken or targetUserId');
+      return;
+    }
+
+    try {
+      setLoading(true); // 👉 start loader
+
+      const response = await fetch(
+        'https://stag.mntech.website/api/v1/user/mobile-number-request/create',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            targetUserId: MatchesScreenData._id,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setNumberSendRequestModal(false);
+        setNumberSendRequestLimitModal(true);
+        // alert(result.message || 'Something went wrong');
+        // console.log(' === result.message ===> ', result.message);
+      } else {
+        console.log('✅ Mobile number request created:', result);
+        setNumberSendRequestModal(false);
+      }
+    } catch (error) {
+      console.error('🚨 Unexpected error:', error);
+    } finally {
+      setLoading(false); // 👉 stop loader in both success & error
+    }
+  };
+
+  useEffect(() => {
+    fetchAccessibleById();
+  }, [accessToken, MatchesScreenData?._id]);
+
+  // Fallback values
   const rawMobileNumber =
-    MatchesScreenData?.mobileNumber?.toString() ||
-    UserData?.mobileNumber?.toString();
+    accessibleContact?.results[0]?.targetUserId?.mobileNumber?.toString() ||
+    accessibleContact?.results[0]?.targetUserId?.mobileNumber?.toString() ||
+    accessibleContact?.results[0]?.targetUserId?.mobileNumber?.toString();
 
-  const rawHomeMobileNumber =
-    MatchesScreenData?.homeMobileNumber?.toString() ||
-    UserData?.homeMobileNumber?.toString();
+  const email =
+    accessibleContact?.email || MatchesScreenData?.email || UserData?.email;
 
-  const email = MatchesScreenData?.email || UserData?.email;
-
-  // Function to format the mobile number as "+91 90001 01021"
   const formatMobileNumber = number => {
     if (number && number.length === 12) {
       const countryCode = `+${number.slice(0, 2)}`;
@@ -87,7 +172,8 @@ const UserContactDetail = (...params) => {
   };
 
   const mobileNumber = formatMobileNumber(rawMobileNumber);
-  const HomeMobileNumber = formatMobileNumber(rawHomeMobileNumber);
+
+  console.log(' === mobileNumber ===> ', mobileNumber);
 
   return (
     <SafeAreaView style={style.container}>
@@ -97,28 +183,74 @@ const UserContactDetail = (...params) => {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : planStatus === 'active' ? (
-          <>
-            <Text style={style.detailTittleText}>Mobile Number</Text>
+          MatchesScreenData?.privacySettingCustom?.contact ? (
+            <View
+              style={{
+                width: '100%',
+                height: 244,
+                backgroundColor: '#F7F7F7',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 19,
+                marginTop: 5,
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(18),
+                  lineHeight: hp(26),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                Private contact
+              </Text>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                  marginTop: 2,
+                }}>
+                This user has hidden their contact details
+              </Text>
+            </View>
+          ) : (
+            <>
+              <Text style={style.detailTittleText}>Mobile Number</Text>
 
-            <Text style={style.detailSubTittleText}>
-              {/*+91 90001 01021*/}
-              {mobileNumber || 'N/A'}
-            </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={style.detailSubTittleText}>
+                  +91 {mobileNumber || '**********'}
+                </Text>
 
-            <Text style={style.detailsTittleTextStyle}>Home Number</Text>
+                {!mobileNumber && (
+                  <TouchableOpacity
+                    // onPress={handleRequestMobileNumber}
+                    onPress={() => setNumberSendRequestModal(true)}
+                    activeOpacity={0.5}
+                    style={{
+                      top: -4,
+                      height: hp(30),
+                      width: hp(50),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      source={icons.blue_screen_eye}
+                      style={{
+                        width: wp(22),
+                        height: hp(15),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
 
-            <Text style={style.detailSubTittleText}>
-              {/*+91 90001 01021*/}
-              {HomeMobileNumber || 'N/A'}
-            </Text>
-
-            <Text style={style.detailsTittleTextStyle}>Email Address</Text>
-
-            <Text style={style.detailSubTittleText}>
-              {/*riyashah@gmail.com*/}
-              {email || 'N/A'}
-            </Text>
-          </>
+              <Text style={style.detailsTittleTextStyle}>Email Address</Text>
+              <Text style={style.detailSubTittleText}>{email || 'N/A'}</Text>
+            </>
+          )
         ) : (
           <View>
             <LinearGradient
@@ -154,9 +286,7 @@ const UserContactDetail = (...params) => {
               </Text>
 
               <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Upgrader');
-                }}
+                onPress={() => navigation.navigate('Upgrader')}
                 activeOpacity={0.6}
                 style={{
                   marginTop: hp(34),
@@ -193,6 +323,188 @@ const UserContactDetail = (...params) => {
           </View>
         )}
       </View>
+
+      {/*SEND REQUESTED MOBILE NUMBER VIEW MODAL*/}
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={numberSendRequestModal}
+        onRequestClose={() => setNumberSendRequestModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: 10,
+              width: '90%',
+            }}>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                right: 5,
+                width: hp(35),
+                height: hp(35),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => {
+                setNumberSendRequestModal(false);
+              }}>
+              <Image
+                source={icons.x_cancel_icon}
+                style={{width: hp(15), height: hp(15), resizeMode: 'contain'}}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                marginTop: hp(65),
+                fontFamily: fontFamily.poppins500,
+                color: colors.pureBlack,
+                textAlign: 'center',
+              }}>
+              Mobile number can be viewed{'\n'}with the user’s approval.
+            </Text>
+
+            <View
+              style={{
+                marginTop: hp(32),
+                marginBottom: hp(31),
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={handleRequestMobileNumber}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  style={{
+                    width: wp(270),
+                    height: hp(50),
+                    borderRadius: 50,
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                  }}>
+                  {loading ? (
+                    <ActivityIndicator size="large" color="white" />
+                  ) : (
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        color: colors.white,
+                        fontSize: fontSize(16),
+                        lineHeight: hp(24),
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      Send View Request
+                    </Text>
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/*SEND REQUESTED MOBILE NUMBER LIMIT OVER MODAL*/}
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={numberSendRequestLimitModal}
+        onRequestClose={() => setNumberSendRequestLimitModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: '#fff',
+              // padding: 25,
+              borderRadius: 10,
+              width: '90%',
+              // alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                right: 5,
+                width: hp(35),
+                height: hp(35),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => {
+                setNumberSendRequestLimitModal(false);
+              }}>
+              <Image
+                source={icons.x_cancel_icon}
+                style={{width: hp(15), height: hp(15), resizeMode: 'contain'}}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                marginTop: hp(65),
+                fontFamily: fontFamily.poppins500,
+                color: colors.pureBlack,
+                textAlign: 'center',
+              }}>
+              Your limit has expired. Upgrade to{'\n'}access premium features.
+            </Text>
+
+            <View
+              style={{
+                marginTop: hp(32),
+                marginBottom: hp(31),
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                // onPress={handleRequestMobileNumber}
+                onPress={() => {
+                  setNumberSendRequestLimitModal(false);
+                  navigation.navigate('Upgrader');
+                }}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  style={{
+                    width: wp(270),
+                    height: hp(50),
+                    borderRadius: 50,
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    alignContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      color: colors.white,
+                      fontSize: fontSize(16),
+                      lineHeight: hp(24),
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    Upgrade
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

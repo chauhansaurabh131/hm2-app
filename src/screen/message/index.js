@@ -1,3 +1,4 @@
+// Message.js
 import React, {useEffect} from 'react';
 import {SafeAreaView, Text, TouchableOpacity, Alert} from 'react-native';
 import RazorpayCheckout from 'react-native-razorpay';
@@ -5,96 +6,86 @@ import axios from 'axios';
 import {colors} from '../../utils/colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {paymentDetails} from '../../actions/homeActions';
+import Config from 'react-native-config'; // For environment variables
 
 const Message = () => {
-  const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const {user} = useSelector(state => state.auth);
+  const payment = useSelector(state => state.home);
+  const PlanDetails = payment?.paymentDetail;
+
+  const token = user?.tokens?.access?.token;
+
+  // Use env variable or fallback
+  const API_URL = Config.API_URL || 'https://stag.mntech.website/api';
 
   useEffect(() => {
     dispatch(paymentDetails());
   }, [dispatch]);
 
-  const payment = useSelector(state => state.home);
-  const PlanDetails = payment?.paymentDetail;
-  const token = user?.tokens?.access?.token;
-
   const handlePayment = async () => {
     try {
-      // Create the order
+      // 1. Create Razorpay Order
       const response = await axios.post(
-        'https://happymilan.tech/api/v1/user/razorpay/order',
+        `${API_URL}/v1/user/razorpay/order`,
         {planId: PlanDetails?.data[0]?.id},
-        {headers: {Authorization: `Bearer ${token}`}},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true', // optional
+          },
+        },
       );
 
-      console.log('Order Creation Response:', response.data);
-
-      const {orderId, amount, paymentHistoryToken} = response.data;
+      const {id: orderId, amount, paymentHistoryToken} = response.data;
 
       if (!paymentHistoryToken) {
-        throw new Error('Payment history token is missing from the response');
+        throw new Error('Payment history token missing');
       }
 
-      console.log('Payment History Token:', paymentHistoryToken);
+      // 2. Construct callback URL for Razorpay server to notify backend
+      const callbackUrl = `${API_URL}/v1/user/razorpay/is-order-complete?authToken=${encodeURIComponent(
+        token,
+      )}&paymentHistoryToken=${encodeURIComponent(paymentHistoryToken)}`;
 
-      // Proceed with Razorpay payment
+      // 3. Razorpay Options
       const options = {
+        key: 'rzp_live_OyWOR7Tj1c7Vnh',
+        name: 'Happy Milan',
         description: 'Credits towards consultation',
         image: 'https://i.imgur.com/3g7nmJC.png',
-        currency: 'INR',
-        key: 'rzp_live_2SoKzqAUA6FY69',
-        amount: amount.toString(),
         order_id: orderId,
-        name: 'foo',
+        amount: amount.toString(), // In paise
+        currency: 'INR',
+        callback_url: callbackUrl,
         prefill: {
-          email: 'void@razorpay.com',
-          contact: '9191919191',
-          name: 'Razorpay Software',
+          name: user?.name || 'User',
+          email: user?.email || 'test@example.com',
+          contact: user?.phone || '9999999999',
         },
-        theme: {color: '#F37254'},
+        theme: {color: '#0F52BA'},
       };
 
+      // 4. Open Razorpay payment screen
       RazorpayCheckout.open(options)
-        .then(async data => {
-          const {razorpay_payment_id} = data;
-
-          console.log(`Success: ${razorpay_payment_id}`);
-          console.log('Payment History Token:', paymentHistoryToken);
-          console.log('===  Token:', token);
-
-          // Verification API call with paymentHistoryToken as query parameter
-          try {
-            const verificationResponse = await axios.post(
-              `https://happymilan.tech/api/v1/user/razorpay/is-order-complete?paymentHistoryToken=${encodeURIComponent(
-                paymentHistoryToken,
-              )}&authToken=${encodeURIComponent(token)}`,
-              {razorpay_payment_id},
-              {headers: {Authorization: `Bearer ${token}`}},
-            );
-
-            console.log(
-              'Payment verification response:',
-              verificationResponse.data,
-            );
-            Alert.alert('Success', 'Payment verified successfully.');
-          } catch (verificationError) {
-            console.error(
-              'Verification Error:',
-              verificationError.response?.data || verificationError.message,
-            );
-            Alert.alert(
-              'Error',
-              'Payment verification failed. Please contact support.',
-            );
-          }
+        .then(data => {
+          console.log('Payment Success:', data);
+          Alert.alert('Payment Successful', 'We are verifying your payment.');
+          // Verification handled by callback_url server-side
         })
         .catch(error => {
-          console.error(`Payment Error: ${error.code} | ${error.description}`);
-          Alert.alert('Payment Error', 'Payment failed. Please try again.');
+          console.error('Payment Failed:', error);
+          Alert.alert(
+            'Payment Error',
+            error.description || 'Please try again.',
+          );
         });
     } catch (error) {
-      console.error('Error:', error.response?.data || error.message);
-      Alert.alert('Error', 'Failed to create order. Please try again.');
+      console.error(
+        'Order Creation Error:',
+        error.response?.data || error.message,
+      );
+      Alert.alert('Error', 'Unable to initiate payment.');
     }
   };
 

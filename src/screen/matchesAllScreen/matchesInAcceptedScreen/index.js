@@ -622,9 +622,22 @@ const MatchesInAcceptedScreen = () => {
         item.friendList?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
-    const imageCount = Array.isArray(item.friendList?.userProfilePic)
-      ? item.friendList?.userProfilePic.length
-      : 0;
+    // const imageCount = Array.isArray(item.friendList?.userProfilePic)
+    //   ? item.friendList?.userProfilePic.length
+    //   : 0;
+
+    const imageList = Array.isArray(item.friendList?.userProfilePic)
+      ? item.friendList?.userProfilePic.filter(img => !img.isDeleted)
+      : [];
+
+    const uniqueUrls = new Set(imageList.map(img => img.url));
+    const imageCount = uniqueUrls.size;
+
+    console.log(
+      ' === item.friendList?.userProfilePic ===> ',
+      item.friendList?.userProfilePic,
+    );
+    console.log(' === imageCount ===> ', imageCount);
 
     const userAllImageShare = () => {
       const allImages = {
@@ -725,7 +738,11 @@ const MatchesInAcceptedScreen = () => {
                   </Text>
 
                   {subPlan && (
-                    <View style={style.subPlanCon}>
+                    <View
+                      style={[
+                        style.subPlanCon,
+                        {backgroundColor: 'crownTintColor'},
+                      ]}>
                       <Image source={icons.crownIcon} style={style.crownImg} />
                       <Text style={style.planNameText}>{planName}</Text>
                     </View>

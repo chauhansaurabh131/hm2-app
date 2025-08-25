@@ -52,7 +52,7 @@ const UserUploadImageFullScreen = () => {
 
   const imageArray = getUniqueImagesByFilename(rawArray);
 
-  console.log(' === imageArray ===> ', imageArray);
+  // console.log(' === imageArray ===> ', imageArray);
 
   return (
     <SafeAreaView style={style.container}>

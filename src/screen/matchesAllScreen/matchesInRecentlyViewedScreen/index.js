@@ -643,6 +643,15 @@ const MatchesInRecentlyViewedScreen = () => {
         item?.user?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
       : '';
 
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
+
     const imageUrl = item?.user?.profilePic;
 
     const profilePrivacy =
@@ -790,7 +799,11 @@ const MatchesInRecentlyViewedScreen = () => {
                     {firstName || name} {lastName}
                   </Text>
                   {subPlan && (
-                    <View style={style.subPlanContainer}>
+                    <View
+                      style={[
+                        style.subPlanContainer,
+                        {backgroundColor: crownTintColor},
+                      ]}>
                       <Image source={icons.crownIcon} style={style.crowIcon} />
                       <Text style={style.planNameText}>{planName}</Text>
                     </View>

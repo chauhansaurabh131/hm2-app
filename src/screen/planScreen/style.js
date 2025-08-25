@@ -130,13 +130,14 @@ export const style = StyleSheet.create({
     marginRight: wp(16),
   },
   descriptionText: {
-    color: '#8F8F8F',
+    // color: '#8F8F8F',
+    color: colors.pureBlack,
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins400,
   },
   textColor: {
-    color: colors.black,
+    color: '#0F52BA',
   },
   onlineText: {
     color: colors.black,
@@ -184,7 +185,7 @@ export const style = StyleSheet.create({
     marginTop: hp(21),
   },
   gradientBorder: {
-    width: wp(158),
+    width: '100%',
     height: hp(44),
     borderRadius: 50,
     borderWidth: 1,
@@ -196,7 +197,7 @@ export const style = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'center',
-    margin: isIOS ? 0 : 1,
+    margin: isIOS ? 0 : 1.2,
   },
   notNowText: {
     textAlign: 'center',
@@ -205,10 +206,10 @@ export const style = StyleSheet.create({
     margin: 10,
     fontSize: fontSize(14),
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
   },
   autoRenewButton: {
-    width: wp(158),
+    width: wp(300),
     height: hp(44),
   },
 });

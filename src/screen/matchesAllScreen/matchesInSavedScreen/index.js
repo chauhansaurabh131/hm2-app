@@ -620,6 +620,38 @@ const MatchesInSavedScreen = () => {
           true) &&
       item?.friendsDetails?.status !== 'accepted';
 
+    const planName = item?.friendList?.subscriptionDetails?.selectedPlan
+      ? item?.friendList?.subscriptionDetails?.selectedPlan
+          .charAt(0)
+          .toUpperCase() +
+        item?.friendList?.subscriptionDetails?.selectedPlan
+          .slice(1)
+          .toLowerCase()
+      : '';
+
+    const {selectedPlan, status} = item?.friendList?.subscriptionDetails || {};
+
+    // Determine if the selected plan is 'gold' (for the crown icon)
+    const isGoldPlan = selectedPlan === 'gold';
+    const isSilverPlan = selectedPlan === 'silver';
+    const isPlatinumPlan = selectedPlan === 'Platinum';
+
+    const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
+
+    console.log(
+      ' === subPlan ===> ',
+      item?.friendList?.subscriptionDetails?.selectedPlan,
+    );
+
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
+
     const userId = item?.friendList?._id;
     const unFrinendRequestId = item?.friendsDetails?._id;
     const AllDetailsPass = item;
@@ -656,8 +688,6 @@ const MatchesInSavedScreen = () => {
     const age = calculateAge(item?.friendList?.dateOfBirth);
 
     const height = item?.friendList?.height;
-
-    console.log(' === var ===> ', item?.friendList?.userProfessional?.jobTitle);
 
     const jobTittle = item?.friendList?.userProfessional?.jobTitle
       ? item?.friendList?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
@@ -777,9 +807,44 @@ const MatchesInSavedScreen = () => {
                   onPress={() => {
                     handlePress(item);
                   }}>
-                  <Text style={styles.nameText}>
-                    {firstName || name} {lastName}
-                  </Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.nameText}>
+                      {firstName || name} {lastName}
+                    </Text>
+
+                    {subPlan && (
+                      <View
+                        style={{
+                          height: 22,
+                          backgroundColor: crownTintColor,
+                          marginLeft: 11,
+                          borderRadius: 50,
+                          flexDirection: 'row',
+                          paddingHorizontal: 7,
+                        }}>
+                        <Image
+                          source={icons.crownIcon}
+                          style={{
+                            width: 11,
+                            height: 11,
+                            tintColor: 'white',
+                            alignSelf: 'center',
+                            resizeMode: 'contain',
+                          }}
+                        />
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: fontSize(12),
+                            fontWeight: 'bold',
+                            alignSelf: 'center',
+                            marginLeft: 3,
+                          }}>
+                          {planName}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
 
                   <View style={styles.detailsContainer}>
                     <Text style={styles.userDetailsTextStyle}>{age} yrs,</Text>
@@ -2677,7 +2742,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(24),
     lineHeight: hp(36),
     fontFamily: fontFamily.poppins700,
-    marginTop: 5,
+    marginTop: hp(5),
   },
   detailsContainer: {
     flexDirection: 'row',

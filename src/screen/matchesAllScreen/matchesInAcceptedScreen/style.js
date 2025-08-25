@@ -584,7 +584,7 @@ export const style = StyleSheet.create({
   },
   subPlanCon: {
     height: 22,
-    backgroundColor: 'orange',
+    // backgroundColor: 'orange',
     marginLeft: 11,
     borderRadius: 50,
     flexDirection: 'row',
