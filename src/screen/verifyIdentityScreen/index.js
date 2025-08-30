@@ -135,6 +135,11 @@ const VerifyIdentityScreen = ({navigation}) => {
               text1: 'KYC Submission Successful',
               text2: 'Your KYC document has been submitted successfully.',
             });
+            setTimeout(() => {
+              navigation.navigate('AccountsScreen', {
+                screen: 'AccountsScreen', // 👈 child inside ExtraStack
+              });
+            }, 1000);
           } else {
             Toast.show({
               type: 'error',
@@ -167,7 +172,12 @@ const VerifyIdentityScreen = ({navigation}) => {
       });
     } finally {
       setLoading(false); // Stop the loader
-      navigation.goBack();
+      // navigation.goBack();
+      setTimeout(() => {
+        navigation.navigate('AccountsScreen', {
+          screen: 'AccountsScreen', // 👈 child inside ExtraStack
+        });
+      }, 1000);
     }
   };
 

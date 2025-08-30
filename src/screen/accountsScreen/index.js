@@ -100,9 +100,10 @@ const AccountsScreen = ({navigation}) => {
 
         // Save the last KYC details to state
         const kycDataArray = result?.data;
-        if (kycDataArray && kycDataArray.length > 0) {
-          setKycData(kycDataArray[kycDataArray.length - 1]); // Get the last item
-        }
+        // if (kycDataArray && kycDataArray.length > 0) {
+        //   setKycData(kycDataArray[kycDataArray.length - 1]); // Get the last item
+        // }
+        setKycData(kycDataArray)
       } else {
         console.error('Failed to fetch KYC details');
         Toast.show({
