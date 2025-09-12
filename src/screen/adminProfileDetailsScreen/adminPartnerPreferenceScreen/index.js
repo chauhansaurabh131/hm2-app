@@ -4,6 +4,7 @@ import {
   Alert,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -19,13 +20,16 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import AgeRangeSlider from '../../../components/ageRangeSlider';
 import LinearGradient from 'react-native-linear-gradient';
 import HeightRangeSlider from '../../../components/heightRangeSlider';
+import MultipleValueSelectTextInput from '../../../components/mutipleValueSelectTextInput';
 
 const AdminPartnerPreferenceScreen = (...params) => {
   const userPersonalData = params[0];
 
+  console.log(' === userPersonalData ===> ', userPersonalData);
+
   const {isUpdatingProfile} = useSelector(state => state.auth);
 
-  console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
+  // console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
 
   // console.log(' === userPersonalData ===> ', userPersonalData?.userPartner);
 
@@ -57,6 +61,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
     userPersonalData?.userPartner?.state || [],
   );
 
+  const [text, setText] = useState('');
   const [city, setCity] = useState(userPersonalData?.userPartner?.city || []);
 
   const [preferDiet, setPreferDiet] = useState(
@@ -180,6 +185,56 @@ const AdminPartnerPreferenceScreen = (...params) => {
     // refRBSheet.current.close(); // Close BottomSheet after selection
   };
 
+  const handleAddCity = () => {
+    const newCity = text.trim();
+
+    if (newCity === '') {
+      return;
+    }
+
+    if (city.length >= 5) {
+      Alert.alert('Limit Reached', 'You can only add up to 5 cities.');
+      return;
+    }
+
+    // Case-insensitive check for duplicates
+    const alreadyExists = city.some(
+      c => c.toLowerCase() === newCity.toLowerCase(),
+    );
+
+    if (alreadyExists) {
+      Alert.alert('Duplicate City', 'This city is already added.');
+      setText('');
+      return;
+    }
+
+    setCity(prev => [...prev, newCity]);
+    setText('');
+  };
+
+  const handleRemoveCity = cityToRemove => {
+    setCity(prevCities => prevCities.filter(city => city !== cityToRemove));
+  };
+
+  const toggleDiet = diets => {
+    if (preferDiet.includes(diets)) {
+      // Remove hobby if already selected
+      setPreferDiet(preferDiet.filter(item => item !== diets));
+    } else {
+      if (preferDiet.length >= 3) {
+        Alert.alert(
+          'Maximum Selection Reached',
+          'You can select a maximum of 3 Diet.',
+          [{text: 'OK'}],
+        );
+        return; // Exit the function without adding
+      }
+      // Add hobby if not selected
+      setPreferDiet([...preferDiet, diets]);
+    }
+    // refRBSheet.current.close(); // Close BottomSheet after selection
+  };
+
   const handleSelectDiet = profileType => {
     setPreferDiet(profileType); // Update the state with the selected profile type
     DietRefRBSheet.current.close(); // Close the bottom sheet
@@ -207,55 +262,76 @@ const AdminPartnerPreferenceScreen = (...params) => {
 
   const availableCountry = [
     'india',
-    'canada',
-    'us',
-    'afghanistan',
-    'china',
-    'myanmar',
-    'nepal',
-    'sri-lanka',
-    'pakistan',
+
     ...(Array.isArray(userPersonalData?.country)
       ? userPersonalData.country.filter(
-          con =>
-            ![
-              'india',
-              'canada',
-              'us',
-              'afghanistan',
-              'china',
-              'myanmar',
-              'nepal',
-              'sri-lanka',
-              'pakistan',
-            ].includes(con.toLowerCase()),
+          con => !['india'].includes(con.toLowerCase()),
         )
       : []), // Default to empty array if country is undefined or not an array
   ];
 
   const availableState = [
-    'gujarat',
-    'assam',
     'andhra-pradesh',
     'arunachal-pradesh',
+    'assam',
     'bihar',
     'chhattisgarh',
     'goa',
+    'gujarat',
     'haryana',
     'himachal-pradesh',
+    'jharkhand',
+    'karnataka',
+    'kerala',
+    'madhya-pradesh',
+    'maharashtra',
+    'manipur',
+    'meghalaya',
+    'mizoram',
+    'nagaland',
+    'odisha',
+    'punjab',
+    'rajasthan',
+    'sikkim',
+    'tamil-nadu',
+    'telangana',
+    'tripura',
+    'uttar-pradesh',
+    'uttarakhand',
+    'west-bengal',
+
     ...(Array.isArray(userPersonalData?.state)
       ? userPersonalData.state.filter(
           con =>
             ![
-              'gujarat',
-              'assam',
               'andhra-pradesh',
               'arunachal-pradesh',
+              'assam',
               'bihar',
               'chhattisgarh',
               'goa',
+              'gujarat',
               'haryana',
               'himachal-pradesh',
+              'jharkhand',
+              'karnataka',
+              'kerala',
+              'madhya-pradesh',
+              'maharashtra',
+              'manipur',
+              'meghalaya',
+              'mizoram',
+              'nagaland',
+              'odisha',
+              'punjab',
+              'rajasthan',
+              'sikkim',
+              'tamil-nadu',
+              'telangana',
+              'tripura',
+              'uttar-pradesh',
+              'uttarakhand',
+              'west-bengal',
             ].includes(con.toLowerCase()),
         )
       : []), // Default to empty array if country is undefined or not an array
@@ -289,33 +365,135 @@ const AdminPartnerPreferenceScreen = (...params) => {
       : []), // Default to empty array if country is undefined or not an array
   ];
 
+  const preferDietPlan = [
+    'vegetarian',
+    'eggetarian',
+    'non_vegetarian',
+    'vegan',
+    'jain',
+    'occasionally_non_vegetarian',
+    'occasionally_vegetarian',
+    'satvik',
+    'other',
+    ...(Array.isArray(userPersonalData?.diet)
+      ? userPersonalData.diet.filter(
+          con =>
+            ![
+              'vegetarian',
+              'eggetarian',
+              'non_vegetarian',
+              'vegan',
+              'jain',
+              'occasionally_non_vegetarian',
+              'occasionally_vegetarian',
+              'satvik',
+              'other',
+            ].includes(con.toLowerCase()),
+        )
+      : []), // Default to empty array if country is undefined or not an array
+  ];
+
   const availableHobbies = [
-    'dancing',
-    'singing',
     'writing',
-    'running',
-    'racing',
-    'gambler',
+    'play_instrument',
+    'writing',
+    'poetry',
+    'cooking',
+    'painting',
+    'gardening',
+    'singing',
+    'diy_crafts',
+    'blogging',
+    'photography',
+    'dancing',
+    'content_creation',
     'movie',
+    'sports',
+    'biking',
+    'music',
+    'social_media',
     'clubbing',
     'travelling',
+    'gaming',
+    'shopping',
+    'reading',
+    'binge_watching',
+    'theater_events',
+    'running',
+    'cycling',
+    'yoga',
+    'walking',
+    'working_out',
+    'trekking',
+    'aerobics_zumba',
+    'swimming',
     ...userPersonalData?.hobbies.filter(
       hobby =>
         ![
-          'dancing',
-          'singing',
           'writing',
-          'running',
-          'racing',
-          'gambler',
+          'play_instrument',
+          'writing',
+          'poetry',
+          'cooking',
+          'painting',
+          'gardening',
+          'singing',
+          'diy_crafts',
+          'blogging',
+          'photography',
+          'dancing',
+          'content_creation',
           'movie',
+          'sports',
+          'biking',
+          'music',
+          'social_media',
           'clubbing',
           'travelling',
+          'gaming',
+          'shopping',
+          'reading',
+          'binge_watching',
+          'theater_events',
+          'running',
+          'cycling',
+          'yoga',
+          'walking',
+          'working_out',
+          'trekking',
+          'aerobics_zumba',
+          'swimming',
         ].includes(hobby.toLowerCase()),
     ),
   ];
 
+  const formatState = state => {
+    return state
+      .replace(/[-_]/g, ' ') // replace - and _ with space
+      .split(' ') // split into words
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  const formatHobby = hobby => {
+    return hobby
+      .replace(/[-_]/g, ' ') // replace - and _ with space
+      .split(' ') // split into words
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  const formatDiet = diet => {
+    return diet
+      .replace(/_/g, ' ') // replace underscores with spaces
+      .split(' ') // split into words
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   const handleSave = () => {
+    console.log(' === handleSave--- ===> ', preferDiet);
+
     setLoading(true);
     dispatch(
       partnerReferences(
@@ -469,7 +647,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                         color: colors.black,
                         lineHeight: hp(24),
                       }}>
-                      {states.charAt(0).toUpperCase() + states.slice(1)}
+                      {formatState(states)}
                     </Text>
                   </View>
                 ))}
@@ -533,7 +711,39 @@ const AdminPartnerPreferenceScreen = (...params) => {
 
             <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
               <Text style={style.tittleText}>Prefer Diet</Text>
-              <Text style={style.subTittleText}>{preferDiet} </Text>
+              {/*<Text style={style.subTittleText}>{preferDiet} </Text>*/}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginTop: hp(15),
+                }}>
+                {preferDiet.map((diets, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      borderColor: '#DEDEDE',
+                      borderWidth: 1,
+                      borderRadius: 25,
+                      paddingHorizontal: wp(18),
+                      paddingVertical: hp(8),
+                      marginRight: wp(10),
+                      marginBottom: hp(10),
+                      backgroundColor: colors.white,
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        fontFamily: fontFamily.poppins500,
+                        color: colors.black,
+                        lineHeight: hp(24),
+                      }}>
+                      {formatDiet(diets)}
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
 
             <View
@@ -592,7 +802,8 @@ const AdminPartnerPreferenceScreen = (...params) => {
                         color: colors.black,
                         lineHeight: hp(24),
                       }}>
-                      {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                      {/*{hobby.charAt(0).toUpperCase() + hobby.slice(1)}*/}
+                      {formatHobby(hobby)}
                     </Text>
                   </View>
                 ))}
@@ -812,7 +1023,8 @@ const AdminPartnerPreferenceScreen = (...params) => {
                           color: colors.black,
                           lineHeight: hp(24),
                         }}>
-                        {states.charAt(0).toUpperCase() + states.slice(1)}
+                        {/*{states.charAt(0).toUpperCase() + states.slice(1)}*/}
+                        {formatState(states)}
                       </Text>
 
                       <View
@@ -849,16 +1061,209 @@ const AdminPartnerPreferenceScreen = (...params) => {
               />
 
               <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                {/*<TouchableOpacity*/}
+                {/*  // onPress={() => {*/}
+                {/*  //   CityRefRBSheet.current.open();*/}
+                {/*  // }}*/}
+                {/*  style={{*/}
+                {/*    flexDirection: 'row',*/}
+                {/*    alignItems: 'center',*/}
+                {/*    justifyContent: 'space-between',*/}
+                {/*  }}>*/}
+                {/*  <Text style={style.tittleTexts}>Select Prefer City</Text>*/}
+
+                {/*  <View*/}
+                {/*    style={{*/}
+                {/*      position: 'absolute',*/}
+                {/*      justifyContent: 'center',*/}
+                {/*      alignSelf: 'center',*/}
+                {/*      alignItems: 'center',*/}
+                {/*      right: 5,*/}
+                {/*      // top: 35,*/}
+                {/*    }}>*/}
+                {/*    <Image*/}
+                {/*      source={icons.rightSideIcon}*/}
+                {/*      style={style.rightSideIcon}*/}
+                {/*    />*/}
+                {/*  </View>*/}
+                {/*</TouchableOpacity>*/}
+
+                <TextInput
+                  style={{
+                    height: 50,
+                    borderWidth: 0.8,
+                    borderColor: 'black',
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins500,
+                    color: colors.black,
+                    borderTopWidth: 0,
+                    borderRightWidth: 0,
+                    borderLeftWidth: 0,
+                    width: '95%',
+                  }}
+                  placeholder="Enter Prefer City"
+                  placeholderTextColor={colors.black}
+                  value={text}
+                  onChangeText={setText}
+                  onSubmitEditing={handleAddCity} // add city when pressing enter
+                  returnKeyType="done"
+                />
+
+                {/*<MultipleValueSelectTextInput*/}
+                {/*  placeholder="Select Prefer City"*/}
+                {/*  maxItems={5}*/}
+                {/*  value={city}*/}
+                {/*  onChange={setCity}*/}
+                {/*/>*/}
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: hp(25),
+                  }}>
+                  {city.map((Cities, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={{
+                        borderColor: '#DEDEDE',
+                        borderWidth: 1,
+                        borderRadius: 25,
+                        paddingHorizontal: wp(15),
+                        paddingVertical: hp(10),
+                        marginRight: wp(10),
+                        marginBottom: hp(10),
+                        backgroundColor: colors.white,
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}
+                      onPress={() => handleRemoveCity(Cities)}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(16),
+                          fontFamily: fontFamily.poppins500,
+                          color: colors.black,
+                          lineHeight: hp(24),
+                        }}>
+                        {Cities.charAt(0).toUpperCase() + Cities.slice(1)}
+                      </Text>
+                      <View
+                        style={{
+                          marginLeft: 15,
+                          width: hp(16),
+                          height: hp(16),
+                          backgroundColor: '#5F6368',
+                          borderRadius: 50,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 9,
+                            fontWeight: 'bold',
+                          }}>
+                          ✕
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/*<View*/}
+                {/*  style={{*/}
+                {/*    flexDirection: 'row',*/}
+                {/*    flexWrap: 'wrap',*/}
+                {/*    marginTop: hp(15),*/}
+                {/*  }}>*/}
+                {/*  {city.map((cites, index) => (*/}
+                {/*    <TouchableOpacity*/}
+                {/*      key={index}*/}
+                {/*      onPress={() => toggleCity(cites)} // Remove hobby on press*/}
+                {/*      style={{*/}
+                {/*        borderColor: '#DEDEDE',*/}
+                {/*        borderWidth: 1,*/}
+                {/*        borderRadius: 25,*/}
+                {/*        paddingHorizontal: wp(15),*/}
+                {/*        paddingVertical: hp(10),*/}
+                {/*        marginRight: wp(10),*/}
+                {/*        marginBottom: hp(10),*/}
+                {/*        backgroundColor: colors.white,*/}
+                {/*        alignItems: 'center',*/}
+                {/*        flexDirection: 'row',*/}
+                {/*      }}>*/}
+                {/*      <Text*/}
+                {/*        style={{*/}
+                {/*          fontSize: fontSize(16),*/}
+                {/*          fontFamily: fontFamily.poppins500,*/}
+                {/*          color: colors.black,*/}
+                {/*          lineHeight: hp(24),*/}
+                {/*        }}>*/}
+                {/*        {cites.charAt(0).toUpperCase() + cites.slice(1)}*/}
+                {/*      </Text>*/}
+
+                {/*      <View*/}
+                {/*        style={{*/}
+                {/*          marginLeft: 15,*/}
+                {/*          width: hp(16),*/}
+                {/*          height: hp(16),*/}
+                {/*          backgroundColor: '#5F6368',*/}
+                {/*          borderRadius: 50,*/}
+                {/*          alignItems: 'center',*/}
+                {/*          justifyContent: 'center',*/}
+                {/*        }}>*/}
+                {/*        <Text*/}
+                {/*          style={{*/}
+                {/*            color: 'white',*/}
+                {/*            fontSize: 9,*/}
+                {/*            fontWeight: 'bold',*/}
+                {/*          }}>*/}
+                {/*          X*/}
+                {/*        </Text>*/}
+                {/*      </View>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*  ))}*/}
+                {/*</View>*/}
+              </View>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#EFEFEF',
+                  marginTop: hp(15),
+                }}
+              />
+
+              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
+                {/*<Text style={style.tittleText}>Prefer Diet</Text>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  onPress={() => {*/}
+                {/*    DietRefRBSheet.current.open();*/}
+                {/*  }}*/}
+                {/*  style={style.subTittleContainerStyle}>*/}
+                {/*  /!*<Text style={style.subTittleText}>{preferDiet}</Text>*!/*/}
+
+                {/*  <View style={{position: 'absolute', right: 5, top: -3}}>*/}
+                {/*    <Image*/}
+                {/*      source={icons.rightSideIcon}*/}
+                {/*      style={style.rightSideIcon}*/}
+                {/*    />*/}
+                {/*  </View>*/}
+                {/*</TouchableOpacity>*/}
+
                 <TouchableOpacity
                   onPress={() => {
-                    CityRefRBSheet.current.open();
+                    DietRefRBSheet.current.open();
                   }}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}>
-                  <Text style={style.tittleTexts}>Select Prefer City</Text>
+                  <Text style={style.tittleTexts}>Select Prefer Diet</Text>
 
                   <View
                     style={{
@@ -882,10 +1287,10 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     flexWrap: 'wrap',
                     marginTop: hp(15),
                   }}>
-                  {city.map((cites, index) => (
+                  {preferDiet.map((diets, index) => (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => toggleCity(cites)} // Remove hobby on press
+                      onPress={() => toggleDiet(diets)} // Remove hobby on press
                       style={{
                         borderColor: '#DEDEDE',
                         borderWidth: 1,
@@ -905,7 +1310,9 @@ const AdminPartnerPreferenceScreen = (...params) => {
                           color: colors.black,
                           lineHeight: hp(24),
                         }}>
-                        {cites.charAt(0).toUpperCase() + cites.slice(1)}
+                        {/*{preferDiet}*/}
+                        {/*{diets.charAt(0).toUpperCase() + diets.slice(1)}*/}
+                        {formatDiet(diets)}
                       </Text>
 
                       <View
@@ -930,34 +1337,6 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     </TouchableOpacity>
                   ))}
                 </View>
-              </View>
-
-              <View
-                style={{
-                  width: '100%',
-                  height: 1,
-                  backgroundColor: '#EFEFEF',
-                  marginTop: hp(15),
-                }}
-              />
-
-              <View style={[style.subTittleContainer, {marginHorizontal: 17}]}>
-                <Text style={style.tittleText}>Prefer Diet</Text>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    DietRefRBSheet.current.open();
-                  }}
-                  style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{preferDiet}</Text>
-
-                  <View style={{position: 'absolute', right: 5, top: -3}}>
-                    <Image
-                      source={icons.rightSideIcon}
-                      style={style.rightSideIcon}
-                    />
-                  </View>
-                </TouchableOpacity>
               </View>
 
               <View
@@ -1056,7 +1435,8 @@ const AdminPartnerPreferenceScreen = (...params) => {
                           color: colors.black,
                           lineHeight: hp(24),
                         }}>
-                        {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                        {/*{hobby.charAt(0).toUpperCase() + hobby.slice(1)}*/}
+                        {formatHobby(hobby)}
                       </Text>
 
                       <View
@@ -1294,7 +1674,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
               {/*COUNTRY BOTTOM SHEET*/}
               <RBSheet
                 ref={countryRBSheet}
-                height={hp(380)}
+                height={hp(150)}
                 openDuration={250}
                 closeOnDragDown={true}
                 closeOnPressMask={true}
@@ -1359,7 +1739,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
               {/*STATE BOTTOM SHEET*/}
               <RBSheet
                 ref={StateRefRBSheet}
-                height={hp(380)}
+                height={hp(500)}
                 openDuration={250}
                 closeOnDragDown={true}
                 closeOnPressMask={true}
@@ -1392,7 +1772,9 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     }}
                   />
 
-                  <View style={{marginHorizontal: 17, marginTop: 5}}>
+                  <ScrollView
+                    style={{marginHorizontal: 17, marginTop: 5}}
+                    contentContainerStyle={{paddingBottom: hp(80)}}>
                     {availableState.map((states, index) => (
                       <TouchableOpacity
                         key={index}
@@ -1416,7 +1798,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                         </Text>
                       </TouchableOpacity>
                     ))}
-                  </View>
+                  </ScrollView>
                 </View>
               </RBSheet>
 
@@ -1489,7 +1871,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                 ref={DietRefRBSheet}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
-                height={hp(170)} // Adjust height of Bottom Sheet
+                height={hp(400)} // Adjust height of Bottom Sheet
                 customStyles={{
                   draggableIcon: {
                     backgroundColor: colors.gray,
@@ -1500,24 +1882,44 @@ const AdminPartnerPreferenceScreen = (...params) => {
                   },
                 }}>
                 <Text style={style.bottomSheetTittleText}>
-                  Select Prefer Diet{' '}
+                  Select Prefer Diet
                 </Text>
 
                 <View style={style.bottomSheetUnderLine} />
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDiet('Vegetarian')}>
-                  <Text style={style.bottomSheetOptionText}>Vegetarian</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDiet('Non_vegetarian')}>
-                  <Text style={style.bottomSheetOptionText}>
-                    Non_vegetarian
-                  </Text>
-                </TouchableOpacity>
+                <View style={{marginHorizontal: 17}}>
+                  {preferDietPlan.map((diets, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => toggleDiet(diets)} // Add/remove diet on press
+                      style={{
+                        marginTop: 10,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: fontSize(16),
+                          marginRight: wp(5),
+                          lineHeight: hp(24),
+                          fontFamily: fontFamily.poppins400,
+                          color: preferDiet.includes(diets)
+                            ? colors.gray
+                            : colors.black,
+                        }}>
+                        {diets
+                          .replace(/_/g, ' ')
+                          .split(' ')
+                          .map(
+                            word =>
+                              word.charAt(0).toUpperCase() +
+                              word.slice(1).toLowerCase(),
+                          )
+                          .join(' ')}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </RBSheet>
 
               {/*ANNUAL INCOME BOTTOM SHEET */}
@@ -1626,7 +2028,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
               {/*HOBBIES BOTTOM SHEET*/}
               <RBSheet
                 ref={HobbiesRefRBSheet}
-                height={hp(390)}
+                height={hp(500)}
                 openDuration={250}
                 closeOnDragDown={true}
                 closeOnPressMask={true}
@@ -1660,7 +2062,9 @@ const AdminPartnerPreferenceScreen = (...params) => {
                     }}
                   />
 
-                  <View style={{marginHorizontal: 17}}>
+                  <ScrollView
+                    style={{marginHorizontal: 17}}
+                    contentContainerStyle={{paddingBottom: hp(80)}}>
                     {availableHobbies.map((hobby, index) => (
                       <TouchableOpacity
                         key={index}
@@ -1684,7 +2088,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                         </Text>
                       </TouchableOpacity>
                     ))}
-                  </View>
+                  </ScrollView>
                 </View>
               </RBSheet>
 

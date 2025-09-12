@@ -1,5 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Modal,
@@ -20,13 +21,13 @@ import {colors} from '../../utils/colors';
 import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useDispatch, useSelector} from 'react-redux';
-import axios from 'axios';
-import {changeStack, logout} from '../../actions/authActions';
+
 import {updateDetails} from '../../actions/homeActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {changeStack, logout} from '../../actions/authActions';
 
 const HideDeleteProfileScreen = () => {
   const navigation = useNavigation();
@@ -39,6 +40,7 @@ const HideDeleteProfileScreen = () => {
   const [selectedDelete, setSelectedDelete] = useState(null);
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [customReason, setCustomReason] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // console.log(' === selectedOption ===> ', selectedOption);
 
@@ -187,50 +189,12 @@ const HideDeleteProfileScreen = () => {
 
   const handleModalClose = () => {
     setModalVisible(false);
-    // console.log(' === Deleted Account ===> ');
   };
-
-  // const onDeleteAccountPress = async () => {
-  //   console.log(' === ID ===> ', user?.user.id);
-  //   try {
-  //     const response = await axios.delete(
-  //       'https://stag.mntech.website/api/v1/user/user/', // Adjust the URL as needed
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // Include the authentication token
-  //           'Content-Type': 'application/json',
-  //         },
-  //       },
-  //     );
-  //
-  //     if (response.status === 200) {
-  //       // Successfully deleted
-  //       setModalVisible(false); // Close the delete confirmation modal
-  //       dispatch(logout(), () => dispatch(changeStack()));
-  //     }
-  //   } catch (error) {
-  //     // Log detailed error response
-  //     console.error('Error deleting account:', {
-  //       status: error.response?.status,
-  //       data: error.response?.data,
-  //       message: error.message,
-  //     });
-  //     Alert.alert('Failed to delete account. Please try again later.'); // Show error message
-  //   }
-  // };
-
-  // const onDeleteAccountPress = () => {
-  //   console.log('Selected Reason Value:', selectedDelete);
-  //
-  //   if (selectedDelete === 'other') {
-  //     console.log('Custom Reason:', customReason);
-  //   }
-  //
-  //   setModalVisible(false);
-  // };
 
   const onDeleteAccountPress = async () => {
     console.log('Selected Reason Value:', selectedDelete);
+
+    setLoading(true); // show loader
 
     let payload = {
       profileHideAndDelete: {
@@ -272,9 +236,10 @@ const HideDeleteProfileScreen = () => {
       }
     } catch (error) {
       console.error('Network error:', error);
+    } finally {
+      setLoading(false);
+      setModalVisible(false);
     }
-
-    setModalVisible(false);
   };
 
   const selectSetDurationModalOPen = () => {
@@ -290,24 +255,6 @@ const HideDeleteProfileScreen = () => {
   };
 
   const onHideProfilePress = () => {
-    // console.log('Selected Duration:', selectedDuration);
-    // if (!selectedDuration) {
-    //   Alert.alert(
-    //     'Please select a duration',
-    //     'You need to select a duration before hiding your profile.',
-    //   );
-    // } else {
-    //   apiDispatch(
-    //     updateDetails({
-    //       profileHideAndDelete: {
-    //         // timeForProfileHide: selectedDuration,
-    //         isProfileHide: true,
-    //       },
-    //     }),
-    //   );
-    //   setSelectDurationModal(false);
-    // }
-
     apiDispatch(
       updateDetails(
         {
@@ -678,9 +625,13 @@ const HideDeleteProfileScreen = () => {
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}
                     style={style.confirmButtonStyle}>
-                    <Text style={style.confirmButtonTextStyle}>
-                      Yes, Delete
-                    </Text>
+                    {loading ? (
+                      <ActivityIndicator size="large" color="white" />
+                    ) : (
+                      <Text style={style.confirmButtonTextStyle}>
+                        Yes, Delete
+                      </Text>
+                    )}
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
@@ -738,14 +689,7 @@ const HideDeleteProfileScreen = () => {
                   marginTop: hp(38),
                   justifyContent: 'space-evenly',
                   marginBottom: hp(39),
-                  // backgroundColor: 'grey',
-                  // marginHorizontal: 34,
                 }}>
-                {/*<CommonGradientButton*/}
-                {/*  buttonName={'not now'}*/}
-                {/*  containerStyle={{width: wp(126), height: hp(50)}}*/}
-                {/*/>*/}
-
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={SelectSetDurationModalClose}>
@@ -777,7 +721,7 @@ const HideDeleteProfileScreen = () => {
                           lineHeight: hp(21),
                           fontFamily: fontFamily.poppins600,
                         }}>
-                        Cancel
+                        Cancel...
                       </Text>
                     </View>
                   </LinearGradient>

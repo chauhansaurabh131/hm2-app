@@ -21,14 +21,38 @@ const EducationDetailsScreen = ({
   setCollageCountry,
 }) => {
   const degreeDropdownData = [
+    'Bachelors Arts',
+    'Science',
+    'Commerce',
+    'B Phil',
+    'Bachelors Engineering',
+    'Computers',
     'BCA',
     'MCA',
-    'B.Com',
-    'M.Com',
-    'B.Tech',
-    'M.Tech',
     'BBA',
+    'BSC',
+    'MSC',
+    'Diploma',
+    'Higher Secondary',
+    'Secondary',
+    'Legal BL',
+    'ML',
+    'LLB',
+    'LLM',
+    'Management BBA',
     'MBA',
+    'Masters Arts',
+    'Masters Science',
+    'Masters Commerce',
+    'M Phil',
+    'Masters Engineering',
+    'Computers (Masters)',
+    'Medicine General',
+    'Dental',
+    'Surgeon',
+    'Ph.D',
+    'IAS',
+    'IPS',
   ];
 
   const educationCityDropdownData = [
@@ -60,7 +84,7 @@ const EducationDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17)}}>
+      <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
         <View>
           <NewDropDownTextInput
             placeholder="Degree"

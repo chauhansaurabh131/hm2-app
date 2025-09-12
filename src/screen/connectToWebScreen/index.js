@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from '../../utils/colors';
 import style from '../privacyScreen/style';
@@ -6,9 +6,28 @@ import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const ConnectToWebScreen = () => {
   const navigation = useNavigation();
+
+  const {user} = useSelector(state => state.auth);
+
+  const userImage = user?.user?.profilePic;
+
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17), marginTop: hp(14)}}>
@@ -17,11 +36,28 @@ const ConnectToWebScreen = () => {
             source={images.happyMilanColorLogo}
             style={{width: wp(96), height: hp(24), resizeMode: 'contain'}}
           />
-          <Image
-            source={images.profileDisplayImage}
-            style={{width: hp(24), height: hp(24), borderRadius: 50}}
-          />
+          {/*<Image*/}
+          {/*  source={images.profileDisplayImage}*/}
+          {/*  style={{width: hp(24), height: hp(24), borderRadius: 50}}*/}
+          {/*/>*/}
+
+          <TouchableOpacity activeOpacity={0.6} onPress={openBottomSheet}>
+            {hasValidImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={{width: hp(24), height: hp(24), borderRadius: 50}}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={{width: hp(24), height: hp(24), borderRadius: 50}}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+          </TouchableOpacity>
         </View>
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View
           style={{
@@ -52,7 +88,7 @@ const ConnectToWebScreen = () => {
               lineHeight: hp(21),
               fontFamily: fontFamily.poppins600,
             }}>
-            Connect to Web{' '}
+            Connect to Web
           </Text>
         </View>
       </View>
@@ -67,7 +103,7 @@ const ConnectToWebScreen = () => {
             textAlign: 'center',
             marginTop: hp(57),
           }}>
-          Login to HappyMilan Web
+          Login to Hapmeet Web
         </Text>
 
         <Image

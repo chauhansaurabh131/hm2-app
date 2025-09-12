@@ -22,24 +22,37 @@ const AddressDetailsScreen = ({
   setCurrentState,
   setSelectCurrentCity,
 }) => {
-  const currentCountryDropDown = [
-    'India',
-    'Canada',
-    'Us',
-    'Afghanistan',
-    'China',
-    'Myanmar',
-    'Nepal',
-    'Sri-lanka',
-    'Pakistan',
-  ];
+  const currentCountryDropDown = ['India'];
 
   const currentStateDropdown = [
-    'Maharashtra',
-    'Delhi',
-    'Rajasthan',
-    'Haryana',
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
     'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya-Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
   ];
 
   const currentCityNameDropdown = [
@@ -53,7 +66,7 @@ const AddressDetailsScreen = ({
 
   return (
     <SafeAreaView style={style.container}>
-      <View style={{marginHorizontal: wp(17)}}>
+      <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
         {/*<View style={{marginTop: 30}}>*/}
         {/*  <FloatingLabelInput*/}
         {/*    label="Current Address"*/}
@@ -67,6 +80,7 @@ const AddressDetailsScreen = ({
             placeholder="Country"
             dropdownData={currentCountryDropDown}
             onValueChange={setCurrentCountry}
+            bottomSheetHeight={hp(100)}
           />
         </View>
 
@@ -79,10 +93,16 @@ const AddressDetailsScreen = ({
         </View>
 
         <View style={{marginTop: hp(37)}}>
-          <NewDropDownTextInput
-            placeholder="City"
-            dropdownData={currentCityNameDropdown}
-            onValueChange={setSelectCurrentCity}
+          {/*<NewDropDownTextInput*/}
+          {/*  placeholder="City"*/}
+          {/*  dropdownData={currentCityNameDropdown}*/}
+          {/*  onValueChange={setSelectCurrentCity}*/}
+          {/*/>*/}
+
+          <FloatingLabelInput
+            label="City"
+            value={selectCurrentCity}
+            onChangeText={setSelectCurrentCity}
           />
         </View>
       </View>

@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -24,9 +25,11 @@ const AdminEducationDetailsScreen = (...params) => {
   const {isEducationLoading} = useSelector(state => state.auth);
 
   const capitalizeFirstLetter = str =>
-    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
 
-  const [degree, setDegree] = useState(userPersonalData?.userEducation?.degree);
+  const [degree, setDegree] = useState(
+    capitalizeFirstLetter(userPersonalData?.userEducation?.degree),
+  );
 
   const [college, setCollege] = useState(
     capitalizeFirstLetter(userPersonalData?.userEducation?.collage),
@@ -74,9 +77,9 @@ const AdminEducationDetailsScreen = (...params) => {
         {
           degree: degree,
           collage: college,
-          city: city,
-          state: state,
-          country: country,
+          // city: city,
+          // state: state,
+          // country: country,
         },
         () => {
           setIsEditing(false);
@@ -109,13 +112,15 @@ const AdminEducationDetailsScreen = (...params) => {
         {!isEditing ? (
           <View style={style.bodyContainerStyle}>
             <Text style={style.tittleText}>Degree</Text>
-            <Text style={style.subTittleText}>{degree}</Text>
+            <Text style={style.subTittleText}>{degree || 'N/A'}</Text>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>College / University</Text>
               {/*<Text style={style.subTittleText}>{college} </Text>*/}
               <Text style={[style.subTittleText, {marginBottom: 10}]}>
-                {college?.length > 30 ? college.slice(0, 30) + '...' : college}
+                {college?.length > 30
+                  ? college.slice(0, 30) + '...'
+                  : college || 'N/A'}
               </Text>
             </View>
 
@@ -144,7 +149,7 @@ const AdminEducationDetailsScreen = (...params) => {
                   degreeBottomSheetRef.current.open();
                 }}
                 style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>{degree}</Text>
+                <Text style={style.subTittleText}>{degree || 'N/A'}</Text>
 
                 <Image
                   source={icons.rightSideIcon}
@@ -163,7 +168,7 @@ const AdminEducationDetailsScreen = (...params) => {
                   <Text style={style.subTittleText}>
                     {college?.length > 30
                       ? college.slice(0, 30) + '...'
-                      : college}
+                      : college || 'N/A'}
                   </Text>
                   <Image
                     source={icons.rightSideIcon}
@@ -239,53 +244,243 @@ const AdminEducationDetailsScreen = (...params) => {
 
                 <View style={style.bottomSheetUnderLine} />
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('BCA')}>
-                  <Text style={style.bottomSheetOptionText}>BCA</Text>
-                </TouchableOpacity>
+                <ScrollView contentContainerStyle={{paddingBottom: hp(30)}}>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Bachelors Arts')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Bachelors Arts
+                    </Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('MCA')}>
-                  <Text style={style.bottomSheetOptionText}>MCA</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Science')}>
+                    <Text style={style.bottomSheetOptionText}>Science</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('B.Com')}>
-                  <Text style={style.bottomSheetOptionText}>B.Com</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Commerce')}>
+                    <Text style={style.bottomSheetOptionText}>Commerce</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('M.Com')}>
-                  <Text style={style.bottomSheetOptionText}>M.Com</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('B Phil')}>
+                    <Text style={style.bottomSheetOptionText}>B Phil</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('B.Tech')}>
-                  <Text style={style.bottomSheetOptionText}>B.Tech</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Bachelors Engineering')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Bachelors Engineering
+                    </Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('M.Tech')}>
-                  <Text style={style.bottomSheetOptionText}>M.Tech</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Computers')}>
+                    <Text style={style.bottomSheetOptionText}>Computers</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('BBA')}>
-                  <Text style={style.bottomSheetOptionText}>BBA</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('BCA')}>
+                    <Text style={style.bottomSheetOptionText}>BCA</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectDegree('MBA')}>
-                  <Text style={style.bottomSheetOptionText}>MBA</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('MCA')}>
+                    <Text style={style.bottomSheetOptionText}>MCA</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('BBA')}>
+                    <Text style={style.bottomSheetOptionText}>BBA</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('BSC')}>
+                    <Text style={style.bottomSheetOptionText}>BSC</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('MSC')}>
+                    <Text style={style.bottomSheetOptionText}>MSC</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Diploma')}>
+                    <Text style={style.bottomSheetOptionText}>Diploma</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Higher Secondary')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Higher Secondary
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Secondary')}>
+                    <Text style={style.bottomSheetOptionText}>Secondary</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Legal BL')}>
+                    <Text style={style.bottomSheetOptionText}>Legal BL</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('ML')}>
+                    <Text style={style.bottomSheetOptionText}>ML</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('LLB')}>
+                    <Text style={style.bottomSheetOptionText}>LLB</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('LLM')}>
+                    <Text style={style.bottomSheetOptionText}>LLM</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('LLM')}>
+                    <Text style={style.bottomSheetOptionText}>LLM</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Management BBA')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Management BBA
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('MBA')}>
+                    <Text style={style.bottomSheetOptionText}>MBA</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Masters Arts')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Masters Arts
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Masters Science')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Masters Science
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Masters Commerce')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Masters Commerce
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('M Phil')}>
+                    <Text style={style.bottomSheetOptionText}>M Phil</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Masters Engineering')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Masters Engineering
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Computers (Masters)')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Computers (Masters)
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Medicine General')}>
+                    <Text style={style.bottomSheetOptionText}>
+                      Medicine General
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Dental')}>
+                    <Text style={style.bottomSheetOptionText}>Dental</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Surgeon')}>
+                    <Text style={style.bottomSheetOptionText}>Surgeon</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('Ph.D')}>
+                    <Text style={style.bottomSheetOptionText}>Ph.D</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('IAS')}>
+                    <Text style={style.bottomSheetOptionText}>IAS</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('IPS')}>
+                    <Text style={style.bottomSheetOptionText}>IPS</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('IRS')}>
+                    <Text style={style.bottomSheetOptionText}>IRS</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('IES')}>
+                    <Text style={style.bottomSheetOptionText}>IES</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{marginTop: hp(15)}}
+                    onPress={() => handleSelectDegree('IF')}>
+                    <Text style={style.bottomSheetOptionText}>IF</Text>
+                  </TouchableOpacity>
+                </ScrollView>
               </RBSheet>
 
               {/*COLLEGE US BOTTOM SHEET*/}

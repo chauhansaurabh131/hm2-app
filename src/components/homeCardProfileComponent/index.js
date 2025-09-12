@@ -29,7 +29,7 @@ const HomeCardProfileComponent = () => {
   const [creditData, setCreditData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  console.log(' === creditData ===> ', creditData?.credit?.creditBalance);
+  // console.log(' === creditData ===> ', creditData?.credit?.creditBalance);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,7 +51,7 @@ const HomeCardProfileComponent = () => {
           );
 
           const data = await response.json();
-          console.log('User Plan Response:', data);
+          // console.log('User Plan Response:', data);
 
           if (response.ok && data?.data?.planId) {
             setPlanDetails(data.data);

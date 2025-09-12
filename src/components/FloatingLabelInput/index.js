@@ -31,6 +31,10 @@ const FloatingLabelInput = ({
       // Allow input of numbers with up to one decimal point
       let numericValue = text;
 
+      if (numericValue.length <= 10) {
+        onChangeText(numericValue);
+      }
+
       // Restrict input to numbers and one optional decimal point
       numericValue = numericValue.replace(/[^0-9.]/g, '');
 

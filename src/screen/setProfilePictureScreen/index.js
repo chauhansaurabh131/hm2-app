@@ -22,7 +22,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
 const SetProfilePictureScreen = ({route}) => {
-  const {selectedImages, setSelectedImages} = route.params;
+  // console.log(' === SetProfilePictureScreen_route ===> ', route);
+
+  // const {selectedImages, setSelectedImages} = route.params;
+  const {selectedImages = [], setSelectedImages = () => {}} =
+    route.params || {};
+
+  // console.log(' === selectedImages ===> ', selectedImages);
+
   const [images, setImages] = useState(selectedImages);
   const [selectedImageUri, setSelectedImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +39,7 @@ const SetProfilePictureScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === SetProfilePictureScreen ===> ', user?.user?.appUsesType);
+  // console.log(' === SetProfilePictureScreen ===> ', user?.user?.appUsesType);
 
   const appUsesType = user?.user?.appUsesType;
 
@@ -43,136 +50,127 @@ const SetProfilePictureScreen = ({route}) => {
   }, [selectedImages]);
 
   const onAddPress = () => {
-    setLoading(true);
-
-    const allImages = selectedImages;
-
-    console.log(' === allImages ===> ', allImages);
-
-    // Check if there are images selected
-    if (allImages.length === 0) {
-      console.log('No images selected');
+    if (!selectedImageUri) {
+      Alert.alert('Please select an image as your profile picture.');
       return;
     }
 
-    // Assuming you want to upload the first image in the array
-    const selectedImage = allImages[0]; // Change the index as needed
-    const imageName = selectedImage.uri.split('/').pop(); // Extracts the filename from the URI
-    console.log('Selected image name:', imageName);
+    console.log(' === images___ ===> ', images);
+    setLoading(true);
 
-    // Extract the file extension from the image name
+    const selectedImage = images.find(img => img.uri === selectedImageUri);
+    if (!selectedImage) {
+      console.log('No valid image found for upload');
+      setLoading(false);
+      return;
+    }
+
+    console.log(' === var ===> ', selectedImage);
+
+    const imageNameKey = selectedImage.uri.split('/').pop(); // use uri, not object
+    const baseName = imageNameKey.replace(/\.[^/.]+$/, ''); // remove extension
+    const imageName = `${baseName}.jpg`;
+
+    // const imageName = selectedImage.uri.split('/').pop();
     const fileExtension = imageName.split('.').pop().toLowerCase();
-    console.log('File extension:', fileExtension);
-
-    // Get the content type based on the file extension
     const contentType = getContentType(fileExtension);
-    console.log(' === getContentType ===> ', contentType);
 
-    const callBack = async response => {
-      try {
-        const presignedUrl = response.data?.data?.url;
-
-        console.log(' === presignedUrl ===> ', presignedUrl);
-
-        const data = await RNBlobUtil.fetch(
-          'PUT',
-          presignedUrl,
-          {
-            'Content-Type': contentType,
-            'x-amz-acl': 'public-read',
-          },
-          RNBlobUtil.wrap(selectedImage.uri), // Use the selected image's URI
-        );
-
-        console.log('Image uploaded successfully:', data);
-        // navigation.navigate('HomeTabs');
-        // Optionally navigate or perform other actions
-        AAA();
-        // setLoading(false);
-      } catch (err) {
-        console.log(' === err ===> ', err);
-      }
-    };
-
+    // ✅ Dispatch API to get presigned URL
     dispatch(
       addProfilePicture(
         {
-          key: imageName, // Use the extracted image name as key
+          key: imageName,
           contentType: contentType,
           isProfilePic: true,
           profileType: 'profileImage',
         },
-        callBack,
+        async response => {
+          try {
+            const presignedUrl = response.data?.data?.url;
+
+            await RNBlobUtil.fetch(
+              'PUT',
+              presignedUrl,
+              {
+                'Content-Type': contentType,
+                'x-amz-acl': 'public-read',
+              },
+              RNBlobUtil.wrap(selectedImage.uri),
+            );
+
+            console.log('Profile picture uploaded:', imageName);
+
+            // ✅ Upload remaining images
+            const remainingImages = images.filter(
+              img => img.uri !== selectedImageUri,
+            );
+
+            if (remainingImages.length > 0) {
+              await AAA(remainingImages);
+            }
+
+            setLoading(false);
+
+            // ✅ Navigate after everything is done
+            navigateNext();
+          } catch (err) {
+            console.log('Upload error:', err);
+            setLoading(false);
+          }
+        },
       ),
     );
   };
 
-  const AAA = async () => {
-    console.log(' === SECOND ===> ');
-    const notSelectedImages = selectedImages;
+  const AAA = async imagesToUpload => {
+    for (let img of imagesToUpload) {
+      const imageNameKey = img.uri.split('/').pop();
+      const baseName = imageNameKey.replace(/\.[^/.]+$/, '');
+      const imageName = `${baseName}.jpg`;
 
-    // Extract filenames and file extensions
-    const imageNamesKey = notSelectedImages.map(image =>
-      image.uri.split('/').pop(),
-    );
+      const fileExtension = imageName.split('.').pop().toLowerCase();
+      const contentType = getContentType(fileExtension);
 
-    const fileExtensions = imageNamesKey.map(imageName =>
-      imageName.split('.').pop().toLowerCase(),
-    );
-
-    // Iterate over each selected image/video
-    for (let i = 0; i < notSelectedImages.length; i++) {
-      const contentType = getContentType(fileExtensions[i]);
-
-      const imageUri = notSelectedImages[i].uri;
-
-      const imageName = imageNamesKey[i];
-
-      const callBack = async response => {
-        try {
-          const presignedUrl = response.data?.data?.url;
-
-          // Upload the image/video using the presigned URL
-          const data = await RNBlobUtil.fetch(
-            'PUT',
-            presignedUrl,
-            {
-              'Content-Type': contentType,
-              'x-amz-acl': 'public-read',
-            },
-            RNBlobUtil.wrap(imageUri), // Correctly use the image URI
-          );
-
-          console.log(' === contentType ===> ', contentType);
-          console.log('File uploaded successfully:', data);
-          setLoading(false);
-          {
-            appUsesType === 'dating'
-              ? navigation.navigate('DatingPartnerPreferenceScreen')
-              : navigation.navigate('PartnerPreferencesScreen', {
-                  userProfileCompleted: true,
-                });
-          }
-
-          // navigation.navigate('DatingPartnerPreferenceScreen');
-          // navigation.navigate('PartnerPreferencesScreen');
-          // userPartnerPreCompleted();
-        } catch (err) {
-          console.log(' === err ===> ', err);
-        }
-      };
-
-      // Dispatch the action to get the presigned URL and upload the file
       await dispatch(
         addProfilePicture(
           {
-            key: imageName, // Use the specific image name as the key
+            key: imageName,
             contentType: contentType,
             profileType: 'profileImage',
           },
-          callBack,
+          async response => {
+            try {
+              const presignedUrl = response.data?.data?.url;
+
+              await RNBlobUtil.fetch(
+                'PUT',
+                presignedUrl,
+                {
+                  'Content-Type': contentType,
+                  'x-amz-acl': 'public-read',
+                },
+                RNBlobUtil.wrap(img.uri),
+              );
+
+              console.log('Uploaded extra image:', imageName);
+            } catch (err) {
+              console.log('Extra image upload error:', err);
+            }
+          },
         ),
       );
+
+      console.log(' === Not profile image ===> ', imageName);
+    }
+  };
+
+  const navigateNext = () => {
+    if (appUsesType === 'dating') {
+      navigation.navigate('DatingPartnerPreferenceScreen');
+    } else {
+      navigation.navigate('PartnerPreferencesScreen', {
+        userProfileCompleted: true,
+      });
     }
   };
 
@@ -334,7 +332,22 @@ const SetProfilePictureScreen = ({route}) => {
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onAddPress} style={styles.addButton}>
+        {/*<TouchableOpacity onPress={onAddPress} style={styles.addButton}>*/}
+        {/*  {loading ? (*/}
+        {/*    <ActivityIndicator size="large" color={colors.white} />*/}
+        {/*  ) : (*/}
+        {/*    <Text style={styles.addButtonText}>Add</Text>*/}
+        {/*  )}*/}
+        {/*</TouchableOpacity>*/}
+
+        <TouchableOpacity
+          onPress={onAddPress}
+          style={[
+            styles.addButton,
+            !selectedImageUri && {backgroundColor: colors.gray}, // gray when disabled
+          ]}
+          disabled={!selectedImageUri || loading} // 🔥 disable when no image or loading
+          activeOpacity={0.5}>
           {loading ? (
             <ActivityIndicator size="large" color={colors.white} />
           ) : (

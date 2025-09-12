@@ -8,11 +8,36 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
   const options = [
     'Writing',
     'Play Instrument',
-    'Game',
+    'Poetry',
+    'Cooking',
+    'Painting',
+    'Gardening',
+    'Singing',
+    'Diy Crafts',
+    'Blogging',
+    'Photography',
+    'Dancing',
+    'Content Creation',
     'Movie',
     'Sports',
+    'Biking',
+    'Music',
+    'Social Media',
+    'Clubbing',
+    'Travelling',
+    'Gaming',
+    'Shopping',
+    'Reading',
+    'Binge Watching',
+    'Theater Events',
     'Running',
     'Cycling',
+    'Yoga',
+    'Walking',
+    'Working_out',
+    'Trekking',
+    'Aerobics Zumba',
+    'Swimming',
   ];
 
   const language = ['Hindi', 'Gujarati', 'English'];
@@ -28,12 +53,13 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 17}}>
+      <View style={{marginHorizontal: 17, marginTop: hp(7)}}>
         {/* Use the NewBottomSheetMultipleValueSelect component */}
         <NewBottomSheetMultipleValueSelect
           label="Select Hobbies"
           options={options}
           onSelect={handleSelect} // Pass the onSelect handler to capture selected values
+          bottomSheetHeight={hp(400)}
         />
 
         <View style={{marginTop: hp(20)}}>

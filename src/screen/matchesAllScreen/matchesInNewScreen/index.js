@@ -27,6 +27,7 @@ import {non_friend_Blocked} from '../../../actions/homeActions';
 import Toast from 'react-native-toast-message';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import axios from 'axios';
+import CustomGradientLoader from '../../../components/CustomGradientLoader';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -586,7 +587,7 @@ const MatchesInNewScreen = () => {
       ? item.userProfilePic.length
       : 0;
 
-    console.log(' === imageCount ===> ', imageCount);
+    // console.log(' === imageCount ===> ', imageCount);
 
     const calculateAge = dateOfBirth => {
       const birthDate = new Date(dateOfBirth);
@@ -874,8 +875,9 @@ const MatchesInNewScreen = () => {
         // ListFooterComponent={isFetchingMore ? <ActivityIndicator /> : null}
         ListFooterComponent={
           isFetchingMore ? (
-            <View style={{alignItems: 'center'}}>
-              <Text style={{color: 'black'}}>Loading Data..</Text>
+            <View style={{alignItems: 'center', marginTop: 10}}>
+              {/*<Text style={{color: 'black'}}>Loading Data..</Text>*/}
+              <CustomGradientLoader />
             </View>
           ) : null
         }

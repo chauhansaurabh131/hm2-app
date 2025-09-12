@@ -26,8 +26,8 @@ const style = StyleSheet.create({
     borderRadius: 50,
     marginRight: hp(10.5),
     resizeMode: 'cover',
-    right: -7,
-    marginTop: hp(2),
+    right: -11,
+    marginTop: hp(1.3),
   },
   modalContainer: {
     flex: 1,

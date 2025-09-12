@@ -147,7 +147,7 @@ export const UserDetailsProfile1 = [
 
 export const AdminDetailsProfile = [
   {
-    phaseName: 'General Information',
+    phaseName: 'General Information..',
     component: params => <AdminGeneralInformationScreen {...params} />,
     icon: require('../assets/icons/profile_logo.png'),
   },

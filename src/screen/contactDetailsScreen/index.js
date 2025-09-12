@@ -40,11 +40,12 @@ const ContactDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17)}}>
+      <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
         <View style={{marginTop: 20}}>
           <FloatingLabelInput
             label="Mobile Number"
             value={mobileNumber}
+            showUnit={true}
             onChangeText={text => {
               updateMobileNumber(text);
               setMobileNumber?.(text); // Always update parent
@@ -52,14 +53,14 @@ const ContactDetailsScreen = ({
           />
         </View>
 
-        <View style={{marginTop: hp(37)}}>
-          <FloatingLabelInput
-            label="Home Number"
-            value={homeNumber}
-            onChangeText={setHomeNumber}
-            showUnit={true}
-          />
-        </View>
+        {/*<View style={{marginTop: hp(37)}}>*/}
+        {/*  <FloatingLabelInput*/}
+        {/*    label="Home Number"*/}
+        {/*    value={homeNumber}*/}
+        {/*    onChangeText={setHomeNumber}*/}
+        {/*    showUnit={true}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
         <View style={{marginTop: hp(37)}}>
           <FloatingLabelInput

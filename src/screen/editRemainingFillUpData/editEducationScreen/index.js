@@ -17,50 +17,55 @@ import {educationDetails} from '../../../actions/homeActions';
 const EditEducationScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === var ===> ', user?.user?.userEducation?.country);
-
   const apiDispatch = useDispatch();
 
   const [degree, setDegree] = useState('');
   const [collage, setCollage] = useState('');
-  const [collageCity, setCollageCity] = useState('');
-  const [collageState, setCollageState] = useState('');
-  const [collageCountry, setCollageCountry] = useState('');
   const [loading, setLoading] = useState(false); // Loader state
 
   const degreeDropdownData = [
+    'Bachelors Arts',
+    'Science',
+    'Commerce',
+    'B Phil',
+    'Bachelors Engineering',
+    'Computers',
     'BCA',
     'MCA',
-    'B.Com',
-    'M.Com',
-    'B.Tech',
-    'M.Tech',
     'BBA',
+    'BSC',
+    'MSC',
+    'Diploma',
+    'Higher Secondary',
+    'Secondary',
+    'Legal BL',
+    'ML',
+    'LLB',
+    'LLM',
+    'Management BBA',
     'MBA',
+    'Masters Arts',
+    'Masters Science',
+    'Masters Commerce',
+    'M Phil',
+    'Masters Engineering',
+    'Computers (Masters)',
+    'Medicine General',
+    'Dental',
+    'Surgeon',
+    'Ph.D',
+    'IAS',
+    'IPS',
+    'IRS',
+    'IES',
+    'IF',
   ];
-
-  const educationCityDropdownData = [
-    'Gandhinagar',
-    'Mehsana',
-    'Himmatnagar',
-    'Kalol',
-  ];
-
-  const educationStateDropdownData = ['Gujarat', 'Delhi', 'Kolkata', 'Mumbai'];
-
-  const educationCountryDropdownData = ['India', 'Sri-Lanka', 'US', 'UK'];
 
   // Dynamic height assignment based on dropdown type
   const getDropdownHeight = dropdownType => {
     switch (dropdownType) {
       case 'Degree':
-        return hp(400); // Set height for gender dropdown
-      case 'City':
-        return hp(230); // Set height for marital status dropdown
-      case 'State':
-        return hp(230); // Set height for caste dropdown
-      case 'Country':
-        return hp(250); // Set height for caste dropdown
+        return hp(500); // Set height for gender dropdown
       default:
         return hp(300); // Default height
     }
@@ -73,22 +78,7 @@ const EditEducationScreen = ({navigation}) => {
     if (user?.user?.userEducation?.collage) {
       setCollage(user?.user?.userEducation?.collage);
     }
-    if (user?.user?.userEducation?.city) {
-      setCollageCity(user?.user?.userEducation?.city);
-    }
-    if (user?.user?.userEducation?.state) {
-      setCollageState(user?.user?.userEducation?.state);
-    }
-    if (user?.user?.userEducation?.country) {
-      setCollageCountry(user?.user?.userEducation?.country);
-    }
-  }, [
-    user?.user?.userEducation?.degree,
-    user?.user?.userEducation?.collage,
-    user?.user?.userEducation?.city,
-    user?.user?.userEducation?.state,
-    user?.user?.userEducation?.country,
-  ]);
+  }, [user?.user?.userEducation?.degree, user?.user?.userEducation?.collage]);
 
   const onSubmitPress = () => {
     setLoading(true);
@@ -97,9 +87,6 @@ const EditEducationScreen = ({navigation}) => {
         {
           degree: degree,
           collage: collage,
-          // city: city,
-          // state: state,
-          // country: country,
         },
         () => {
           setLoading(false);
@@ -111,13 +98,6 @@ const EditEducationScreen = ({navigation}) => {
 
   const onBackPress = () => {
     navigation.goBack();
-  };
-
-  const capitalizeFirstLetter = text => {
-    if (!text) {
-      return text;
-    }
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
   return (
@@ -136,53 +116,23 @@ const EditEducationScreen = ({navigation}) => {
           Education Details
         </Text>
 
-        <View style={{marginTop: 30}}>
+        <View style={{marginTop: hp(30)}}>
           <NewDropDownTextInput
             placeholder="Degree"
             dropdownData={degreeDropdownData}
             onValueChange={setDegree}
-            value={capitalizeFirstLetter(degree)}
+            value={degree}
             bottomSheetHeight={getDropdownHeight('Degree')} // Dynamic height
           />
         </View>
 
-        <View style={{marginTop: hp(37)}}>
+        <View style={{marginTop: hp(50)}}>
           <FloatingLabelInput
             label="College/University"
-            value={capitalizeFirstLetter(collage)}
+            value={collage}
             onChangeText={setCollage}
           />
         </View>
-
-        {/*<View style={{marginTop: 37}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="City"*/}
-        {/*    dropdownData={educationCityDropdownData}*/}
-        {/*    onValueChange={setCollageCity}*/}
-        {/*    value={capitalizeFirstLetter(collageCity)}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('City')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        {/*<View style={{marginTop: 37}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="State"*/}
-        {/*    dropdownData={educationStateDropdownData}*/}
-        {/*    onValueChange={setCollageState}*/}
-        {/*    value={capitalizeFirstLetter(collageState)}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('State')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        {/*<View style={{marginTop: 37}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="Country"*/}
-        {/*    dropdownData={educationCountryDropdownData}*/}
-        {/*    onValueChange={setCollageCountry}*/}
-        {/*    value={capitalizeFirstLetter(collageCountry)}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
 
         <View
           style={{
@@ -221,16 +171,18 @@ const EditEducationScreen = ({navigation}) => {
 
             <TouchableOpacity
               onPress={onSubmitPress}
+              activeOpacity={0.6}
+              disabled={!degree || !collage} // ✅ disable if either is empty
               style={{
                 width: wp(176),
                 height: hp(44),
                 borderRadius: 30,
-                backgroundColor: colors.black,
+                backgroundColor:
+                  !degree || !collage ? colors.gray : colors.black, // ✅ grey when disabled
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {loading ? (
-                // Show loader if loading is true
                 <ActivityIndicator size="large" color={colors.white} />
               ) : (
                 <Text

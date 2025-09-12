@@ -298,7 +298,7 @@ const NewDropDownTextInput = ({
           },
         }}>
         <View style={styles.dropdownContainer}>
-          <ScrollView style={{marginBottom: 25}}>
+          <ScrollView style={{marginBottom: hp(45)}}>
             {dropdownData.map((item, index) => (
               <TouchableOpacity
                 key={index}

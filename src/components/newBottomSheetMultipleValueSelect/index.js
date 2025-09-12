@@ -8,6 +8,7 @@ import {
   Text,
   StyleSheet,
   Alert,
+  ScrollView,
 } from 'react-native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers'; // Ensure you have these utils
 import {icons} from '../../assets'; // Assuming icons are defined for your assets
@@ -145,14 +146,16 @@ const NewBottomSheetMultipleValueSelect = ({
         }}>
         {/* Content inside the Bottom Sheet */}
         <View>
-          {options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleSelect(option)} // Call handleSelect to select value
-              style={style.option}>
-              <Text style={style.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))}
+          <ScrollView style={{marginBottom: hp(35)}}>
+            {options.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleSelect(option)} // Call handleSelect to select value
+                style={style.option}>
+                <Text style={style.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       </RBSheet>
     </SafeAreaView>

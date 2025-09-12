@@ -13,7 +13,7 @@ const UserPartnerPreferenceScreen = (...params) => {
   const UserData = params[0]?.friendList;
   const userData = params[0];
 
-  console.log(' === 123 ===> ', userData?.userPartner);
+  // console.log(' === 123 ===> ', userData?.userPartner);
 
   const MatchesScreenData = params[0];
 
@@ -87,7 +87,7 @@ const UserPartnerPreferenceScreen = (...params) => {
 
         <Text style={style.tittlesText}>Prefer Height (ft)</Text>
         <Text style={style.subTittleText}>
-          {minHeight} - {maxHeight} ft
+          {minHeight} - {maxHeight}
         </Text>
 
         <Text style={style.tittlesText}>Prefer City</Text>
@@ -109,11 +109,14 @@ const UserPartnerPreferenceScreen = (...params) => {
 
         <Text style={style.tittlesText}>Hobbies & Interest</Text>
         <View style={style.hobbiesContainer}>
-          {hobbies.map((hobby, index) => (
-            <View key={index} style={style.hobbiesBody}>
-              <Text style={style.hobbiesText}>{hobby}</Text>
-            </View>
-          ))}
+          {/*{hobbies.map((hobby, index) => (*/}
+          {/*  <View key={index} style={style.hobbiesBody}>*/}
+          {/*    <Text style={style.hobbiesText}>{hobby}</Text>*/}
+          {/*  </View>*/}
+          {/*))}*/}
+          <Text style={[style.subTittleText, {marginTop: -5}]}>
+            {formatList(hobbies) || 'N/A'}
+          </Text>
         </View>
       </View>
     </SafeAreaView>

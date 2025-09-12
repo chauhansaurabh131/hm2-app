@@ -8,6 +8,7 @@ import {hp, wp} from '../../utils/helpers';
 const GeneralInformationDetailsScreen = ({
   genderSetSelectedOption,
   maritalSetSelectedOption,
+  selectCaste,
   setSelectCaste,
   setSelectReligion,
   setUserHeight,
@@ -21,66 +22,138 @@ const GeneralInformationDetailsScreen = ({
   about,
   setAbout,
 }) => {
-  const genderDropdownData = ['Male', 'Female'];
-  const maritalDropdownData = ['Single', 'Never-married', 'Married'];
+  const genderDropdownData = [
+    'Male',
+    'Female',
+    'Non Binary',
+    'Prefer Not To Say',
+    'Other',
+  ];
+  const maritalDropdownData = [
+    'Single',
+    'Never-Married',
+    'Married',
+    'Divorcee',
+  ];
   const casteDropdownData = ['Rajput', 'Shah', 'Jain', 'Surti', 'Kathiawar'];
-  const religionDropdownData = ['Hindu', 'Muslim', 'Sikh'];
-  const ManglikStatusDropdownData = ['Yes', 'No'];
+  const religionDropdownData = [
+    'Hindu',
+    'Muslim',
+    'Christian',
+    'Sikh',
+    'Buddhist',
+    'Jain',
+    'Islam',
+    'Other',
+  ];
+  const ManglikStatusDropdownData = [
+    'Manglik',
+    'Non Manglik',
+    'Anshik Manglik',
+    'Dont know',
+  ];
   const GothraStatusDropdownData = [
-    'Agasthi (अगस्ती)',
-    'Atri (अत्री)',
-    'Angirasa (अंगिरासा)',
-    'Bharadwaj (भारद्वाज)',
-    'Gautam (गौतम)',
-    'Jamadagni (जमदग्नि)',
-    'Kashyap (कश्यप)',
-    'Vasishta (वशिष्ठ)',
-    'Vishwamitra (विश्वामित्र)',
-    'Bhrigu (भृगु)',
-    'Shandilya (शांडिल्य)',
-    'Kaushik (कौशिक)',
-    'Parashar (पाराशर)',
-    'Vatsa (वत्स)',
-    'Mudgal (मुदगल)',
-    'Other (अन्य)',
+    'Bharadvaja',
+    'Kashyapa',
+    'Atri',
+    'Vashistha',
+    'Vishwamitra',
+    'Gautama',
+    'Jamadagni',
+    'Agastya',
+    'Bhrigu',
+    'Kaushika',
+    'Sandilya',
+    'Parashara',
+    'Mandavya',
+    'Harita',
+    'Kutsa',
+    'Shrivatsa',
+    'Mudgala',
+    'Vatsa',
+    'Maitreya',
+    'Durvasa',
+    'Chyavana',
+    'Marichi',
+    'Pulastya',
+    'Pulaha',
+    'Kratu',
+    'Angirasa',
+    'Vishnuvardhana',
+    'Shunak',
+    'Kapila',
+    'Vyasa',
+    'Rishyashringa',
+    'Sankriti',
+    'Saunaka',
+    'Rohini',
+    'Lomasha',
+    'Devala',
+    'Yajnavalkya',
+    'Valmiki',
+    'Valmiki',
+    'Vamadeva',
+    'Other',
   ];
 
   const ZodiacStatusDropdownData = [
-    'Aries (मेष)',
-    'Taurus (वॄष)',
-    'Gemini (मिथुन)',
-    'Cancer (कर्क)',
-    'Leo (सिंह)',
-    'Virgo (कन्या)',
-    'Libra (तुला)',
-    'Scorpio (वृश्चिक)',
-    'Sagittarius (धनु)',
-    'Capricorn (मकर)',
-    'Aquarius (कुंभ)',
-    'Pisces (मीन)',
+    'Aries',
+    'Taurus',
+    'Gemini',
+    'Cancer',
+    'Leo',
+    'Virgo',
+    'Libra',
+    'Scorpio',
+    'Sagittarius',
+    'Capricorn',
+    'Aquarius',
+    'Pisces',
   ];
 
-  const languageDropdownData = ['Hindi', 'Gujarati', 'English'];
+  const languageDropdownData = [
+    'Assamese',
+    'Bengali',
+    'Bodo',
+    'Dogri',
+    'English',
+    'Gujarati',
+    'Hindi',
+    'Kannada',
+    'Kashmiri',
+    'Konkini',
+    'Nepali',
+    'Manipuri',
+    'Marathi',
+    'Odia',
+    'Punjabi',
+    'Sanskrit',
+    'Santali',
+    'Sindhi',
+    'Tamil',
+    'Telugu',
+    'Urdu',
+  ];
 
   // Dynamic height assignment based on dropdown type
   const getDropdownHeight = dropdownType => {
     switch (dropdownType) {
       case 'gender':
-        return hp(150); // Set height for gender dropdown
+        return hp(255); // Set height for gender dropdown
       case 'marital':
-        return hp(200); // Set height for marital status dropdown
+        return hp(220); // Set height for marital status dropdown
       case 'caste':
         return hp(300); // Set height for caste dropdown
       case 'Religion':
-        return hp(200); // Set height for caste dropdown
+        return hp(390); // Set height for caste dropdown
       case 'Manglik':
-        return hp(150); // Set height for caste dropdown
+        return hp(220); // Set height for caste dropdown
       case 'Gothra':
-        return hp(350); // Set height for caste dropdown
+        return hp(420); // Set height for caste dropdown
       case 'Zodiac':
         return hp(350); // Set height for caste dropdown
       case 'Toungue':
-        return hp(180); // Set height for caste dropdown
+        return hp(450); // Set height for caste dropdown
       default:
         return 300; // Default height
     }
@@ -89,7 +162,7 @@ const GeneralInformationDetailsScreen = ({
   return (
     <SafeAreaView style={style.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{marginHorizontal: wp(17)}}>
+        <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
           <View>
             <NewDropDownTextInput
               placeholder="Gender"
@@ -107,11 +180,17 @@ const GeneralInformationDetailsScreen = ({
             </View>
 
             <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Caste"
-                dropdownData={casteDropdownData}
-                onValueChange={setSelectCaste}
-                bottomSheetHeight={getDropdownHeight('caste')} // Dynamic height
+              {/*<NewDropDownTextInput*/}
+              {/*  placeholder="Caste"*/}
+              {/*  dropdownData={casteDropdownData}*/}
+              {/*  onValueChange={setSelectCaste}*/}
+              {/*  bottomSheetHeight={getDropdownHeight('caste')} // Dynamic height*/}
+              {/*/>*/}
+
+              <FloatingLabelInput
+                label="Caste"
+                value={selectCaste}
+                onChangeText={setSelectCaste}
               />
             </View>
 
@@ -131,7 +210,7 @@ const GeneralInformationDetailsScreen = ({
                   label="Height"
                   value={userHeight}
                   onChangeText={setUserHeight}
-                  showUnitText={'(ft/cm)'}
+                  showUnitText={'(Ft)'}
                   showUnit={true}
                 />
               </View>
@@ -140,7 +219,7 @@ const GeneralInformationDetailsScreen = ({
                   label="Weight"
                   value={userWeight}
                   onChangeText={setUserWeight}
-                  showUnitText={'(kg)'}
+                  showUnitText={'(Kg)'}
                   showUnit={true}
                 />
               </View>
@@ -190,7 +269,7 @@ const GeneralInformationDetailsScreen = ({
               />
             </View>
 
-            <View style={{height: hp(100)}} />
+            <View style={{height: hp(50)}} />
           </View>
         </View>
       </ScrollView>

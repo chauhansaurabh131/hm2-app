@@ -235,8 +235,8 @@ const KycDetailsScreen = ({route}) => {
         text1: 'Upload Error',
         text2: 'Something went wrong during the upload process.',
       });
-    }finally {
-      loading(false)
+    } finally {
+      loading(false);
     }
   };
 
@@ -314,120 +314,133 @@ const KycDetailsScreen = ({route}) => {
 
       <View style={style.submitFunctionContainer}>
         {kycData?.document[0]?.verify ? (
-            // ✅ CASE 1: Verified
-            <>
-              <View style={{flexDirection:'row', alignItems:'center'}}>
+          // ✅ CASE 1: Verified
+          <>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={style.uploadIdText}>Upload ID</Text>
-              <Image source={icons.green_check_icon} style={{width: hp(14), height: hp(14), resizeMode:'contain', marginLeft: wp(14), top: -1}}/>
-              </View>
-
-              <Text style={style.finalSubmitText}>
-                Your document has been verified successfully.
-              </Text>
-            </>
-        ) : (kycData?.document[0]?.isDocUpload && !kycData?.document[0]?.isDocRejected) || isSubmitted ? (
-            // 📩 CASE 2: Submitted, waiting for review
-            <>
-              <Text style={style.uploadIdText}>Upload ID</Text>
-              <Text style={style.finalSubmitText}>
-                Thank you for submitting documents. We will review and update you
-                within 24 hours.
-              </Text>
-            </>
-        ) : selectedImage ? (
-            // 📤 CASE 3A: Image selected but not submitted yet
-            <View>
-              <Text style={style.uploadIdText}>Upload ID</Text>
-
-              <Text style={style.subSubmitTextTittle}>
-                Please submit a government issued-ID. Your ID will be{'\n'}deleted
-                once we verify your identity.
-              </Text>
-
-              <View style={style.selectedImageContainer}>
-                <Text style={style.selectedImageText}>{imageName}</Text>
-
-                <TouchableOpacity
-                    onPress={handleRemoveImage}
-                    style={style.cancelImageContainer}>
-                  <Text style={style.cancelText}>X</Text>
-                </TouchableOpacity>
-              </View>
-
-              <CommonGradientButton
-                  buttonName={'Submit'}
-                  containerStyle={style.submitButton}
-                  loading={loading}
-                  onPress={handleSubmit}
+              <Image
+                source={icons.green_check_icon}
+                style={{
+                  width: hp(14),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  marginLeft: wp(14),
+                  top: -1,
+                }}
               />
             </View>
+
+            <Text style={style.finalSubmitText}>
+              Your document has been verified successfully.
+            </Text>
+          </>
+        ) : (kycData?.document[0]?.isDocUpload &&
+            !kycData?.document[0]?.isDocRejected) ||
+          isSubmitted ? (
+          // 📩 CASE 2: Submitted, waiting for review
+          <>
+            <Text style={style.uploadIdText}>Upload ID</Text>
+            <Text style={style.finalSubmitText}>
+              Thank you for submitting documents. We will review and update you
+              within 24 hours.
+            </Text>
+          </>
+        ) : selectedImage ? (
+          // 📤 CASE 3A: Image selected but not submitted yet
+          <View>
+            <Text style={style.uploadIdText}>Upload ID</Text>
+
+            <Text style={style.subSubmitTextTittle}>
+              Please submit a government issued-ID. Your ID will be{'\n'}deleted
+              once we verify your identity.
+            </Text>
+
+            <View style={style.selectedImageContainer}>
+              <Text style={style.selectedImageText}>{imageName}</Text>
+
+              <TouchableOpacity
+                onPress={handleRemoveImage}
+                style={style.cancelImageContainer}>
+                <Text style={style.cancelText}>X</Text>
+              </TouchableOpacity>
+            </View>
+
+            <CommonGradientButton
+              buttonName={'Submit'}
+              containerStyle={style.submitButton}
+              loading={loading}
+              onPress={handleSubmit}
+            />
+          </View>
         ) : (
-            // 📤 CASE 3B: No file selected yet
-            <>
-              <Text style={style.uploadIdText}>Upload ID</Text>
+          // 📤 CASE 3B: No file selected yet
+          <>
+            <Text style={style.uploadIdText}>Upload ID</Text>
 
-              <Text style={style.subSubmitTextTittle}>
-                Please submit a government issued-ID. Your ID will be{'\n'}deleted
-                once we verify your identity.
-              </Text>
+            <Text style={style.subSubmitTextTittle}>
+              Please submit a government issued-ID. Your ID will be{'\n'}deleted
+              once we verify your identity.
+            </Text>
 
-              <View style={style.bottomSheetContainer}>
-                <TouchableOpacity onPress={() => refRBSheet.current.open()}>
-                  <TextInput
-                      style={style.selectedDocumentTextInput}
-                      placeholder={'Select ID Type'}
-                      placeholderTextColor={'black'}
-                      value={selectedID}
-                      editable={false}
-                  />
-                  <Image source={icons.drooDownLogo} style={style.dropDownIcon} />
-                </TouchableOpacity>
-
-                <RBSheet
-                    ref={refRBSheet}
-                    height={320}
-                    openDuration={250}
-                    customStyles={{
-                      container: {
-                        borderTopLeftRadius: 20,
-                        borderTopRightRadius: 20,
-                      },
-                    }}>
-                  <View style={style.textInputContainer}>
-                    <Text style={style.photoTypeText}>Select Photo ID Type</Text>
-                    <View style={style.bottomSheetUnderLine} />
-
-                    <TouchableOpacity onPress={() => handleSelect('Passport')}>
-                      <Text style={style.passwordText}>Passport</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => handleSelect('Driving license')}>
-                      <Text style={style.bottomSheetText}>Driving License</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => handleSelect('Aadhar Card')}>
-                      <Text style={style.bottomSheetText}>Aadhar Card</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => handleSelect('Election Card')}>
-                      <Text style={style.bottomSheetText}>Election Card</Text>
-                    </TouchableOpacity>
-                  </View>
-                </RBSheet>
-
-                <CommonGradientButton
-                    buttonName={'Select Files'}
-                    containerStyle={style.selectedFileButton}
-                    onPress={onSelectFilesPress}
-                    disabled={!selectedID}
-                    buttonTextStyle={{
-                      fontSize: fontSize(14),
-                      lineHeight: hp(21),
-                      fontFamily: fontFamily.poppins400,
-                    }}
+            <View style={style.bottomSheetContainer}>
+              <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+                <TextInput
+                  style={style.selectedDocumentTextInput}
+                  placeholder={'Select ID Type'}
+                  placeholderTextColor={'black'}
+                  value={selectedID}
+                  editable={false}
                 />
-              </View>
-            </>
+                <Image source={icons.drooDownLogo} style={style.dropDownIcon} />
+              </TouchableOpacity>
+
+              <RBSheet
+                ref={refRBSheet}
+                height={320}
+                openDuration={250}
+                customStyles={{
+                  container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                  },
+                }}>
+                <View style={style.textInputContainer}>
+                  <Text style={style.photoTypeText}>Select Photo ID Type</Text>
+                  <View style={style.bottomSheetUnderLine} />
+
+                  <TouchableOpacity onPress={() => handleSelect('Passport')}>
+                    <Text style={style.passwordText}>Passport</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleSelect('Driving license')}>
+                    <Text style={style.bottomSheetText}>Driving License</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => handleSelect('Aadhar Card')}>
+                    <Text style={style.bottomSheetText}>Aadhar Card</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleSelect('Election Card')}>
+                    <Text style={style.bottomSheetText}>Election Card</Text>
+                  </TouchableOpacity>
+                </View>
+              </RBSheet>
+
+              <CommonGradientButton
+                buttonName={'Select Files'}
+                containerStyle={style.selectedFileButton}
+                onPress={onSelectFilesPress}
+                disabled={!selectedID}
+                buttonTextStyle={{
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}
+              />
+            </View>
+          </>
         )}
       </View>
 
@@ -483,66 +496,83 @@ const KycDetailsScreen = ({route}) => {
         {/*  </TouchableOpacity>*/}
         {/*)}*/}
 
-
-
         {kycData?.selfie[0]?.verify ? (
-            // ✅ CASE 3: Verified
-            <>
-            <View style={{flexDirection:'row', alignItems:'center', marginBottom: hp(12)}}>
+          // ✅ CASE 3: Verified
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: hp(12),
+              }}>
               <Text style={style.photoVerifyText}>Photo Verify</Text>
-              <Image source={icons.green_check_icon} style={{width: hp(14), height: hp(14), resizeMode:'contain', marginLeft: wp(14), top: -1}}/>
+              <Image
+                source={icons.green_check_icon}
+                style={{
+                  width: hp(14),
+                  height: hp(14),
+                  resizeMode: 'contain',
+                  marginLeft: wp(14),
+                  top: -1,
+                }}
+              />
             </View>
-              <Text style={style.kycPictureSubTittle}>
-                Thank you for verified your identity
-              </Text>
+            <Text style={style.kycPictureSubTittle}>
+              Thank you for verified your identity
+            </Text>
+          </>
+        ) : kycData?.selfie[0]?.isDocRejected ||
+          !kycData?.selfie[0]?.isSelfieUpload ? (
+          // 📤 CASE 1: Not uploaded OR rejected
+          <>
+            <Text style={style.photoVerifyText}>Photo Verify</Text>
 
-            </>
-        ) : kycData?.selfie[0]?.isDocRejected || !kycData?.selfie[0]?.isSelfieUpload ? (
-            // 📤 CASE 1: Not uploaded OR rejected
-            <>
-              <Text style={style.photoVerifyText}>Photo Verify</Text>
+            <Text style={[style.SubTextTittle, {marginTop: hp(12)}]}>
+              To verify your profile photo with a selfie. Download{'\n'}app and
+              Complete Verification
+            </Text>
 
-              <Text style={[style.SubTextTittle,{marginTop: hp(12)}]}>
-                To verify your profile photo with a selfie. Download{'\n'}app and
-                Complete Verification
-              </Text>
-
-              <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={style.verifyButtonContainer}
-                  onPress={() => {
-                    navigation.navigate('VerifyIdentityScreen');
-                  }}>
-                <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1.5}}
-                    style={style.verifyButtonBody}>
-                  <Text style={style.verifyButtonText}>Start Verification</Text>
-                  <Image
-                      source={icons.back_arrow_icon}
-                      style={style.verifyButtonIconStyle}
-                  />
-                </LinearGradient>
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={style.verifyButtonContainer}
+              onPress={() => {
+                navigation.navigate('VerifyIdentityScreen');
+              }}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={style.verifyButtonBody}>
+                <Text style={style.verifyButtonText}>Start Verification</Text>
+                <Image
+                  source={icons.back_arrow_icon}
+                  style={style.verifyButtonIconStyle}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </>
         ) : (
-            // ⏳ CASE 2: Uploaded (waiting for verification)
-            <>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: hp(13)}}>
-                <Text style={style.photoVerifyText}>Photo Verify</Text>
-                <Text style={style.reviewProgressText}>Review In Progress</Text>
-              </View>
+          // ⏳ CASE 2: Uploaded (waiting for verification)
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: hp(13),
+              }}>
+              <Text style={style.photoVerifyText}>Photo Verify</Text>
+              <Text style={style.reviewProgressText}>Review In Progress</Text>
+            </View>
 
-              <Text style={style.kycPictureSubTittle}>
-                Thank you! Your selfie has been submitted successfully
-              </Text>
+            <Text style={style.kycPictureSubTittle}>
+              Thank you! Your selfie has been submitted successfully
+            </Text>
 
-              <Text style={[style.kycPictureSubTittle, {marginTop: hp(15)}]}>
-                We'll notify you once verification is complete. Contact{'\n'}
-                support if you have questions
-              </Text>
-            </>
+            <Text style={[style.kycPictureSubTittle, {marginTop: hp(15)}]}>
+              We'll notify you once verification is complete. Contact{'\n'}
+              support if you have questions
+            </Text>
+          </>
         )}
       </View>
 

@@ -229,7 +229,16 @@ const UserEditProfileScreen = () => {
     setLoading(true); // Start loading
 
     const selectedImage = imageList[selectedImageIndex];
-    const imageName = selectedImage.split('/').pop();
+
+    const imageNameKey = selectedImage.split('/').pop();
+    const baseName = imageNameKey.replace(/\.[^/.]+$/, ''); // remove extension
+    const imageName = `${baseName}.jpg`;
+
+    // console.log('=== finalImageName ===>', imageName);
+
+    // const imageName = selectedImage.split('/').pop();
+    // console.log(' === imageName__++ ===> ', imageName);
+
     const fileExtension = selectedImage.split('.').pop().toLowerCase();
     const contentType = getContentType(fileExtension);
 
@@ -279,6 +288,7 @@ const UserEditProfileScreen = () => {
         });
       } else {
         console.log('Unsupported image URI');
+        setLoading(false); // Always stop loading
       }
 
       // Navigate after successful operation
@@ -293,21 +303,36 @@ const UserEditProfileScreen = () => {
       console.error('Error during save:', error);
     } finally {
       setLoading(false); // Always stop loading
+      // setSelectedImageIndex(null);
     }
   };
 
+  // const getContentType = fileExtension => {
+  //   switch (fileExtension) {
+  //     case 'mp4':
+  //       return 'video/mp4';
+  //     case 'jpeg':
+  //     case 'jpg':
+  //       return 'image/jpeg';
+  //     case 'png':
+  //       return 'image/png';
+  //     default:
+  //       // return 'application/octet-stream';
+  //       return 'image/jpeg';
+  //   }
+  // };
+
   const getContentType = fileExtension => {
     switch (fileExtension) {
-      case 'mp4':
+      case 'video/mp4':
         return 'video/mp4';
-      case 'jpeg':
-      case 'jpg':
+      case 'image/jpeg':
+      case 'image/jpg':
         return 'image/jpeg';
-      case 'png':
+      case 'image/png':
         return 'image/png';
       default:
-        return 'application/octet-stream';
-      // return 'image/jpeg';
+        return 'image/jpeg';
     }
   };
 

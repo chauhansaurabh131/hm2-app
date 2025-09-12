@@ -271,101 +271,114 @@ const AddPersonalInfo = ({navigation}) => {
   };
 
   const navigateToNext = () => {
-    if (!genderSelectedOption) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Gender.',
-      });
-      return;
-    } else if (!maritalSelectedOption) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Marital.',
-      });
-      return;
-    } else if (!selectCaste) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Caste.',
-      });
-      return;
-    } else if (!selectReligion) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Religion.',
-      });
-      return;
-    } else if (!userHeight) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Height.',
-      });
-      return;
-    } else if (!userWeight) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Weight.',
-      });
-      return; // Stop navigation if caste is not religion
-    } else if (!selectManglik) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Manglik.',
-      });
-      return;
-    } else if (!selectLanguage) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please select your Language.',
-      });
-      return;
-    } else if (!about) {
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Information',
-        text2: 'Please Add About Yourself.',
-      });
-      return;
-    }
-
-    // if (activeIndex === PersonalInfoPhases.length - 1) {
-    //   // navigation.navigate('SetProfilePictureScreen');
-    //   openGallery();
-    // } else {
+    // if (!genderSelectedOption) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Gender.',
+    //   });
+    //   return;
+    // } else if (!maritalSelectedOption) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Marital.',
+    //   });
+    //   return;
+    // } else if (!selectCaste) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Caste.',
+    //   });
+    //   return;
+    // } else if (!selectReligion) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Religion.',
+    //   });
+    //   return;
+    // } else if (!userHeight) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Height.',
+    //   });
+    //   return;
+    // } else if (!userWeight) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Weight.',
+    //   });
+    //   return; // Stop navigation if caste is not religion
+    // } else if (!selectManglik) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Manglik.',
+    //   });
+    //   return;
+    // } else if (!selectLanguage) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please select your Language.',
+    //   });
+    //   return;
+    // } else if (!about) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please Add About Yourself.',
+    //   });
+    //   return;
+    // }
 
     setLoading(true);
+
+    //GENDER DATA TO FIXED
+    const formattedGender = genderSelectedOption
+      .toLowerCase()
+      .split(' ')
+      .map((word, index) =>
+        index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1),
+      )
+      .join('');
+
+    // MARITAL DATA TO FIXED
+    const formatMaritalOption = option => {
+      if (!option) {
+        return '';
+      } // handle empty string case
+      return option
+        .toLowerCase()
+        .replace(/[- ](.)/g, (_, char) => char.toUpperCase());
+    };
+
+    const formatManglik = option => {
+      if (!option) {
+        return '';
+      }
+      return option.toLowerCase().replace(/\s+/g, '-'); // replace all spaces with -
+    };
 
     if (activeIndex === 0) {
       apiDispatch(
         updateDetails(
           {
-            gender: genderSelectedOption.toLowerCase(),
-            maritalStatus: maritalSelectedOption.toLowerCase(),
+            gender: formattedGender,
+            maritalStatus: formatMaritalOption(maritalSelectedOption),
             caste: selectCaste.toLowerCase(),
             religion: selectReligion.toLowerCase(),
             height: userHeight,
             weight: userWeight,
-            manglikStatus: selectManglik.toLowerCase(),
-            gothra: selectGothra.toLowerCase(),
-            zodiac: selectZodiac.toLowerCase(),
+            manglikStatus: formatManglik(selectManglik),
+            gothra: selectGothra,
+            zodiac: selectZodiac,
             motherTongue: selectLanguage.toLowerCase(),
             writeBoutYourSelf: about,
-
-            // firstName: firstName,
-            // lastName: lastName,
-            // dateOfBirth: dateOfBirthISO,
-            // birthTime: [selectHours, selectMinutes, selectSecond],
-            //
-            // writeBoutYourSelf: addDescription,
-            // userProfileCompleted: true,
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
@@ -375,19 +388,20 @@ const AddPersonalInfo = ({navigation}) => {
       const formattedCountry =
         currentCountry.charAt(0).toLowerCase() + currentCountry.slice(1);
 
-      const formattedState =
-        currentState.charAt(0).toLowerCase() + currentState.slice(1);
-
-      const formattedCity =
-        selectCurrentCity.charAt(0).toLowerCase() + selectCurrentCity.slice(1);
+      const formatState = state => {
+        if (!state) {
+          return '';
+        }
+        return currentState.toLowerCase().replace(/\s+/g, '-');
+      };
 
       apiDispatch(
         addressDetails(
           {
             // currentResidenceAddress: currentAddress,
             currentCountry: formattedCountry,
-            currentState: formattedState,
-            currentCity: formattedCity,
+            currentState: formatState(currentState),
+            currentCity: selectCurrentCity.toLowerCase(),
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
@@ -399,7 +413,7 @@ const AddPersonalInfo = ({navigation}) => {
         updateDetails(
           {
             mobileNumber: mobileNumber,
-            homeMobileNumber: homeNumber,
+            // homeMobileNumber: homeNumber,
             email: userEmail,
             userProfileCompleted: true,
           },
@@ -413,11 +427,13 @@ const AddPersonalInfo = ({navigation}) => {
         return str.charAt(0).toLowerCase() + str.slice(1);
       };
 
+      // console.log(' === degree ===> ', degree);
+
       apiDispatch(
         // updateDetails(
         educationDetails(
           {
-            degree: convertFirstLetterToLowerCase(degree),
+            degree: degree,
             collage: convertFirstLetterToLowerCase(collage),
             // city: convertFirstLetterToLowerCase(collageCity),
             // state: convertFirstLetterToLowerCase(collageState),
@@ -429,7 +445,7 @@ const AddPersonalInfo = ({navigation}) => {
     } else if (activeIndex === 4) {
       // Call addressDetails API for Address Details
 
-      console.log(' === salary--+++ ===> ', salary);
+      // console.log(' === salary--+++ ===> ', salary);
 
       // Extract only the numeric part of the salary (e.g., '2 lakh' => 2)
       const numericSalary = parseInt(salary.replace(/\D/g, ''), 10); // This removes all non-digit characters
@@ -439,35 +455,44 @@ const AddPersonalInfo = ({navigation}) => {
         console.error('Invalid salary value!');
         return; // You can also show an error message to the user if needed
       }
-      console.log(' === salary ===> ', salary);
+      console.log(' === salary ===> ', workInCountry.toLowerCase());
 
-      const convertFirstLetterToLowerCase = str => {
-        return str.charAt(0).toLowerCase() + str.slice(1);
-      };
+      // console.log(' === jobTitle ===> ', jobTitle);
 
       apiDispatch(
         professionalDetail(
           {
             jobTitle: jobTitle,
-            jobType: jobType,
+            jobType: jobType.toLowerCase(),
             companyName: companyName,
             currentSalary: numericSalary,
-            workCity: convertFirstLetterToLowerCase(workInCity),
-            workCountry: convertFirstLetterToLowerCase(workInCountry),
+            workCity: workInCity.toLowerCase(),
+            workCountry: workInCountry.toLowerCase(),
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
       );
     } else if (activeIndex === 5) {
-      console.log(' === selectedItems ===> ', selectedItems);
+      const formatHobby = hobby => {
+        if (!hobby) {
+          return '';
+        }
+        return hobby.toLowerCase().replace(/\s+/g, '_');
+      };
+
+      const formattedItems = selectedItems.map(formatHobby);
+      const formattedItemsLanguage = selectedLanguage.map(formatHobby);
+
+      // console.log(' === selectedItems ===> ', formattedItemsLanguage);
+      // console.log(' === selectedItems ===> ', formattedItems);
 
       apiDispatch(
         updateDetails(
           {
-            hobbies: selectedItems,
-            language: selectedLanguage,
+            hobbies: formattedItems,
+            language: formattedItemsLanguage,
           },
-          // () => navigation.navigate('SetProfilePictureScreen'),
+          () => navigation.navigate('SetProfilePictureScreen'),
           () => {
             setLoading(false);
           },
@@ -740,6 +765,7 @@ const AddPersonalInfo = ({navigation}) => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            activeOpacity={0.5}
             onPress={navigateToNext}
             style={{
               width: wp(176),

@@ -20,22 +20,22 @@ const ProfessionalsDetailsScreen = ({
   workInCountry,
   setWorkInCountry,
 }) => {
-  const jobTypeDropdownData = ['Part-Time', 'Full-Time'];
+  const jobTypeDropdownData = ['Government', 'Private', 'Retired', 'Homemaker'];
   const jobWorkCityDropdownData = ['Surat', 'Ahmadabad', 'Navsari', 'Bardoli'];
-  const jobWorkContryDropdownData = ['India', 'Sri-Lanka', 'UK', 'USA'];
+  const jobWorkContryDropdownData = ['India'];
   const anuallSalary = ['1 lakh', '2 lakh', '3 lakh', '5 lakh', '10 lakh'];
 
   // Dynamic height assignment based on dropdown type
   const getDropdownHeight = dropdownType => {
     switch (dropdownType) {
       case 'Job Type':
-        return hp(150); // Set height for gender dropdown
+        return hp(220); // Set height for gender dropdown
       case 'Annual Salary':
         return hp(250); // Set height for marital status dropdown
       case 'Work City':
         return hp(230); // Set height for caste dropdown
       case 'Country':
-        return hp(230); // Set height for caste dropdown
+        return hp(100); // Set height for caste dropdown
       default:
         return 300; // Default height
     }
@@ -45,7 +45,7 @@ const ProfessionalsDetailsScreen = ({
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17)}}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View>
+          <View style={{marginTop: hp(10)}}>
             <FloatingLabelInput
               label="Current Designation"
               value={jobTitle}
@@ -92,11 +92,17 @@ const ProfessionalsDetailsScreen = ({
           </View>
 
           <View style={{marginTop: hp(37)}}>
-            <NewDropDownTextInput
-              placeholder="Work City"
-              dropdownData={jobWorkCityDropdownData}
-              onValueChange={setWorkInCity}
-              bottomSheetHeight={getDropdownHeight('Work City')} // Dynamic height
+            {/*<NewDropDownTextInput*/}
+            {/*  placeholder="Work City"*/}
+            {/*  dropdownData={jobWorkCityDropdownData}*/}
+            {/*  onValueChange={setWorkInCity}*/}
+            {/*  bottomSheetHeight={getDropdownHeight('Work City')} // Dynamic height*/}
+            {/*/>*/}
+
+            <FloatingLabelInput
+              label="Work City"
+              value={workInCity}
+              onChangeText={setWorkInCity}
             />
           </View>
 

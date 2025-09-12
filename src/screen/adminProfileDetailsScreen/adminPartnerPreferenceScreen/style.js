@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {colors} from '../../../utils/colors';
-import {fontFamily, fontSize, hp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 
 export const style = StyleSheet.create({
   container: {
@@ -44,10 +44,10 @@ export const style = StyleSheet.create({
     marginHorizontal: 17,
   },
   tittleText: {
-    fontSize: fontSize(14),
-    lineHeight: hp(18),
-    fontFamily: fontFamily.poppins400,
-    color: colors.black,
+    color: 'black',
+    fontSize: fontSize(16),
+    lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
   },
   tittleTexts: {
     fontSize: fontSize(16),
@@ -60,7 +60,8 @@ export const style = StyleSheet.create({
     fontSize: fontSize(18),
     lineHeight: hp(28),
     fontFamily: fontFamily.poppins600,
-    marginTop: hp(2),
+    marginTop: hp(10),
+    marginLeft: wp(3),
   },
   subTittleContainer: {
     marginTop: hp(27),

@@ -55,11 +55,12 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           setPlanData(response.data);
           console.log('API Response:', response.data);
         } else {
-          Alert.alert('Error', 'No access token found.');
+          // Alert.alert('Error', 'No access token found.');
+          console.log(' === Error ===> ', 'No access token found.');
         }
       } catch (error) {
         console.error('API Error:', error);
-        Alert.alert('Error', 'Failed to fetch plan data.');
+        // Alert.alert('Error', 'Failed to fetch plan data.');
       } finally {
         console.log(' === err ===> ');
       }
@@ -108,7 +109,8 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
         planData: planData.data,
       }); // Pass data to Abc screen
     } else {
-      Alert.alert('Error', 'No plan data available to pass.');
+      // Alert.alert('Error', 'No plan data available to pass.');
+      console.log(' === Error ===> ', 'No plan data available to pass.');
     }
   };
 

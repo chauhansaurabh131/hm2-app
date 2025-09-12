@@ -52,20 +52,20 @@ const UserEducationDetail = (...params) => {
           {college || 'N/A'}
         </Text>
 
-        <Text style={style.detailsTittleTextStyle}>City</Text>
-        <Text style={style.detailSubTittleText}>
-          {/*Noida*/}
-          {educationCity || 'N/A'}
-        </Text>
+        {/*<Text style={style.detailsTittleTextStyle}>City</Text>*/}
+        {/*<Text style={style.detailSubTittleText}>*/}
+        {/*  /!*Noida*!/*/}
+        {/*  {educationCity || 'N/A'}*/}
+        {/*</Text>*/}
 
-        <Text style={style.detailsTittleTextStyle}>State</Text>
-        <Text style={style.detailSubTittleText}>{educationState || 'N/A'}</Text>
+        {/*<Text style={style.detailsTittleTextStyle}>State</Text>*/}
+        {/*<Text style={style.detailSubTittleText}>{educationState || 'N/A'}</Text>*/}
 
-        <Text style={style.detailsTittleTextStyle}>Country</Text>
-        <Text style={style.detailSubTittleText}>
-          {/*India*/}
-          {educationCountry || 'N/A'}
-        </Text>
+        {/*<Text style={style.detailsTittleTextStyle}>Country</Text>*/}
+        {/*<Text style={style.detailSubTittleText}>*/}
+        {/*  /!*India*!/*/}
+        {/*  {educationCountry || 'N/A'}*/}
+        {/*</Text>*/}
       </View>
     </SafeAreaView>
   );

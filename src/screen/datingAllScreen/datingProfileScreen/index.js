@@ -154,7 +154,7 @@ const DatingProfileScreen = () => {
   const educationLevel = user?.user?.datingData[0]?.educationLevel;
   const annualIncome = user?.user?.datingData[0]?.annualIncome;
 
-  console.log(' === imageCount ===> ', user?.user?.userProfilePic);
+  // console.log(' === imageCount ===> ', user?.user?.userProfilePic);
 
   // const imageCount = Array.isArray(user?.user?.userProfilePic)
   //   ? user?.user?.userProfilePic.length

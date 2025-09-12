@@ -140,7 +140,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       });
     } catch (error) {
       console.error('Error creating like:', error);
-      Alert.alert('Error', 'Failed to create like.');
+      // Alert.alert('Error', 'Failed to create like.');
     }
   };
 
@@ -218,7 +218,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       // await fetchNewUserData();
     } catch (error) {
       console.error('Error updating like:', error);
-      Alert.alert('Error', 'Failed to update like.');
+      // Alert.alert('Error', 'Failed to update like.');
     }
   };
 
@@ -298,7 +298,8 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
         ),
       );
     } catch (error) {
-      Alert.alert('Error', 'Failed to send friend request.');
+      // Alert.alert('Error', 'Failed to send friend request.');
+      console.log(' === Error ===> ', 'Failed to send friend request.');
     }
   };
 
@@ -347,7 +348,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
         );
       } catch (error) {
         console.log(' === error ===> ', error);
-        Alert.alert('Error', 'Failed to remove friend request.');
+        // Alert.alert('Error', 'Failed to remove friend request.');
       }
     }
   };
@@ -423,7 +424,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       // fetchNewUserData(); // Re-fetch user data
     } catch (error) {
       console.error('Error adding to shortlist:', error);
-      Alert.alert('Error', 'Failed to add to shortlist.');
+      // Alert.alert('Error', 'Failed to add to shortlist.');
     }
   };
 
@@ -475,7 +476,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       });
     } catch (error) {
       console.error('Error removing from shortlist:', error);
-      Alert.alert('Error', 'Failed to remove from shortlist.');
+      // Alert.alert('Error', 'Failed to remove from shortlist.');
     }
   };
 

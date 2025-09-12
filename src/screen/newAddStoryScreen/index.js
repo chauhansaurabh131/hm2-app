@@ -48,11 +48,11 @@ const NewAddStoryScreen = () => {
         setStatuses(data.data); // Set the statuses to state
       } else {
         console.log('Failed to fetch statuses:', response.status);
-        Alert.alert('Error', 'Failed to fetch statuses');
+        // Alert.alert('Error', 'Failed to fetch statuses');
       }
     } catch (error) {
       console.error('Error fetching statuses:', error);
-      Alert.alert('Error', 'Failed to fetch statuses');
+      // Alert.alert('Error', 'Failed to fetch statuses');
     }
   }, [accessToken]);
 

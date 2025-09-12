@@ -172,7 +172,7 @@
 //
 // export default QRCodeScreen;
 
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   Alert,
   Image,
@@ -189,15 +189,29 @@ import {useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import {useSelector} from 'react-redux';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const QRCodeScreen = () => {
   const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
+  const userImage = user?.user?.profilePic;
+
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
 
   const toke = user?.tokens?.access?.token;
 
   console.log(' === toke ===> ', toke);
+
+  const topModalBottomSheetRef = useRef(null);
+
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
 
   const onQRCodeRead = async e => {
     // Assume e.data is a JSON string containing token and channel
@@ -258,11 +272,28 @@ const QRCodeScreen = () => {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Image source={images.happyMilanColorLogo} style={styles.logo} />
-          <Image
-            source={images.profileDisplayImage}
-            style={styles.profileImage}
-          />
+          {/*<Image*/}
+          {/*  source={images.profileDisplayImage}*/}
+          {/*  style={styles.profileImage}*/}
+          {/*/>*/}
+          <TouchableOpacity activeOpacity={0.6} onPress={openBottomSheet}>
+            {hasValidImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={styles.profileImage}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={styles.profileImage}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
+          </TouchableOpacity>
         </View>
+
+        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
         <View style={styles.titleContainer}>
           <TouchableOpacity

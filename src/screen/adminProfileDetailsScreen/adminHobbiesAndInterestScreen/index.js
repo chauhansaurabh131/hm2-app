@@ -1,8 +1,10 @@
 import React, {useRef, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -20,18 +22,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const AdminHobbiesAndInterestScreen = (...params) => {
   const userPersonalData = params[0];
 
-  // const {user} = useSelector(state => state.auth);
-  // const userData = user.user;
-  //
-  // console.log(' === userData ===> ', userData);
-
-  // console.log(' === userPersonalData ===> ', userPersonalData?.hobbies);
-
   const {isUpdatingProfile} = useSelector(state => state.auth);
-
-  // console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
-
-  // console.log(' === userPersonalData ===> ', userPersonalData?.language);
 
   const initialHobbies = userPersonalData?.hobbies || [];
   const initialLanguage = userPersonalData?.language || [];
@@ -43,25 +34,76 @@ const AdminHobbiesAndInterestScreen = (...params) => {
   const refRBSheetLanguage = useRef(); // Reference for the Bottom Sheet
   const apiDispatch = useDispatch();
 
-  // console.log(' === isEditing ===> ', isEditing);
-
   // List of all available hobbies for selection
   const availableHobbies = [
-    'dancing',
-    'singing',
     'writing',
+    'play_instrument',
+    'poetry',
+    'cooking',
+    'painting',
+    'gardening',
+    'singing',
+    'diy_crafts',
+    'blogging',
+    'photography',
+    'dancing',
+    'content_creation',
+    'movie',
+    'sports',
+    'biking',
+    'music',
+    'social_media',
+    'clubbing',
+    'travelling',
+    'gaming',
+    'shopping',
+    'reading',
+    'binge_watching',
+    'theater_events',
     'running',
-    'racing',
-    'gambler',
+    'cycling',
+    'yoga',
+    'walking',
+    'working_out',
+    'trekking',
+    'aerobics_zumba',
+    'swimming',
+
     ...initialHobbies.filter(
       hobby =>
         ![
-          'dancing',
-          'singing',
           'writing',
+          'play_instrument',
+          'poetry',
+          'cooking',
+          'painting',
+          'gardening',
+          'singing',
+          'diy_crafts',
+          'blogging',
+          'photography',
+          'dancing',
+          'content_creation',
+          'movie',
+          'sports',
+          'biking',
+          'music',
+          'social_media',
+          'clubbing',
+          'travelling',
+          'gaming',
+          'shopping',
+          'reading',
+          'binge_watching',
+          'theater_events',
           'running',
-          'racing',
-          'gambler',
+          'cycling',
+          'yoga',
+          'walking',
+          'working_out',
+          'trekking',
+          'aerobics_zumba',
+          'swimming',
         ].includes(hobby.toLowerCase()),
     ),
   ];
@@ -76,15 +118,28 @@ const AdminHobbiesAndInterestScreen = (...params) => {
   ];
 
   // Function to handle hobby selection/deselection
+  // const toggleHobby = hobby => {
+  //   if (hobbies.includes(hobby)) {
+  //     // Remove hobby if already selected
+  //     setHobbies(hobbies.filter(item => item !== hobby));
+  //   } else {
+  //     // Add hobby if not selected
+  //     setHobbies([...hobbies, hobby]);
+  //   }
+  //   // refRBSheet.current.close();
+  // };
+
   const toggleHobby = hobby => {
     if (hobbies.includes(hobby)) {
-      // Remove hobby if already selected
-      setHobbies(hobbies.filter(item => item !== hobby));
+      // If hobby is already selected, remove it
+      setHobbies(hobbies.filter(h => h !== hobby));
     } else {
-      // Add hobby if not selected
-      setHobbies([...hobbies, hobby]);
+      if (hobbies.length >= 5) {
+        Alert.alert('Limit Reached', 'You can only select up to 5 hobbies.');
+      } else {
+        setHobbies([...hobbies, hobby]);
+      }
     }
-    // refRBSheet.current.close();
   };
 
   const toggleLanguage = lan => {
@@ -98,9 +153,16 @@ const AdminHobbiesAndInterestScreen = (...params) => {
     // refRBSheetLanguage.current.close();
   };
 
+  const formatHobby = hobby => {
+    return hobby
+      .split('_') // split on underscore
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize each word
+      .join(' '); // join with space
+  };
+
   // Function to handle Save button click
   const handleSave = () => {
-    console.log('Selected Hobbies:', hobbies); // Log selected hobbies
+    // console.log('Selected Hobbies:', hobbies); // Log selected hobbies
 
     apiDispatch(
       updateDetails({hobbies: hobbies, language: language}, () => {
@@ -178,6 +240,40 @@ const AdminHobbiesAndInterestScreen = (...params) => {
               Select Hobbies and Interest
             </Text>
 
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    flexDirection: 'row',*/}
+            {/*    flexWrap: 'wrap',*/}
+            {/*    marginTop: hp(20),*/}
+            {/*    marginBottom: hp(25),*/}
+            {/*  }}>*/}
+            {/*  {hobbies.map((hobby, index) => (*/}
+            {/*    <View*/}
+            {/*      key={index}*/}
+            {/*      style={{*/}
+            {/*        borderColor: '#DEDEDE',*/}
+            {/*        borderWidth: 1,*/}
+            {/*        borderRadius: 25,*/}
+            {/*        paddingHorizontal: wp(18),*/}
+            {/*        paddingVertical: hp(8),*/}
+            {/*        marginRight: wp(10),*/}
+            {/*        marginBottom: hp(10),*/}
+            {/*        backgroundColor: colors.white,*/}
+            {/*        alignItems: 'center',*/}
+            {/*      }}>*/}
+            {/*      <Text*/}
+            {/*        style={{*/}
+            {/*          fontSize: fontSize(16),*/}
+            {/*          fontFamily: fontFamily.poppins500,*/}
+            {/*          color: colors.black,*/}
+            {/*          lineHeight: hp(24),*/}
+            {/*        }}>*/}
+            {/*        {hobby.charAt(0).toUpperCase() + hobby.slice(1)}*/}
+            {/*      </Text>*/}
+            {/*    </View>*/}
+            {/*  ))}*/}
+            {/*</View>*/}
+
             <View
               style={{
                 flexDirection: 'row',
@@ -185,31 +281,44 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                 marginTop: hp(20),
                 marginBottom: hp(25),
               }}>
-              {hobbies.map((hobby, index) => (
-                <View
-                  key={index}
-                  style={{
-                    borderColor: '#DEDEDE',
-                    borderWidth: 1,
-                    borderRadius: 25,
-                    paddingHorizontal: wp(18),
-                    paddingVertical: hp(8),
-                    marginRight: wp(10),
-                    marginBottom: hp(10),
-                    backgroundColor: colors.white,
-                    alignItems: 'center',
-                  }}>
-                  <Text
+              {hobbies && hobbies.length > 0 ? (
+                hobbies.map((hobby, index) => (
+                  <View
+                    key={index}
                     style={{
-                      fontSize: fontSize(16),
-                      fontFamily: fontFamily.poppins500,
-                      color: colors.black,
-                      lineHeight: hp(24),
+                      borderColor: '#DEDEDE',
+                      borderWidth: 1,
+                      borderRadius: 25,
+                      paddingHorizontal: wp(18),
+                      paddingVertical: hp(8),
+                      marginRight: wp(10),
+                      marginBottom: hp(10),
+                      backgroundColor: colors.white,
+                      alignItems: 'center',
                     }}>
-                    {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
-                  </Text>
-                </View>
-              ))}
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        fontFamily: fontFamily.poppins500,
+                        color: colors.black,
+                        lineHeight: hp(24),
+                      }}>
+                      {/*{hobby.charAt(0).toUpperCase() + hobby.slice(1)}*/}
+                      {formatHobby(hobby)}
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    fontFamily: fontFamily.poppins500,
+                    color: colors.black,
+                    lineHeight: hp(24),
+                  }}>
+                  N/A
+                </Text>
+              )}
             </View>
 
             <Text
@@ -222,6 +331,40 @@ const AdminHobbiesAndInterestScreen = (...params) => {
               Select Language You Known
             </Text>
 
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    flexDirection: 'row',*/}
+            {/*    flexWrap: 'wrap',*/}
+            {/*    marginTop: hp(20),*/}
+            {/*    marginBottom: hp(25),*/}
+            {/*  }}>*/}
+            {/*  {language.map((lan, index) => (*/}
+            {/*    <View*/}
+            {/*      key={index}*/}
+            {/*      style={{*/}
+            {/*        borderColor: '#DEDEDE',*/}
+            {/*        borderWidth: 1,*/}
+            {/*        borderRadius: 25,*/}
+            {/*        paddingHorizontal: wp(18),*/}
+            {/*        paddingVertical: hp(8),*/}
+            {/*        marginRight: wp(10),*/}
+            {/*        marginBottom: hp(10),*/}
+            {/*        backgroundColor: colors.white,*/}
+            {/*        alignItems: 'center',*/}
+            {/*      }}>*/}
+            {/*      <Text*/}
+            {/*        style={{*/}
+            {/*          fontSize: fontSize(16),*/}
+            {/*          fontFamily: fontFamily.poppins500,*/}
+            {/*          color: colors.black,*/}
+            {/*          lineHeight: hp(24),*/}
+            {/*        }}>*/}
+            {/*        {lan.charAt(0).toUpperCase() + lan.slice(1)}*/}
+            {/*      </Text>*/}
+            {/*    </View>*/}
+            {/*  ))}*/}
+            {/*</View>*/}
+
             <View
               style={{
                 flexDirection: 'row',
@@ -229,31 +372,43 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                 marginTop: hp(20),
                 marginBottom: hp(25),
               }}>
-              {language.map((lan, index) => (
-                <View
-                  key={index}
-                  style={{
-                    borderColor: '#DEDEDE',
-                    borderWidth: 1,
-                    borderRadius: 25,
-                    paddingHorizontal: wp(18),
-                    paddingVertical: hp(8),
-                    marginRight: wp(10),
-                    marginBottom: hp(10),
-                    backgroundColor: colors.white,
-                    alignItems: 'center',
-                  }}>
-                  <Text
+              {language && language.length > 0 ? (
+                language.map((lan, index) => (
+                  <View
+                    key={index}
                     style={{
-                      fontSize: fontSize(16),
-                      fontFamily: fontFamily.poppins500,
-                      color: colors.black,
-                      lineHeight: hp(24),
+                      borderColor: '#DEDEDE',
+                      borderWidth: 1,
+                      borderRadius: 25,
+                      paddingHorizontal: wp(18),
+                      paddingVertical: hp(8),
+                      marginRight: wp(10),
+                      marginBottom: hp(10),
+                      backgroundColor: colors.white,
+                      alignItems: 'center',
                     }}>
-                    {lan.charAt(0).toUpperCase() + lan.slice(1)}
-                  </Text>
-                </View>
-              ))}
+                    <Text
+                      style={{
+                        fontSize: fontSize(16),
+                        fontFamily: fontFamily.poppins500,
+                        color: colors.black,
+                        lineHeight: hp(24),
+                      }}>
+                      {lan.charAt(0).toUpperCase() + lan.slice(1)}
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    fontFamily: fontFamily.poppins500,
+                    color: colors.black,
+                    lineHeight: hp(24),
+                  }}>
+                  N/A
+                </Text>
+              )}
             </View>
           </View>
         ) : (
@@ -318,7 +473,8 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                         color: colors.black,
                         lineHeight: hp(24),
                       }}>
-                      {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                      {/*{hobby.charAt(0).toUpperCase() + hobby.slice(1)}*/}
+                      {formatHobby(hobby)}
                     </Text>
 
                     <View
@@ -346,7 +502,7 @@ const AdminHobbiesAndInterestScreen = (...params) => {
 
               <RBSheet
                 ref={refRBSheet}
-                height={hp(420)}
+                height={hp(530)}
                 openDuration={250}
                 closeOnDragDown={true}
                 closeOnPressMask={true}
@@ -380,7 +536,9 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                     }}
                   />
 
-                  <View style={{marginHorizontal: 17}}>
+                  <ScrollView
+                    style={{marginHorizontal: 17}}
+                    contentContainerStyle={{paddingBottom: hp(80)}}>
                     {availableHobbies.map((hobby, index) => (
                       <TouchableOpacity
                         key={index}
@@ -400,11 +558,12 @@ const AdminHobbiesAndInterestScreen = (...params) => {
                               ? colors.gray
                               : colors.black,
                           }}>
-                          {hobby.charAt(0).toUpperCase() + hobby.slice(1)}
+                          {/*{hobby.charAt(0).toUpperCase() + hobby.slice(1)}*/}
+                          {formatHobby(hobby)}
                         </Text>
                       </TouchableOpacity>
                     ))}
-                  </View>
+                  </ScrollView>
                 </View>
               </RBSheet>
 

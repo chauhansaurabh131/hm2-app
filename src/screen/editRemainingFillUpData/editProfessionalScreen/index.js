@@ -29,22 +29,31 @@ const EditProfessionalScreen = ({navigation}) => {
   const [workInCountry, setWorkInCountry] = useState('');
   const [loading, setLoading] = useState(false); // Loader state
 
-  const jobTypeDropdownData = ['Part-Time', 'Full-Time'];
+  const jobTypeDropdownData = ['Government', 'Private', 'Retired', 'Homemaker'];
   const jobWorkCityDropdownData = ['Surat', 'Ahmadabad', 'Navsari', 'Bardoli'];
-  const jobWorkContryDropdownData = ['India', 'Sri-Lanka', 'UK', 'USA'];
-  const anuallSalary = ['1 lakh', '2 lakh', '3 lakh', '5 lakh', '10 lakh'];
+  const jobWorkContryDropdownData = ['India'];
+  const anuallSalary = [
+    '1 Lac.',
+    '2 Lac.',
+    '3 Lac.',
+    '5 Lac.',
+    '10 Lac.',
+    '12 Lac.',
+    '15 Lac.',
+    '20 Lac.',
+  ];
 
   // Dynamic height assignment based on dropdown type
   const getDropdownHeight = dropdownType => {
     switch (dropdownType) {
       case 'Job Type':
-        return hp(150); // Set height for gender dropdown
+        return hp(230); // Set height for gender dropdown
       case 'Annual Salary':
-        return hp(250); // Set height for marital status dropdown
+        return hp(400); // Set height for marital status dropdown
       case 'Work City':
         return hp(230); // Set height for caste dropdown
       case 'Country':
-        return hp(230); // Set height for caste dropdown
+        return hp(150); // Set height for caste dropdown
       default:
         return 300; // Default height
     }
@@ -79,22 +88,24 @@ const EditProfessionalScreen = ({navigation}) => {
   ]);
 
   const onSubmitPress = () => {
-    setLoading(true);
-
     const numericSalary = salary
       ? parseInt(String(salary).replace(/\D/g, ''), 10)
       : 0;
-    console.log(' === salary ===> ', numericSalary);
 
+    // console.log(' === salary ===> ', numericSalary);
+
+    // console.log(' === onSubmitPress ===> ', workInCity);
+
+    setLoading(true);
     apiDispatch(
       professionalDetail(
         {
           jobTitle: jobTitle,
-          jobType: jobType,
+          jobType: jobType.toLowerCase(),
           companyName: companyName,
           currentSalary: numericSalary,
           workCity: workInCity,
-          workCountry: workInCountry,
+          workCountry: workInCountry.toLowerCase(),
         },
         () => {
           setLoading(false);
@@ -168,12 +179,18 @@ const EditProfessionalScreen = ({navigation}) => {
         </View>
 
         <View style={{marginTop: hp(37)}}>
-          <NewDropDownTextInput
-            placeholder="Work City"
-            dropdownData={jobWorkCityDropdownData}
-            onValueChange={setWorkInCity}
-            value={capitalizeFirstLetter(workInCity)}
-            bottomSheetHeight={getDropdownHeight('Work City')} // Dynamic height
+          {/*<NewDropDownTextInput*/}
+          {/*  placeholder="Work City"*/}
+          {/*  dropdownData={jobWorkCityDropdownData}*/}
+          {/*  onValueChange={setWorkInCity}*/}
+          {/*  value={capitalizeFirstLetter(workInCity)}*/}
+          {/*  bottomSheetHeight={getDropdownHeight('Work City')} // Dynamic height*/}
+          {/*/>*/}
+
+          <FloatingLabelInput
+            label="Work City"
+            value={workInCity}
+            onChangeText={setWorkInCity}
           />
         </View>
 
@@ -224,16 +241,32 @@ const EditProfessionalScreen = ({navigation}) => {
 
             <TouchableOpacity
               onPress={onSubmitPress}
+              activeOpacity={0.6}
+              disabled={
+                !jobTitle ||
+                !jobType ||
+                !companyName ||
+                !salary ||
+                !workInCity ||
+                !workInCountry
+              } // Disable if any field is empty
               style={{
                 width: wp(176),
                 height: hp(44),
                 borderRadius: 30,
-                backgroundColor: colors.black,
+                backgroundColor:
+                  !jobTitle ||
+                  !jobType ||
+                  !companyName ||
+                  !salary ||
+                  !workInCity ||
+                  !workInCountry
+                    ? colors.gray // Disabled color
+                    : colors.black, // Active color
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {loading ? (
-                // Show loader if loading is true
                 <ActivityIndicator size="large" color={colors.white} />
               ) : (
                 <Text

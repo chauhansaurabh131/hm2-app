@@ -29,10 +29,6 @@ const MyProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
-  // console.log(' === userData.... ===> ', userData?.writeBoutYourSelf);
-
-  // console.log(' === userData--+++ ===> ', userData);
-
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [imageRotation, setImageRotation] = useState('90deg');
@@ -58,7 +54,7 @@ const MyProfileScreen = () => {
     topModalBottomSheetRef.current.open();
   };
   const {dataCount} = useSelector(state => state.home);
-  console.log(' === dataCount ===> ', dataCount);
+  // console.log(' === dataCount ===> ', dataCount);
   const accessToken = user?.tokens?.access?.token;
 
   useEffect(() => {
@@ -83,15 +79,15 @@ const MyProfileScreen = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log('User Plan:', data);
+          // console.log('User Plan:', data);
           setPlanDetails(data?.data);
         } else {
           console.error('API Error:', data);
-          Alert.alert('Error', data.message || 'Something went wrong');
+          // Alert.alert('Error', data.message || 'Something went wrong');
         }
       } catch (error) {
         console.error('Fetch error:', error);
-        Alert.alert('Network Error', 'Unable to fetch user plan');
+        // Alert.alert('Network Error', 'Unable to fetch user plan');
       }
     };
 
@@ -128,6 +124,7 @@ const MyProfileScreen = () => {
   // console.log(' === user?.user____ ===> ', user?.user);
 
   const firstName = capitalizeFirstLetter(user?.user?.firstName);
+
   const lastName = capitalizeFirstLetter(user?.user?.lastName);
   const jobTitle = capitalizeFirstLetter(
     user?.user?.userProfessional?.jobTitle,
@@ -310,7 +307,7 @@ const MyProfileScreen = () => {
                         borderRadius: 50,
                         alignSelf: 'flex-start', // ensures the box only takes needed width
                         paddingHorizontal: 10,
-                        marginLeft: wp(7),
+                        // marginLeft: wp(7),
                       }}>
                       <Image
                         source={icons.crownIcon}

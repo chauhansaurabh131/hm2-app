@@ -58,7 +58,7 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === user?.user---= ===> ', user?.user);
+  // console.log(' === user?.user---= ===> ', user?.user);
 
   const {storiesData} = useSelector(state => state.home);
 
@@ -775,7 +775,7 @@ const HomeScreen = ({route}) => {
           <RecentlyViewComponent />
         </View>
 
-        <View style={{marginTop: 10, backgroundColor: 'red'}}>
+        <View style={{marginTop: 10}}>
           <RemainingDataUiScreen />
         </View>
 
@@ -837,7 +837,7 @@ const HomeScreen = ({route}) => {
                 height: hp(40),
                 borderRadius: 20,
                 backgroundColor: colors.white,
-                right: hp(30),
+                right: wp(42),
                 bottom: hp(30),
                 alignItems: 'center',
                 justifyContent: 'center',

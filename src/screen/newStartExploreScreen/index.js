@@ -23,6 +23,7 @@ const NewStartExploreScreen = () => {
     // } else {
     // }
     if (selectedOption === 'longTerm') {
+      setLoading(true);
       console.log('marriage');
       apiDispatch(
         updateDetails(
@@ -34,6 +35,7 @@ const NewStartExploreScreen = () => {
         ),
       );
     } else if (selectedOption === 'dating') {
+      setLoading(true);
       console.log('dating');
       apiDispatch(
         updateDetails(

@@ -122,6 +122,7 @@ const NewMainScreen = () => {
           resizeMode: 'stretch',
           width: hp(96),
           height: hp(24),
+          alignSelf: 'center',
         }}
       />
 

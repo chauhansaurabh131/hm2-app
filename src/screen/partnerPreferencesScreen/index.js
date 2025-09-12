@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   SafeAreaView,
   ScrollView,
   Text,
@@ -23,6 +24,8 @@ import HeightRangeSlider from '../../components/heightRangeSlider';
 import NewBottomSheetMultipleValueSelect from '../../components/newBottomSheetMultipleValueSelect';
 import NewBottomSheetSingleValueSelect from '../../components/newBottomSheetSingleValueSelect';
 import {colors} from '../../utils/colors';
+import MultipleValueSelectTextInput from '../../components/mutipleValueSelectTextInput';
+import Toast from 'react-native-toast-message';
 
 const PartnerPreferencesScreen = () => {
   const [countryList, setCountryList] = useState([]);
@@ -48,11 +51,12 @@ const PartnerPreferencesScreen = () => {
   const [heightRange, setHeightRange] = useState([4, 8]); // Initial age range
   const [preferCountry, setPreferCountry] = useState([]);
   const [preferState, setPreferState] = useState([]);
-  const [preferCity, setPreferCity] = useState([]);
+  // const [preferCity, setPreferCity] = useState([]);
   const [preferDiet, setPreferDiet] = useState([]);
   const [annualIncome, setAnnualIncome] = useState([7, 12]); // Initial age range
   const [preferHobbies, setPreferHobbies] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [cities, setCities] = useState([]);
 
   const dispatch = useDispatch();
   const apiDispatch = useDispatch();
@@ -62,64 +66,37 @@ const PartnerPreferencesScreen = () => {
 
   // console.log(' === PartnerPreferencesScreen..... ===> ', user);
 
-  const getSelectedCountryLabels = () => {
-    return countryList
-      .map(value => {
-        const country = COUNTRY_LIST.find(item => item.value === value);
-        return country ? country.label : null;
-      })
-      .filter(label => label); // Filter out any null values
-  };
-
-  const getSelectedStateLabels = () => {
-    return stateList
-      .map(value => {
-        const state = CurrentState.find(item => item.value === value);
-        return state ? state.label : null;
-      })
-      .filter(label => label); // Filter out any null values
-  };
-
-  const getSelectedPartnerCountryLabels = () => {
-    return partnerPreferCity
-      .map(value => {
-        const country = COUNTRY_LIST.find(item => item.value === value);
-        return country ? country.label : null;
-      })
-      .filter(label => label); // Filter out any null values
-  };
-
-  const getSelectedPartnerHobbiesLabels = () => {
-    return hobbies
-      .map(value => {
-        const hobbies = Fun.find(item => item.value === value);
-        return hobbies ? hobbies.label : null;
-      })
-      .filter(label => label); // Filter out any null values
-  };
-
-  const Prefer_Country = [
-    'India',
-    'Canada',
-    'Us',
-    'Afghanistan',
-    'China',
-    'Myanmar',
-    'Nepal',
-    'Sri-lanka',
-    'Pakistan',
-  ];
+  const Prefer_Country = ['India'];
 
   const Prefer_State = [
-    'Gujarat',
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
     'Assam',
-    'Andhra-pradesh',
-    'Arunachal-pradesh',
     'Bihar',
     'Chhattisgarh',
     'Goa',
+    'Gujarat',
     'Haryana',
-    'Himachal-pradesh',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya-Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
   ];
 
   const Prefer_City = [
@@ -134,9 +111,31 @@ const PartnerPreferencesScreen = () => {
     'Sirdi',
   ];
 
-  const Prefer_Diet = ['Vegetarian', 'Non_vegetarian'];
+  const Prefer_Diet = [
+    'Vegetarian',
+    'Eggetarian',
+    'Non Vegetarian',
+    'Vegan',
+    'Jain',
+    'Occasionally Non Vegetarian',
+    'Occasionally Vegetarian',
+    'Satvik',
+    'Other',
+  ];
 
   const Prefer_hobbies = [
+    'Writing',
+    'Play Instrument',
+    'Poetry',
+    'Cooking',
+    'Painting',
+    'Gardening',
+    'Singing',
+    'Diy Crafts',
+    'Blogging',
+    'Photography',
+    'Dancing',
+    'Content Creation',
     'Movie',
     'Sports',
     'Biking',
@@ -144,40 +143,88 @@ const PartnerPreferencesScreen = () => {
     'Social Media',
     'Clubbing',
     'Travelling',
+    'Gaming',
     'Shopping',
     'Reading',
-    'Binge-Watching',
-    'Theater & Events',
-    'Photography',
+    'Binge Watching',
+    'Theater Events',
+    'Running',
+    'Cycling',
+    'Yoga',
+    'Walking',
+    'Working_out',
+    'Trekking',
+    'Aerobics Zumba',
+    'Swimming',
   ];
 
   const onDashboardPress = () => {
-    console.log(' === Min Age ===> ', ageRange[0]);
-    console.log(' === Max Age ===> ', ageRange[1]);
-    console.log(' === Max Height ===> ', heightRange[0]);
-    console.log(' === Max Height ===> ', heightRange[1]);
-    console.log(' === preferCountry ===> ', preferCountry);
-    console.log(' === preferState ===> ', preferState);
-    console.log(' === preferCity ===> ', preferCity);
-    console.log(' === preferDiet ===> ', preferDiet);
-    console.log(' === annualIncome[0] ===> ', annualIncome[0]);
-    console.log(' === annualIncome[1] ===> ', annualIncome[1]);
-    setLoading(true);
+    if (!preferCountry.length) {
+      // Alert.alert('Missing Field', 'Please select at least one country');
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Field',
+        text2: 'Please select a country.',
+      });
+      return;
+    }
 
-    // const incomeValue = annualIncome[0]; // You can use annualIncome[0] (min), annualIncome[1] (max), or calculate the average
+    if (!preferState.length) {
+      // Alert.alert('Missing Field', 'Please select at least one state');
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Field',
+        text2: 'Please select at least one state.',
+      });
+      return;
+    }
+
+    if (!cities.length) {
+      // Alert.alert('Missing Field', 'Please enter at least one city');
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Field',
+        text2: 'Please enter at least one city.',
+      });
+      return;
+    }
+
+    if (!preferDiet.length) {
+      // Alert.alert('Missing Field', 'Please select a diet preference');
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Field',
+        text2: 'Please enter a diet preference.',
+      });
+      return;
+    }
+
+    if (!preferHobbies.length) {
+      // Alert.alert('Missing Field', 'Please select at least one hobby');
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Field',
+        text2: 'Please select at least one hobby.',
+      });
+      return;
+    }
 
     const payload = {
       age: {min: ageRange[0], max: ageRange[1]},
       height: {min: heightRange[0], max: heightRange[1]},
       country: preferCountry.map(country => country.toLowerCase()), // Convert to lowercase
-      state: preferState.map(state => state.toLowerCase()), // Convert to lowercase
-      city: preferCity.map(city => city.toLowerCase()), // Convert to lowercase
+      state: preferState.map(state => state.toLowerCase().replace(/\s+/g, '-')),
+      city: cities.map(city => city.toLowerCase().replace(/\s+/g, '-')),
       diet: Array.isArray(preferDiet)
-        ? preferDiet.map(diet => diet.toLowerCase())
-        : [preferDiet.toLowerCase()], // Ensure diet is an array
+        ? preferDiet.map(diet => diet.toLowerCase().replace(/\s+/g, '_'))
+        : [preferDiet.toLowerCase().replace(/\s+/g, '_')], // convert single string to array
       income: {min: annualIncome[0], max: annualIncome[1]}, // Send a single numeric value for income
-      hobbies: preferHobbies,
+      hobbies: Array.isArray(preferHobbies)
+        ? preferHobbies.map(hobby => hobby.toLowerCase().replace(/\s+/g, '_'))
+        : [preferHobbies.toLowerCase().replace(/\s+/g, '_')],
     };
+
+    console.log(' === var ===> ', payload);
 
     setLoading(true);
     // First API Call: partnerReferences
@@ -216,9 +263,9 @@ const PartnerPreferencesScreen = () => {
     setPreferState(selectedValue);
   };
 
-  const handleCitySelect = selectedValue => {
-    setPreferCity(selectedValue);
-  };
+  // const handleCitySelect = selectedValue => {
+  //   setPreferCity(selectedValue);
+  // };
 
   const handleDietSelect = selectedValue => {
     setPreferDiet(selectedValue);
@@ -298,7 +345,7 @@ const PartnerPreferencesScreen = () => {
               label="Select Prefer Country"
               options={Prefer_Country}
               onSelect={handleSelect} // Pass the onSelect handler to capture selected values
-              bottomSheetHeight={hp(450)}
+              bottomSheetHeight={hp(100)}
               maxSelections={5}
             />
           </View>
@@ -314,21 +361,36 @@ const PartnerPreferencesScreen = () => {
           </View>
 
           <View style={{marginTop: hp(30)}}>
-            <NewBottomSheetMultipleValueSelect
-              label="Select Prefer City"
-              options={Prefer_City}
-              onSelect={handleCitySelect} // Pass the onSelect handler to capture selected values
-              bottomSheetHeight={hp(450)}
-              maxSelections={5}
+            {/*<NewBottomSheetMultipleValueSelect*/}
+            {/*  label="Select Prefer City"*/}
+            {/*  options={Prefer_City}*/}
+            {/*  onSelect={handleCitySelect} // Pass the onSelect handler to capture selected values*/}
+            {/*  bottomSheetHeight={hp(450)}*/}
+            {/*  maxSelections={5}*/}
+            {/*/>*/}
+
+            <MultipleValueSelectTextInput
+              placeholder="Select Prefer City"
+              maxItems={5}
+              value={cities}
+              onChange={setCities}
             />
           </View>
 
           <View style={{marginTop: hp(30)}}>
-            <NewBottomSheetSingleValueSelect
+            {/*<NewBottomSheetSingleValueSelect*/}
+            {/*  label="Prefer Diet"*/}
+            {/*  options={Prefer_Diet}*/}
+            {/*  onSelect={handleDietSelect} // Pass the onSelect handler to capture the selected value*/}
+            {/*  bottomSheetHeight={hp(430)}*/}
+            {/*/>*/}
+
+            <NewBottomSheetMultipleValueSelect
               label="Prefer Diet"
               options={Prefer_Diet}
-              onSelect={handleDietSelect} // Pass the onSelect handler to capture the selected value
-              bottomSheetHeight={hp(150)}
+              onSelect={handleDietSelect} // Pass the onSelect handler to capture selected values
+              bottomSheetHeight={hp(450)}
+              maxSelections={3}
             />
           </View>
 
@@ -371,119 +433,12 @@ const PartnerPreferencesScreen = () => {
           </View>
 
           <View style={{height: hp(70)}} />
-          {/*<Text style={style.headingSubText}>Select Age Range (From & To)</Text>*/}
-
-          {/*<View style={style.ageContainer}>*/}
-          {/*  <View style={style.ageContainerStyle}>*/}
-          {/*    <DropdownHeightAndAgeComponent*/}
-          {/*      options={AgeFrom}*/}
-          {/*      placeholder="25"*/}
-          {/*      selectedValue={selectedAgeFrom}*/}
-          {/*      setSelectedValue={setSelectedAgeFrom}*/}
-          {/*    />*/}
-          {/*  </View>*/}
-          {/*  <View style={style.ageContainerStyle}>*/}
-          {/*    <DropdownHeightAndAgeComponent*/}
-          {/*      options={AgeFromTo}*/}
-          {/*      placeholder="25"*/}
-          {/*      selectedValue={selectedAgeTo}*/}
-          {/*      setSelectedValue={setSelectedAgeTo}*/}
-          {/*    />*/}
-          {/*  </View>*/}
-          {/*</View>*/}
-
-          {/*<Text style={style.headingSubTittleText}>*/}
-          {/*  Select Height Range (CM)*/}
-          {/*</Text>*/}
-
-          {/*<View style={style.ageContainer}>*/}
-          {/*  <View style={style.ageContainerStyle}>*/}
-          {/*    <DropdownHeightAndAgeComponent*/}
-          {/*      options={HeightRangeFrom}*/}
-          {/*      placeholder="4"*/}
-          {/*      selectedValue={selectHeightFrom}*/}
-          {/*      setSelectedValue={setSelectHeightFrom}*/}
-          {/*    />*/}
-          {/*  </View>*/}
-          {/*  <View style={style.ageContainerStyle}>*/}
-          {/*    <DropdownHeightAndAgeComponent*/}
-          {/*      options={HeightRangeTo}*/}
-          {/*      placeholder="6"*/}
-          {/*      selectedValue={selectedHeightTo}*/}
-          {/*      setSelectedValue={setSelectedHeightTo}*/}
-          {/*    />*/}
-          {/*  </View>*/}
-          {/*</View>*/}
-
-          {/*<Text style={style.headingSubTittleText}>Select Prefer Country</Text>*/}
-
-          {/*<DropDownMutipleValueComponent*/}
-          {/*  data={COUNTRY_LIST}*/}
-          {/*  height={50}*/}
-          {/*  searchPlaceholder={'Search Country'}*/}
-          {/*  placeholder={'Select'}*/}
-          {/*  selectedItems={countryList}*/}
-          {/*  setSelectedItems={setCountryList}*/}
-          {/*/>*/}
-
-          {/*<Text style={style.headingSubTittleText}>Select Prefer State</Text>*/}
-
-          {/*<DropDownMutipleValueComponent*/}
-          {/*  data={CurrentState}*/}
-          {/*  height={50}*/}
-          {/*  searchPlaceholder={'Search Country'}*/}
-          {/*  placeholder={'Select'}*/}
-          {/*  selectedItems={stateList}*/}
-          {/*  setSelectedItems={setStateList}*/}
-          {/*/>*/}
-
-          {/*<Text style={style.headingSubTittleText}>Select Prefer City</Text>*/}
-
-          {/*<DropDownMutipleValueComponent*/}
-          {/*  data={COUNTRY_LIST}*/}
-          {/*  height={50}*/}
-          {/*  searchPlaceholder={'Search Country'}*/}
-          {/*  placeholder={'Select'}*/}
-          {/*  selectedItems={partnerPreferCity}*/}
-          {/*  setSelectedItems={setPartnerPreferCity}*/}
-          {/*/>*/}
-
-          {/*<Text style={style.headingSubTittleText}>Prefer Diet</Text>*/}
-
-          {/*<ReusableDropdown*/}
-          {/*  dropdownValues={dropdownValues}*/}
-          {/*  placeholder={'Select'}*/}
-          {/*  selectedValue={preferDiet}*/}
-          {/*  onValueChange={value => setPreferDiet(value)}*/}
-          {/*/>*/}
-
-          {/*<Text style={style.headingSubTittleText}>Prefer income</Text>*/}
-
-          {/*<ReusableDropdown*/}
-          {/*  dropdownValues={dropdownPreferIncome}*/}
-          {/*  placeholder={'Select'}*/}
-          {/*  selectedValue={preferIncome}*/}
-          {/*  onValueChange={value => setPreferIncome(value)}*/}
-          {/*/>*/}
-
-          {/*<Text style={style.headingSubTittleText}>Select Hobbies</Text>*/}
-
-          {/*  <DropDownMutipleValueComponent*/}
-          {/*    data={Fun}*/}
-          {/*    height={50}*/}
-          {/*    searchPlaceholder={'Search Country'}*/}
-          {/*    placeholder={'Select'}*/}
-          {/*    selectedItems={hobbies}*/}
-          {/*    setSelectedItems={setHobbies}*/}
-          {/*  />*/}
-
-          {/*  <View style={style.space} />*/}
         </View>
       </ScrollView>
 
       <View style={style.buttonContainer}>
         <TouchableOpacity
-          activeOpacity={0.7}
+          activeOpacity={0.6}
           style={style.backButtonContainer}
           onPress={() => {
             navigation.goBack();
@@ -492,6 +447,7 @@ const PartnerPreferencesScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
+          activeOpacity={0.6}
           onPress={onDashboardPress}
           style={style.dashboardButton}>
           {loading ? (
@@ -501,6 +457,7 @@ const PartnerPreferencesScreen = () => {
           )}
         </TouchableOpacity>
       </View>
+      {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
     </SafeAreaView>
   );
 };

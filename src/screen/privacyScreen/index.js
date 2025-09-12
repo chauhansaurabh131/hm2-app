@@ -220,6 +220,7 @@ const PrivacyScreen = ({route}) => {
         'gothra',
         'zodiac',
         'datingData',
+        'email',
       ];
     } else if (selectedPrivacy === 'privateProfile') {
       privacySettingCustom.privateProfile = [
@@ -256,6 +257,7 @@ const PrivacyScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'email',
       ];
       // Automatically set showPhotoToFriendsOnly to true for privateProfile
       privacySettingCustom.showPhotoToFriendsOnly = true;
@@ -315,6 +317,7 @@ const PrivacyScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'email',
       ];
     }
 

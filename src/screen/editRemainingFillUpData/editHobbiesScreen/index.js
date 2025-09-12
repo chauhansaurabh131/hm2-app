@@ -17,32 +17,81 @@ const EditHobbiesScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
   const apiDispatch = useDispatch();
 
-  console.log(' === var ===> ', user?.user?.hobbies);
-
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedLang, setSelectedLang] = useState([]);
   const [loading, setLoading] = useState(false); // Loader state
 
   const options = [
     'Writing',
     'Play Instrument',
-    'Game',
+    'Poetry',
+    'Cooking',
+    'Painting',
+    'Gardening',
+    'Singing',
+    'Diy Crafts',
+    'Blogging',
+    'Photography',
+    'Dancing',
+    'Content Creation',
     'Movie',
     'Sports',
+    'Biking',
+    'Music',
+    'Social Media',
+    'Clubbing',
+    'Travelling',
+    'Gaming',
+    'Shopping',
+    'Reading',
+    'Binge Watching',
+    'Theater Events',
     'Running',
     'Cycling',
+    'Yoga',
+    'Walking',
+    'Working Out',
+    'Trekking',
+    'Aerobics Zumba',
+    'Swimming',
   ];
+
+  const LanguageOptions = ['Hindi', 'Gujarati', 'English'];
 
   const handleSelect = selectedValue => {
     setSelectedItems(selectedValue);
   };
 
+  const handleSelectLanguage = selectedLanguageValue => {
+    setSelectedLang(selectedLanguageValue);
+  };
+
+  const formatHobbies = items => {
+    return items
+      .map(
+        item =>
+          item
+            .toLowerCase() // lowercase
+            .replace(/\s+/g, '_'), // replace spaces with underscore
+      )
+      .join(', '); // join into a single string
+  };
+
   const onSubmitPress = () => {
+    const formattedHobbies = formatHobbies(selectedItems);
+
     setLoading(true);
     apiDispatch(
-      updateDetails({hobbies: selectedItems}, () => {
-        setLoading(false);
-        navigation.goBack();
-      }),
+      updateDetails(
+        {
+          hobbies: formattedHobbies,
+          language: selectedLang.map(lang => lang.toLowerCase()).join(', '),
+        },
+        () => {
+          setLoading(false);
+          navigation.goBack();
+        },
+      ),
     );
   };
 
@@ -68,9 +117,19 @@ const EditHobbiesScreen = ({navigation}) => {
 
         <View style={{marginTop: hp(37)}}>
           <NewBottomSheetMultipleValueSelect
-            label="Select options"
+            label="Select Hobbies"
             options={options}
             onSelect={handleSelect} // Pass the onSelect handler to capture selected values
+            bottomSheetHeight={hp(500)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(37)}}>
+          <NewBottomSheetMultipleValueSelect
+            label="Language Known"
+            options={LanguageOptions}
+            onSelect={handleSelectLanguage} // Pass the onSelect handler to capture selected values
+            bottomSheetHeight={hp(200)}
           />
         </View>
 
@@ -110,17 +169,21 @@ const EditHobbiesScreen = ({navigation}) => {
             </TouchableOpacity>
 
             <TouchableOpacity
+              activeOpacity={0.6}
               onPress={onSubmitPress}
+              disabled={selectedItems.length === 0 || selectedLang.length === 0} // ✅ Disable if nothing selected
               style={{
                 width: wp(176),
                 height: hp(44),
                 borderRadius: 30,
-                backgroundColor: colors.black,
+                backgroundColor:
+                  selectedItems.length === 0 || selectedLang.length === 0
+                    ? colors.gray // disabled state color
+                    : colors.black, // enabled state color
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {loading ? (
-                // Show loader if loading is true
                 <ActivityIndicator size="large" color={colors.white} />
               ) : (
                 <Text

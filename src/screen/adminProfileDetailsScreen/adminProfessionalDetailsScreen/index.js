@@ -30,11 +30,12 @@ const AdminProfessionalDetailsScreen = (...params) => {
   // console.log(' === isSendRequestLoading ===> ', isSendRequestLoading);
 
   const capitalizeFirstLetter = str =>
-    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
+    str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
 
   const [currentDesignation, setCurrentDesignation] = useState(
     capitalizeFirstLetter(userPersonalData?.userProfessional?.jobTitle),
   );
+
   const [jobType, setJobType] = useState(
     capitalizeFirstLetter(userPersonalData?.userProfessional?.jobType),
   );
@@ -44,6 +45,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
   const [salary, setSalary] = useState(
     userPersonalData?.userProfessional?.currentSalary || 'N/A',
   );
+
   const [workCity, setWorkCity] = useState(
     capitalizeFirstLetter(userPersonalData?.userProfessional?.workCity),
   );
@@ -80,26 +82,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
   };
 
   const handleSave = () => {
-    // const isValidRange = range => {
-    //   const regex = /^\d+(\.\d+)?-\d+(\.\d+)?$/;
-    //   return regex.test(range);
-    // };
-    //
-    // const getAverageFromRange = range => {
-    //   const [min, max] = range.split('-').map(Number);
-    //   return (min + max) / 2;
-    // };
-    //
-    // if (!isValidRange(salary)) {
-    //   console.error('Invalid salary format');
-    //   return;
-    // }
-    //
-    // const numericSalary = getAverageFromRange(salary);
-    //
-    // console.log(' === numeric salary ===> ', numericSalary);
-    setLoading(true);
+    // console.log(' === handleSave ===> ', salary);
 
+    setLoading(true);
     apiDispatch(
       professionalDetail(
         {
@@ -144,31 +129,35 @@ const AdminProfessionalDetailsScreen = (...params) => {
         {!isEditing ? (
           <View style={style.bodyContainerStyle}>
             <Text style={style.tittleText}>Current Designation</Text>
-            <Text style={style.subTittleText}>{currentDesignation} </Text>
+            <Text style={style.subTittleText}>
+              {currentDesignation || 'N/A'}{' '}
+            </Text>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Job Type</Text>
-              <Text style={style.subTittleText}>{jobType} </Text>
+              <Text style={style.subTittleText}>{jobType || 'N/A'} </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Company Name</Text>
-              <Text style={style.subTittleText}>{companyName} </Text>
+              <Text style={style.subTittleText}>{companyName || 'N/A'} </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Annual Salary</Text>
-              <Text style={style.subTittleText}>{salary} Lac. </Text>
+              <Text style={style.subTittleText}>
+                {salary === 'N/A' ? salary : `${salary} Lac.`}{' '}
+              </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Work City</Text>
-              <Text style={style.subTittleText}>{workCity} </Text>
+              <Text style={style.subTittleText}>{workCity || 'N/A'} </Text>
             </View>
 
             <View style={[style.subTittleContainer, {marginBottom: hp(25)}]}>
               <Text style={style.tittleText}>Country</Text>
-              <Text style={style.subTittleText}>{workCountry} </Text>
+              <Text style={style.subTittleText}>{workCountry || 'N/A'} </Text>
             </View>
           </View>
         ) : (
@@ -180,7 +169,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
                   designationBottomSheetRef.current.open();
                 }}
                 style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>{currentDesignation}</Text>
+                <Text style={style.subTittleText}>
+                  {capitalizeFirstLetter(currentDesignation) || 'N/A'}
+                </Text>
 
                 <Image
                   source={icons.rightSideIcon}
@@ -196,7 +187,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
                     jobTypeBottomSheetRef.current.open();
                   }}
                   style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{jobType}</Text>
+                  <Text style={style.subTittleText}>
+                    {capitalizeFirstLetter(jobType) || 'N/A'}
+                  </Text>
                   <Image
                     source={icons.rightSideIcon}
                     style={style.rightSideIcon}
@@ -212,7 +205,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
                     nameBottomSheetRef.current.open();
                   }}
                   style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{companyName}</Text>
+                  <Text style={style.subTittleText}>
+                    {capitalizeFirstLetter(companyName) || 'N/A'}
+                  </Text>
                   <Image
                     source={icons.rightSideIcon}
                     style={style.rightSideIcon}
@@ -228,7 +223,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
                     salaryBottomSheetRef.current.open();
                   }}
                   style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{salary} Lac.</Text>
+                  <Text style={style.subTittleText}>
+                    {salary === 'N/A' ? salary : `${salary} Lac.`}{' '}
+                  </Text>
                   <Image
                     source={icons.rightSideIcon}
                     style={style.rightSideIcon}
@@ -244,7 +241,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
                     cityBottomSheetRef.current.open();
                   }}
                   style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{workCity}</Text>
+                  <Text style={style.subTittleText}>
+                    {capitalizeFirstLetter(workCity) || 'N/A'}
+                  </Text>
                   <Image
                     source={icons.rightSideIcon}
                     style={style.rightSideIcon}
@@ -260,7 +259,9 @@ const AdminProfessionalDetailsScreen = (...params) => {
                     countryBottomSheetRef.current.open();
                   }}
                   style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>{workCountry}</Text>
+                  <Text style={style.subTittleText}>
+                    {capitalizeFirstLetter(workCountry) || 'N/A'}
+                  </Text>
                   <Image
                     source={icons.rightSideIcon}
                     style={style.rightSideIcon}
@@ -340,7 +341,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 ref={jobTypeBottomSheetRef}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
-                height={hp(280)} // Adjust height of Bottom Sheet
+                height={hp(260)} // Adjust height of Bottom Sheet
                 customStyles={{
                   draggableIcon: {
                     backgroundColor: colors.gray,
@@ -356,32 +357,26 @@ const AdminProfessionalDetailsScreen = (...params) => {
 
                 <TouchableOpacity
                   style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectJobType('Part-Time')}>
-                  <Text style={style.bottomSheetOptionText}>Part-Time</Text>
+                  onPress={() => handleSelectJobType('government')}>
+                  <Text style={style.bottomSheetOptionText}>Government</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectJobType('Full-Time')}>
-                  <Text style={style.bottomSheetOptionText}>Full-Time</Text>
+                  onPress={() => handleSelectJobType('private')}>
+                  <Text style={style.bottomSheetOptionText}>Private</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectJobType('Contract')}>
-                  <Text style={style.bottomSheetOptionText}>Contract</Text>
+                  onPress={() => handleSelectJobType('retired')}>
+                  <Text style={style.bottomSheetOptionText}>Retired</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectJobType('Internship')}>
-                  <Text style={style.bottomSheetOptionText}>Internship</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectJobType('Remote')}>
-                  <Text style={style.bottomSheetOptionText}>Remote</Text>
+                  onPress={() => handleSelectJobType('homemaker')}>
+                  <Text style={style.bottomSheetOptionText}>Homemaker</Text>
                 </TouchableOpacity>
               </RBSheet>
 
@@ -476,72 +471,44 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 <ScrollView>
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('1-3')}>
-                    <Text style={style.bottomSheetOptionText}>1 - 3 Lac.</Text>
+                    onPress={() => handleSelectSalary('1')}>
+                    <Text style={style.bottomSheetOptionText}>1 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('3-5')}>
-                    <Text style={style.bottomSheetOptionText}>3 - 5 Lac.</Text>
+                    onPress={() => handleSelectSalary('2')}>
+                    <Text style={style.bottomSheetOptionText}>2 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('5-7')}>
-                    <Text style={style.bottomSheetOptionText}>5 - 7 Lac.</Text>
+                    onPress={() => handleSelectSalary('3')}>
+                    <Text style={style.bottomSheetOptionText}>3 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('7-9')}>
-                    <Text style={style.bottomSheetOptionText}>7 - 9 Lac.</Text>
+                    onPress={() => handleSelectSalary('5')}>
+                    <Text style={style.bottomSheetOptionText}>5 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('9-11')}>
-                    <Text style={style.bottomSheetOptionText}>9 - 11 Lac.</Text>
+                    onPress={() => handleSelectSalary('10')}>
+                    <Text style={style.bottomSheetOptionText}>10 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('11-13')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      11 - 13 Lac.
-                    </Text>
+                    onPress={() => handleSelectSalary('15')}>
+                    <Text style={style.bottomSheetOptionText}>15 Lac.</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('13-16')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      13 - 16 Lac.
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('16-20')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      16 - 20 Lac.
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectSalary('20-24')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      20 - 24 Lac.
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{marginTop: hp(15), marginBottom: hp(25)}}
-                    onPress={() => handleSelectSalary('24-30')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      24 - 30 Lac.
-                    </Text>
+                    onPress={() => handleSelectSalary('20')}>
+                    <Text style={style.bottomSheetOptionText}>20 Lac.</Text>
                   </TouchableOpacity>
                 </ScrollView>
               </RBSheet>
@@ -551,7 +518,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 ref={cityBottomSheetRef}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
-                height={hp(400)} // Adjust height of Bottom Sheet
+                height={hp(300)} // Adjust height of Bottom Sheet
                 customStyles={{
                   draggableIcon: {
                     backgroundColor: colors.gray,
@@ -567,52 +534,90 @@ const AdminProfessionalDetailsScreen = (...params) => {
 
                 <View style={style.bottomSheetUnderLine} />
 
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Gandhinagar')}>
-                  <Text style={style.bottomSheetOptionText}>Gandhinagar</Text>
-                </TouchableOpacity>
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Gandhinagar')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Gandhinagar</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Mehsana')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Mehsana</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Himmatnagar')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Himmatnagar</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Kalol')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Kalol</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Surat')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Surat</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Bardoli')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Bardoli</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Navsari')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Navsari</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                {/*<TouchableOpacity*/}
+                {/*  style={{marginTop: hp(15)}}*/}
+                {/*  onPress={() => handleSelectCity('Mandvi')}>*/}
+                {/*  <Text style={style.bottomSheetOptionText}>Mandvi</Text>*/}
+                {/*</TouchableOpacity>*/}
+
+                <View style={{marginHorizontal: 25}}>
+                  <TextInput
+                    style={{
+                      height: 50,
+                      borderColor: 'black',
+                      borderWidth: 1,
+                      fontSize: 18,
+                      borderRightWidth: 0,
+                      borderLeftWidth: 0,
+                      borderTopWidth: 0,
+                      marginTop: hp(25),
+                      width: '100%',
+                      color: colors.black,
+                    }}
+                    value={workCity}
+                    onChangeText={setWorkCity}
+                    placeholder="Enter Work City"
+                    placeholderTextColor={colors.gray}
+                  />
+                </View>
 
                 <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Mehsana')}>
-                  <Text style={style.bottomSheetOptionText}>Mehsana</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Himmatnagar')}>
-                  <Text style={style.bottomSheetOptionText}>Himmatnagar</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Kalol')}>
-                  <Text style={style.bottomSheetOptionText}>Kalol</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Surat')}>
-                  <Text style={style.bottomSheetOptionText}>Surat</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Bardoli')}>
-                  <Text style={style.bottomSheetOptionText}>Bardoli</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Navsari')}>
-                  <Text style={style.bottomSheetOptionText}>Navsari</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCity('Mandvi')}>
-                  <Text style={style.bottomSheetOptionText}>Mandvi</Text>
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    cityBottomSheetRef.current.close();
+                  }}>
+                  <LinearGradient
+                    colors={['#2D46B9', '#8D1D8D']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1}}
+                    style={[
+                      style.bottomSheetAddButtonContainer,
+                      {marginTop: hp(80)},
+                    ]}>
+                    <Text style={style.bottomSheetAddButtonText}>Add</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
               </RBSheet>
 
@@ -621,7 +626,7 @@ const AdminProfessionalDetailsScreen = (...params) => {
                 ref={countryBottomSheetRef}
                 closeOnDragDown={true} // Allows drag to close
                 closeOnPressMask={true} // Allows closing when clicking outside the sheet
-                height={hp(250)} // Adjust height of Bottom Sheet
+                height={hp(150)} // Adjust height of Bottom Sheet
                 customStyles={{
                   draggableIcon: {
                     backgroundColor: colors.gray,
@@ -632,33 +637,15 @@ const AdminProfessionalDetailsScreen = (...params) => {
                   },
                 }}>
                 <Text style={style.bottomSheetTittleText}>
-                  Select College Country
+                  Select Work Country
                 </Text>
 
                 <View style={style.bottomSheetUnderLine} />
 
                 <TouchableOpacity
                   style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCountry('India')}>
+                  onPress={() => handleSelectCountry('india')}>
                   <Text style={style.bottomSheetOptionText}>India</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCountry('Sri-Lanka')}>
-                  <Text style={style.bottomSheetOptionText}>Sri-Lanka</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCountry('US')}>
-                  <Text style={style.bottomSheetOptionText}>US</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={{marginTop: hp(15)}}
-                  onPress={() => handleSelectCountry('UK')}>
-                  <Text style={style.bottomSheetOptionText}>UK</Text>
                 </TouchableOpacity>
               </RBSheet>
 

@@ -15,10 +15,12 @@ import {updateDetails} from '../../../actions/homeActions';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {useNavigation} from '@react-navigation/native';
 
 const AdminContactDetailsScreen = (...params) => {
   const userPersonalData = params[0];
   const apiDispatch = useDispatch();
+  const navigation = useNavigation();
 
   const [mobileNumber, setMobileNumber] = useState(
     userPersonalData?.mobileNumber || 'N/A',
@@ -138,10 +140,10 @@ const AdminContactDetailsScreen = (...params) => {
             <Text style={style.tittleText}>Mobile Number</Text>
             <Text style={style.subTittleText}>+91 {mobileNumber} </Text>
 
-            <View style={style.subTittleContainer}>
-              <Text style={style.tittleText}>Home Number</Text>
-              <Text style={style.subTittleText}>+91 {homeNumber} </Text>
-            </View>
+            {/*<View style={style.subTittleContainer}>*/}
+            {/*  <Text style={style.tittleText}>Home Number</Text>*/}
+            {/*  <Text style={style.subTittleText}>+91 {homeNumber} </Text>*/}
+            {/*</View>*/}
 
             <View style={[style.subTittleContainer, {marginBottom: hp(25)}]}>
               <Text style={style.tittleText}>Email</Text>
@@ -153,7 +155,16 @@ const AdminContactDetailsScreen = (...params) => {
             <View style={style.bodyContainerStyle}>
               <Text style={style.tittleText}>Mobile Number</Text>
               <TouchableOpacity
-                onPress={() => refRBSheet.current.open()}
+                // onPress={() => refRBSheet.current.open()}
+                //       navigation.navigate('AccountsScreen', {
+                //   screen: 'AccountsScreen', // 👈 child inside ExtraStack
+                // });
+
+                onPress={() => {
+                  navigation.navigate('AccountsScreen', {
+                    screen: 'CredentialsScreen',
+                  });
+                }}
                 style={style.subTittleContainerStyle}>
                 <Text style={style.subTittleText}>+91 {mobileNumber}</Text>
 
@@ -163,25 +174,30 @@ const AdminContactDetailsScreen = (...params) => {
                 />
               </TouchableOpacity>
 
-              <View style={style.subTittleContainer}>
-                <Text style={style.tittleText}>Home Number</Text>
+              {/*<View style={style.subTittleContainer}>*/}
+              {/*  <Text style={style.tittleText}>Home Number</Text>*/}
 
-                <TouchableOpacity
-                  onPress={() => refHomeRBSheet.current.open()}
-                  style={style.subTittleContainerStyle}>
-                  <Text style={style.subTittleText}>+91 {homeNumber}</Text>
-                  <Image
-                    source={icons.rightSideIcon}
-                    style={style.rightSideIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+              {/*  <TouchableOpacity*/}
+              {/*    onPress={() => refHomeRBSheet.current.open()}*/}
+              {/*    style={style.subTittleContainerStyle}>*/}
+              {/*    <Text style={style.subTittleText}>+91 {homeNumber}</Text>*/}
+              {/*    <Image*/}
+              {/*      source={icons.rightSideIcon}*/}
+              {/*      style={style.rightSideIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*</View>*/}
 
               <View style={style.subTittleContainer}>
                 <Text style={style.tittleText}>Email</Text>
 
                 <TouchableOpacity
-                  onPress={() => refEmailRBSheet.current.open()}
+                  // onPress={() => refEmailRBSheet.current.open()}
+                  onPress={() => {
+                    navigation.navigate('AccountsScreen', {
+                      screen: 'CredentialsScreen',
+                    });
+                  }}
                   style={style.subTittleContainerStyle}>
                   <Text style={style.subTittleText}>{email}</Text>
                   <Image
@@ -817,17 +833,19 @@ const AdminContactDetailsScreen = (...params) => {
                   </View>
                 </RBSheet>
 
-                <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
-                  <LinearGradient
-                    colors={['#0F52BA', '#8225AF']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0.5}}
-                    style={style.saveButtonContainer}>
-                    <Text style={style.bottomSheetAddButtonText}>
-                      Save Changes
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
+                {/*<TouchableOpacity activeOpacity={0.7} onPress={handleSave}>*/}
+                {/*  <LinearGradient*/}
+                {/*    colors={['#0F52BA', '#8225AF']}*/}
+                {/*    start={{x: 0, y: 0}}*/}
+                {/*    end={{x: 1, y: 0.5}}*/}
+                {/*    style={style.saveButtonContainer}>*/}
+                {/*    <Text style={style.bottomSheetAddButtonText}>*/}
+                {/*      Save Changes*/}
+                {/*    </Text>*/}
+                {/*  </LinearGradient>*/}
+                {/*</TouchableOpacity>*/}
+
+                <View style={{height: hp(50)}} />
               </View>
             </View>
           </>

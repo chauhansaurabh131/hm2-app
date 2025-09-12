@@ -18,6 +18,7 @@ import style from './style';
 import DOBTextInputComponent from '../../components/DOBTextInputComponent';
 import BirthOfTimeTextInput from '../../components/BirthOfTimeTextInput';
 import moment from 'moment-timezone';
+import {hp} from '../../utils/helpers';
 
 const CreatingProfileScreen = () => {
   const dropdownData = [
@@ -26,6 +27,9 @@ const CreatingProfileScreen = () => {
     'My Daughter',
     'My Brother',
     'My Friend',
+    'My Relatives',
+    'My Cousin',
+    'My Nephew',
   ];
 
   const [selectedOption, setSelectedOption] = useState('');
@@ -33,6 +37,8 @@ const CreatingProfileScreen = () => {
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [birthOfTime, setBirthOfTime] = useState('');
+
+  // console.log(' === dateOfBirth ===> ', dateOfBirth);
 
   const navigation = useNavigation();
   const apiDispatch = useDispatch();
@@ -86,10 +92,22 @@ const CreatingProfileScreen = () => {
   }, [user?.user?.creatingProfileFor]);
 
   const onStartNowPress = () => {
+    // const formattedOption = selectedOption
+    //   .split(' ')
+    //   .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    //   .join(' ');
+
     const formattedOption = selectedOption
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+      .map((word, index) => {
+        if (index === 0) {
+          // first word lowercase
+          return word.toLowerCase();
+        }
+        // capitalize first letter of next words
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join('');
 
     const [day, month, year] = dateOfBirth.split('/');
     const dob = new Date(`${year}-${month}-${day}`);
@@ -104,6 +122,15 @@ const CreatingProfileScreen = () => {
 
     // Format to ISO string, while keeping local time (no UTC conversion)
     const formattedDateTime = combinedDateTime.format(); // Default format is ISO-8601 (local timezone)
+
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    const dayDiff = today.getDate() - dob.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
 
     if (!selectedOption) {
       Toast.show({
@@ -126,13 +153,20 @@ const CreatingProfileScreen = () => {
         text2: 'Please enter last name.',
       });
       return;
+    } else if (age < 18) {
+      Toast.show({
+        type: 'error',
+        text1: 'Age Restriction',
+        text2: 'You must be at least 18 years old.',
+      });
+      return; // stop here if under 18
     }
 
     if (isNaN(dob.getTime())) {
       Toast.show({
         type: 'error',
-        text1: 'Invalid Date',
-        text2: 'Please enter a valid date.',
+        text1: 'Invalid Birth Date',
+        text2: 'Please enter a valid Birth date.',
       });
       return;
     }
@@ -144,7 +178,7 @@ const CreatingProfileScreen = () => {
     birthDateTime.setMinutes(parseInt(minutes, 10));
     birthDateTime.setSeconds(0);
 
-    console.log(' === birthDateTime ===> ', birthDateTime);
+    // console.log(' === birthDateTime ===> ', birthDateTime);
 
     if (isNaN(birthDateTime.getTime())) {
       Toast.show({
@@ -154,6 +188,8 @@ const CreatingProfileScreen = () => {
       });
       return;
     }
+
+    // console.log(' === dob ===> ', dob);
 
     apiDispatch(
       updateDetails(
@@ -184,6 +220,7 @@ const CreatingProfileScreen = () => {
             dropdownData={dropdownData}
             onValueChange={setSelectedOption}
             value={selectedOption} // This will bind the selected value to the dropdown
+            bottomSheetHeight={hp(400)}
           />
         </View>
 

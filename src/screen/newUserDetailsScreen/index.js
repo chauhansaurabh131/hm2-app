@@ -37,6 +37,7 @@ import {
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import DemoCode from '../demoCode';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -1347,23 +1348,38 @@ const NewUserDetailsScreen = () => {
           style={style.customHeaderLogo}
         />
 
-        <TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>
+        {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopBottomSheet}>*/}
+        {/*  {userImage ? (*/}
+        {/*    // <Image source={{uri: userImage}} style={style.profileLogoStyle} />*/}
+        {/*    <Image*/}
+        {/*      source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+        {/*      style={style.profileLogoStyle}*/}
+        {/*    />*/}
+        {/*  ) : (*/}
+        {/*    <ProfileAvatar*/}
+        {/*      firstName={user?.user?.firstName || user?.user?.name}*/}
+        {/*      lastName={user?.user?.firstName}*/}
+        {/*      textStyle={style.profileLogoStyle}*/}
+        {/*      profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*    />*/}
+        {/*  )}*/}
+        {/*</TouchableOpacity>*/}
+
+        <TouchableOpacity activeOpacity={0.6} onPress={openTopBottomSheet}>
           {userImage ? (
             <Image source={{uri: userImage}} style={style.profileLogoStyle} />
           ) : (
             <ProfileAvatar
-              firstName={user?.user?.firstName}
-              lastName={user?.user?.firstName}
+              firstName={user?.user?.firstName || user?.user?.name}
+              lastName={user?.user?.lastName}
               textStyle={style.profileLogoStyle}
               profileTexts={{fontSize: fontSize(10)}}
             />
           )}
-          {/*<Image*/}
-          {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-          {/*  style={style.profileLogoStyle}*/}
-          {/*/>*/}
         </TouchableOpacity>
       </View>
+
+      {/*<DemoCode />*/}
 
       <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 

@@ -36,6 +36,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import axios from 'axios';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const CustomCheckbox = ({isChecked, onPress}) => {
   return (
@@ -80,6 +81,11 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
+
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
 
   const privacySetting = user?.user?.privacySetting;
 
@@ -381,10 +387,24 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
 
           {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={style.profileImageStyle}
-            />
+            {/*<Image*/}
+            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+            {/*  style={style.profileImageStyle}*/}
+            {/*/>*/}
+
+            {hasValidImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={style.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={style.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
           </TouchableOpacity>
         </View>
 
