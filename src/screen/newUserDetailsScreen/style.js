@@ -180,12 +180,13 @@ export const style = StyleSheet.create({
   bodyMiddleContainer: {
     marginHorizontal: wp(17),
     marginTop: hp(18),
+    // backgroundColor: 'red',
   },
   BodyContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 15,
-    marginTop: 5,
+    marginBottom: 10,
+    // marginTop: 5,
   },
   sendRequestIcon: {
     width: hp(180),
@@ -195,7 +196,7 @@ export const style = StyleSheet.create({
   },
   likeIcon: {
     width: hp(63),
-    height: hp(40),
+    height: hp(39),
     resizeMode: 'contain',
   },
   threeDotBottomSheetContainer: {
@@ -307,7 +308,7 @@ export const style = StyleSheet.create({
   },
   unFriendModalTittle: {
     fontSize: fontSize(16),
-    color: 'black',
+    color: colors.pureBlack,
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
     marginTop: hp(30),

@@ -57,7 +57,7 @@ const PROFILE_TYPES = {
 
 const PrivacyScreen = ({route}) => {
   const {planData} = route.params;
-  console.log(' === planData ===> ', planData);
+  // console.log(' === planData ===> ', planData);
 
   const [selectedPrivacy, setSelectedPrivacy] = useState('');
   const [checkedOptions, setCheckedOptions] = useState({});
@@ -465,7 +465,7 @@ const PrivacyScreen = ({route}) => {
                 }}>
                 {isSelected ? (
                   <LinearGradient
-                    colors={['#0F52BA', '#8225AF']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0.1}}
                     style={{
@@ -608,7 +608,7 @@ const PrivacyScreen = ({route}) => {
 
               {shouldShowExtraText && !isDisabled && (
                 <LinearGradient
-                  colors={['#0F52BA', '#8225AF']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0.1}}
                   style={{
@@ -724,7 +724,7 @@ const PrivacyScreen = ({route}) => {
               activeOpacity={0.7}
               onPress={() => setIsModalVisible(false)}>
               <LinearGradient
-                colors={['#0F52BA', '#8225AF']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.2}}
                 style={{
@@ -761,7 +761,7 @@ const PrivacyScreen = ({route}) => {
         <View style={{marginHorizontal: 17}}>
           <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
             <LinearGradient
-              colors={['#0F52BA', '#8225AF']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1.2}}
               style={{

@@ -996,7 +996,7 @@ const MatchesInBlockedScreen = () => {
                 activeOpacity={0.7}
                 onPress={handleConfirmBlock}>
                 <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
                   style={style.blockModalYesButtonContainer}>
@@ -1177,7 +1177,7 @@ const MatchesInBlockedScreen = () => {
               style={style.reportModalButtonContainer}
               onPress={handleCloseModal}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.5}}
                 style={style.reportModalButtonBody}>

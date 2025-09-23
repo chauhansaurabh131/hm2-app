@@ -200,7 +200,7 @@ const VerifyEmailOtpScreen = ({route}) => {
             style={{
               marginTop: hp(29),
               marginLeft: wp(33),
-              resizeMode: 'stretch',
+              resizeMode: 'contain',
               width: hp(96),
               height: hp(24),
             }}

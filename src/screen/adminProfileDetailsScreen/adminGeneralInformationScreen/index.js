@@ -27,7 +27,7 @@ const AdminGeneralInformationScreen = (...params) => {
   const userPersonalData = params[0];
   const apiDispatch = useDispatch();
 
-  console.log(' === userPersonalData ===> ', userPersonalData?.motherTongue);
+  // console.log(' === userPersonalData ===> ', userPersonalData?.motherTongue);
 
   const {isUpdatingProfile} = useSelector(state => state.auth);
 
@@ -1406,7 +1406,7 @@ const AdminGeneralInformationScreen = (...params) => {
 
               <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
                 <LinearGradient
-                  colors={['#0F52BA', '#8225AF']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0.5}}
                   style={style.saveButtonContainer}>

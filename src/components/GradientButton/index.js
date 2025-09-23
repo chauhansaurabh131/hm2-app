@@ -57,7 +57,7 @@ const GradientButton = ({
       activeOpacity={0.7}>
       <LinearGradient
         colors={
-          whiteBackground ? ['#FFFFFF', '#FFFFFF'] : ['#0D4EB3', '#9413D0']
+          whiteBackground ? ['#FFFFFF', '#FFFFFF'] : ['#7045EB', '#4819CB']
         }
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}

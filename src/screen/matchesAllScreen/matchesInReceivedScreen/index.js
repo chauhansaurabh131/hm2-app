@@ -242,7 +242,7 @@ const MatchesInReceivedScreen = () => {
   };
 
   const handleDecline = (userID, requestedId) => {
-    console.log(' === var ===> ', userId, requestedId);
+    // console.log(' === var ===> ', userId, requestedId);
 
     dispatch(
       accepted_Decline_Request(
@@ -885,7 +885,7 @@ const MatchesInReceivedScreen = () => {
                         <Text
                           style={{
                             color: 'white',
-                            marginLeft: 9,
+                            marginLeft: wp(7),
                             fontSize: fontSize(10),
                             lineHeight: hp(15),
                             fontFamily: fontFamily.poppins600,
@@ -1484,7 +1484,7 @@ const MatchesInReceivedScreen = () => {
                 activeOpacity={0.7}
                 onPress={handleConfirmBlock}>
                 <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
                   style={{
@@ -1869,7 +1869,7 @@ const MatchesInReceivedScreen = () => {
               style={{marginTop: hp(38), marginBottom: hp(43)}}
               onPress={handleCloseModal}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.5}}
                 style={{

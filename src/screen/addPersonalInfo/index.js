@@ -334,7 +334,124 @@ const AddPersonalInfo = ({navigation}) => {
     //     text2: 'Please Add About Yourself.',
     //   });
     //   return;
+    // } else if (!mobileNumber) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please Add Mobile Number.',
+    //   });
+    //   return;
+    // } else if (!userEmail) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Missing Information',
+    //     text2: 'Please Add Email.',
+    //   });
+    //   return;
     // }
+
+    if (activeIndex === 0) {
+      if (!genderSelectedOption) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Gender.',
+        });
+      }
+      if (!maritalSelectedOption) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Marital.',
+        });
+      }
+      if (!selectCaste) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Caste.',
+        });
+      }
+      if (!selectReligion) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Religion.',
+        });
+      }
+      if (!userHeight) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Height.',
+        });
+      }
+      if (!userWeight) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Weight.',
+        });
+      }
+      if (!selectManglik) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Manglik.',
+        });
+      }
+      if (!selectLanguage) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Language.',
+        });
+      }
+      if (!about) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please Add About Yourself.',
+        });
+      }
+    } else if (activeIndex === 1) {
+      if (!currentCountry) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your Country.',
+        });
+      }
+      if (!currentState) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your State.',
+        });
+      }
+      if (!selectCurrentCity) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please select your City.',
+        });
+      }
+    } else if (activeIndex === 2) {
+      if (!mobileNumber) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please Add Mobile Number.',
+        });
+      }
+      if (!userEmail) {
+        return Toast.show({
+          type: 'error',
+          text1: 'Missing Information',
+          text2: 'Please Add Email.',
+        });
+      }
+    }
 
     setLoading(true);
 
@@ -413,7 +530,6 @@ const AddPersonalInfo = ({navigation}) => {
         updateDetails(
           {
             mobileNumber: mobileNumber,
-            // homeMobileNumber: homeNumber,
             email: userEmail,
             userProfileCompleted: true,
           },

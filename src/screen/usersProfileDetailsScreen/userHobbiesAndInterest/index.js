@@ -39,7 +39,7 @@ const UserHobbiesAndInterest = (...params) => {
             gap: 10,
             marginTop: hp(10),
           }}>
-          {hobbies.map((hobby, index) => (
+          {hobbies?.map((hobby, index) => (
             <View
               key={index}
               style={{
@@ -82,7 +82,7 @@ const UserHobbiesAndInterest = (...params) => {
             gap: 10,
             marginTop: hp(10),
           }}>
-          {language.map((lang, index) => (
+          {language?.map((lang, index) => (
             <View
               key={index}
               style={{

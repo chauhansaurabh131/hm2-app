@@ -71,7 +71,7 @@ const CredentialsScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
 
-  console.log(' === user ===> ', user?.user);
+  // console.log(' === user ===> ', user?.user);
 
   useEffect(() => {
     let interval;
@@ -351,6 +351,7 @@ const CredentialsScreen = () => {
 
   const onUpdatePasswordPress = async () => {
     // Check if new password and confirm password match
+    setLoader(true);
     if (newPassword === confirmPassword) {
       try {
         console.log('Making API call with token:', token); // Debugging line
@@ -376,6 +377,7 @@ const CredentialsScreen = () => {
 
         if (response.status === 404) {
           console.error('Error: Endpoint not found. Please check the URL.');
+          setLoader(false);
           Alert.alert(
             'Error',
             'The endpoint could not be found. Please contact support.',
@@ -390,15 +392,19 @@ const CredentialsScreen = () => {
         if (response.ok) {
           // Close the first bottom sheet and open the second one
           passwordBottomSheetRef.current.close();
+
           setTimeout(() => {
             bottomSheetPasswordChangeRef2.current.open();
           }, 100); // Small delay to ensure the first sheet closes before opening the second
+
+          setLoader(false);
         } else {
           // Show alert if API call fails
           Alert.alert(
             'Update Failed',
             result.message || 'An error occurred. Please try again.',
           );
+          setLoader(false);
         }
       } catch (error) {
         // Handle network or other errors
@@ -415,6 +421,7 @@ const CredentialsScreen = () => {
         'New Password and Confirm Password do not match.',
       );
     }
+    setLoader(false);
   };
 
   const currentMobileString = String(currentMobile);
@@ -491,6 +498,7 @@ const CredentialsScreen = () => {
   };
 
   const closeSecondBottomSheet = () => {
+    dispatch(logout(), () => dispatch(changeStack()));
     bottomSheetPasswordChangeRef2.current.close();
   };
 
@@ -559,7 +567,7 @@ const CredentialsScreen = () => {
                   onPress={handleSubmit}
                   disabled={!newEmail.trim()}>
                   <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}
                     // style={style.submitButtonContainer}
@@ -657,7 +665,7 @@ const CredentialsScreen = () => {
                           onMobileChangePress();
                         }}>
                         <LinearGradient
-                          colors={['#0D4EB3', '#9413D0']}
+                          colors={['#7045EB', '#4819CB']}
                           start={{x: 0, y: 0}}
                           end={{x: 1, y: 0}}
                           // style={style.submitButtonContainer}
@@ -835,7 +843,7 @@ const CredentialsScreen = () => {
           activeOpacity={0.7}
           onPress={onChangeEmailPress}>
           <LinearGradient
-            colors={['#0F52BA', '#8225AF']}
+            colors={['#7045EB', '#4819CB']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1.2}}
             style={{
@@ -949,7 +957,7 @@ const CredentialsScreen = () => {
           activeOpacity={0.7}
           onPress={onChangeNumberNumberPress}>
           <LinearGradient
-            colors={['#0F52BA', '#8225AF']}
+            colors={['#7045EB', '#4819CB']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1.2}}
             style={{
@@ -1118,11 +1126,15 @@ const CredentialsScreen = () => {
               activeOpacity={0.5}
               onPress={onUpdatePasswordPress}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
                 style={style.submitButtonContainer}>
-                <Text style={style.submitButtonTextStyle}>Submit</Text>
+                {loader ? (
+                  <ActivityIndicator size="large" color={colors.white} />
+                ) : (
+                  <Text style={style.submitButtonTextStyle}>Submit</Text>
+                )}
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -1367,7 +1379,7 @@ const CredentialsScreen = () => {
               bottomSheetEmailChangeSubmitRef.current.close();
             }}>
             <LinearGradient
-              colors={['#0F52BA', '#8225AF']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1.2}}
               style={{
@@ -1534,7 +1546,7 @@ const CredentialsScreen = () => {
             onPress={closeSecondBottomSheet} // Close the second bottom sheet
           >
             <LinearGradient
-              colors={['#0D4EB3', '#9413D0']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0.5}}
               style={{
@@ -1545,9 +1557,11 @@ const CredentialsScreen = () => {
                 justifyContent: 'center',
               }}>
               <TouchableOpacity
-                onPress={() => {
-                  dispatch(logout(), () => dispatch(changeStack()));
-                }}>
+              // onPress={() => {
+              //   // dispatch(logout(), () => dispatch(changeStack()));
+              //   dispatch(logout(), () => dispatch(changeStack()));
+              // }}
+              >
                 <Text
                   style={{
                     color: colors.white,

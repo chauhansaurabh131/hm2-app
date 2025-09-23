@@ -132,13 +132,16 @@ const HomeCardProfileComponent = () => {
   };
 
   const name = capitalizeFirstLetter(user?.user?.name || '');
+
   const UserUniqueId = user?.user?.userUniqueId;
+
+  console.log(' === UserUniqueId ===> ', UserUniqueId);
 
   return (
     <SafeAreaView style={style.container}>
       <View style={style.cardContainer}>
         <LinearGradient
-          colors={['#0D4EB3', '#9413D0']}
+          colors={['#7045EB', '#4819CB']}
           start={{x: 0, y: 0}}
           end={{x: 0, y: 1.5}}
           style={style.cardBodyStyle}>
@@ -163,7 +166,10 @@ const HomeCardProfileComponent = () => {
                 // When API gives planName
                 <View>
                   <Text
-                    style={[style.cardSubTittleTextStyle, {marginTop: hp(5)}]}>
+                    style={[
+                      style.cardSubTittleTextStyle,
+                      {marginTop: hp(5), textTransform: 'uppercase'},
+                    ]}>
                     {UserUniqueId}
                   </Text>
                   {/*<View style={style.cardCenterLineStyle} />*/}
@@ -198,12 +204,19 @@ const HomeCardProfileComponent = () => {
               ) : (
                 // When no API plan data, fallback to Free Plan
                 <>
-                  <View style={style.cardSubTittleContainer}>
-                    <Text style={style.cardSubTittleTextStyle}>
+                  <View
+                    style={[style.cardSubTittleContainer, {marginTop: hp(7)}]}>
+                    <Text
+                      style={[
+                        style.cardSubTittleTextStyle,
+                        {textTransform: 'uppercase', top: 1},
+                      ]}>
                       {UserUniqueId}
                     </Text>
                     <View style={style.cardCenterLineStyle} />
-                    <Text style={style.cardSubTittleTextStyle}>Free Plan</Text>
+                    <Text style={[style.cardSubTittleTextStyle, {top: 1}]}>
+                      Free Plan
+                    </Text>
                   </View>
 
                   <TouchableOpacity

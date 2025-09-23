@@ -17,6 +17,7 @@ const MultipleValueSelectTextInput = ({
   maxItems = 5,
   value = [],
   onChange,
+  textInputProps,
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -57,7 +58,7 @@ const MultipleValueSelectTextInput = ({
           value={inputValue}
           onChangeText={setInputValue}
           onSubmitEditing={handleAddItem} // enter key
-          style={style.textInput}
+          style={[style.textInput, textInputProps]}
           placeholderTextColor="black"
           returnKeyType="done"
         />

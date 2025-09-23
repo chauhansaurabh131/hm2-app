@@ -65,6 +65,7 @@ const style = StyleSheet.create({
     fontSize: fontSize(24),
     lineHeight: hp(26),
     fontFamily: fontFamily.poppins700,
+    marginRight: wp(10),
   },
   userDetailsDescriptionContainer: {
     flexDirection: 'row',

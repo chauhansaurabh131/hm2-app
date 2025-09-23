@@ -741,7 +741,7 @@ const AdminEducationDetailsScreen = (...params) => {
 
               <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
                 <LinearGradient
-                  colors={['#0F52BA', '#8225AF']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0.5}}
                   style={style.saveButtonContainer}>

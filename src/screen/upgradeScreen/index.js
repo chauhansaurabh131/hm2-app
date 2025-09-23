@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -27,6 +27,7 @@ import axios from 'axios';
 import RazorpayCheckout from 'react-native-razorpay';
 import Config from 'react-native-config';
 import GradientButton from '../../components/GradientButton';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const UpgradeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('silver');
@@ -39,6 +40,8 @@ const UpgradeScreen = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showPlanModal, setShowPlanModal] = useState(false);
+
+  const navigation = useNavigation();
 
   // console.log(' === setSelectedPlan__ ===> ', selectedPlan);
 
@@ -80,6 +83,8 @@ const UpgradeScreen = () => {
   const [userPlan, setUserPlan] = useState(null); // store user plan details
 
   const openBottomSheet = plan => {
+    console.log(' === openBottomSheet ===> ', plan);
+
     setSelectedPlan(plan);
     RBSheetRef.current.open();
     setIsBottomSheetOpen(true);
@@ -95,118 +100,227 @@ const UpgradeScreen = () => {
     setIsBottomSheetOpen(false);
   };
 
-  useEffect(() => {
-    const fetchPlansAndUserPlan = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/plan/get-plan',
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${AccessToken}`,
-              'Content-Type': 'application/json',
+  // useEffect(() => {
+  //   const fetchPlansAndUserPlan = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(
+  //         'https://stag.mntech.website/api/v1/user/plan/get-plan',
+  //         {
+  //           method: 'GET',
+  //           headers: {
+  //             Authorization: `Bearer ${AccessToken}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         },
+  //       );
+  //
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+  //
+  //       const json = await response.json();
+  //
+  //       // Transform API data into your expected format
+  //       const transformedPlans = {
+  //         silver: [],
+  //         gold: [],
+  //       };
+  //
+  //       const labelMap = {
+  //         monthly: 'One',
+  //         'two-month': 'Two',
+  //         'three-month': 'Three',
+  //       };
+  //
+  //       const labelsMap = {
+  //         monthly: 'Month',
+  //         'two-month': 'Month',
+  //         'three-month': 'Month',
+  //       };
+  //
+  //       json?.data?.forEach((plan, index) => {
+  //         // console.log(' === plan ===> ', plan);
+  //         const {
+  //           planName,
+  //           planDuration,
+  //           price,
+  //           totalPrice,
+  //           discount,
+  //           discountAmount,
+  //           allowNumberOfProfile,
+  //           allowNumberOfRequest,
+  //         } = plan;
+  //
+  //         const planItem = {
+  //           key: String(index + 1),
+  //           NewPrice: Math.round(totalPrice).toString(),
+  //           OldPrice: Math.round(price).toString(),
+  //           Discount: `${discount}% off`,
+  //           label: labelMap[planDuration] || '',
+  //           labels: labelsMap[planDuration] || '',
+  //           DiscountPrice: Math.round(discountAmount).toString(),
+  //           PlanName: planName,
+  //           MessageNumber: allowNumberOfProfile.toString(),
+  //           SendRequestNumber: allowNumberOfRequest.toString(),
+  //           planName, // store for comparison
+  //           planDuration, // store for comparison
+  //         };
+  //
+  //         if (planName === 'silver') {
+  //           transformedPlans.silver.push(planItem);
+  //         } else if (planName === 'gold') {
+  //           transformedPlans.gold.push(planItem);
+  //         }
+  //       });
+  //
+  //       setSubscriptionPlans(transformedPlans);
+  //
+  //       // 2️⃣ Fetch user's current plan
+  //       const userPlanRes = await fetch(
+  //         'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+  //         {
+  //           method: 'GET',
+  //           headers: {
+  //             Authorization: `Bearer ${AccessToken}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         },
+  //       );
+  //
+  //       if (!userPlanRes.ok) {
+  //         throw new Error(`HTTP error! status: ${userPlanRes.status}`);
+  //       }
+  //
+  //       const userPlanJson = await userPlanRes.json();
+  //       console.log('=== USER PLAN DETAILS ===', userPlanJson);
+  //
+  //       setUserPlan(userPlanJson.data); // store for later use
+  //     } catch (err) {
+  //       console.error('Error fetching plan:', err);
+  //       console.log(err.message);
+  //       // setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //
+  //   if (AccessToken) {
+  //     fetchPlansAndUserPlan();
+  //   }
+  // }, [AccessToken]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPlansAndUserPlan = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch(
+            'https://stag.mntech.website/api/v1/user/plan/get-plan',
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${AccessToken}`,
+                'Content-Type': 'application/json',
+              },
             },
-          },
-        );
+          );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-        const json = await response.json();
+          const json = await response.json();
 
-        // Transform API data into your expected format
-        const transformedPlans = {
-          silver: [],
-          gold: [],
-        };
-
-        const labelMap = {
-          monthly: 'One',
-          'two-month': 'Two',
-          'three-month': 'Three',
-        };
-
-        const labelsMap = {
-          monthly: 'Month',
-          'two-month': 'Month',
-          'three-month': 'Month',
-        };
-
-        json?.data?.forEach((plan, index) => {
-          // console.log(' === plan ===> ', plan);
-          const {
-            planName,
-            planDuration,
-            price,
-            totalPrice,
-            discount,
-            discountAmount,
-            allowNumberOfProfile,
-            allowNumberOfRequest,
-          } = plan;
-
-          const planItem = {
-            key: String(index + 1),
-            NewPrice: Math.round(totalPrice).toString(),
-            OldPrice: Math.round(price).toString(),
-            Discount: `${discount}% off`,
-            label: labelMap[planDuration] || '',
-            labels: labelsMap[planDuration] || '',
-            DiscountPrice: Math.round(discountAmount).toString(),
-            PlanName: planName,
-            MessageNumber: allowNumberOfProfile.toString(),
-            SendRequestNumber: allowNumberOfRequest.toString(),
-            planName, // store for comparison
-            planDuration, // store for comparison
+          // Transform API data
+          const transformedPlans = {silver: [], gold: []};
+          const labelMap = {
+            monthly: 'One',
+            'two-month': 'Two',
+            'three-month': 'Three',
+          };
+          const labelsMap = {
+            monthly: 'Month',
+            'two-month': 'Month',
+            'three-month': 'Month',
           };
 
-          if (planName === 'silver') {
-            transformedPlans.silver.push(planItem);
-          } else if (planName === 'gold') {
-            transformedPlans.gold.push(planItem);
-          }
-        });
+          json?.data?.forEach((plan, index) => {
+            // console.log(' === plan ===> ', planName);
+            const {
+              planName,
+              planDuration,
+              price,
+              totalPrice,
+              discount,
+              discountAmount,
+              allowNumberOfProfile,
+              allowNumberOfRequest,
+              id,
+            } = plan;
 
-        setSubscriptionPlans(transformedPlans);
+            const planItem = {
+              key: String(index + 1),
+              NewPrice: Math.round(totalPrice).toString(),
+              OldPrice: Math.round(price).toString(),
+              Discount: `${discount}% off`,
+              label: labelMap[planDuration] || '',
+              labels: labelsMap[planDuration] || '',
+              DiscountPrice: Math.round(discountAmount).toString(),
+              PlanName: planName,
+              MessageNumber: allowNumberOfProfile.toString(),
+              SendRequestNumber: allowNumberOfRequest.toString(),
+              planName,
+              planDuration,
+              planId: id,
+            };
 
-        // 2️⃣ Fetch user's current plan
-        const userPlanRes = await fetch(
-          'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${AccessToken}`,
-              'Content-Type': 'application/json',
+            if (planName === 'silver') {
+              transformedPlans.silver.push(planItem);
+            } else if (planName === 'gold') {
+              transformedPlans.gold.push(planItem);
+            }
+          });
+
+          setSubscriptionPlans(transformedPlans);
+
+          // Fetch user plan
+          const userPlanRes = await fetch(
+            'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${AccessToken}`,
+                'Content-Type': 'application/json',
+              },
             },
-          },
-        );
+          );
 
-        if (!userPlanRes.ok) {
-          throw new Error(`HTTP error! status: ${userPlanRes.status}`);
+          if (!userPlanRes.ok) {
+            throw new Error(`HTTP error! status: ${userPlanRes.status}`);
+          }
+
+          const userPlanJson = await userPlanRes.json();
+          console.log('=== USER PLAN DETAILS ===', userPlanJson);
+
+          setUserPlan(userPlanJson.data);
+        } catch (err) {
+          console.error('Error fetching plan:', err);
+        } finally {
+          setLoading(false);
         }
+      };
 
-        const userPlanJson = await userPlanRes.json();
-        console.log('=== USER PLAN DETAILS ===', userPlanJson);
-
-        setUserPlan(userPlanJson.data); // store for later use
-      } catch (err) {
-        console.error('Error fetching plan:', err);
-        console.log(err.message);
-        // setError(err.message);
-      } finally {
-        setLoading(false);
+      if (AccessToken) {
+        fetchPlansAndUserPlan();
       }
-    };
+    }, [AccessToken]),
+  );
 
-    if (AccessToken) {
-      fetchPlansAndUserPlan();
-    }
-  }, [AccessToken]);
-
-  const handleContinuePayment = () => {
+  const handleContinuePayment = userPlan => {
     const hasAnyPlan = !!userPlan; // true if user has purchased any plan
+
+    console.log(' === handleContinuePayment--- ===> ', selectedPlan);
 
     if (hasAnyPlan) {
       setShowPlanModal(true); // show modal for any purchased plan
@@ -219,11 +333,13 @@ const UpgradeScreen = () => {
   };
 
   const handlePayment = async () => {
+    console.log(' === PlanDetails--- ===> ', selectedPlan?.planId);
+
     try {
       // 1. Create Razorpay Order
       const response = await axios.post(
         `${API_URL}/v1/user/razorpay/order`,
-        {planId: PlanDetails?.data[0]?.id},
+        {planId: selectedPlan?.planId},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -265,6 +381,7 @@ const UpgradeScreen = () => {
       RazorpayCheckout.open(options)
         .then(data => {
           console.log('Payment Success:', data);
+
           Alert.alert('Payment Successful', 'We are verifying your payment.');
           // Verification handled by callback_url server-side
         })
@@ -656,7 +773,9 @@ const UpgradeScreen = () => {
 
             <View style={style.bottomSheetBottomButtonContainer}>
               <TouchableOpacity
-                onPress={handleContinuePayment}
+                onPress={() => {
+                  handleContinuePayment(userPlan);
+                }}
                 disabled={
                   userPlan?.planId?.planName?.toLowerCase() ===
                     selectedPlan?.planName?.toLowerCase() &&
@@ -673,7 +792,7 @@ const UpgradeScreen = () => {
                       : 1,
                 }}>
                 <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']} // keep original colors
+                  colors={['#7045EB', '#4819CB']} // keep original colors
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
                   style={style.payButtonColorGradient}>
@@ -692,38 +811,10 @@ const UpgradeScreen = () => {
         </RBSheet>
 
         <LinearGradient
-          colors={['#0D4EB3', '#9413D0']}
+          colors={['#7045EB', '#4819CB']}
           style={style.headerContainer}
           start={{x: 0, y: 0}}
           end={{x: 1.1, y: 0}}>
-          {/*{user?.user?.appUsesType !== 'dating' && (*/}
-          {/*  <View style={style.headerTittleStyle}>*/}
-          {/*    <Image*/}
-          {/*      source={icons.headerIconWhite}*/}
-          {/*      style={style.headerLogoStyle}*/}
-          {/*    />*/}
-
-          {/*    /!*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*!/*/}
-          {/*    <TouchableOpacity*/}
-          {/*      activeOpacity={0.7}*/}
-          {/*      onPress={openTopBottomSheet}>*/}
-          {/*      {userImage ? (*/}
-          {/*        <Image*/}
-          {/*          source={{uri: userImage}}*/}
-          {/*          style={style.profileImageStyle}*/}
-          {/*        />*/}
-          {/*      ) : (*/}
-          {/*        <ProfileAvatar*/}
-          {/*          firstName={user?.user?.firstName}*/}
-          {/*          lastName={user?.user?.lastName}*/}
-          {/*          textStyle={style.profileImageStyle}*/}
-          {/*          profileTexts={{fontSize: fontSize(10)}}*/}
-          {/*        />*/}
-          {/*      )}*/}
-          {/*    </TouchableOpacity>*/}
-          {/*  </View>*/}
-          {/*)}*/}
-
           <View>
             <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
           </View>
@@ -736,83 +827,8 @@ const UpgradeScreen = () => {
             <Text style={style.headerTittleDescriptionTextStyle}>
               Upgrade your profile and find your perfect match
             </Text>
-
-            {/*<Text style={style.headerTittleDescriptionTextStyle}>*/}
-            {/*  with exclusive benefits!*/}
-            {/*</Text>*/}
           </View>
         </LinearGradient>
-
-        {/*<View style={{marginHorizontal: 18}}>*/}
-        {/*  <View style={style.headingBodYContainer}>*/}
-        {/*    <TouchableOpacity*/}
-        {/*      onPress={() => handleOptionClick('silver')}*/}
-        {/*      style={style.silverTouchableFunctionality}>*/}
-        {/*      <LinearGradient*/}
-        {/*        colors={*/}
-        {/*          selectedOption === 'silver'*/}
-        {/*            ? ['#0D4EB3', '#9413D0']*/}
-        {/*            : ['transparent', 'transparent']*/}
-        {/*        }*/}
-        {/*        start={{x: 0, y: 0.5}}*/}
-        {/*        end={{x: 1, y: 0.5}}*/}
-        {/*        style={style.silverTextContainer}*/}
-        {/*      />*/}
-
-        {/*      <Text*/}
-        {/*        style={[*/}
-        {/*          style.silverText,*/}
-        {/*          {color: selectedOption === 'silver' ? 'white' : 'black'},*/}
-        {/*        ]}>*/}
-        {/*        Silver*/}
-        {/*      </Text>*/}
-        {/*    </TouchableOpacity>*/}
-
-        {/*    <TouchableOpacity*/}
-        {/*      onPress={() => handleOptionClick('gold')}*/}
-        {/*      style={style.goldContainer}>*/}
-        {/*      <LinearGradient*/}
-        {/*        colors={*/}
-        {/*          selectedOption === 'gold'*/}
-        {/*            ? ['#0D4EB3', '#9413D0']*/}
-        {/*            : ['transparent', 'transparent']*/}
-        {/*        }*/}
-        {/*        start={{x: 0, y: 0.5}}*/}
-        {/*        end={{x: 1, y: 0.5}}*/}
-        {/*        style={style.goldBodyContainer}*/}
-        {/*      />*/}
-        {/*      <Text*/}
-        {/*        style={[*/}
-        {/*          style.goldText,*/}
-        {/*          {color: selectedOption === 'gold' ? 'white' : 'black'},*/}
-        {/*        ]}>*/}
-        {/*        Gold*/}
-        {/*      </Text>*/}
-        {/*    </TouchableOpacity>*/}
-
-        {/*    <TouchableOpacity*/}
-        {/*      onPress={() => handleOptionClick('platinum')}*/}
-        {/*      style={style.platinumBodyContainer}>*/}
-        {/*      <LinearGradient*/}
-        {/*        colors={*/}
-        {/*          selectedOption === 'platinum'*/}
-        {/*            ? ['#0D4EB3', '#9413D0']*/}
-        {/*            : ['transparent', 'transparent']*/}
-        {/*        }*/}
-        {/*        start={{x: 0, y: 0.5}}*/}
-        {/*        end={{x: 1, y: 0.5}}*/}
-        {/*        style={style.platinumBody}*/}
-        {/*      />*/}
-        {/*      <Text*/}
-        {/*        style={[*/}
-        {/*          style.platinumText,*/}
-        {/*          {color: selectedOption === 'platinum' ? 'white' : 'black'},*/}
-        {/*        ]}>*/}
-        {/*        Platinum*/}
-        {/*      </Text>*/}
-        {/*    </TouchableOpacity>*/}
-        {/*  </View>*/}
-        {/*</View>*/}
 
         <View style={{marginHorizontal: 18}}>
           <View
@@ -842,7 +858,7 @@ const UpgradeScreen = () => {
               <LinearGradient
                 colors={
                   selectedOption === 'silver'
-                    ? ['#0D4EB3', '#9413D0']
+                    ? ['#7045EB', '#4819CB']
                     : ['transparent', 'transparent']
                 }
                 start={{x: 0, y: 0.5}}
@@ -878,7 +894,7 @@ const UpgradeScreen = () => {
               <LinearGradient
                 colors={
                   selectedOption === 'gold'
-                    ? ['#0D4EB3', '#9413D0']
+                    ? ['#7045EB', '#4819CB']
                     : ['transparent', 'transparent']
                 }
                 start={{x: 0, y: 0.5}}

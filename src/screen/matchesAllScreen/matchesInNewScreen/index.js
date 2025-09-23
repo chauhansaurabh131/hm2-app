@@ -877,14 +877,36 @@ const MatchesInNewScreen = () => {
           isFetchingMore ? (
             <View style={{alignItems: 'center', marginTop: 10}}>
               {/*<Text style={{color: 'black'}}>Loading Data..</Text>*/}
-              <CustomGradientLoader />
+              {/*<CustomGradientLoader />*/}
+              <ActivityIndicator size="large" color="blue" />
             </View>
           ) : null
         }
         ListEmptyComponent={
           !loading && !isFetchingMore ? (
             <View style={style.emptyListContainer}>
-              <Text style={{color: 'black'}}>No data available</Text>
+              {/*<Text style={{color: 'black'}}>No data available</Text>*/}
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: hp(250),
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.no_Profile_Found_img}
+                  style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
+                />
+                <Text
+                  style={{
+                    color: colors.black,
+                    fontSize: fontSize(18),
+                    lineHeight: hp(27),
+                    fontFamily: fontFamily.poppins400,
+                    marginTop: hp(12),
+                  }}>
+                  No Profiles Found
+                </Text>
+              </View>
             </View>
           ) : null
         }
@@ -1253,7 +1275,10 @@ const MatchesInNewScreen = () => {
               />
 
               <Text style={style.bottomSheetText}>
-                Copy ID : {selectedUniqueId}
+                Copy ID :{' '}
+                <Text style={{textTransform: 'uppercase'}}>
+                  {selectedUniqueId}
+                </Text>
               </Text>
             </TouchableOpacity>
 
@@ -1316,7 +1341,7 @@ const MatchesInNewScreen = () => {
                 activeOpacity={0.7}
                 onPress={handleConfirmBlock}>
                 <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
                   style={style.blockModalYesBTNCon}>
@@ -1495,7 +1520,7 @@ const MatchesInNewScreen = () => {
               style={style.successOkCon}
               onPress={handleCloseModal}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.5}}
                 style={style.successOkBody}>

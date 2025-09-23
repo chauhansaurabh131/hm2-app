@@ -15,11 +15,21 @@ import {icons} from '../../assets';
 import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {useSelector} from 'react-redux';
+import axios from 'axios/index';
 
 const STATUS_DURATION = 3000; // 3 seconds for each status
 
 const ViewStatusScreen = () => {
   const route = useRoute(); // Get the route object
+
+  console.log(' === route ===> ', route?.params);
+
+  const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+
+  console.log(' === var ===> ', user?.user);
+
   const navigation = useNavigation(); // Get the navigation object
   const {allStatuses, selectedIndex} = route.params || {}; // Access the passed data
   const [currentIndex, setCurrentIndex] = useState(selectedIndex); // Track current status index
@@ -40,6 +50,44 @@ const ViewStatusScreen = () => {
       clearTimeout(timeoutRef.current); // Clean up timer on unmount or index change
     };
   }, [currentIndex]);
+
+  // ✅ API Call function
+  const createStoryView = async () => {
+    try {
+      const statusId = route?.params?.allStatuses[0]?.id;
+      const viewerId = user?.user?.id;
+
+      if (!statusId || !viewerId) {
+        return;
+      }
+
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/story-view/create-view',
+        {
+          statusId,
+          viewerId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // ✅ token from redux
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      console.log('📌 Story view created:', response.data);
+    } catch (error) {
+      console.error(
+        '❌ Error creating story view:',
+        error.response?.data || error.message,
+      );
+    }
+  };
+
+  // ✅ Call API when screen loads
+  useEffect(() => {
+    createStoryView();
+  }, []);
 
   // Function to calculate time ago
   const calculateTimeAgo = () => {
@@ -138,7 +186,7 @@ const ViewStatusScreen = () => {
   // Get the current status based on the currentIndex
   const currentStatus = allStatuses[currentIndex];
 
-  console.log(' === currentStatus______++++ ===> ', currentStatus?.caption);
+  // console.log(' === currentStatus______++++ ===> ', currentStatus?.caption);
 
   // Interpolate the progress to create the color transition effect
   const progressBarColor = progress.interpolate({

@@ -64,7 +64,7 @@ const NewUserDetailsScreen = () => {
 
   const route = useRoute();
   const {matchesUserData} = route.params;
-  console.log(' === matchesUserData ===> ', matchesUserData?.id);
+  // console.log(' === matchesUserData ===> ', matchesUserData);
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -72,6 +72,19 @@ const NewUserDetailsScreen = () => {
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
   const userImage = user?.user?.profilePic;
+
+  console.log(' === userId++--+++ ===> ', userId);
+  console.log(
+    ' === userDetails****///*** ===> ',
+    userDetails?.friendsDetails?.friend,
+  );
+
+  console.log(
+    ' === userDetails_Status**// ===> ',
+    userDetails?.friendsDetails?.status,
+  );
+
+  console.log(' === **//** ===> ', userDetails?.friendsDetails);
 
   const topModalBottomSheetRef = useRef(null);
   const friendBottomSheetRef = useRef(null);
@@ -221,6 +234,14 @@ const NewUserDetailsScreen = () => {
     Toast.show({
       type: 'ProfileDisLike',
       text1: 'Profile Disliked',
+      visibilityTime: 1000,
+    });
+  };
+
+  const RequestedAccepted = () => {
+    Toast.show({
+      type: 'RequestAccepted',
+      text1: 'Requested Accepted',
       visibilityTime: 1000,
     });
   };
@@ -411,7 +432,7 @@ const NewUserDetailsScreen = () => {
   }
 
   const handleShortlist = async () => {
-    const loggedInUserId = userDetails._id; // Get the logged-in user's ID
+    const loggedInUserId = userDetails?._id; // Get the logged-in user's ID
     const currentShortlistId =
       userDetails?.userShortListDetails?._id ||
       userDetails?.userShortListDetails?.id;
@@ -507,7 +528,7 @@ const NewUserDetailsScreen = () => {
 
   // Function to handle like action (add or remove)
   const handleLike = async () => {
-    const likedUserId = userDetails._id; // The user you want to like/unlike
+    const likedUserId = userDetails?._id; // The user you want to like/unlike
     const currentIsLike = userDetails?.userLikeDetails?.isLike;
     const currentIsLikeId = userDetails?.userLikeDetails?._id;
 
@@ -626,6 +647,39 @@ const NewUserDetailsScreen = () => {
   };
 
   // Function to create a new friend request
+  // const sendFriendRequest = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       'https://stag.mntech.website/api/v1/user/friend/create-friend',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           friend: userDetails?._id,
+  //           user: userId,
+  //         }),
+  //       },
+  //     );
+  //
+  //     if (!response.ok) {
+  //       throw new Error('Failed to send friend request');
+  //     }
+  //
+  //     RequestSent();
+  //
+  //     setUserDetails(prevState => ({
+  //       ...prevState,
+  //       friendsDetails: {...prevState.friendsDetails, status: 'requested'},
+  //     }));
+  //   } catch (err) {
+  //     alert('Error sending friend request');
+  //     console.error(err);
+  //   }
+  // };
+
   const sendFriendRequest = async () => {
     try {
       const response = await fetch(
@@ -637,8 +691,8 @@ const NewUserDetailsScreen = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            friend: userDetails?._id,
-            user: userId,
+            friend: userDetails?._id, // the person you're sending request to
+            user: userId, // current logged in user
           }),
         },
       );
@@ -647,11 +701,18 @@ const NewUserDetailsScreen = () => {
         throw new Error('Failed to send friend request');
       }
 
+      const data = await response.json(); // 👈 get API response
       RequestSent();
 
+      // ✅ Update both friend id & status immediately
       setUserDetails(prevState => ({
         ...prevState,
-        friendsDetails: {...prevState.friendsDetails, status: 'requested'},
+        friendsDetails: {
+          ...prevState?.friendsDetails,
+          friend: userDetails?._id, // update friend id here
+          status: 'requested', // update status
+          _id: data?.data?._id || prevState?.friendsDetails?._id, // update request id if API returns it
+        },
       }));
     } catch (err) {
       alert('Error sending friend request');
@@ -672,6 +733,7 @@ const NewUserDetailsScreen = () => {
         () => {
           // Updating the status to 'declined' in the user data after a successful API call
           setRequestStatus('declined'); // Update request status to 'declined'
+          // RequestDeclined();
 
           // Update userDetails to reflect the declined status
           setUserDetails(prevData => {
@@ -679,7 +741,7 @@ const NewUserDetailsScreen = () => {
               ...prevData, // Keep the existing data
               friendsDetails: {
                 ...prevData.friendsDetails,
-                status: 'declined', // Update the status of the declined request
+                status: 'rejected', // Update the status of the declined request
               },
             };
           });
@@ -702,6 +764,7 @@ const NewUserDetailsScreen = () => {
         },
         () => {
           setRequestStatus('accepted');
+          RequestedAccepted();
           setUserDetails(prevData => {
             return {
               ...prevData, // Keep the existing data
@@ -717,8 +780,13 @@ const NewUserDetailsScreen = () => {
   };
 
   const onSendMessagePress = allData => {
-    const userData = allData?.userData;
-    // console.log(' === onSendMessagePress_____ ===> ', userData);
+    // const userData = allData?.userData;
+    // console.log(' === onSendMessagePress_____ ===> ', allData);
+
+    const userData = {
+      friendList: allData,
+      userList: user?.user,
+    };
 
     navigation.navigate('ChatUserScreen', {
       userData,
@@ -729,21 +797,6 @@ const NewUserDetailsScreen = () => {
     const status = userDetails?.friendsDetails?.status;
 
     console.log(' === onThreeDotPress__ ===> ', status);
-
-    // if (status === 'accepted') {
-    //   friendBottomSheetRef.current.open();
-    // } else if (status === 'requested') {
-    //   friendBottomSheetRef.current.open();
-    // }
-
-    // if (
-    //   status === 'accepted' ||
-    //   status === 'requested' ||
-    //   status === 'rejected' ||
-    //   status === undefined
-    // ) {
-    //   friendBottomSheetRef.current.open();
-    // }
 
     friendBottomSheetRef.current.open();
   };
@@ -847,7 +900,7 @@ const NewUserDetailsScreen = () => {
     dispatch(
       accepted_Decline_Request(
         {
-          user: userDetails?._id,
+          user: userDetails?.friendsDetails?.friend,
           request: userDetails?.friendsDetails?._id,
           status: 'removed',
         },
@@ -1036,10 +1089,14 @@ const NewUserDetailsScreen = () => {
     setAboutText('');
   };
 
-  const bottomSheetSendMessagePress = userData => {
-    // console.log(' === bottomSheetSendMessagePress ===> ', userData);
+  const bottomSheetSendMessagePress = userDatas => {
+    // console.log(' === bottomSheetSendMessagePress ===> ', userDatas);
 
     friendBottomSheetRef.current.close();
+    const userData = {
+      friendList: userDatas,
+      userList: user?.user,
+    };
 
     navigation.navigate('ChatUserScreen', {
       userData,
@@ -1226,6 +1283,28 @@ const NewUserDetailsScreen = () => {
         </Text>
       </View>
     ),
+    RequestAccepted: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333',
+          borderRadius: 100,
+          marginHorizontal: 20,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white',
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
   };
 
   // console.log(
@@ -1236,8 +1315,8 @@ const NewUserDetailsScreen = () => {
   // console.log(' === userDetails___ ===> ', userDetails?.friendsDetails?.status);
 
   const profilePrivacy =
-    (userDetails.privacySettingCustom?.profilePhotoPrivacy === true ||
-      userDetails.privacySettingCustom?.showPhotoToFriendsOnly === true) &&
+    (userDetails?.privacySettingCustom?.profilePhotoPrivacy === true ||
+      userDetails?.privacySettingCustom?.showPhotoToFriendsOnly === true) &&
     userDetails?.friendsDetails?.status !== 'accepted';
 
   const {selectedPlan, status} = userDetails?.subscriptionDetails || {};
@@ -1254,14 +1333,15 @@ const NewUserDetailsScreen = () => {
     crownTintColor = 'orange'; // Gold plan -> orange tint
   } else if (isSilverPlan) {
     crownTintColor = 'silver'; // Silver plan -> silver tint
+    // crownTintColor = '#9CA8C9'; // Silver plan -> silver tint
   } else if (isPlatinumPlan) {
     crownTintColor = 'green'; // Platinum plan -> red tint
   }
 
   const hasValidImage =
-    userDetails.profilePic &&
-    userDetails.profilePic !== 'null' &&
-    userDetails.profilePic.trim() !== '';
+    userDetails?.profilePic &&
+    userDetails?.profilePic !== 'null' &&
+    userDetails?.profilePic.trim() !== '';
 
   const calculateAge = dob => {
     const birthDate = new Date(dob);
@@ -1300,7 +1380,7 @@ const NewUserDetailsScreen = () => {
   //   : 0;
 
   const uniqueProfilePics = Array.isArray(userDetails?.userProfilePic)
-    ? userDetails.userProfilePic.filter(
+    ? userDetails?.userProfilePic.filter(
         (pic, index, self) =>
           index ===
           self.findIndex(
@@ -1309,9 +1389,9 @@ const NewUserDetailsScreen = () => {
       )
     : [];
 
-  const imageCount = uniqueProfilePics.length;
+  const imageCount = uniqueProfilePics?.length;
 
-  console.log(' === imageCount+++ ===> ', imageCount);
+  // console.log(' === imageCount+++ ===> ', imageCount);
 
   const userAllImageShare = () => {
     const allImages = userDetails?.userProfilePic?.map(image => image.url);
@@ -1407,7 +1487,7 @@ const NewUserDetailsScreen = () => {
             {hasValidImage ? (
               <>
                 <Image
-                  source={{uri: userDetails.profilePic}}
+                  source={{uri: userDetails?.profilePic}}
                   style={{
                     width: '100%',
                     height: hp(449),
@@ -1432,8 +1512,8 @@ const NewUserDetailsScreen = () => {
             ) : (
               <>
                 <ProfileAvatar
-                  firstName={userDetails.firstName || userDetails.name}
-                  lastName={userDetails.lastName}
+                  firstName={userDetails?.firstName || userDetails?.name}
+                  lastName={userDetails?.lastName}
                   textStyle={{
                     width: '100%',
                     height: hp(449),
@@ -1540,7 +1620,7 @@ const NewUserDetailsScreen = () => {
                   // }}
                   style={style.gradientImageBody}
                   disabled={percentageLoader !== null}>
-                  {percentageLoader === userDetails._id ? (
+                  {percentageLoader === userDetails?._id ? (
                     <ActivityIndicator
                       size="small"
                       color="#FFFFFF"
@@ -1609,156 +1689,355 @@ const NewUserDetailsScreen = () => {
         {matchesUserData?.userData?.status !== 'blocked' && (
           <View style={style.bodyMiddleContainer}>
             <View style={style.BodyContainer}>
-              {matchesUserData?.screen === 'SendScreen' ? (
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  onPress={
-                    friendStatus === 'requested'
-                      ? removeFriendRequest
-                      : sendFriendRequest
-                  }>
-                  <Image
-                    source={friendIconSource}
-                    style={style.sendRequestIcon}
-                  />
-                </TouchableOpacity>
-              ) : receivedScreeData === 'requested' ? (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    marginTop: 15,
-                  }}>
-                  {requestStatus === 'declined' ? (
-                    <View style={{flexDirection: 'row'}}>
-                      <Text
-                        style={{
-                          fontSize: fontSize(16),
-                          lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins500,
-                          color: colors.black,
-                          marginRight: 15,
-                        }}>
-                        Declined Request
-                      </Text>
-                      <Image
-                        source={icons.matched_declined_icon}
-                        tintColor={'#BE6D6B'}
-                        style={{
-                          width: hp(22),
-                          height: hp(22),
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </View>
-                  ) : requestStatus === 'accepted' ? (
-                    <View style={{flexDirection: 'row'}}>
-                      <Text
-                        style={{
-                          fontSize: fontSize(16),
-                          lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins500,
-                          color: colors.black,
-                          marginRight: 15,
-                        }}>
-                        Accepted Request
-                      </Text>
-                      <Image
-                        source={icons.matches_accp_icon}
-                        tintColor={'#17C270'}
-                        style={{
-                          width: hp(22),
-                          height: hp(22),
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </View>
-                  ) : (
-                    <>
-                      <Text
-                        style={{
-                          fontSize: fontSize(16),
-                          lineHeight: hp(24),
-                          fontFamily: fontFamily.poppins500,
-                          color: colors.black,
-                        }}>
-                        Want to accept?
-                      </Text>
+              {/*{matchesUserData?.screen === 'SendScreen' ? (*/}
+              {/*  <TouchableOpacity*/}
+              {/*    activeOpacity={0.5}*/}
+              {/*    onPress={*/}
+              {/*      friendStatus === 'requested'*/}
+              {/*        ? removeFriendRequest*/}
+              {/*        : sendFriendRequest*/}
+              {/*    }>*/}
+              {/*    <Image*/}
+              {/*      source={friendIconSource}*/}
+              {/*      style={style.sendRequestIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*) : receivedScreeData === 'requested' ? (*/}
+              {/*  <View*/}
+              {/*    style={{*/}
+              {/*      alignItems: 'center',*/}
+              {/*      flexDirection: 'row',*/}
+              {/*      justifyContent: 'center',*/}
+              {/*      marginTop: 15,*/}
+              {/*    }}>*/}
+              {/*    {requestStatus === 'declined' ? (*/}
+              {/*      <View style={{flexDirection: 'row'}}>*/}
+              {/*        <Text*/}
+              {/*          style={{*/}
+              {/*            fontSize: fontSize(16),*/}
+              {/*            lineHeight: hp(24),*/}
+              {/*            fontFamily: fontFamily.poppins500,*/}
+              {/*            color: colors.black,*/}
+              {/*            marginRight: 15,*/}
+              {/*          }}>*/}
+              {/*          Declined Request*/}
+              {/*        </Text>*/}
+              {/*        <Image*/}
+              {/*          source={icons.matched_declined_icon}*/}
+              {/*          tintColor={'#BE6D6B'}*/}
+              {/*          style={{*/}
+              {/*            width: hp(22),*/}
+              {/*            height: hp(22),*/}
+              {/*            resizeMode: 'contain',*/}
+              {/*          }}*/}
+              {/*        />*/}
+              {/*      </View>*/}
+              {/*    ) : requestStatus === 'accepted' ? (*/}
+              {/*      <View style={{flexDirection: 'row'}}>*/}
+              {/*        <Text*/}
+              {/*          style={{*/}
+              {/*            fontSize: fontSize(16),*/}
+              {/*            lineHeight: hp(24),*/}
+              {/*            fontFamily: fontFamily.poppins500,*/}
+              {/*            color: colors.black,*/}
+              {/*            marginRight: 15,*/}
+              {/*          }}>*/}
+              {/*          Accepted Request*/}
+              {/*        </Text>*/}
+              {/*        <Image*/}
+              {/*          source={icons.matches_accp_icon}*/}
+              {/*          tintColor={'#17C270'}*/}
+              {/*          style={{*/}
+              {/*            width: hp(22),*/}
+              {/*            height: hp(22),*/}
+              {/*            resizeMode: 'contain',*/}
+              {/*          }}*/}
+              {/*        />*/}
+              {/*      </View>*/}
+              {/*    ) : (*/}
+              {/*      <>*/}
+              {/*        <Text*/}
+              {/*          style={{*/}
+              {/*            fontSize: fontSize(16),*/}
+              {/*            lineHeight: hp(24),*/}
+              {/*            fontFamily: fontFamily.poppins500,*/}
+              {/*            color: colors.black,*/}
+              {/*          }}>*/}
+              {/*          Want to accept?*/}
+              {/*        </Text>*/}
 
-                      <TouchableOpacity
-                        onPress={() => {
-                          receivedFriendRequestedAccepted(userDetails);
-                        }}>
-                        <Image
-                          source={icons.received_accept_icon}
-                          style={{
-                            width: hp(63),
-                            height: hp(40),
-                            resizeMode: 'contain',
-                            marginRight: 15,
-                            marginLeft: 18,
-                          }}
-                        />
-                      </TouchableOpacity>
+              {/*        <TouchableOpacity*/}
+              {/*          onPress={() => {*/}
+              {/*            receivedFriendRequestedAccepted(userDetails);*/}
+              {/*          }}>*/}
+              {/*          <Image*/}
+              {/*            source={icons.received_accept_icon}*/}
+              {/*            style={{*/}
+              {/*              width: hp(63),*/}
+              {/*              height: hp(40),*/}
+              {/*              resizeMode: 'contain',*/}
+              {/*              marginRight: 15,*/}
+              {/*              marginLeft: 18,*/}
+              {/*            }}*/}
+              {/*          />*/}
+              {/*        </TouchableOpacity>*/}
 
-                      <TouchableOpacity
-                        // onPress={() => handleDecline(item?.friend?._id, item?._id)}
-                        onPress={() => {
-                          receivedFriendRequestedDecline(userDetails);
-                        }}>
-                        <Image
-                          source={icons.received_declined_icon}
+              {/*        <TouchableOpacity*/}
+              {/*          // onPress={() => handleDecline(item?.friend?._id, item?._id)}*/}
+              {/*          onPress={() => {*/}
+              {/*            receivedFriendRequestedDecline(userDetails);*/}
+              {/*          }}>*/}
+              {/*          <Image*/}
+              {/*            source={icons.received_declined_icon}*/}
+              {/*            style={{*/}
+              {/*              width: hp(63),*/}
+              {/*              height: hp(40),*/}
+              {/*              resizeMode: 'contain',*/}
+              {/*            }}*/}
+              {/*          />*/}
+              {/*        </TouchableOpacity>*/}
+              {/*      </>*/}
+              {/*    )}*/}
+              {/*  </View>*/}
+              {/*) : friendStatus === 'accepted' ? (*/}
+              {/*  <TouchableOpacity*/}
+              {/*    activeOpacity={0.5}*/}
+              {/*    onPress={() => {*/}
+              {/*      onSendMessagePress(matchesUserData);*/}
+              {/*    }}>*/}
+              {/*    <Image*/}
+              {/*      source={icons.new_send_message_icon}*/}
+              {/*      style={style.sendRequestIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*) : (*/}
+              {/*  <TouchableOpacity*/}
+              {/*    activeOpacity={0.5}*/}
+              {/*    onPress={*/}
+              {/*      friendStatus === 'requested'*/}
+              {/*        ? removeFriendRequest*/}
+              {/*        : sendFriendRequest*/}
+              {/*    }>*/}
+              {/*    <Image*/}
+              {/*      source={friendIconSource}*/}
+              {/*      style={style.sendRequestIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*)}*/}
+
+              {matchesUserData?.userData?.status !== 'blocked' && (
+                <View style={style.bodyMiddleContainer}>
+                  <View style={style.BodyContainer}>
+                    {userDetails?.friendsDetails?.status === 'requested' &&
+                    userId === userDetails?.friendsDetails?.friend ? (
+                      // ✅ Only show Want to accept block
+                      <>
+                        <Text
                           style={{
-                            width: hp(63),
-                            height: hp(40),
-                            resizeMode: 'contain',
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </>
-                  )}
+                            fontSize: fontSize(16),
+                            lineHeight: hp(24),
+                            fontFamily: fontFamily.poppins500,
+                            color: colors.black,
+                          }}>
+                          Want to accept?
+                        </Text>
+
+                        <TouchableOpacity
+                          onPress={() => {
+                            receivedFriendRequestedAccepted(userDetails);
+                          }}>
+                          <Image
+                            source={icons.received_accept_icon}
+                            style={{
+                              width: hp(63),
+                              height: hp(39),
+                              resizeMode: 'contain',
+                              marginRight: 15,
+                              marginLeft: 18,
+                              marginTop: -8,
+                            }}
+                          />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => {
+                            receivedFriendRequestedDecline(userDetails);
+                          }}>
+                          <Image
+                            source={icons.received_declined_icon}
+                            style={{
+                              width: hp(63),
+                              height: hp(39),
+                              resizeMode: 'contain',
+                              marginTop: -8,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      // ✅ Fallback to your existing logic
+                      <>
+                        {matchesUserData?.screen === 'SendScreen' ? (
+                          <TouchableOpacity
+                            activeOpacity={0.5}
+                            onPress={
+                              friendStatus === 'requested'
+                                ? removeFriendRequest
+                                : sendFriendRequest
+                            }>
+                            <Image
+                              source={friendIconSource}
+                              style={style.sendRequestIcon}
+                            />
+                          </TouchableOpacity>
+                        ) : receivedScreeData === 'requested' ? (
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              marginTop: 15,
+                            }}>
+                            {requestStatus === 'declined' ? (
+                              <View style={{flexDirection: 'row'}}>
+                                <Text
+                                  style={{
+                                    fontSize: fontSize(16),
+                                    lineHeight: hp(24),
+                                    fontFamily: fontFamily.poppins500,
+                                    color: colors.black,
+                                    marginRight: 15,
+                                  }}>
+                                  Declined Request
+                                </Text>
+                                <Image
+                                  source={icons.matched_declined_icon}
+                                  tintColor={'#BE6D6B'}
+                                  style={{
+                                    width: hp(22),
+                                    height: hp(22),
+                                    resizeMode: 'contain',
+                                  }}
+                                />
+                              </View>
+                            ) : requestStatus === 'accepted' ? (
+                              <View style={{flexDirection: 'row'}}>
+                                <Text
+                                  style={{
+                                    fontSize: fontSize(16),
+                                    lineHeight: hp(24),
+                                    fontFamily: fontFamily.poppins500,
+                                    color: colors.black,
+                                    marginRight: 15,
+                                  }}>
+                                  Accepted Request
+                                </Text>
+                                <Image
+                                  source={icons.matches_accp_icon}
+                                  tintColor={'#17C270'}
+                                  style={{
+                                    width: hp(22),
+                                    height: hp(22),
+                                    resizeMode: 'contain',
+                                  }}
+                                />
+                              </View>
+                            ) : null}
+                          </View>
+                        ) : friendStatus === 'accepted' ? (
+                          <>
+                            <TouchableOpacity
+                              activeOpacity={0.5}
+                              onPress={() => {
+                                onSendMessagePress(userDetails);
+                              }}>
+                              <Image
+                                source={icons.new_send_message_icon}
+                                style={style.sendRequestIcon}
+                              />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              activeOpacity={0.5}
+                              onPress={handleLike}>
+                              <Image
+                                source={
+                                  userDetails?.userLikeDetails?.isLike
+                                    ? icons.new_user_like_icon
+                                    : icons.new_like_icon
+                                }
+                                style={style.likeIcon}
+                              />
+                            </TouchableOpacity>
+                          </>
+                        ) : (
+                          <>
+                            <TouchableOpacity
+                              activeOpacity={0.5}
+                              onPress={
+                                friendStatus === 'requested'
+                                  ? removeFriendRequest
+                                  : sendFriendRequest
+                              }>
+                              <Image
+                                source={friendIconSource}
+                                style={style.sendRequestIcon}
+                              />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              activeOpacity={0.5}
+                              onPress={handleLike}>
+                              <Image
+                                source={
+                                  userDetails?.userLikeDetails?.isLike
+                                    ? icons.new_user_like_icon
+                                    : icons.new_like_icon
+                                }
+                                style={style.likeIcon}
+                              />
+                            </TouchableOpacity>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </View>
                 </View>
-              ) : friendStatus === 'accepted' ? (
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  onPress={() => {
-                    onSendMessagePress(matchesUserData);
-                  }}>
-                  <Image
-                    source={icons.new_send_message_icon}
-                    style={style.sendRequestIcon}
-                  />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  onPress={
-                    friendStatus === 'requested'
-                      ? removeFriendRequest
-                      : sendFriendRequest
-                  }>
-                  <Image
-                    source={friendIconSource}
-                    style={style.sendRequestIcon}
-                  />
-                </TouchableOpacity>
               )}
 
               {/*//////////////*/}
-              {(receivedScreeData !== 'requested' ||
-                matchesUserData?.screen === 'SendScreen') && (
-                <TouchableOpacity activeOpacity={0.5} onPress={handleLike}>
-                  <Image
-                    source={
-                      userDetails?.userLikeDetails?.isLike
-                        ? icons.new_user_like_icon
-                        : icons.new_like_icon
-                    }
-                    style={style.likeIcon}
-                  />
-                </TouchableOpacity>
-              )}
+              {/*{(receivedScreeData !== 'requested' ||*/}
+              {/*  matchesUserData?.screen === 'SendScreen') && (*/}
+              {/*  <TouchableOpacity*/}
+              {/*    activeOpacity={0.5}*/}
+              {/*    onPress={handleLike}*/}
+              {/*    style={{marginTop: hp(19)}}>*/}
+              {/*    <Image*/}
+              {/*      source={*/}
+              {/*        userDetails?.userLikeDetails?.isLike*/}
+              {/*          ? icons.new_user_like_icon*/}
+              {/*          : icons.new_like_icon*/}
+              {/*      }*/}
+              {/*      style={style.likeIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*)}*/}
+
+              {/*{userId !== userDetails?.friendsDetails?.friend && (*/}
+              {/*  <TouchableOpacity*/}
+              {/*    activeOpacity={0.5}*/}
+              {/*    onPress={handleLike}*/}
+              {/*    style={{marginTop: hp(19)}}>*/}
+              {/*    <Image*/}
+              {/*      source={*/}
+              {/*        userDetails?.userLikeDetails?.isLike*/}
+              {/*          ? icons.new_user_like_icon*/}
+              {/*          : icons.new_like_icon*/}
+              {/*      }*/}
+              {/*      style={style.likeIcon}*/}
+              {/*    />*/}
+              {/*  </TouchableOpacity>*/}
+              {/*)}*/}
             </View>
           </View>
         )}
@@ -1857,7 +2136,11 @@ const NewUserDetailsScreen = () => {
                   source={icons.copy_id_card_icon}
                   style={style.threeDotBottomSheetIcon}
                 />
-                <Text style={style.threeDotBottomSheetTittleText}>
+                <Text
+                  style={[
+                    style.threeDotBottomSheetTittleText,
+                    {textTransform: 'uppercase'},
+                  ]}>
                   Copy ID : {userDetails?.userUniqueId}
                 </Text>
               </TouchableOpacity>
@@ -1990,7 +2273,9 @@ const NewUserDetailsScreen = () => {
 
                     <TouchableOpacity
                       onPress={() => {
-                        bottomSheetSendMessagePress(matchesUserData?.userData);
+                        bottomSheetSendMessagePress(
+                          matchesUserData?.userData || userDetails,
+                        );
                       }}
                       style={style.threeDotBottomSheetContainers}>
                       <Image
@@ -2046,7 +2331,7 @@ const NewUserDetailsScreen = () => {
                       : handleConfirmBlock();
                   }}>
                   <LinearGradient
-                    colors={['#2D46B9', '#8D1D8D']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 1}}
                     style={style.blockModalYesButtonBody}>
@@ -2089,7 +2374,7 @@ const NewUserDetailsScreen = () => {
                     activeOpacity={0.7}
                     onPress={handleConfirmUnFriend}>
                     <LinearGradient
-                      colors={['#2D46B9', '#8D1D8D']}
+                      colors={['#7045EB', '#4819CB']}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 1}}
                       style={style.unFriendModalYesButtonBody}>
@@ -2265,7 +2550,7 @@ const NewUserDetailsScreen = () => {
                 style={style.RBSSubmitModalOkButton}
                 onPress={handleCloseModal}>
                 <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1.5}}
                   style={style.RBSSubmitModalOkButtonBody}>

@@ -83,7 +83,7 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
       {isActive ? (
         // Gradient background for the active icon
         <LinearGradient
-          colors={['#0D4EB3', '#9413D0']}
+          colors={['#7045EB', '#4819CB']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
           style={{

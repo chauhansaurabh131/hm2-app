@@ -25,6 +25,9 @@ const AdminContactDetailsScreen = (...params) => {
   const [mobileNumber, setMobileNumber] = useState(
     userPersonalData?.mobileNumber || 'N/A',
   );
+
+  console.log(' === mobileNumber ===> ', mobileNumber);
+
   const [homeNumber, setHomeNumber] = useState(
     userPersonalData?.homeMobileNumber || 'N/A',
   );
@@ -138,12 +141,10 @@ const AdminContactDetailsScreen = (...params) => {
         {!isEditing ? (
           <View style={style.bodyContainerStyle}>
             <Text style={style.tittleText}>Mobile Number</Text>
-            <Text style={style.subTittleText}>+91 {mobileNumber} </Text>
-
-            {/*<View style={style.subTittleContainer}>*/}
-            {/*  <Text style={style.tittleText}>Home Number</Text>*/}
-            {/*  <Text style={style.subTittleText}>+91 {homeNumber} </Text>*/}
-            {/*</View>*/}
+            {/*<Text style={style.subTittleText}>+91 {mobileNumber} </Text>*/}
+            <Text style={style.subTittleText}>
+              {mobileNumber === 'N/A' ? 'N/A' : `+91 ${mobileNumber}`}
+            </Text>
 
             <View style={[style.subTittleContainer, {marginBottom: hp(25)}]}>
               <Text style={style.tittleText}>Email</Text>
@@ -166,7 +167,10 @@ const AdminContactDetailsScreen = (...params) => {
                   });
                 }}
                 style={style.subTittleContainerStyle}>
-                <Text style={style.subTittleText}>+91 {mobileNumber}</Text>
+                {/*<Text style={style.subTittleText}>+91 {mobileNumber}</Text>*/}
+                <Text style={style.subTittleText}>
+                  {mobileNumber === 'N/A' ? 'N/A' : `+91 ${mobileNumber}`}
+                </Text>
 
                 <Image
                   source={icons.rightSideIcon}

@@ -544,7 +544,7 @@ const UserEditProfileScreen = () => {
           <LinearGradient
             colors={
               selectedImageIndex !== null
-                ? ['#0D4EB3', '#9413D0']
+                ? ['#7045EB', '#4819CB']
                 : ['#CCCCCC', '#AAAAAA']
             }
             start={{x: 0, y: 0}}

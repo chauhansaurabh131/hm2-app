@@ -552,7 +552,15 @@ const HomeScreen = ({route}) => {
               borderRadius: 14,
               alignItems: 'center',
             }}>
-            <Image source={images.modal_top_img} style={{width: '100%'}} />
+            <Image
+              source={images.modal_top_img}
+              style={{
+                width: '99.9%',
+                height: hp(91),
+                borderTopRightRadius: 14,
+                borderTopLeftRadius: 14,
+              }}
+            />
 
             <Text
               style={{
@@ -601,7 +609,8 @@ const HomeScreen = ({route}) => {
                     style={{
                       width: wp(50),
                       borderWidth: 1,
-                      borderColor: activeLine === line ? '#8225AF' : '#E8E8E8',
+                      // borderColor: activeLine === line ? '#8225AF' : '#E8E8E8',
+                      borderColor: activeLine === line ? '#7045EB' : '#E8E8E8',
                       marginHorizontal: 5,
                     }}
                   />
@@ -619,7 +628,7 @@ const HomeScreen = ({route}) => {
                 bottom: 35,
               }}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0.5}}
                 style={{
@@ -648,64 +657,6 @@ const HomeScreen = ({route}) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginHorizontal: 17}}>
           <HomeCardProfileComponent />
-          {/*<View style={style.cardContainer}>*/}
-          {/*  <LinearGradient*/}
-          {/*    colors={['#0D4EB3', '#9413D0']}*/}
-          {/*    start={{x: 0, y: 0}}*/}
-          {/*    end={{x: 0, y: 1.5}}*/}
-          {/*    style={style.cardBodyStyle}>*/}
-          {/*    <View style={style.cardViewStyle}>*/}
-          {/*      {profilePicUrl ? (*/}
-          {/*        <Image*/}
-          {/*          source={{uri: profilePicUrl}}*/}
-          {/*          style={style.imageStyle}*/}
-          {/*        />*/}
-          {/*      ) : (*/}
-          {/*        <ProfileAvatar*/}
-          {/*          firstName={user?.user?.firstName}*/}
-          {/*          lastName={user?.user?.lastName}*/}
-          {/*          textStyle={style.imageStyle}*/}
-          {/*        />*/}
-          {/*      )}*/}
-          {/*      <View style={style.cardTextContainer}>*/}
-          {/*        /!*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*!/*/}
-          {/*        <Text style={style.cardUserTextStyle}>*/}
-          {/*          /!*{firstName} {lastName}*!/*/}
-          {/*          {name}*/}
-          {/*        </Text>*/}
-
-          {/*        <View style={style.cardSubTittleContainer}>*/}
-          {/*          <Text style={style.cardSubTittleTextStyle}>*/}
-          {/*            {UserUniqueId}*/}
-          {/*          </Text>*/}
-          {/*          <View style={style.cardCenterLineStyle} />*/}
-          {/*          <Text style={style.cardSubTittleTextStyle}>*/}
-          {/*            {capitalizeFirstLetter(planDetails?.planId?.planName) ||*/}
-          {/*              'Free'}{' '}*/}
-          {/*            Profile*/}
-          {/*          </Text>*/}
-          {/*        </View>*/}
-
-          {/*        <TouchableOpacity*/}
-          {/*          activeOpacity={0.7}*/}
-          {/*          onPress={() => {*/}
-          {/*            navigation.navigate('Upgrader');*/}
-          {/*          }}*/}
-          {/*          style={style.cardButtonContainer}>*/}
-          {/*          <View style={style.cardButtonBodyStyle}>*/}
-          {/*            <View style={style.cardButtonTextContainer}>*/}
-          {/*              <Text style={style.cardButtonTextStyle}>Upgrade</Text>*/}
-          {/*              <Image*/}
-          {/*                source={icons.crownIcon}*/}
-          {/*                style={style.cardButtonImageStyle}*/}
-          {/*              />*/}
-          {/*            </View>*/}
-          {/*          </View>*/}
-          {/*        </TouchableOpacity>*/}
-          {/*      </View>*/}
-          {/*    </View>*/}
-          {/*  </LinearGradient>*/}
-          {/*</View>*/}
         </View>
 
         {/*TOP SHEET*/}
@@ -718,18 +669,10 @@ const HomeScreen = ({route}) => {
         <View style={{marginHorizontal: 17}}>
           <View style={style.premiumTextContainer}>
             <Text style={style.premiumTextStyle}>New Matches</Text>
-            {/*<Text style={style.premiumTextsStyle}>110</Text>*/}
           </View>
 
           {/*PREMIUM MATCHES COMPONENT*/}
           <View style={style.PremiumMatchesTextContainer}>
-            {/*<PremiumMatchesFlatlistComponent*/}
-            {/*  data={NEW_MATCHES}*/}
-            {/*  shareButtonPress={() => {*/}
-            {/*    completeOpenModal(selectedBox);*/}
-            {/*  }}*/}
-            {/*/>*/}
-            {/*<NewPremiumMatchesComponent toastConfigs={toastConfigs} />*/}
             <PremiumMatchesComponent toastConfigs={toastConfigs} />
           </View>
         </View>
@@ -771,11 +714,11 @@ const HomeScreen = ({route}) => {
 
         {/* Start Recently view code*/}
 
-        <View style={{marginTop: 20}}>
+        <View>
           <RecentlyViewComponent />
         </View>
 
-        <View style={{marginTop: 10}}>
+        <View>
           <RemainingDataUiScreen />
         </View>
 

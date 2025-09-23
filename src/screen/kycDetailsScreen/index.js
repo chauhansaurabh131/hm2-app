@@ -37,7 +37,7 @@ const KycDetailsScreen = ({route}) => {
 
   // console.log(' === selectedID ===> ', selectedID);
 
-  console.log('Received KYC Data:======>', kycData); // Use the KYC data in this screen
+  // console.log('Received KYC Data:======>', kycData); // Use the KYC data in this screen
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
@@ -539,7 +539,7 @@ const KycDetailsScreen = ({route}) => {
                 navigation.navigate('VerifyIdentityScreen');
               }}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.5}}
                 style={style.verifyButtonBody}>

@@ -172,8 +172,12 @@ const MainNavigator = () => {
   const CustomTabBarButton = ({accessibilityState, children, onPress}) => {
     const focused = accessibilityState.selected;
 
+    // const gradientColors = focused
+    //   ? ['#0D4EB3', '#9413D0']
+    //   : ['transparent', 'transparent'];
+
     const gradientColors = focused
-      ? ['#0D4EB3', '#9413D0']
+      ? ['transparent', 'transparent']
       : ['transparent', 'transparent'];
 
     return (
@@ -456,27 +460,52 @@ const MainNavigator = () => {
   const HomeTabs = ({route}) => {
     console.log(' === HomeTabs ===> ', appType);
     // const {colors} = useTheme();
+
+    // const getIconStyle = isFocused => {
+    //   return {
+    //     width: hp(17.76),
+    //     height: hp(20),
+    //     tintColor: isFocused ? 'white' : '#120FBA',
+    //     resizeMode: 'contain',
+    //   };
+    // };
+
     const getIconStyle = isFocused => {
       return {
         width: hp(17.76),
         height: hp(20),
-        tintColor: isFocused ? 'white' : '#120FBA',
+        tintColor: isFocused ? '#4819CB' : '#5F6368', // 👈 red if focused, green if not
         resizeMode: 'contain',
       };
     };
+
+    // const getDatingIconStyle = isFocused => {
+    //   return {
+    //     width: hp(24),
+    //     height: hp(20),
+    //     tintColor: isFocused ? 'white' : '#120FBA',
+    //     resizeMode: 'contain',
+    //   };
+    // };
 
     const getDatingIconStyle = isFocused => {
       return {
         width: hp(24),
         height: hp(20),
-        tintColor: isFocused ? 'white' : '#120FBA',
+        tintColor: isFocused ? '#4819CB' : '#5F6368', // 👈 same here
         resizeMode: 'contain',
       };
     };
 
+    // const getLabelStyle = isFocused => {
+    //   return {
+    //     color: isFocused ? 'white' : 'black',
+    //   };
+    // };
+
     const getLabelStyle = isFocused => {
       return {
-        color: isFocused ? 'white' : 'black',
+        color: isFocused ? '#4819CB' : '#5F6368', // 👈 red if focused, green if not
       };
     };
 

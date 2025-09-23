@@ -509,7 +509,7 @@ export const style = StyleSheet.create({
   },
   gradientImageTextContainer: {
     color: 'white',
-    marginLeft: 9,
+    marginLeft: wp(7),
     fontSize: fontSize(10),
     lineHeight: hp(15),
     fontFamily: fontFamily.poppins600,

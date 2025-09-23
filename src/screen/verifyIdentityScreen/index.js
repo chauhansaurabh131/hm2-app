@@ -271,7 +271,7 @@ const VerifyIdentityScreen = ({navigation}) => {
             onPress={handleCapture} // Capture the image on button press
           >
             <LinearGradient
-              colors={['#0D4EB3', '#9413D0']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0.2}}
               end={{x: 1, y: 1.5}}
               style={styles.buttonBody}>
@@ -289,7 +289,7 @@ const VerifyIdentityScreen = ({navigation}) => {
             onPress={handleContinue} // Capture the image on button press
           >
             <LinearGradient
-              colors={['#0D4EB3', '#9413D0']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0.2}}
               end={{x: 1, y: 1.5}}
               style={styles.buttonBody}>

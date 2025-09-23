@@ -29,7 +29,7 @@ const ChatScreen = ({navigation}) => {
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
-  console.log(' === var ===> ', user?.user?.appUsesType);
+  // console.log(' === var ===> ', user?.user?.appUsesType);
 
   const [userInput, setUserInput] = useState(''); // User input for search
   const [status, setStatus] = useState('Disconnected');
@@ -196,6 +196,7 @@ const ChatScreen = ({navigation}) => {
 
       socketIo.on('onlineUser', data => {
         console.log('👥 Online users:', data);
+        setIsConnecting(false);
       });
 
       // ✅ Listen for "message" event instead of "newMessage"
@@ -391,12 +392,24 @@ const ChatScreen = ({navigation}) => {
               fontSize: fontSize(12),
               lineHeight: hp(18),
               fontFamily: fontFamily.poppins400,
-              color: colors.black,
+              // color: colors.black,
+              color:
+                item?.lastMessage?.message || item?.lastMessage?.fileUrl
+                  ? colors.black // ✅ normal case → black
+                  : colors.gray, // ✅ fallback → gray
             }}>
             {/*Hi, I am busy, I’ll drop you a message after some time.*/}
             {/*{item?.lastMessage?.message?.length > 40*/}
             {/*  ? `${item.lastMessage.message.slice(0, 40)}...`*/}
             {/*  : item.lastMessage.message}*/}
+
+            {/*{item?.lastMessage?.message*/}
+            {/*  ? item.lastMessage.message.length > 40*/}
+            {/*    ? `${item.lastMessage.message.slice(0, 40)}...`*/}
+            {/*    : item.lastMessage.message*/}
+            {/*  : item?.lastMessage?.fileUrl*/}
+            {/*  ? 'Image'*/}
+            {/*  : ''}*/}
 
             {item?.lastMessage?.message
               ? item.lastMessage.message.length > 40
@@ -404,7 +417,7 @@ const ChatScreen = ({navigation}) => {
                 : item.lastMessage.message
               : item?.lastMessage?.fileUrl
               ? 'Image'
-              : ''}
+              : 'No message yet !'}
           </Text>
 
           {item?.unreadCount > 0 && (
@@ -621,6 +634,101 @@ const ChatScreen = ({navigation}) => {
             ListFooterComponent={<View style={{height: hp(120)}} />}
           />
         )}
+
+        {/*{isConnecting ? (*/}
+        {/*  // shimmer loader*/}
+        {/*  <FlatList*/}
+        {/*    data={[1, 1, 1, 1, 1, 1, 1, 1]}*/}
+        {/*    renderItem={({item, index}) => {*/}
+        {/*      return (*/}
+        {/*        <View*/}
+        {/*          style={{*/}
+        {/*            width: '100%',*/}
+        {/*            height: 65,*/}
+        {/*            flexDirection: 'row',*/}
+        {/*            alignItems: 'center',*/}
+        {/*          }}>*/}
+        {/*          <ShimmerPlaceholder*/}
+        {/*            style={{*/}
+        {/*              width: 47,*/}
+        {/*              height: 47,*/}
+        {/*              borderRadius: 25,*/}
+        {/*              marginRight: wp(19),*/}
+        {/*            }}*/}
+        {/*          />*/}
+        {/*          <View style={{marginLeft: 3}}>*/}
+        {/*            <ShimmerPlaceholder*/}
+        {/*              style={{width: 100, height: 15, marginRight: wp(10)}}*/}
+        {/*            />*/}
+        {/*            <ShimmerPlaceholder*/}
+        {/*              style={{width: '100%', height: 10, marginTop: 5}}*/}
+        {/*            />*/}
+        {/*          </View>*/}
+        {/*        </View>*/}
+        {/*      );*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*) : filteredFriends.length === 0 && userInput ? (*/}
+        {/*  // ❌ No results for search*/}
+        {/*  <View*/}
+        {/*    style={{*/}
+        {/*      alignItems: 'center',*/}
+        {/*      marginTop: hp(200),*/}
+        {/*    }}>*/}
+        {/*    <Image*/}
+        {/*      source={icons.no_Profile_Found_img}*/}
+        {/*      style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}*/}
+        {/*    />*/}
+        {/*    <Text*/}
+        {/*      style={{*/}
+        {/*        marginTop: hp(14),*/}
+        {/*        color: colors.black,*/}
+        {/*        fontSize: fontSize(18),*/}
+        {/*        lineHeight: hp(27),*/}
+        {/*        fontFamily: fontFamily.poppins400,*/}
+        {/*      }}>*/}
+        {/*      No Profiles Found*/}
+        {/*    </Text>*/}
+        {/*  </View>*/}
+        {/*) : filteredFriends.length === 0 && !userInput ? (*/}
+        {/*  // no chats at all*/}
+        {/*  <View style={{alignItems: 'center', marginTop: hp(200)}}>*/}
+        {/*    <Image*/}
+        {/*      source={icons.no_message_icon}*/}
+        {/*      style={{width: hp(48), height: hp(44), resizeMode: 'contain'}}*/}
+        {/*    />*/}
+        {/*    <Text*/}
+        {/*      style={{*/}
+        {/*        marginTop: hp(14),*/}
+        {/*        color: colors.black,*/}
+        {/*        fontSize: fontSize(18),*/}
+        {/*        lineHeight: hp(27),*/}
+        {/*        fontFamily: fontFamily.poppins400,*/}
+        {/*      }}>*/}
+        {/*      No messages*/}
+        {/*    </Text>*/}
+        {/*    <Text*/}
+        {/*      style={{*/}
+        {/*        fontSize: fontSize(14),*/}
+        {/*        lineHeight: hp(21),*/}
+        {/*        fontFamily: fontFamily.poppins400,*/}
+        {/*        color: colors.gray,*/}
+        {/*      }}>*/}
+        {/*      New messages will appear here.*/}
+        {/*    </Text>*/}
+        {/*  </View>*/}
+        {/*) : (*/}
+        {/*  // ✅ Use filteredFriends here*/}
+        {/*  <FlatList*/}
+        {/*    data={filteredFriends}*/}
+        {/*    renderItem={FilterData}*/}
+        {/*    keyExtractor={item =>*/}
+        {/*      item.friendList?._id || item.id || Math.random().toString()*/}
+        {/*    }*/}
+        {/*    showsVerticalScrollIndicator={false}*/}
+        {/*    ListFooterComponent={<View style={{height: hp(120)}} />}*/}
+        {/*  />*/}
+        {/*)}*/}
       </View>
     </SafeAreaView>
   );

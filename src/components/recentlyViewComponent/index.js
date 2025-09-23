@@ -280,7 +280,7 @@ const RecentlyViewComponent = () => {
     <SafeAreaView style={{flex: 1}}>
       {(loading || profileData.length > 0) && (
         <>
-          <View style={{marginHorizontal: 17}}>
+          <View style={{marginHorizontal: 17, marginTop: hp(20)}}>
             <Text
               style={{
                 color: colors.black,
@@ -406,7 +406,7 @@ const RecentlyViewComponent = () => {
               height: 8,
               backgroundColor: '#F8F8F8',
               // marginTop: hp(10),
-              marginBottom: 20,
+              // marginBottom: 20,
             }}
           />
         </>

@@ -218,7 +218,7 @@ const MatchesScreen = ({navigation, route}) => {
         <LinearGradient
           colors={
             selectedTab === item.id
-              ? ['#0F52BA', '#8225AF'] // Gradient when selected
+              ? ['#7045EB', '#4819CB'] // Gradient when selected
               : ['#F9F9F9', '#F9F9F9'] // Default white background when not selected
           }
           start={{x: 0, y: 0}}

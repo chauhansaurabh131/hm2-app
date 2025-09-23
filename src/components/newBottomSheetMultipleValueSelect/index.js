@@ -10,11 +10,11 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers'; // Ensure you have these utils
-import {icons} from '../../assets'; // Assuming icons are defined for your assets
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {icons} from '../../assets';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {colors} from '../../utils/colors';
-import {style} from './style'; // Ensure you have colors defined
+import {style} from './style';
 
 const NewBottomSheetMultipleValueSelect = ({
   label,
@@ -23,32 +23,12 @@ const NewBottomSheetMultipleValueSelect = ({
   bottomSheetHeight,
   maxSelections = 5,
 }) => {
-  const [selectedValues, setSelectedValues] = useState([]); // State to store selected values
-  const bottomSheetRef = useRef(null); // Reference to the bottom sheet
+  const [selectedValues, setSelectedValues] = useState([]);
+  const bottomSheetRef = useRef(null);
 
-  // Function to open the bottom sheet
   const openBottomSheet = () => {
     bottomSheetRef.current.open();
   };
-
-  // Function to handle value selection from the bottom sheet
-  // const handleSelect = value => {
-  //   const updatedSelectedValues = selectedValues.includes(value)
-  //     ? selectedValues.filter(item => item !== value) // Remove if already selected
-  //     : [...selectedValues, value]; // Add if not selected
-  //
-  //   setSelectedValues(updatedSelectedValues);
-  //
-  //   // Only update parent state if onSelect is defined
-  //   if (onSelect) {
-  //     onSelect(updatedSelectedValues);
-  //   }
-  //
-  //   // Delay closing the bottom sheet slightly to avoid race conditions
-  //   setTimeout(() => {
-  //     bottomSheetRef.current.close();
-  //   }, 100);
-  // };
 
   const handleSelect = value => {
     const isSelected = selectedValues.includes(value);
@@ -58,7 +38,7 @@ const NewBottomSheetMultipleValueSelect = ({
       // Remove if already selected
       updatedSelectedValues = selectedValues.filter(item => item !== value);
     } else {
-      // Check if maximum selections reached
+      // Check max selection limit
       if (selectedValues.length >= maxSelections) {
         Alert.alert(
           'Maximum Selection Reached',
@@ -67,7 +47,6 @@ const NewBottomSheetMultipleValueSelect = ({
         );
         return;
       }
-      // Add new selection
       updatedSelectedValues = [...selectedValues, value];
     }
 
@@ -77,12 +56,12 @@ const NewBottomSheetMultipleValueSelect = ({
       onSelect(updatedSelectedValues);
     }
 
-    setTimeout(() => {
-      bottomSheetRef.current.close();
-    }, 100);
+    // ❌ Remove auto-close → Keep BottomSheet open
+    // setTimeout(() => {
+    //   bottomSheetRef.current.close();
+    // }, 100);
   };
 
-  // Function to remove a selected value
   const removeSelectedValue = value => {
     const updatedSelectedValues = selectedValues.filter(item => item !== value);
     setSelectedValues(updatedSelectedValues);
@@ -94,26 +73,26 @@ const NewBottomSheetMultipleValueSelect = ({
 
   return (
     <SafeAreaView style={style.container}>
-      {/* TextInput and dropdown icon container */}
+      {/* Input field */}
       <TouchableOpacity
         activeOpacity={0.6}
         onPress={openBottomSheet}
         style={style.textInputContainer}>
         <TextInput
           placeholder={label || 'Select options'}
-          value={selectedValues.length === 0 ? '' : undefined} // Show placeholder if no value is selected
+          value={selectedValues.length === 0 ? '' : undefined}
           style={style.textInput}
-          editable={false} // Make it non-editable to only open the bottom sheet on press
+          editable={false}
           placeholderTextColor={'black'}
         />
         <Image
-          source={icons.drooDownLogo} // Update the image source as needed
+          source={icons.drooDownLogo}
           style={style.dropdownIcon}
           resizeMode="contain"
         />
       </TouchableOpacity>
 
-      {/* Display selected values as chips below the TextInput */}
+      {/* Chips */}
       <View style={style.selectedValuesContainer}>
         {selectedValues.map((value, index) => (
           <View key={`${value}-${index}`} style={style.chip}>
@@ -127,34 +106,39 @@ const NewBottomSheetMultipleValueSelect = ({
         ))}
       </View>
 
-      {/* Bottom Sheet Component */}
+      {/* BottomSheet */}
       <RBSheet
         ref={bottomSheetRef}
         closeOnDragDown={true}
         closeOnPressMask={true}
-        // height={hp(350)}
         height={bottomSheetHeight}
         customStyles={{
-          wrapper: {
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          },
+          wrapper: {backgroundColor: 'rgba(0, 0, 0, 0.3)'},
           container: {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             backgroundColor: 'white',
           },
         }}>
-        {/* Content inside the Bottom Sheet */}
         <View>
           <ScrollView style={{marginBottom: hp(35)}}>
-            {options.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handleSelect(option)} // Call handleSelect to select value
-                style={style.option}>
-                <Text style={style.optionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
+            {options.map((option, index) => {
+              const isSelected = selectedValues.includes(option);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => handleSelect(option)}
+                  style={style.option}>
+                  <Text
+                    style={[
+                      style.optionText,
+                      isSelected && {color: 'gray'}, // ✅ only text color changes
+                    ]}>
+                    {option}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
       </RBSheet>

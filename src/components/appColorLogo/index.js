@@ -12,7 +12,7 @@ const AppColorLogo = () => {
           width: wp(96),
           height: hp(24),
           marginTop: hp(15),
-          resizeMode: 'stretch',
+          resizeMode: 'contain',
           marginBottom: hp(15),
         }}
       />

@@ -93,6 +93,7 @@ const style = StyleSheet.create({
     fontSize: fontSize(16),
     paddingHorizontal: 10,
     marginTop: hp(36),
+    color: colors.pureBlack,
   },
   buttonContainer: {
     width: '100%',

@@ -51,14 +51,12 @@ export const style = StyleSheet.create({
     color: colors.white,
   },
   cardCenterLineStyle: {
-    height: hp(13),
-    // borderWidth: 0.9,
-    // borderColor: colors.white,
+    height: hp(12),
     marginLeft: hp(10),
     marginRight: hp(10),
     top: 3,
     width: 1,
-    backgroundColor: colors.white,
+    backgroundColor: '#FFFFFF',
   },
   cardButtonContainer: {
     position: 'absolute',

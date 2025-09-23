@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -17,16 +17,23 @@ import {colors} from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
 import {changeStack, logout} from '../../actions/authActions';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import ProfileAvatar from '../letterProfileComponent';
+import {style} from '../homeCardProfileComponent/style';
 
 const NewProfileBottomSheet = ({bottomSheetRef}) => {
   const navigation = useNavigation();
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [planData, setPlanData] = useState(null);
+  const [planDetails, setPlanDetails] = useState(null);
+  const [planDurationDetails, setPlanDurationDetails] = useState(null);
+  const [creditData, setCreditData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [socket, setSocket] = useState(null);
   const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const userId = user?.user?.id;
 
   const appType = user?.user?.appUsesType;
 
@@ -38,6 +45,79 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
     user?.user?.profilePic.trim() !== '';
 
   const dispatch = useDispatch();
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserPlan = async () => {
+        if (!accessToken) {
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+
+          const data = await response.json();
+          // console.log('User Plan Response:', data);
+
+          if (response.ok && data?.data?.planId) {
+            setPlanDetails(data.data);
+            setPlanDurationDetails(data.data);
+          } else {
+            setPlanDetails(null);
+            setPlanDurationDetails(null);
+          }
+        } catch (error) {
+          console.error('User Plan Fetch error:', error);
+        }
+      };
+
+      const fetchCredit = async () => {
+        if (!accessToken || !userId) {
+          return;
+        }
+
+        try {
+          setLoading(true);
+          const response = await fetch(
+            `https://stag.mntech.website/api/v1/user/user/get-credit/${userId}`,
+            {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+
+          const data = await response.json();
+          console.log('Credit Response:', data);
+
+          if (response.ok) {
+            setCreditData(data);
+          } else {
+            setCreditData(null);
+          }
+        } catch (error) {
+          console.error('Credit Fetch error:', error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      // 🔹 Call both APIs when screen focuses
+      fetchUserPlan();
+      fetchCredit();
+    }, [accessToken, userId]),
+  );
 
   useEffect(() => {
     const fetchPlanData = async () => {
@@ -114,6 +194,26 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
     }
   };
 
+  const formatPlanDuration = duration => {
+    if (!duration || typeof duration !== 'string') {
+      return '';
+    }
+
+    // remove "-" and replace with space
+    const cleaned = duration.replace(/-/g, ' ');
+
+    const map = {
+      monthly: 'One Month',
+      yearly: 'Year',
+      quarterly: 'Quarter',
+      weekly: 'Week',
+      daily: 'Day',
+    };
+
+    const lower = cleaned.toLowerCase();
+    return map[lower] || capitalizeFirstLetter(lower);
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -124,7 +224,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
       }}>
       <RBSheet
         ref={bottomSheetRef}
-        height={hp(630)}
+        height={hp(610)}
         openDuration={250}
         customStyles={{
           container: {
@@ -155,29 +255,127 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
 
             <Text style={styles.userNameTextStyle}>{name}</Text>
 
-            <View style={styles.userDescriptionContainer}>
-              <Text style={styles.userNumberTextStyle}>{UserUniqueId}</Text>
-              <View style={styles.userDescriptionTextStyle} />
-              <Text style={styles.freeProfileText}>FREE Profile</Text>
-            </View>
+            {/*<View style={styles.userDescriptionContainer}>*/}
+            {/*  <Text style={styles.userNumberTextStyle}>{UserUniqueId}</Text>*/}
+            {/*  <View style={styles.userDescriptionTextStyle} />*/}
+            {/*  <Text style={styles.freeProfileText}>FREE Profile</Text>*/}
+            {/*</View>*/}
 
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={{marginTop: hp(12)}}
-              onPress={() => {
-                navigation.navigate('Upgrader');
-                closeBottomSheet();
-              }}>
-              <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1.5}}
-                style={styles.upgradeContainer}>
-                <Text style={styles.upgradeText}>Upgrade</Text>
-                <Image source={icons.crownIcon} style={styles.crownIconStyle} />
-              </LinearGradient>
-            </TouchableOpacity>
+            {/*<TouchableOpacity*/}
+            {/*  activeOpacity={0.7}*/}
+            {/*  style={{marginTop: hp(12)}}*/}
+            {/*  onPress={() => {*/}
+            {/*    navigation.navigate('Upgrader');*/}
+            {/*    closeBottomSheet();*/}
+            {/*  }}>*/}
+            {/*  <LinearGradient*/}
+            {/*    colors={['#0D4EB3', '#9413D0']}*/}
+            {/*    start={{x: 0, y: 0}}*/}
+            {/*    end={{x: 1, y: 1.5}}*/}
+            {/*    style={styles.upgradeContainer}>*/}
+            {/*    <Text style={styles.upgradeText}>Upgrade</Text>*/}
+            {/*    <Image source={icons.crownIcon} style={styles.crownIconStyle} />*/}
+            {/*  </LinearGradient>*/}
+            {/*</TouchableOpacity>*/}
           </View>
+
+          {planDetails?.planId?.planName ? (
+            // When API gives planName
+            <View style={{marginHorizontal: 27}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    marginTop: hp(5),
+                    textTransform: 'uppercase',
+                    fontSize: fontSize(14),
+                    lineHeight: hp(18),
+                    fontFamily: fontFamily.poppins500,
+                    color: colors.pureBlack,
+                  }}>
+                  {UserUniqueId}
+                </Text>
+                <View
+                  style={{
+                    height: hp(20),
+                    marginLeft: hp(10),
+                    marginRight: hp(10),
+                    top: 3,
+                    width: 1,
+                    backgroundColor: 'gray',
+                  }}
+                />
+
+                <Text
+                  style={{
+                    marginTop: hp(5),
+                    fontSize: fontSize(14),
+                    lineHeight: hp(18),
+                    fontFamily: fontFamily.poppins500,
+                    color: colors.pureBlack,
+                  }}>
+                  {capitalizeFirstLetter(planDetails?.planId?.planName)} -{' '}
+                  {formatPlanDuration(
+                    planDurationDetails?.planId?.planDuration,
+                  )}
+                </Text>
+              </View>
+
+              {/*<View*/}
+              {/*  style={{*/}
+              {/*    width: '100%',*/}
+              {/*    height: 2,*/}
+              {/*    backgroundColor: '#F2F2F2',*/}
+              {/*    marginTop: hp(13),*/}
+              {/*  }}*/}
+              {/*/>*/}
+
+              <Text
+                style={{
+                  color: colors.pureBlack,
+                  fontSize: fontSize(16),
+                  // lineHeight: hp(20),
+                  fontFamily: fontFamily.poppins600,
+                  marginTop: hp(10),
+                }}>
+                Available Credits : {creditData?.credit?.creditBalance}
+              </Text>
+            </View>
+          ) : (
+            // When no API plan data, fallback to Free Plan
+            <View style={{marginHorizontal: 27}}>
+              <View style={styles.userDescriptionContainer}>
+                <Text
+                  style={[
+                    styles.userNumberTextStyle,
+                    {textTransform: 'uppercase'},
+                  ]}>
+                  {UserUniqueId}
+                </Text>
+                <View style={styles.userDescriptionTextStyle} />
+                <Text style={styles.freeProfileText}>FREE Profile</Text>
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{marginTop: hp(12)}}
+                onPress={() => {
+                  navigation.navigate('Upgrader');
+                  closeBottomSheet();
+                }}>
+                <LinearGradient
+                  colors={['#7045EB', '#4819CB']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1.5}}
+                  style={styles.upgradeContainer}>
+                  <Text style={styles.upgradeText}>Upgrade</Text>
+                  <Image
+                    source={icons.crownIcon}
+                    style={styles.crownIconStyle}
+                  />
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <View style={styles.horizontalLine} />
 
@@ -317,7 +515,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity activeOpacity={0.7} onPress={onStayButtonPress}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0.5}}
                 style={styles.stayButtonContainer}>
@@ -402,9 +600,10 @@ const styles = StyleSheet.create({
   },
   horizontalLine: {
     width: '100%',
-    height: 1,
+    height: 4,
     backgroundColor: '#F2F2F2',
-    marginTop: hp(26),
+    // marginTop: hp(26),
+    marginTop: hp(20),
   },
   bodyContainer: {
     // marginHorizontal: 27,

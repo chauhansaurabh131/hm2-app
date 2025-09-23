@@ -26,7 +26,7 @@ const CommonGradientButton = ({
         disabled={disabled || loading}
         onPress={onPress}>
         <LinearGradient
-          colors={disabled ? ['#0D4EB3', '#9413D0'] : ['#0D4EB3', '#9413D0']}
+          colors={disabled ? ['#7045EB', '#4819CB'] : ['#7045EB', '#4819CB']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1.5}}
           style={[

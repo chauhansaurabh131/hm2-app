@@ -1132,6 +1132,7 @@ const ChatUserScreen = ({route}) => {
                   {userData
                     ? `${capitalizeFirstLetter(
                         userData?.friendList?.firstName ||
+                          userData?.friendList?.name ||
                           userData?.friendList[0]?.firstName ||
                           '',
                       )} ${capitalizeFirstLetter(
@@ -1355,7 +1356,7 @@ const ChatUserScreen = ({route}) => {
                     activeOpacity={0.7}
                     onPress={handleConfirmBlock}>
                     <LinearGradient
-                      colors={['#2D46B9', '#8D1D8D']}
+                      colors={['#7045EB', '#4819CB']}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 1}}
                       style={{
@@ -1851,9 +1852,11 @@ const ChatUserScreen = ({route}) => {
                 style={{
                   height: hp(245),
                   width: '100%',
-                  backgroundColor: 'silver',
+                  backgroundColor: 'white',
                   borderTopLeftRadius: 20,
                   borderTopRightRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'gray',
                 }}>
                 <Pressable style={{flex: 1}} onPress={() => {}}>
                   <EmojiSelector
@@ -2200,41 +2203,18 @@ const ChatUserScreen = ({route}) => {
                     color: colors.black,
                     textAlign: 'center',
                     marginTop: hp(24),
-                    fontSize: fontSize(12),
-                    lineHeight: hp(14),
-                    fontFamily: fontFamily.poppins400,
+                    fontSize: fontSize(14),
+                    lineHeight: hp(26),
+                    fontFamily: fontFamily.poppins500,
                   }}>
                   Are you sure want clear all chat?
                 </Text>
 
-                {/*<View*/}
-                {/*  style={{*/}
-                {/*    width: '90%',*/}
-                {/*    height: hp(66),*/}
-                {/*    backgroundColor: '#EDF4FF',*/}
-                {/*    alignItems: 'center',*/}
-                {/*    justifyContent: 'center',*/}
-                {/*    alignSelf: 'center',*/}
-                {/*    borderRadius: 14,*/}
-                {/*    marginTop: hp(20),*/}
-                {/*  }}>*/}
-                {/*  <Text*/}
-                {/*    style={{*/}
-                {/*      color: 'black',*/}
-                {/*      fontSize: fontSize(14),*/}
-                {/*      lineHeight: hp(18),*/}
-                {/*      fontFamily: fontFamily.poppins500,*/}
-                {/*    }}>*/}
-                {/*    {selectedMessage?.message?.length > 35*/}
-                {/*      ? `${selectedMessage.message.slice(0, 35)}...`*/}
-                {/*      : selectedMessage?.message}*/}
-                {/*  </Text>*/}
-                {/*</View>*/}
-
                 <View
                   style={{
                     alignSelf: 'center',
-                    marginTop: hp(45),
+                    // marginTop: hp(45),
+                    marginTop: hp(30),
                     marginBottom: hp(31),
                     flexDirection: 'row',
                     width: '90%',

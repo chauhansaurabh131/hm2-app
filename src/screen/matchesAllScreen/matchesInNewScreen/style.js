@@ -330,7 +330,7 @@ const style = StyleSheet.create({
   },
   couplePercentageContainer: {
     color: 'white',
-    marginLeft: 9,
+    marginLeft: wp(7),
     fontSize: fontSize(10),
     lineHeight: hp(15),
     fontFamily: fontFamily.poppins600,
@@ -436,7 +436,7 @@ const style = StyleSheet.create({
     zIndex: 99,
     position: 'absolute',
     alignSelf: 'center',
-    top: -130,
+    top: -100,
   },
   bottomSheetContainer: {
     marginHorizontal: 30,

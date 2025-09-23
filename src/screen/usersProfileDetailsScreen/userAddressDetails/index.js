@@ -35,6 +35,8 @@ const UserAddressDetails = (...params) => {
   const [planStatus, setPlanStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false); // Loader state
 
+  console.log(' === planStatus ===> ', planStatus);
+
   useEffect(() => {
     const fetchSubscription = async () => {
       if (!accessToken) {
@@ -179,7 +181,7 @@ const UserAddressDetails = (...params) => {
         ) : (
           <View>
             <LinearGradient
-              colors={['#0F52BA', '#8225AF']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
               style={{

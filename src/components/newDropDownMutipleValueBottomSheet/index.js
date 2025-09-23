@@ -25,18 +25,33 @@ const DropdownComponentBottomSheet = ({
   const [isFocus, setIsFocus] = useState(false);
   const bottomSheetRef = useRef(); // Reference to the bottom sheet
 
+  // const handleDropdownChange = item => {
+  //   const index = selectedItems.indexOf(item.value);
+  //   if (index === -1) {
+  //     setSelectedItems([...selectedItems, item.value]); // Select if not already selected
+  //   } else {
+  //     const newSelectedItems = [...selectedItems];
+  //     newSelectedItems.splice(index, 1); // Deselect if already selected
+  //     setSelectedItems(newSelectedItems);
+  //   }
+  //
+  //   bottomSheetRef.current.close(); // Close the bottom sheet after selection
+  // };
+
   const handleDropdownChange = item => {
     const index = selectedItems.indexOf(item.value);
     if (index === -1) {
-      setSelectedItems([...selectedItems, item.value]); // Select if not already selected
+      setSelectedItems([...selectedItems, item.value]); // Add
     } else {
       const newSelectedItems = [...selectedItems];
-      newSelectedItems.splice(index, 1); // Deselect if already selected
+      newSelectedItems.splice(index, 1); // Remove
       setSelectedItems(newSelectedItems);
     }
 
-    bottomSheetRef.current.close(); // Close the bottom sheet after selection
+    // ❌ Remove this line so sheet stays open
+    // bottomSheetRef.current.close();
   };
+
   const removeSelectedValue = value => {
     const newSelectedItems = selectedItems.filter(val => val !== value);
     setSelectedItems(newSelectedItems);
@@ -59,11 +74,28 @@ const DropdownComponentBottomSheet = ({
     });
   };
 
+  // const renderItem = item => {
+  //   return (
+  //     <TouchableOpacity onPress={() => handleDropdownChange(item)}>
+  //       <View style={styles.item}>
+  //         <Text style={styles.textItem}>{item.label}</Text>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+
   const renderItem = item => {
+    const isSelected = selectedItems.includes(item.value);
     return (
       <TouchableOpacity onPress={() => handleDropdownChange(item)}>
         <View style={styles.item}>
-          <Text style={styles.textItem}>{item.label}</Text>
+          <Text
+            style={[
+              styles.textItem,
+              isSelected && {color: 'gray'}, // 👈 make selected ones gray
+            ]}>
+            {item.label}
+          </Text>
         </View>
       </TouchableOpacity>
     );

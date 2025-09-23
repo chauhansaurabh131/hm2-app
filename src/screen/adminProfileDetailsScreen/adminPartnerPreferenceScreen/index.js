@@ -25,7 +25,7 @@ import MultipleValueSelectTextInput from '../../../components/mutipleValueSelect
 const AdminPartnerPreferenceScreen = (...params) => {
   const userPersonalData = params[0];
 
-  console.log(' === userPersonalData ===> ', userPersonalData);
+  // console.log(' === userPersonalData ===> ', userPersonalData);
 
   const {isUpdatingProfile} = useSelector(state => state.auth);
 
@@ -492,7 +492,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
   };
 
   const handleSave = () => {
-    console.log(' === handleSave--- ===> ', preferDiet);
+    // console.log(' === handleSave--- ===> ', preferDiet);
 
     setLoading(true);
     dispatch(
@@ -2097,7 +2097,7 @@ const AdminPartnerPreferenceScreen = (...params) => {
                 onPress={handleSave}
                 style={{marginHorizontal: 17}}>
                 <LinearGradient
-                  colors={['#0F52BA', '#8225AF']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0.5}}
                   style={{

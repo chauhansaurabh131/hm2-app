@@ -35,7 +35,7 @@ const AlertsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [requestResponses, setRequestResponses] = useState({});
 
-  console.log(' === notifications__ ===> ', notifications);
+  // console.log(' === notifications__ ===> ', notifications);
 
   // Fetch notifications page-wise
   const fetchNotifications = async (pageNumber = 1, isRefresh = false) => {
@@ -274,7 +274,7 @@ const AlertsScreen = () => {
   const renderItem = ({item}) => {
     const requestState = requestResponses[item.id];
 
-    console.log(' === requestState ===> ', requestState);
+    // console.log(' === requestState ===> ', requestState);
 
     const name = item?.otherUserId?.name
       ? item?.otherUserId?.name.charAt(0).toUpperCase() +
@@ -368,7 +368,7 @@ const AlertsScreen = () => {
                   )
                 }>
                 <LinearGradient
-                  colors={['#9413D0', '#0D4EB3']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 1, y: 0}}
                   end={{x: 0, y: 0}}
                   style={{
@@ -419,7 +419,7 @@ const AlertsScreen = () => {
               <TouchableOpacity
                 onPress={() => onAcceptedNumberRequestedPress(item)}>
                 <LinearGradient
-                  colors={['#9413D0', '#0D4EB3']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 1, y: 0}}
                   end={{x: 0, y: 0}}
                   style={{

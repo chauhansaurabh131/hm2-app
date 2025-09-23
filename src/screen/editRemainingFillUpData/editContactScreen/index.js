@@ -16,7 +16,6 @@ import {updateDetails} from '../../../actions/homeActions';
 const EditContactScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
   const [mobileNumber, setMobileNumber] = useState('');
-  const [homeNumber, setHomeNumber] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(false); // Loader state
 
@@ -26,17 +25,13 @@ const EditContactScreen = ({navigation}) => {
     if (user?.user?.mobileNumber) {
       setMobileNumber(user?.user?.mobileNumber);
     }
-    if (user?.user?.homeMobileNumber) {
-      setHomeNumber(user?.user?.homeMobileNumber);
-    }
+
     if (user?.user?.email) {
       setUserEmail(user?.user?.email);
     }
-  }, [
-    user?.user?.mobileNumber,
-    user?.user?.homeMobileNumber,
-    user?.user?.email,
-  ]);
+  }, [user?.user?.mobileNumber, user?.user?.email]);
+
+  const isDisabled = !mobileNumber?.trim() || !userEmail?.trim();
 
   const onSubmitPress = () => {
     setLoading(true);
@@ -44,7 +39,7 @@ const EditContactScreen = ({navigation}) => {
       updateDetails(
         {
           mobileNumber: mobileNumber,
-          homeMobileNumber: homeNumber,
+          // homeMobileNumber: homeNumber,
           email: userEmail,
         },
         () => {
@@ -80,15 +75,6 @@ const EditContactScreen = ({navigation}) => {
             label="Mobile Number"
             value={mobileNumber.toString()}
             onChangeText={setMobileNumber}
-            showUnit={true}
-          />
-        </View>
-
-        <View style={{marginTop: hp(37)}}>
-          <FloatingLabelInput
-            label="Home Number"
-            value={homeNumber.toString()}
-            onChangeText={setHomeNumber}
             showUnit={true}
           />
         </View>
@@ -139,17 +125,17 @@ const EditContactScreen = ({navigation}) => {
             {/* Submit Button */}
             <TouchableOpacity
               onPress={onSubmitPress}
+              disabled={isDisabled || loading}
               style={{
                 width: wp(176),
                 height: hp(44),
                 borderRadius: 30,
-                backgroundColor: colors.black,
+                backgroundColor: isDisabled ? colors.gray : colors.black,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {loading ? (
-                // Show loader if loading is true
-                <ActivityIndicator size="large" color={colors.white} />
+                <ActivityIndicator size="small" color={colors.white} />
               ) : (
                 <Text
                   style={{

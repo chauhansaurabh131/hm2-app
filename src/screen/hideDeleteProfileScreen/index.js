@@ -536,8 +536,8 @@ const HideDeleteProfileScreen = () => {
               <LinearGradient
                 colors={
                   !selectedDelete
-                    ? ['#0D4EB3', '#9413D0']
-                    : ['#0D4EB3', '#9413D0']
+                    ? ['#7045EB', '#4819CB']
+                    : ['#7045EB', '#4819CB']
                 } // Gray when disabled
                 start={{x: 0, y: 0}}
                 end={{x: 0.9, y: 0.7}}
@@ -721,7 +721,7 @@ const HideDeleteProfileScreen = () => {
                           lineHeight: hp(21),
                           fontFamily: fontFamily.poppins600,
                         }}>
-                        Cancel...
+                        Cancel
                       </Text>
                     </View>
                   </LinearGradient>

@@ -24,6 +24,7 @@ import ProfileAvatar from '../../components/letterProfileComponent';
 const StepForAuthenticationOnScreen = () => {
   const [barcodeUrl, setBarcodeUrl] = useState(null); // State to hold barcode URL
   const [code, setCode] = useState(''); // To store the 6-digit code
+  const [loader, setLoader] = useState(false);
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
@@ -103,6 +104,7 @@ const StepForAuthenticationOnScreen = () => {
 
     console.log(' === codeWithoutSpaces ===> ', codeWithoutSpaces);
 
+    setLoader(true);
     // API request to verify the OTP
     try {
       const response = await fetch(
@@ -136,6 +138,7 @@ const StepForAuthenticationOnScreen = () => {
         // navigation.goBack();
         setCode('');
         navigation.navigate('TwoFactorAuthenticationScreen');
+        setLoader(false);
       } else {
         // Log the error details from the API response
         setCode('');
@@ -143,6 +146,7 @@ const StepForAuthenticationOnScreen = () => {
           'Verification Failed:',
           responseData?.message || 'Unknown error',
         );
+        setLoader(false);
 
         // Enhanced user feedback for invalid code
         Toast.show({
@@ -166,6 +170,7 @@ const StepForAuthenticationOnScreen = () => {
         visibilityTime: 3000,
       });
     }
+    setLoader(false);
   };
 
   const onGooglePlayPress = () => {
@@ -300,11 +305,15 @@ const StepForAuthenticationOnScreen = () => {
 
           <TouchableOpacity activeOpacity={0.7} onPress={handleSubmit}>
             <LinearGradient
-              colors={['#2D46B9', '#8D1D8D']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0}}
               end={{x: 1.3, y: 1.8}}
               style={style.buttonContainer}>
-              <Text style={style.buttonText}>Verify</Text>
+              {loader ? (
+                <ActivityIndicator size="large" color={colors.white} />
+              ) : (
+                <Text style={style.buttonText}>Verify</Text>
+              )}
             </LinearGradient>
           </TouchableOpacity>
 

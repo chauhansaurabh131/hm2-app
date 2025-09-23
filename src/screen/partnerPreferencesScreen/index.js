@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   SafeAreaView,
   ScrollView,
   Text,
@@ -48,7 +49,7 @@ const PartnerPreferencesScreen = () => {
 
   // NEW
   const [ageRange, setAgeRange] = useState([25, 35]); // Initial age range
-  const [heightRange, setHeightRange] = useState([4, 8]); // Initial age range
+  const [heightRange, setHeightRange] = useState([4, 6.5]); // Initial age range
   const [preferCountry, setPreferCountry] = useState([]);
   const [preferState, setPreferState] = useState([]);
   // const [preferCity, setPreferCity] = useState([]);
@@ -57,6 +58,7 @@ const PartnerPreferencesScreen = () => {
   const [preferHobbies, setPreferHobbies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cities, setCities] = useState([]);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const dispatch = useDispatch();
   const apiDispatch = useDispatch();
@@ -65,6 +67,25 @@ const PartnerPreferencesScreen = () => {
   const {user} = useSelector(state => state.auth);
 
   // console.log(' === PartnerPreferencesScreen..... ===> ', user);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const Prefer_Country = ['India'];
 
@@ -436,27 +457,29 @@ const PartnerPreferencesScreen = () => {
         </View>
       </ScrollView>
 
-      <View style={style.buttonContainer}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          style={style.backButtonContainer}
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <Text style={style.backButtonText}>Back</Text>
-        </TouchableOpacity>
+      {!isKeyboardVisible && (
+        <View style={style.buttonContainer}>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            style={style.backButtonContainer}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <Text style={style.backButtonText}>Back</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={onDashboardPress}
-          style={style.dashboardButton}>
-          {loading ? (
-            <ActivityIndicator size="large" color={colors.white} />
-          ) : (
-            <Text style={style.dashboardText}>Dashboard</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={onDashboardPress}
+            style={style.dashboardButton}>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text style={style.dashboardText}>Dashboard</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
       {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -21,6 +21,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import RNBlobUtil from 'react-native-blob-util';
+import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 
 const SuccessStoryEditInformationScreen = ({route}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -39,8 +40,14 @@ const SuccessStoryEditInformationScreen = ({route}) => {
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
+  const topModalBottomSheetRef = useRef(null);
+
+  // Function to open bottom sheet from Abc component
+  const openBottomSheet = () => {
+    topModalBottomSheetRef.current.open();
+  };
+
   const handlePublish = async () => {
-    setLoading(true);
     // Check if description length is at least 150 characters
     if (description.length < 200) {
       Alert.alert(
@@ -81,9 +88,15 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     let imageUrls = []; // Array to store all ImageUrls
     let partnerUserId = ''; // Variable to store partnerUserId
 
+    const partnerUniqueID = partnerId ? partnerId.toUpperCase() : '';
+
+    // console.log(' === partnerId== ===> ', partnerUniqueID);
+
+    setLoading(true);
+
     try {
       // Get Partner User ID by calling the second API
-      const partnerApiUrl = `https://stag.mntech.website/api/v1/user/user/userUniqueId/${partnerId}`;
+      const partnerApiUrl = `https://stag.mntech.website/api/v1/user/user/userUniqueId/${partnerUniqueID}`;
       const partnerResponse = await fetch(partnerApiUrl, {
         method: 'get',
         headers: {
@@ -294,13 +307,15 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Image source={images.happyMilanColorLogo} style={styles.logo} />
-        <TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>
+        <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
           <Image
             source={userImage ? {uri: userImage} : images.empty_male_Image}
             style={styles.profileImage}
           />
         </TouchableOpacity>
       </View>
+
+      <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
       <Text style={styles.introText}>Share Your Story</Text>
       <Text
@@ -313,7 +328,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
           marginBottom: hp(20),
           marginTop: 2,
         }}>
-        Found your partner on HappyMilan?
+        Found your partner on Hapmeet?
       </Text>
 
       <View style={{width: '100', height: 2, backgroundColor: '#F8F8F8'}} />
@@ -453,18 +468,20 @@ const SuccessStoryEditInformationScreen = ({route}) => {
               disabled={
                 name.trim().length === 0 ||
                 birthday.trim().length === 0 ||
-                partnerId.trim().length === 0
+                partnerId.trim().length === 0 ||
+                selectedImages.length === 0
               }
               style={{
                 opacity:
                   name.trim().length === 0 ||
                   birthday.trim().length === 0 ||
-                  partnerId.trim().length === 0
+                  partnerId.trim().length === 0 ||
+                  selectedImages.length === 0
                     ? 0.5
                     : 1,
               }}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
                 style={styles.publishButton}>

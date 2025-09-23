@@ -338,11 +338,11 @@ const MatchesInAcceptedScreen = () => {
   const onSendMessagePress = userData => {
     console.log(' === onSendMessagePress ===> ', userData);
 
-    sheetRef.current.close();
+    // sheetRef.current.close();
 
-    navigation.navigate('ChatUserScreen', {
-      userData,
-    });
+    // navigation.navigate('ChatUserScreen', {
+    //   userData,
+    // });
   };
 
   const handleUnFriendPress = () => {
@@ -579,6 +579,15 @@ const MatchesInAcceptedScreen = () => {
 
     const subPlan = isGoldPlan || isSilverPlan || isPlatinumPlan;
 
+    let crownTintColor = 'white'; // Default to white
+    if (isGoldPlan) {
+      crownTintColor = 'orange'; // Gold plan -> orange tint
+    } else if (isSilverPlan) {
+      crownTintColor = 'silver'; // Silver plan -> silver tint
+    } else if (isPlatinumPlan) {
+      crownTintColor = 'green'; // Platinum plan -> red tint
+    }
+
     const userAllImage = Array.isArray(item.friendList?.userProfilePic)
       ? item.friendList?.userProfilePic.map(pic => pic.url)
       : [];
@@ -633,10 +642,10 @@ const MatchesInAcceptedScreen = () => {
     const uniqueUrls = new Set(imageList.map(img => img.url));
     const imageCount = uniqueUrls.size;
 
-    console.log(
-      ' === item.friendList?.userProfilePic ===> ',
-      item.friendList?.userProfilePic,
-    );
+    // console.log(
+    //   ' === item.friendList?.userProfilePic ===> ',
+    //   item.friendList?.userProfilePic,
+    // );
     // console.log(' === imageCount ===> ', imageCount);
 
     const userAllImageShare = () => {
@@ -741,7 +750,7 @@ const MatchesInAcceptedScreen = () => {
                     <View
                       style={[
                         style.subPlanCon,
-                        {backgroundColor: 'crownTintColor'},
+                        {backgroundColor: crownTintColor},
                       ]}>
                       <Image source={icons.crownIcon} style={style.crownImg} />
                       <Text style={style.planNameText}>{planName}</Text>
@@ -911,7 +920,8 @@ const MatchesInAcceptedScreen = () => {
         ListFooterComponent={
           isFetchingMore ? (
             <View style={{alignItems: 'center'}}>
-              <Text style={{color: 'black'}}>Loading Data..</Text>
+              {/*<Text style={{color: 'black'}}>Loading Data..</Text>*/}
+              <ActivityIndicator size="large" color="blue" />
             </View>
           ) : null
         }
@@ -967,8 +977,11 @@ const MatchesInAcceptedScreen = () => {
                 source={icons.copy_id_card_icon}
                 style={style.threeDotBottomSheetIcon}
               />
-              <Text style={style.threeDotBottomSheetTittleText}>
-                Copy ID : {selectedUniqueId}
+              <Text style={[style.threeDotBottomSheetTittleText]}>
+                Copy ID :{' '}
+                <Text style={{textTransform: 'uppercase'}}>
+                  {selectedUniqueId}
+                </Text>
               </Text>
             </TouchableOpacity>
 
@@ -1113,7 +1126,7 @@ const MatchesInAcceptedScreen = () => {
                 activeOpacity={0.7}
                 onPress={handleConfirmBlock}>
                 <LinearGradient
-                  colors={['#2D46B9', '#8D1D8D']}
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
                   style={style.blockModalYesButtonBody}>
@@ -1289,7 +1302,7 @@ const MatchesInAcceptedScreen = () => {
               style={style.RBSSubmitModalOkButton}
               onPress={handleCloseModal}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.5}}
                 style={style.RBSSubmitModalOkButtonBody}>
@@ -1318,7 +1331,7 @@ const MatchesInAcceptedScreen = () => {
                   activeOpacity={0.7}
                   onPress={handleConfirmUnFriend}>
                   <LinearGradient
-                    colors={['#2D46B9', '#8D1D8D']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 1}}
                     style={style.unFriendModalYesButtonBody}>

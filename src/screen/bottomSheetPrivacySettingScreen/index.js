@@ -483,7 +483,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
                 }}>
                 {isSelected ? (
                   <LinearGradient
-                    colors={['#0F52BA', '#8225AF']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0.1}}
                     style={{
@@ -742,7 +742,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
               activeOpacity={0.7}
               onPress={() => setIsModalVisible(false)}>
               <LinearGradient
-                colors={['#0F52BA', '#8225AF']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1.2}}
                 style={{
@@ -779,7 +779,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         <View style={{marginHorizontal: 17}}>
           <TouchableOpacity activeOpacity={0.7} onPress={handleSave}>
             <LinearGradient
-              colors={['#0F52BA', '#8225AF']}
+              colors={['#7045EB', '#4819CB']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1.2}}
               style={{

@@ -169,44 +169,84 @@ const RemainingDataUiScreen = () => {
     }
 
     return (
-      <SafeAreaView style={{width: hp(190), marginHorizontal: 10}}>
-        <View style={{alignItems: 'center'}}>
-          <View style={[styles.categoryContainer, {backgroundColor}]}>
-            {imageSource && (
-              <Image
-                source={imageSource}
-                style={[styles.categoryImage, imageStyle]}
-              />
-            )}
-            <Text style={styles.categoryTitle}>
-              {capitalizeCategory(item.category)}
-            </Text>
+      <SafeAreaView>
+        <View style={{width: hp(190), marginHorizontal: 10}}>
+          <View style={{alignItems: 'center'}}>
+            <View style={[styles.categoryContainer, {backgroundColor}]}>
+              {imageSource && (
+                <Image
+                  source={imageSource}
+                  style={[styles.categoryImage, imageStyle]}
+                />
+              )}
+              <Text style={styles.categoryTitle}>
+                {capitalizeCategory(item.category)}
+              </Text>
 
-            <TouchableOpacity onPress={() => handleAddPress(item)}>
-              <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
-                style={styles.addButtonContainer}>
-                <View style={[styles.addButtonBody, {backgroundColor}]}>
-                  <Text style={styles.addButtonText}>Add Details</Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleAddPress(item)}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  style={styles.addButtonContainer}>
+                  <View style={[styles.addButtonBody, {backgroundColor}]}>
+                    <Text style={styles.addButtonText}>Add Details</Text>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 8,
+            backgroundColor: '#F8F8F8',
+            marginTop: hp(25),
+            marginBottom: 20,
+          }}
+        />
       </SafeAreaView>
     );
   };
 
+  const validData = data?.filter(
+    item => item.category && item.fields?.length > 0,
+  );
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{flex: 1, marginTop: hp(22)}}>
+      {validData?.length > 0 && (
+        <Text
+          style={{
+            color: 'black',
+            fontSize: fontSize(16),
+            lineHeight: hp(26),
+            fontFamily: fontFamily.poppins500,
+            marginBottom: hp(22),
+            marginHorizontal: 17,
+          }}>
+          Add Details for Better Matches
+        </Text>
+      )}
       <FlatList
-        data={data}
+        // data={data}
+        data={validData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{paddingHorizontal: 17, marginBottom: hp(39)}}
+        contentContainerStyle={{paddingHorizontal: 17, marginBottom: hp(5)}}
       />
+
+      {/*<View*/}
+      {/*  style={{*/}
+      {/*    width: '100%',*/}
+      {/*    height: 8,*/}
+      {/*    backgroundColor: '#F8F8F8',*/}
+      {/*    marginTop: hp(25),*/}
+      {/*    marginBottom: 20,*/}
+      {/*  }}*/}
+      {/*/>*/}
     </SafeAreaView>
   );
 };

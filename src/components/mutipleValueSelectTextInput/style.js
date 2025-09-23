@@ -14,6 +14,7 @@ export const style = StyleSheet.create({
     fontSize: fontSize(18),
     lineHeight: hp(27),
     fontFamily: fontFamily.poppins500,
+    color: colors.black,
   },
   dropdownIcon: {
     height: 6,

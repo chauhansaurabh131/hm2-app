@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
+  Clipboard,
   Image,
   SafeAreaView,
   ScrollView,
@@ -24,10 +25,13 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {colors} from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import Toast from 'react-native-toast-message';
 
 const MyProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
+
+  // console.log(' === userData ===> ', userData?.userUniqueId);
 
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -104,6 +108,14 @@ const MyProfileScreen = () => {
       setTopModalVisible(false);
     }, []),
   );
+
+  const CopyId = () => {
+    Toast.show({
+      type: 'Copied',
+      text1: 'Your ID has been copied!',
+      visibilityTime: 1000,
+    });
+  };
 
   const openTopSheetModal = () => {
     toggleModal();
@@ -200,8 +212,49 @@ const MyProfileScreen = () => {
     setDescription(editedDescription);
     setIsEditing(false);
   };
+
+  const onCopyIdPress = async selectedUniqueId => {
+    console.log(' === selectedUniqueId ===> ', selectedUniqueId);
+    await Clipboard.setString(selectedUniqueId);
+    bottomSheetRef.current.close();
+    CopyId();
+  };
+
+  const toastConfigs = {
+    Copied: ({text1}) => (
+      <View
+        style={{
+          backgroundColor: '#333333',
+          borderRadius: 100,
+          marginHorizontal: 20,
+          width: wp(300),
+          height: hp(55),
+          justifyContent: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'white', // Toast text color
+            fontSize: fontSize(16),
+            textAlign: 'center',
+            lineHeight: hp(24),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+  };
+
   return (
     <SafeAreaView style={style.container}>
+      <View
+        style={{
+          zIndex: 99,
+          top: -20,
+        }}>
+        <Toast config={toastConfigs} />
+      </View>
+
       <View style={style.headerContainer}>
         <Image
           source={images.happyMilanColorLogo}
@@ -297,44 +350,46 @@ const MyProfileScreen = () => {
                     {firstName} {lastName}
                   </Text>
 
-                  {planDetails?.planId?.planName && (
-                    <View
-                      style={{
-                        backgroundColor: getBackgroundColor(),
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        padding: 2, // internal padding
-                        borderRadius: 50,
-                        alignSelf: 'flex-start', // ensures the box only takes needed width
-                        paddingHorizontal: 10,
-                        // marginLeft: wp(7),
-                      }}>
-                      <Image
-                        source={icons.crownIcon}
+                  <View style={{top: -5}}>
+                    {planDetails?.planId?.planName && (
+                      <View
                         style={{
-                          width: hp(10),
-                          height: hp(10),
-                          marginRight: 5,
-                          tintColor: 'white',
-                        }}
-                        resizeMode="contain"
-                      />
-                      <Text
-                        style={{
-                          fontSize: fontSize(12),
-                          color: 'white',
-                          fontFamily: fontFamily.poppins400,
-                          top: 2,
+                          backgroundColor: getBackgroundColor(),
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          padding: 2, // internal padding
+                          borderRadius: 50,
+                          alignSelf: 'flex-start', // ensures the box only takes needed width
+                          paddingHorizontal: 10,
+                          // marginLeft: wp(7),
                         }}>
-                        {planDetails?.planId?.planName
-                          ? planDetails.planId.planName
-                              .charAt(0)
-                              .toUpperCase() +
-                            planDetails.planId.planName.slice(1).toLowerCase()
-                          : 'Plan Name'}
-                      </Text>
-                    </View>
-                  )}
+                        <Image
+                          source={icons.crownIcon}
+                          style={{
+                            width: hp(10),
+                            height: hp(10),
+                            marginRight: 5,
+                            tintColor: 'white',
+                          }}
+                          resizeMode="contain"
+                        />
+                        <Text
+                          style={{
+                            fontSize: fontSize(12),
+                            color: 'white',
+                            fontFamily: fontFamily.poppins400,
+                            top: 2,
+                          }}>
+                          {planDetails?.planId?.planName
+                            ? planDetails.planId.planName
+                                .charAt(0)
+                                .toUpperCase() +
+                              planDetails.planId.planName.slice(1).toLowerCase()
+                            : 'Plan Name'}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
 
                 <View
@@ -412,7 +467,7 @@ const MyProfileScreen = () => {
         {/* Bottom Sheet */}
         <RBSheet
           ref={bottomSheetRef}
-          height={130}
+          height={hp(160)}
           openDuration={250}
           customStyles={{
             draggableIcon: {
@@ -474,6 +529,36 @@ const MyProfileScreen = () => {
                   fontFamily: fontFamily.poppins400,
                 }}>
                 Copy URL
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => onCopyIdPress()}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 20,
+              }}>
+              <Image
+                source={icons.copy_id_card_icon}
+                style={{
+                  width: hp(16),
+                  height: hp(16),
+                  resizeMode: 'contain',
+                  marginRight: hp(15),
+                }}
+              />
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                Copy ID :{' '}
+                <Text style={{textTransform: 'uppercase'}}>
+                  {userData?.userUniqueId}
+                </Text>
               </Text>
             </TouchableOpacity>
           </View>

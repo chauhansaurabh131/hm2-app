@@ -27,6 +27,7 @@ import Toast from 'react-native-toast-message';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import style from '../HomeScreen/style';
+import MultipleValueSelectTextInput from '../../components/mutipleValueSelectTextInput';
 
 const SearchFilterScreen = () => {
   const [ageSelectedRange, setAgeSelectedRange] = useState([22, 27]);
@@ -448,7 +449,17 @@ const SearchFilterScreen = () => {
       maxHeight: heightSelectedRange[1],
       maritalStatus: maritalStatus.map(value => {
         const item = dropdownData.find(option => option.value === value);
-        return item?.label.toLowerCase().replace(' ', '-'); // Convert to lowercase and replace spaces with dashes
+        if (!item?.label) {
+          return null;
+        }
+
+        // Convert to camelCase
+        return item.label
+          .toLowerCase()
+          .replace(/(?:^\w|[A-Z]|\b\w)/g, (match, index) =>
+            index === 0 ? match.toLowerCase() : match.toUpperCase(),
+          )
+          .replace(/\s+/g, '');
       }),
       religion: religionStatus.map(value => {
         const item = religionData.find(option => option.value === value);
@@ -462,10 +473,9 @@ const SearchFilterScreen = () => {
         const item = COUNTRY_LIST.find(option => option.value === value);
         return item?.label.toLowerCase(); // Convert to lowercase
       }),
-      currentCity: cityLivingStatus.map(value => {
-        const item = CurrentCity.find(option => option.value === value);
-        return item?.label.toLowerCase(); // Convert to lowercase
-      }),
+      currentCity: cityLivingStatus.map(label =>
+        label ? label.toLowerCase() : null,
+      ),
     };
 
     // console.log(' ===  ageSelectedRange[0] ===> ', ageSelectedRange[0]);
@@ -535,14 +545,20 @@ const SearchFilterScreen = () => {
 
   const dropdownData = [
     {label: 'Single', value: '1'},
-    {label: 'Never-Married', value: '2'},
+    {label: 'Never Married', value: '2'},
     {label: 'Married', value: '3'},
+    {label: 'Divorcee', value: '4'},
   ];
 
   const religionData = [
     {label: 'Hindu', value: '1'},
     {label: 'Muslim', value: '2'},
     {label: 'Sikh', value: '3'},
+    {label: 'Christian', value: '4'},
+    {label: 'Buddhist', value: '5'},
+    {label: 'jain', value: '6'},
+    {label: 'Islam', value: '7'},
+    {label: 'Other', value: '8'},
   ];
 
   const motherTongueData = [
@@ -551,17 +567,7 @@ const SearchFilterScreen = () => {
     {label: 'English', value: '3'},
   ];
 
-  const COUNTRY_LIST = [
-    {label: 'india', value: '1'},
-    {label: 'canada', value: '2'},
-    {label: 'us', value: '3'},
-    {label: 'afghanistan', value: '4'},
-    {label: 'china', value: '5'},
-    {label: 'myanmar', value: '6'},
-    {label: 'nepal', value: '7'},
-    {label: 'sri-lanka', value: '8'},
-    {label: 'pakistan', value: '9'},
-  ];
+  const COUNTRY_LIST = [{label: 'India', value: '1'}];
 
   const CurrentCity = [
     {label: 'Bardoli', value: '1'},
@@ -665,7 +671,7 @@ const SearchFilterScreen = () => {
             alignItems: 'center',
             marginHorizontal: 17,
             marginTop: hp(22),
-            backgroundColor: '#112873',
+            backgroundColor: '#7A55E5',
             borderRadius: 100,
             paddingHorizontal: 20,
           }}>
@@ -800,13 +806,7 @@ const SearchFilterScreen = () => {
             placeholder={'Marital Status'}
             selectedItems={maritalStatus}
             setSelectedItems={setMaritalStatus}
-            bottomSheetHeight={hp(200)}
-            // placeholderStyle={{
-            //   fontFamily: fontFamily.poppins500,
-            //   fontSize: fontSize(16),
-            //   lineHeight: hp(27),
-            //   colors: 'black',
-            // }}
+            bottomSheetHeight={hp(230)}
           />
 
           <View style={{marginTop: hp(30)}}>
@@ -817,7 +817,7 @@ const SearchFilterScreen = () => {
               placeholder={'Religion'}
               selectedItems={religionStatus}
               setSelectedItems={setReligionStatus}
-              bottomSheetHeight={hp(200)}
+              bottomSheetHeight={hp(390)}
             />
           </View>
 
@@ -841,19 +841,27 @@ const SearchFilterScreen = () => {
               placeholder={'Country Living'}
               selectedItems={countryLivingStatus}
               setSelectedItems={setCountryLivingStatus}
-              bottomSheetHeight={hp(430)}
+              bottomSheetHeight={hp(120)}
             />
           </View>
 
           <View style={{marginTop: 30}}>
-            <DropdownComponentBottomSheet
-              data={CurrentCity}
-              height={50}
-              searchPlaceholder={'Search Option'}
-              placeholder={'City Living'}
-              selectedItems={cityLivingStatus}
-              setSelectedItems={setCityLivingStatus}
-              bottomSheetHeight={hp(280)}
+            {/*<DropdownComponentBottomSheet*/}
+            {/*  data={CurrentCity}*/}
+            {/*  height={50}*/}
+            {/*  searchPlaceholder={'Search Option'}*/}
+            {/*  placeholder={'City Living'}*/}
+            {/*  selectedItems={cityLivingStatus}*/}
+            {/*  setSelectedItems={setCityLivingStatus}*/}
+            {/*  bottomSheetHeight={hp(280)}*/}
+            {/*/>*/}
+
+            <MultipleValueSelectTextInput
+              placeholder="City Living"
+              // maxItems={5}
+              value={cityLivingStatus}
+              onChange={setCityLivingStatus}
+              textInputProps={{fontSize: fontSize(16)}}
             />
           </View>
 
@@ -902,7 +910,7 @@ const SearchFilterScreen = () => {
                   onPress={() => setSelectedToggle('Yes')}>
                   {selectedToggle === 'Yes' ? (
                     <LinearGradient
-                      colors={['#0D4EB3', '#9413D0']}
+                      colors={['#7045EB', '#4819CB']}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 1}}
                       style={{
@@ -941,7 +949,7 @@ const SearchFilterScreen = () => {
                   onPress={() => setSelectedToggle('No')}>
                   {selectedToggle === 'No' ? (
                     <LinearGradient
-                      colors={['#0D4EB3', '#9413D0']}
+                      colors={['#7045EB', '#4819CB']}
                       start={{x: 0, y: 0}}
                       end={{x: 1, y: 1}}
                       style={{
@@ -1110,7 +1118,7 @@ const SearchFilterScreen = () => {
                 <LinearGradient
                   colors={
                     searchName.trim()
-                      ? ['#0D4EB3', '#9413D0']
+                      ? ['#7045EB', '#4819CB']
                       : ['#D3D3D3', '#D3D3D3']
                   } // Change color if disabled
                   start={{x: 0, y: 0}}

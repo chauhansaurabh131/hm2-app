@@ -34,7 +34,7 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
     'Cycling',
     'Yoga',
     'Walking',
-    'Working_out',
+    'Working Out',
     'Trekking',
     'Aerobics Zumba',
     'Swimming',
@@ -75,5 +75,3 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
 };
 
 export default HobbiesAndInterestScreen;
-
-// HobbiesAndInterestScreen
