@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   Keyboard,
+  Modal,
   SafeAreaView,
   Text,
   TextInput,
@@ -29,10 +30,82 @@ import AgeRangeSlider from '../../../components/ageRangeSlider';
 
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import ProfileAvatar from '../../../components/letterProfileComponent';
+import Toast from 'react-native-toast-message';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBaqU_1hOFIhVLm8su_caJheEChJCNBTyY';
+
+const customToastConfig = {
+  like: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  disLike: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  sentReq: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  cancelReq: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+};
 
 const MeetNewFriendsScreen = ({route}) => {
   const {category} = route.params;
@@ -49,6 +122,8 @@ const MeetNewFriendsScreen = ({route}) => {
   const [text, setText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [freeCreditModal, setFreeCreditModal] = useState(false);
+  const [creditOverModal, setCreditOverModal] = useState(false);
 
   // console.log(' === cards___ ===> ', cards);
 
@@ -251,12 +326,31 @@ const MeetNewFriendsScreen = ({route}) => {
               : item,
           );
           setCards(updatedCards);
+
+          Toast.show({
+            type: 'sentReq',
+            text1: 'Request Sent',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           console.log('Unable to send friend request. Please try again.');
         }
       } catch (error) {
         console.error('Error with create-friend API:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
+        // Alert.alert('Error', 'Something went wrong. Please try again.');
+        const errorMessage =
+          error?.response?.data?.message ||
+          'Something went wrong. Please try again.';
+
+        console.error('API Error:', errorMessage);
+
+        if (errorMessage.includes('Credit record not found')) {
+          setFreeCreditModal(true);
+        } else {
+          setCreditOverModal(true);
+          // Alert.alert('Error', errorMessage);
+        }
       }
     } else {
       console.log('Friend request already sent, now removing the request');
@@ -302,6 +396,13 @@ const MeetNewFriendsScreen = ({route}) => {
               : item,
           );
           setCards(updatedCards);
+
+          Toast.show({
+            type: 'cancelReq',
+            text1: 'Cancel Request ',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           console.log('Unable to remove friend request. Please try again.');
         }
@@ -353,6 +454,14 @@ const MeetNewFriendsScreen = ({route}) => {
           );
 
           setCards(updatedCards); // Update the state
+
+          // 🔹 Show toast after unlike
+          Toast.show({
+            type: 'disLike',
+            text1: 'Profile Disliked',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           Alert.alert('Error', 'Unable to unlike the user. Please try again.');
         }
@@ -390,6 +499,14 @@ const MeetNewFriendsScreen = ({route}) => {
           );
 
           setCards(updatedCards); // Update the state
+
+          // 🔹 Show toast after like
+          Toast.show({
+            type: 'like',
+            text1: 'Profile Liked',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           Alert.alert('Error', 'Unable to like the user. Please try again.');
         }
@@ -423,6 +540,16 @@ const MeetNewFriendsScreen = ({route}) => {
     const capitalizeFirstLetter = str =>
       str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
 
+    const formatText = text => {
+      if (!text) {
+        return 'N.A';
+      }
+      return text
+        .split('_') // split by underscore
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
+        .join(' '); // join with space
+    };
+
     const calculateAge = dateOfBirth => {
       const dob = new Date(dateOfBirth); // Parse the date of birth string into a Date object
       const diffMs = Date.now() - dob.getTime(); // Get the difference in milliseconds
@@ -437,8 +564,8 @@ const MeetNewFriendsScreen = ({route}) => {
         style={{
           justifyContent: 'center',
           borderRadius: 20,
-          borderWidth: 2,
-          borderColor: '#E8E8E8',
+          // borderWidth: 2,
+          // borderColor: '#E8E8E8',
           backgroundColor: '#FFF',
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 1},
@@ -503,6 +630,27 @@ const MeetNewFriendsScreen = ({route}) => {
             bottom: 90,
             left: 20,
           }}>
+          {card?.isUserActive && (
+            <View
+              style={{
+                width: wp(34.8),
+                height: hp(12),
+                borderRadius: 5,
+                backgroundColor: '#24FF00A8',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: colors.black,
+                  fontSize: fontSize(9),
+                  lineHeight: hp(12),
+                  textAlign: 'center',
+                }}>
+                Online
+              </Text>
+            </View>
+          )}
+
           <Text
             style={{
               color: colors.white,
@@ -522,10 +670,17 @@ const MeetNewFriendsScreen = ({route}) => {
                 lineHeight: hp(21),
                 fontFamily: fontFamily.poppins400,
               }}>
-              {card?.datingData[0]?.Occupation || 'N.A'} |{' '}
-              {capitalizeFirstLetter(card?.datingData[0]?.Ethnicity) || 'N.A'},{' '}
-              {capitalizeFirstLetter(card?.datingData[0]?.CurrentlyLiving) ||
-                'N.A'}
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: fontSize(14),
+                  lineHeight: hp(21),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                {formatText(card?.datingData?.[0]?.Occupation) || 'N.A'} |{' '}
+                {formatText(card?.datingData?.[0]?.Ethnicity) || 'N.A'},{' '}
+                {formatText(card?.datingData?.[0]?.CurrentlyLiving) || 'N.A'}
+              </Text>
             </Text>
           </View>
         </TouchableOpacity>
@@ -676,6 +831,10 @@ const MeetNewFriendsScreen = ({route}) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View style={{zIndex: 99, top: -70}}>
+        <Toast config={customToastConfig} />
+      </View>
+
       <View style={style.headerContainer}>
         <View style={style.headerBody}>
           <Image
@@ -988,7 +1147,7 @@ const MeetNewFriendsScreen = ({route}) => {
                     // height: 50,
                   }}>
                   <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0.5}}
                     style={{
@@ -1006,7 +1165,7 @@ const MeetNewFriendsScreen = ({route}) => {
                         lineHeight: hp(24),
                         fontFamily: fontFamily.poppins600,
                       }}>
-                      Show Me
+                      Show Me..
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -1123,6 +1282,174 @@ const MeetNewFriendsScreen = ({route}) => {
           </View>
         )}
       </View>
+
+      {/*FREE CREDIT OVER MODAL*/}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={freeCreditModal}
+        onRequestClose={() => setFreeCreditModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+                marginTop: hp(42),
+              }}>
+              Free plan ended — upgrade to
+            </Text>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+              }}>
+              send more requests.
+            </Text>
+
+            {/* Close Button */}
+            <TouchableOpacity
+              onPress={() => {
+                setFreeCreditModal(false);
+                navigation.navigate('Upgrader');
+              }}
+              activeOpacity={0.7}
+              style={{marginTop: hp(23), marginBottom: hp(43)}}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={{
+                  width: wp(123),
+                  height: hp(44),
+                  borderRadius: 50,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    marginLeft: hp(20),
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                    marginRight: wp(7),
+                    top: 2,
+                  }}>
+                  Upgrade
+                </Text>
+                <Image
+                  source={icons.crownIcon}
+                  style={{
+                    width: hp(16.52),
+                    height: hp(14),
+                    tintColor: colors.white,
+                    marginRight: hp(22.12),
+                  }}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* PURCHASE CREDIT OVER MODAL */}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={creditOverModal}
+        onRequestClose={() => setCreditOverModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+                marginTop: hp(42),
+              }}>
+              No credits left. Purchase more to
+            </Text>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+              }}>
+              send requests.
+            </Text>
+
+            {/* Close Button */}
+            <TouchableOpacity
+              onPress={() => {
+                setCreditOverModal(false);
+                navigation.navigate('Upgrader');
+              }}
+              activeOpacity={0.7}
+              style={{marginTop: hp(23), marginBottom: hp(43)}}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={{
+                  width: wp(123),
+                  height: hp(44),
+                  borderRadius: 50,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    marginLeft: hp(20),
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                    marginRight: wp(7),
+                    top: 2,
+                  }}>
+                  Upgrade
+                </Text>
+                <Image
+                  source={icons.crownIcon}
+                  style={{
+                    width: hp(16.52),
+                    height: hp(14),
+                    tintColor: colors.white,
+                    marginRight: hp(22.12),
+                  }}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

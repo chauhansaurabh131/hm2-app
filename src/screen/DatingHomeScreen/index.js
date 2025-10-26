@@ -272,7 +272,7 @@ const DatingHomeScreen = () => {
 
   const userImage = user?.user?.profilePic;
 
-  console.log(' === hasValidImage ===> ', user?.user?.profilePic);
+  // console.log(' === hasValidImage ===> ', user?.user?.profilePic);
 
   return (
     <SafeAreaView style={style.container}>
@@ -592,7 +592,7 @@ const DatingHomeScreen = () => {
                     // height: 50,
                   }}>
                   <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0.5}}
                     style={{
@@ -629,7 +629,15 @@ const DatingHomeScreen = () => {
         }}>
         <View style={style.modalContainer}>
           <View style={style.modalBodyContainer}>
-            <Image source={images.modal_top_img} style={{width: '100%'}} />
+            <Image
+              source={images.modal_top_img}
+              style={{
+                width: '99.9%',
+                height: hp(91),
+                borderTopRightRadius: 14,
+                borderTopLeftRadius: 14,
+              }}
+            />
 
             <Text style={style.modalTittleText}>Congratulations</Text>
 
@@ -647,7 +655,7 @@ const DatingHomeScreen = () => {
                     style={{
                       width: wp(50),
                       borderWidth: 1,
-                      borderColor: activeLine === line ? '#8225AF' : '#E8E8E8',
+                      borderColor: activeLine === line ? '#7045EB' : '#E8E8E8',
                       marginHorizontal: 5,
                     }}
                   />
@@ -660,7 +668,7 @@ const DatingHomeScreen = () => {
               onPress={handleButtonClick}
               style={style.modalButtonContainer}>
               <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0.5}}
                 style={style.modalButtonGradient}>
@@ -692,7 +700,15 @@ const DatingHomeScreen = () => {
               borderRadius: 14,
               alignItems: 'center',
             }}>
-            <Image source={images.modal_top_img} style={{width: '100%'}} />
+            <Image
+              source={images.modal_top_img}
+              style={{
+                width: '99.9%',
+                height: hp(91),
+                borderTopRightRadius: 14,
+                borderTopLeftRadius: 14,
+              }}
+            />
 
             <Text
               style={{
@@ -745,7 +761,7 @@ const DatingHomeScreen = () => {
                 bottom: 50,
               }}>
               <LinearGradient
-                colors={['#0F52BA', '#BA0FA9']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 2}}
                 style={{

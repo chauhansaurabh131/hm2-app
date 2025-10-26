@@ -1,57 +1,42 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {colors} from '../../../utils/colors';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
-import {Dropdown} from 'react-native-element-dropdown';
 import NewBottomSheetMultipleValueSelect from '../../../components/newBottomSheetMultipleValueSelect';
 
-// const data = [
-//   {label: 'Writing', value: '1'},
-//   {label: 'Play Instrument', value: '2'},
-//   {label: 'Game', value: '3'},
-//   {label: 'Movie', value: '4'},
-//   {label: 'Sports', value: '5'},
-//   {label: 'Running', value: '6'},
-//   {label: 'Cycling', value: '7'},
-// ];
-
 const DatingHobbiesScreen = ({selectedItems, setSelectedItems}) => {
-  // const selectedLabels = selectedItems.map(item => item.label);
-
-  // // Log the selected labels
-  // console.log('Selected Labels:', selectedLabels.join(', '));
-  //
-  // const handleSelect = item => {
-  //   const selectedLabel = item.label;
-  //   const selectedValue = item.value;
-  //   if (selectedItems.find(i => i.value === selectedValue)) {
-  //     setSelectedItems(selectedItems.filter(i => i.value !== selectedValue));
-  //   } else {
-  //     setSelectedItems([
-  //       ...selectedItems,
-  //       {label: selectedLabel, value: selectedValue},
-  //     ]);
-  //   }
-  // };
-  //
-  // const removeItem = itemValue => {
-  //   setSelectedItems(selectedItems.filter(i => i.value !== itemValue));
-  // };
-
   const options = [
     'Writing',
     'Play Instrument',
-    'Game',
+    'Poetry',
+    'Cooking',
+    'Painting',
+    'Gardening',
+    'Singing',
+    'Diy Crafts',
+    'Blogging',
+    'Photography',
+    'Dancing',
+    'Content Creation',
     'Movie',
     'Sports',
+    'Biking',
+    'Music',
+    'Social Media',
+    'Clubbing',
+    'Travelling',
+    'Gaming',
+    'Shopping',
+    'Reading',
+    'Binge Watching',
+    'Theater Events',
     'Running',
     'Cycling',
+    'Yoga',
+    'Walking',
+    'Working Out',
+    'Trekking',
+    'Aerobics Zumba',
+    'Swimming',
   ];
 
   const handleSelect = selectedValue => {
@@ -60,51 +45,6 @@ const DatingHobbiesScreen = ({selectedItems, setSelectedItems}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/*<View style={styles.wrapper}>*/}
-      {/*  <Dropdown*/}
-      {/*    style={styles.dropdown}*/}
-      {/*    data={data}*/}
-      {/*    labelField="label"*/}
-      {/*    valueField="value"*/}
-      {/*    placeholder="Select Hobbies"*/}
-      {/*    placeholderStyle={{*/}
-      {/*      color: 'black',*/}
-      {/*      fontSize: fontSize(18),*/}
-      {/*      lineHeight: 27,*/}
-      {/*      fontFamily: fontFamily.poppins500,*/}
-      {/*    }}*/}
-      {/*    value={selectedItems.map(item => item.value)} // Use the values of selected items*/}
-      {/*    onChange={item => handleSelect(item)}*/}
-      {/*    selectedTextStyle={styles.selectedTextStyle}*/}
-      {/*    containerStyle={styles.dropdownContainer}*/}
-      {/*    multi*/}
-      {/*    renderItem={(item, selected) => (*/}
-      {/*      <View style={styles.dropdownItem}>*/}
-      {/*        <Text*/}
-      {/*          style={[styles.itemText, selected ? styles.selectedItem : {}]}>*/}
-      {/*          {item.label}*/}
-      {/*        </Text>*/}
-      {/*      </View>*/}
-      {/*    )}*/}
-      {/*    search={false} // Hide the search bar*/}
-      {/*  />*/}
-      {/*  {selectedLabels.length > 0 && (*/}
-      {/*    <View style={styles.selectedContainer}>*/}
-      {/*      {selectedLabels.map((label, index) => (*/}
-      {/*        <View key={index} style={styles.selectedItemContainer}>*/}
-      {/*          <Text style={styles.selectedItemText}>{label}</Text>*/}
-      {/*          <TouchableOpacity*/}
-      {/*            onPress={() => removeItem(selectedItems[index].value)}>*/}
-      {/*            <View style={styles.cancelButton}>*/}
-      {/*              <Text style={styles.cancelIcon}>X</Text>*/}
-      {/*            </View>*/}
-      {/*          </TouchableOpacity>*/}
-      {/*        </View>*/}
-      {/*      ))}*/}
-      {/*    </View>*/}
-      {/*  )}*/}
-      {/*</View>*/}
-
       <View style={{marginHorizontal: 17, marginTop: hp(30)}}>
         {/* Use the NewBottomSheetMultipleValueSelect component */}
         <NewBottomSheetMultipleValueSelect
@@ -121,8 +61,6 @@ const DatingHobbiesScreen = ({selectedItems, setSelectedItems}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingHorizontal: 20,
-    // marginTop: 50,
   },
   wrapper: {
     width: '100%',

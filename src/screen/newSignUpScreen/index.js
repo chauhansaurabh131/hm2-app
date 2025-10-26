@@ -23,6 +23,7 @@ import {
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import messaging from '@react-native-firebase/messaging';
 
 const NewSignUpScreen = () => {
   const [name, setName] = useState('');
@@ -32,6 +33,7 @@ const NewSignUpScreen = () => {
   const [userInfo, setUserInfo] = useState(null);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [fcmToken, setFcmToken] = useState(null);
 
   const {loading} = useSelector(state => state.auth);
 
@@ -47,6 +49,25 @@ const NewSignUpScreen = () => {
   //     return true;
   //   }
   // };
+
+  useEffect(() => {
+    const RequestUserPermission = async () => {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        const token = await messaging().getToken();
+        if (token) {
+          console.log('=============fcmToken_____========>', token);
+          setFcmToken(token); // Save the token in state
+        }
+      }
+    };
+
+    RequestUserPermission();
+  }, []);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -151,9 +172,13 @@ const NewSignUpScreen = () => {
 
       dispatch(
         register(
-          {name, email, countryCodeId: '68709f07e33fd998c7105ad5'},
+          {name, email, countryCodeId: '68df8125ae450858978682ec'},
           () => {
-            navigation.navigate('VerifyEmailOtpScreen', {name, email});
+            navigation.navigate('VerifyEmailOtpScreen', {
+              name,
+              email,
+              deviceToken: fcmToken,
+            });
           },
         ),
       );

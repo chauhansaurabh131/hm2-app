@@ -13,6 +13,8 @@ import {
   Alert,
   ImageBackground,
   ActivityIndicator,
+  Linking,
+  Platform,
 } from 'react-native';
 import {
   useFocusEffect,
@@ -38,8 +40,13 @@ import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import DemoCode from '../demoCode';
+import axios from 'axios';
+import {navigationRef} from '../../navigations';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
+const appPackageName = 'com.happymilan2'; // your Android package
+const deepLink = 'happymilan://home'; // deep link to your app
+const playStoreLink = `https://play.google.com/store/apps/details?id=${appPackageName}`;
 
 const NewUserDetailsScreen = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -63,6 +70,8 @@ const NewUserDetailsScreen = () => {
   const [step, setStep] = useState(1);
 
   const route = useRoute();
+  const {userIds} = route.params || {}; // 👈 get userId from deep link
+  console.log(' === userIds******* ===> ', userIds);
   const {matchesUserData} = route.params;
   // console.log(' === matchesUserData ===> ', matchesUserData);
   const navigation = useNavigation();
@@ -801,27 +810,131 @@ const NewUserDetailsScreen = () => {
     friendBottomSheetRef.current.open();
   };
 
+  // const handleShare = async () => {
+  //   friendBottomSheetRef.current.close();
+  //   console.log(' ===   handleShare  ===> ', userDetails?._id);
+  //
+  //   try {
+  //     await new Promise(resolve => setTimeout(resolve, 50));
+  //
+  //     const result = await Share.share({
+  //       // message: 'Happy Milan App', // Message to share
+  //       message: userDetails?.firstName, // Message to share
+  //       // title: userDetails?.firstName,
+  //     });
+  //
+  //     if (result.action === Share.sharedAction) {
+  //       console.log('Content shared successfully');
+  //     } else if (result.action === Share.dismissedAction) {
+  //       console.log('Share dismissed');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error sharing content:', error);
+  //   }
+  // };
+
+  // const handleShare = async () => {
+  //   try {
+  //     const userId = userDetails?._id;
+  //     // console.log(' === userId ===> ', userId);
+  //     const url = `happymilan://user?userId=${userId}`;
+  //
+  //     await Share.share({
+  //       message: `Check out this profile: ${url}`,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error sharing content:', error);
+  //   }
+  // };
+
+  // const handleShare = async () => {
+  //   friendBottomSheetRef.current.close();
+  //   const url = `https://happymilan.com/openApp?userId=${userDetails?._id}`; // 👈 Use HTTPS link
+  //
+  //   try {
+  //     await Share.share({
+  //       message: `Check out this profile: ${url}`,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error sharing:', error);
+  //   }
+  // };
+
+  // const handleShare = async () => {
+  //   const url = `https://happymilan.com/openApp.html?userId=${userDetails?._id}`;
+  //   try {
+  //     await Share.share({
+  //       message: `Check out this profile: ${url}`,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error sharing:', error);
+  //   }
+  // };
+
+  // const handleShare = async () => {
+  //   const userId = userDetails?._id;
+  //   const appDeepLink = `happymilan://user?userId=${userId}`; // Your app deep link
+  //   const webFallbackUrl = `https://happymilan.tech/openApp?userId=${userId}`; // Web fallback
+  //
+  //   try {
+  //     // Check if app is installed
+  //     const canOpen = await Linking.canOpenURL(appDeepLink);
+  //
+  //     // Decide which URL to share
+  //     const shareUrl = canOpen ? appDeepLink : webFallbackUrl;
+  //
+  //     await Share.share({
+  //       message: `Check out this profile: ${shareUrl}`,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error sharing:', error);
+  //     Alert.alert('Error', 'Unable to share the link. Please try again.');
+  //   }
+  // };
+
   const handleShare = async () => {
-    friendBottomSheetRef.current.close();
+    const userId = userDetails?._id;
+    const isAndroid = Platform.OS === 'android';
+    const appDeepLink = isAndroid
+      ? `intent://user?userId=${userId}#Intent;scheme=happymilan;package=com.happymilan2;end`
+      : `happymilan://user?userId=${userId}`;
+    const webFallbackUrl = `https://happymilan.tech/openApp?userId=${userId}`;
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 50));
-
-      const result = await Share.share({
-        // message: 'Happy Milan App', // Message to share
-        message: userDetails?.firstName, // Message to share
-        // title: selectedFirstName,
+      await Share.share({
+        message: `Check out this profile: ${appDeepLink}\nIf not opening, try this link: ${webFallbackUrl}`,
       });
-
-      if (result.action === Share.sharedAction) {
-        console.log('Content shared successfully');
-      } else if (result.action === Share.dismissedAction) {
-        console.log('Share dismissed');
-      }
     } catch (error) {
-      console.error('Error sharing content:', error);
+      console.error('Error sharing:', error);
+      Alert.alert('Error', 'Unable to share the link. Please try again.');
     }
   };
+
+  // const handleShare = async () => {
+  //   friendBottomSheetRef.current.close();
+  //   console.log(' ===   handleShare  ===> ', userDetails?._id);
+  //
+  //   try {
+  //     await new Promise(resolve => setTimeout(resolve, 50));
+  //
+  //     // Build API link with user ID
+  //     const shareUrl = `https://stag.mntech.website/api/v1/user/user/${userDetails?._id}`;
+  //
+  //     // Share this URL
+  //     const result = await Share.share({
+  //       message: `Check this profile: ${shareUrl}`,
+  //       title: 'Share Profile',
+  //     });
+  //
+  //     if (result.action === Share.sharedAction) {
+  //       console.log('Content shared successfully');
+  //     } else if (result.action === Share.dismissedAction) {
+  //       console.log('Share dismissed');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error sharing content:', error);
+  //   }
+  // };
 
   const onCopyIdPress = async () => {
     await Clipboard.setString(userDetails?.userUniqueId);
@@ -1532,9 +1645,11 @@ const NewUserDetailsScreen = () => {
           />
           <View style={style.UserDetailsContainer}>
             <View style={style.imageBottomContainer}>
-              <View style={style.onlineBodyStyle}>
-                <Text style={style.bodyTextStyle}>Online</Text>
-              </View>
+              {userDetails?.isUserActive && (
+                <View style={style.onlineBodyStyle}>
+                  <Text style={style.bodyTextStyle}>Online</Text>
+                </View>
+              )}
 
               <View
                 style={[style.userDetailsDescriptionContainer, {marginTop: 3}]}>

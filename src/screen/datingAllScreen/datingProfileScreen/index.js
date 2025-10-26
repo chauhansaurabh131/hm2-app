@@ -150,7 +150,17 @@ const DatingProfileScreen = () => {
 
   const ethnicity = user?.user?.datingData[0]?.Ethnicity;
 
-  const hobbies = user?.user?.hobbies || [];
+  // const hobbies = user?.user?.hobbies || [];
+
+  // console.log(' === 1111 ===> ', user?.user?.hobbies);
+
+  const hobbies = (user?.user?.hobbies || [])
+    .map(h => h.trim()) // remove spaces
+    .filter(h => h.length > 0) // remove empty items
+    .map(h => h.replace(/_/g, ' ')); // replace _ with space
+
+  // console.log(' === hobbies ===> ', hobbies);
+
   const educationLevel = user?.user?.datingData[0]?.educationLevel;
   const annualIncome = user?.user?.datingData[0]?.annualIncome;
 
@@ -173,6 +183,16 @@ const DatingProfileScreen = () => {
     user?.user?.profilePic.trim() !== '';
 
   const profileImage = user?.user?.profilePic;
+
+  const formatText = text => {
+    if (!text) {
+      return 'N.A';
+    }
+    return text
+      .split('_') // split by underscore
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
+      .join(' '); // join with space
+  };
 
   const toastConfigs = {
     Copied: ({text1}) => (
@@ -446,7 +466,9 @@ const DatingProfileScreen = () => {
           <Text style={style.TittleText}>{birthDate || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Currently Living</Text>
-          <Text style={style.TittleText}>{currentlyLiving || 'N/A'}</Text>
+          <Text style={style.TittleText}>
+            {formatText(currentlyLiving) || 'N/A'}
+          </Text>
 
           <Text style={style.subTittleText}>Language Spoken</Text>
 
@@ -465,7 +487,7 @@ const DatingProfileScreen = () => {
           </View>
 
           <Text style={style.subTittleText}>Religion</Text>
-          <Text style={style.TittleText}>{religion || 'N/A'}</Text>
+          <Text style={style.TittleText}>{formatText(religion) || 'N/A'}</Text>
 
           <Text style={style.subTittleText}>Ethnicity</Text>
           <Text style={style.TittleText}>{ethnicity || 'N/A'}</Text>
@@ -477,10 +499,14 @@ const DatingProfileScreen = () => {
           <Text style={style.basicInfoText}>Professional Details</Text>
 
           <Text style={style.subTittleText}>Education Level</Text>
-          <Text style={style.TittleText}>{educationLevel || 'N/A'}</Text>
+          <Text style={style.TittleText}>
+            {formatText(educationLevel) || 'N/A'}
+          </Text>
 
           <Text style={style.subTittleText}>Occupation</Text>
-          <Text style={style.TittleText}>{Occupation || 'N/A'}</Text>
+          <Text style={style.TittleText}>
+            {formatText(Occupation) || 'N/A'}
+          </Text>
 
           <Text style={style.subTittleText}>Annual Income</Text>
           <Text style={style.TittleText}>{annualIncome || 'N/A'}</Text>

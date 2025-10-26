@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, Text, TextInput, View} from 'react-native';
 import {colors} from '../../../utils/colors';
 import NewDropDownTextInput from '../../../components/newDropdownTextinput';
-import {fontSize, hp, wp} from '../../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 
 import DatingTextInputMultipleSelect from '../../../components/datingTextInputMultipleSelect';
@@ -18,8 +18,23 @@ const DatingGeneralDetailsScreen = ({
   setBio,
   bio,
 }) => {
-  const genderDropdownData = ['Male', 'Female'];
-  const ReligionData = ['Hindu', 'Muslim', 'Sikh'];
+  const genderDropdownData = [
+    'Male',
+    'Female',
+    'Non Binary',
+    'prefer Not To Say',
+    'Other',
+  ];
+  const ReligionData = [
+    'Hindu',
+    'Muslim',
+    'Christian',
+    'Sikh',
+    'Buddhist',
+    'Jain',
+    'Islam',
+    'Other',
+  ];
   const Language = ['Hindi', 'English', 'Gujarati'];
   const EthnicityData = ['AAA', 'BBB', 'CCC'];
 
@@ -39,15 +54,17 @@ const DatingGeneralDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17)}}>
+      <ScrollView
+        style={{marginHorizontal: wp(17)}}
+        showsVerticalScrollIndicator={false}>
         <View style={{marginTop: 30}}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{height: hp(10)}} />
+            <View style={{height: hp(15)}} />
             <NewDropDownTextInput
               placeholder="Gender"
               dropdownData={genderDropdownData}
               onValueChange={genderSetSelectedOption}
-              bottomSheetHeight={hp(150)}
+              bottomSheetHeight={hp(260)}
             />
 
             <View style={{marginTop: hp(37)}}>
@@ -55,7 +72,7 @@ const DatingGeneralDetailsScreen = ({
                 label="Height"
                 value={userHeight}
                 onChangeText={setUserHeight}
-                showUnitText={'CM'}
+                showUnitText={'Ft'}
                 showUnit={true}
               />
             </View>
@@ -66,6 +83,11 @@ const DatingGeneralDetailsScreen = ({
                 options={Language}
                 onSelect={handleSelect} // Pass the onSelect handler to capture selected values
                 bottomSheetHeight={hp(170)}
+                textInputStyle={{
+                  fontSize: fontSize(17),
+                  lineHeight: hp(26),
+                  fontFamily: fontFamily.poppins400,
+                }}
               />
             </View>
 
@@ -74,7 +96,7 @@ const DatingGeneralDetailsScreen = ({
                 placeholder="Religion"
                 dropdownData={ReligionData}
                 onValueChange={SetReligionSelectedOption}
-                bottomSheetHeight={hp(170)}
+                bottomSheetHeight={hp(390)}
               />
             </View>
 
@@ -98,7 +120,7 @@ const DatingGeneralDetailsScreen = ({
             <View style={{height: hp(50)}} />
           </ScrollView>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

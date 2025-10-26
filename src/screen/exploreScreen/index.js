@@ -61,7 +61,6 @@ const ExploreScreen = () => {
     {
       id: 2,
       name: 'Aarav Joshi',
-      image: require('../../assets/images/user_two.png'),
       gender: 'Male',
       age: '36',
       height: '4\'55"',

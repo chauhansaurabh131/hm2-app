@@ -183,7 +183,7 @@ const ChatScreen = ({navigation}) => {
       });
 
       socketIo.on('MessagesOfFriends', data => {
-        setIsConnecting(false);
+        // setIsConnecting(false);
         console.log('📨 Received friends list:', data);
         if (data?.data) {
           setFriends(data.data);
@@ -311,9 +311,12 @@ const ChatScreen = ({navigation}) => {
     const onlineStatusColor = item?.friendList?.isUserActive
       ? colors.blue
       : '#A7A7A7';
+
     const onlineStatusText = item?.friendList?.isUserActive
       ? 'Online'
       : 'Offline';
+
+    console.log(' === onlineStatusText ===> ', item?.friendList?.isUserActive);
 
     const handleItemPress = userData => {
       // console.log(' === handleItemPress_chatScreen ===> ', userData);

@@ -1,52 +1,80 @@
-import React from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import {style} from '../newUserDetailsScreen/style';
-import {images} from '../../assets';
-import ProfileAvatar from '../../components/letterProfileComponent';
-import {fontSize, hp, wp} from '../../utils/helpers';
+import React, {useState, useCallback} from 'react';
+import {
+  SafeAreaView,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  View,
+} from 'react-native';
 import {useSelector} from 'react-redux';
+import axios from 'axios';
+import {useFocusEffect} from '@react-navigation/native';
+
+// 🔹 Separate render item component
+const PlanItem = ({item}) => {
+  return (
+    <View style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
+      <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+        {item?.name || 'No Name'}
+      </Text>
+      <Text>{item?.price ? `Price: ${item.price}` : 'No Price'}</Text>
+    </View>
+  );
+};
 
 const DemoCode = () => {
   const {user} = useSelector(state => state.auth);
-  const userImage = user?.user?.profilePic;
+  const accessToken = user?.tokens?.access?.token;
 
-  const hasValidImage =
-    user?.user?.profilePic &&
-    user?.user?.profilePic !== 'null' &&
-    user?.user?.profilePic.trim() !== '';
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPlans = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        'https://stag.mntech.website/api/v1/admin/plan/get-plan-dating',
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log(' === Plans Response ===> ', response.data);
+      setPlans(response.data?.data || []);
+    } catch (error) {
+      console.error(
+        'Error fetching plans:',
+        error?.response?.data || error.message,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Call API every time this screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      if (accessToken) {
+        fetchPlans();
+      }
+    }, [accessToken]),
+  );
 
   return (
-    <SafeAreaView>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}>
-        <Image
-          source={images.happyMilanColorLogo}
-          style={{width: wp(96), height: hp(24), resizeMode: 'contain'}}
+    <SafeAreaView style={{flex: 1, padding: 16}}>
+      {loading ? (
+        <ActivityIndicator size="large" color="blue" />
+      ) : (
+        <FlatList
+          data={plans}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => <PlanItem item={item} />}
+          ListEmptyComponent={<Text>No plans found</Text>}
         />
-
-        <TouchableOpacity
-          activeOpacity={0.6}
-          // onPress={openBottomSheet}
-        >
-          {hasValidImage ? (
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={{width: hp(24), height: hp(24), borderRadius: 50}}
-            />
-          ) : (
-            <ProfileAvatar
-              firstName={user?.user?.firstName || user?.user?.name}
-              lastName={user?.user?.lastName}
-              textStyle={{width: hp(24), height: hp(24), borderRadius: 50}}
-              profileTexts={{fontSize: fontSize(10)}}
-            />
-          )}
-        </TouchableOpacity>
-      </View>
+      )}
     </SafeAreaView>
   );
 };
+
 export default DemoCode;

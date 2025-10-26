@@ -14,22 +14,57 @@ const DatingLocationScreen = ({
   setOccupation,
   setAnnualIncome,
 }) => {
-  const CurrentLivingData = ['India', 'Sri-Lanka', 'US', 'UK'];
+  const CurrentLivingData = ['India'];
 
   const EducationLevelData = [
-    'PhD',
-    "master's Degree",
-    "Bachelor's Degree",
-    'Higher Secondary ',
+    'Bachelors Arts',
+    'Science',
+    'Commerce',
+    'B Phil',
+    'Bachelors Engineering',
+    'Computers',
+    'BCA',
+    'MCA',
+    'BBA',
+    'BSC',
+    'MSC',
+    'Diploma',
+    'Higher Secondary',
     'Secondary',
+    'Legal BL',
+    'ML',
+    'LLB',
+    'LLM',
+    'Management BBA',
+    'MBA',
+    'Masters Arts',
+    'Masters Science',
+    'Masters Commerce',
+    'M Phil',
+    'Masters Engineering',
+    'Computers (Masters)',
+    'Medicine General',
+    'Dental',
+    'Surgeon',
+    'Ph.D',
+    'IAS',
+    'IPS',
+    'IRS',
+    'IES',
+    'IF',
   ];
-  const OccupationData = ['Work', 'Business', 'Business & Work'];
+  const OccupationData = ['Government', 'Private', 'Retired', 'Homemaker'];
 
   const Annual_Income = [
     'Above 2 Lacs',
-    'Above 3 Lacs',
     'Above 4 Lacs',
-    'Above 5 Lacs',
+    'Above 6 Lacs',
+    'Above 8 Lacs',
+    'Above 10 Lacs',
+    'Above 12 Lacs',
+    'Above 15 Lacs',
+    'Above 18 Lacs',
+    'Above 20 Lacs',
   ];
 
   const {user} = useSelector(state => state.auth);
@@ -39,6 +74,7 @@ const DatingLocationScreen = ({
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17)}}>
         <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{height: hp(15)}} />
           <View style={{marginTop: 30}}>
             <FloatingLabelInput
               label="Mobile Number"
@@ -62,7 +98,7 @@ const DatingLocationScreen = ({
               placeholder="Currently Living"
               dropdownData={CurrentLivingData}
               onValueChange={setCurrentLiving}
-              bottomSheetHeight={hp(210)}
+              bottomSheetHeight={hp(100)}
             />
           </View>
 
@@ -71,7 +107,7 @@ const DatingLocationScreen = ({
               placeholder="Education Level"
               dropdownData={EducationLevelData}
               onValueChange={setEducationLevel}
-              bottomSheetHeight={hp(260)}
+              bottomSheetHeight={hp(450)}
             />
           </View>
 
@@ -80,7 +116,7 @@ const DatingLocationScreen = ({
               placeholder="Occupation"
               dropdownData={OccupationData}
               onValueChange={setOccupation}
-              bottomSheetHeight={hp(170)}
+              bottomSheetHeight={hp(220)}
             />
           </View>
 
@@ -89,7 +125,7 @@ const DatingLocationScreen = ({
               placeholder="Annual Income"
               dropdownData={Annual_Income}
               onValueChange={setAnnualIncome}
-              bottomSheetHeight={hp(230)}
+              bottomSheetHeight={hp(300)}
             />
           </View>
 

@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   Keyboard,
+  Modal,
   SafeAreaView,
   Text,
   TextInput,
@@ -25,6 +26,78 @@ import AgeRangeSlider from '../../../components/ageRangeSlider';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import Toast from 'react-native-toast-message';
+
+const customToastConfig = {
+  like: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  disLike: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  sentReq: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  cancelReq: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+};
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -48,6 +121,8 @@ const DatingSearchFilterScreen = ({route}) => {
   const [text, setText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [freeCreditModal, setFreeCreditModal] = useState(false);
+  const [creditOverModal, setCreditOverModal] = useState(false);
 
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
@@ -295,6 +370,13 @@ const DatingSearchFilterScreen = ({route}) => {
           );
 
           setCards(updatedCards); // Update the state
+          // 🔹 Show toast after unlike
+          Toast.show({
+            type: 'disLike',
+            text1: 'Profile Disliked',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           Alert.alert('Error', 'Unable to unlike the user. Please try again.');
         }
@@ -332,6 +414,14 @@ const DatingSearchFilterScreen = ({route}) => {
           );
 
           setCards(updatedCards); // Update the state
+
+          // 🔹 Show toast after like
+          Toast.show({
+            type: 'like',
+            text1: 'Profile Liked',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           Alert.alert('Error', 'Unable to like the user. Please try again.');
         }
@@ -342,19 +432,149 @@ const DatingSearchFilterScreen = ({route}) => {
     }
   };
 
+  // const handleSend = async card => {
+  //   console.log(' === handleSend--- ===> ', card);
+  //   // const requestedId = card?.friendsDetails[0]?._id; // Retrieve stored request ID
+  //   const requestedId = card?._id; // Retrieve stored request ID
+  //
+  //   console.log('=== requestedId ===> ', requestedId);
+  //
+  //   if (card?.status !== 'requested') {
+  //     // Sending friend request
+  //     try {
+  //       const response = await axios.post(
+  //         'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
+  //         {
+  //           friend: card._id, // Friend's ID
+  //           user: userId, // Logged-in user's ID
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         },
+  //       );
+  //
+  //       console.log('API Response for create-friend:', response?.data);
+  //
+  //       if (response?.data?.status === 'Success') {
+  //         const requestId = response?.data?.data?.id; // Extract the request ID
+  //
+  //         if (!requestId) {
+  //           console.error('Friend request ID is missing from API response.');
+  //           return;
+  //         }
+  //
+  //         // Update the card with the request ID and status
+  //         const updatedCards = cards.map(item =>
+  //           item._id === card._id
+  //             ? {
+  //                 ...item,
+  //                 friendsDetails: [
+  //                   {
+  //                     // ...item.friendsDetails[0],
+  //                     ...item.friendsDetails,
+  //                     _id: requestId, // Store request ID
+  //                     status: 'requested',
+  //                   },
+  //                 ],
+  //               }
+  //             : item,
+  //         );
+  //         setCards(updatedCards);
+  //
+  //         Toast.show({
+  //           type: 'sentReq',
+  //           text1: 'Request Sent',
+  //           position: 'top',
+  //           visibilityTime: 1500,
+  //         });
+  //       } else {
+  //         console.log('Unable to send friend request. Please try again.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error with create-friend API:', error);
+  //       Alert.alert('Error', 'Something went wrong. Please try again.');
+  //     }
+  //   } else {
+  //     console.log('Friend request already sent, now removing the request');
+  //
+  //     if (!requestedId) {
+  //       console.error('Requested ID is missing. Cannot remove friend request.');
+  //       return;
+  //     }
+  //
+  //     // Removing friend request
+  //     try {
+  //       const response = await axios.post(
+  //         'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+  //         {
+  //           user: card._id, // Friend's ID
+  //           request: requestedId, // Use stored request ID
+  //           status: 'removed', // Mark request as removed
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         },
+  //       );
+  //
+  //       console.log('API Response for remove-friend-request:', response?.data);
+  //
+  //       if (response?.data?.success === true) {
+  //         // Update the card to reflect the removal
+  //         const updatedCards = cards.map(item =>
+  //           item._id === card._id
+  //             ? {
+  //                 ...item,
+  //                 friendsDetails: [
+  //                   {
+  //                     ...item.friendsDetails[0],
+  //                     _id: null, // Remove request ID
+  //                     status: 'removed',
+  //                   },
+  //                 ],
+  //               }
+  //             : item,
+  //         );
+  //         setCards(updatedCards);
+  //
+  //         Toast.show({
+  //           type: 'cancelReq',
+  //           text1: 'Cancel Request ',
+  //           position: 'top',
+  //           visibilityTime: 1500,
+  //         });
+  //       } else {
+  //         console.log('Unable to remove friend request. Please try again.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error with remove-friend-request API:', error);
+  //       Alert.alert('Error', 'Something went wrong. Please try again....');
+  //     }
+  //   }
+  // };
+
   const handleSend = async card => {
-    const requestedId = card?.friendsDetails[0]?._id; // Retrieve stored request ID
+    // console.log(' === handleSend--- ===> ', card);
+
+    const requestedId = card?.friendsDetails?.[0]?._id || null;
+    const currentStatus = card?.friendsDetails?.[0]?.status || null;
 
     console.log('=== requestedId ===> ', requestedId);
+    console.log('=== currentStatus ===> ', currentStatus);
 
-    if (card?.friendsDetails[0]?.status !== 'requested') {
-      // Sending friend request
+    if (currentStatus !== 'requested') {
+      // ✅ Send friend request
       try {
         const response = await axios.post(
           'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
           {
-            friend: card._id, // Friend's ID
-            user: userId, // Logged-in user's ID
+            friend: card._id,
+            user: userId,
           },
           {
             headers: {
@@ -367,52 +587,65 @@ const DatingSearchFilterScreen = ({route}) => {
         console.log('API Response for create-friend:', response?.data);
 
         if (response?.data?.status === 'Success') {
-          const requestId = response?.data?.data?.id; // Extract the request ID
+          const requestId = response?.data?.data?.id;
 
-          if (!requestId) {
-            console.error('Friend request ID is missing from API response.');
-            return;
-          }
-
-          // Update the card with the request ID and status
           const updatedCards = cards.map(item =>
             item._id === card._id
               ? {
                   ...item,
                   friendsDetails: [
                     {
-                      ...item.friendsDetails[0],
-                      _id: requestId, // Store request ID
+                      _id: requestId,
                       status: 'requested',
                     },
                   ],
                 }
               : item,
           );
+
           setCards(updatedCards);
-        } else {
-          console.log('Unable to send friend request. Please try again.');
+
+          Toast.show({
+            type: 'sentReq',
+            text1: 'Request Sent',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         }
       } catch (error) {
-        console.error('Error with create-friend API:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
+        console.error('❌ Error with create-friend API:', error);
+        // Alert.alert(
+        //   'Friend request failed',
+        //   'This user may have already been requested.',
+        // );
+
+        const errorMessage =
+          error?.response?.data?.message ||
+          'Something went wrong. Please try again.';
+
+        console.error('API Error:', errorMessage);
+
+        if (errorMessage.includes('Credit record not found')) {
+          setFreeCreditModal(true);
+        } else {
+          setCreditOverModal(true);
+          // Alert.alert('Error', errorMessage);
+        }
       }
     } else {
-      console.log('Friend request already sent, now removing the request');
-
+      // ✅ Remove friend request
       if (!requestedId) {
-        console.error('Requested ID is missing. Cannot remove friend request.');
+        Alert.alert('Missing Request ID', 'Cannot remove friend request.');
         return;
       }
 
-      // Removing friend request
       try {
         const response = await axios.post(
           'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
           {
-            user: card._id, // Friend's ID
-            request: requestedId, // Use stored request ID
-            status: 'removed', // Mark request as removed
+            user: card._id,
+            request: requestedId,
+            status: 'removed',
           },
           {
             headers: {
@@ -422,37 +655,49 @@ const DatingSearchFilterScreen = ({route}) => {
           },
         );
 
-        console.log('API Response for remove-friend-request:', response?.data);
-
         if (response?.data?.success === true) {
-          // Update the card to reflect the removal
           const updatedCards = cards.map(item =>
             item._id === card._id
               ? {
                   ...item,
                   friendsDetails: [
                     {
-                      ...item.friendsDetails[0],
-                      _id: null, // Remove request ID
+                      _id: null,
                       status: 'removed',
                     },
                   ],
                 }
               : item,
           );
+
           setCards(updatedCards);
-        } else {
-          console.log('Unable to remove friend request. Please try again.');
+
+          Toast.show({
+            type: 'cancelReq',
+            text1: 'Request Cancelled',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         }
       } catch (error) {
-        console.error('Error with remove-friend-request API:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
+        console.error('❌ Error with remove-friend-request API:', error);
+        Alert.alert('Failed to cancel', 'Try again later.');
       }
     }
   };
 
   const renderCard = card => {
-    // console.log(' === card ===> ', card?.friendsDetails?.status);
+    // console.log(' === card ===> ', card?.datingData[0]?.Occupation);
+
+    const formatText = text => {
+      if (!text) {
+        return 'N.A';
+      }
+      return text
+        .split('_') // split by underscore
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
+        .join(' '); // join with space
+    };
 
     const profilePrivacy =
       card.privacySettingCustom?.profilePhotoPrivacy === true ||
@@ -480,8 +725,8 @@ const DatingSearchFilterScreen = ({route}) => {
         style={{
           justifyContent: 'center',
           borderRadius: 20,
-          borderWidth: 2,
-          borderColor: '#E8E8E8',
+          // borderWidth: 2,
+          // borderColor: '#E8E8E8',
           backgroundColor: '#FFF',
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 1},
@@ -553,8 +798,7 @@ const DatingSearchFilterScreen = ({route}) => {
               lineHeight: hp(36),
               fontFamily: fontFamily.poppins700,
             }}>
-            {/*{card.name.charAt(0).toUpperCase() + card.name.slice(1)},{' '}*/}
-            {capitalizeFirstLetter(card?.name)}, {age || card?.age || 'N.A'}
+            {formatText(card?.name)}, {age || card?.age || 'N.A'}
           </Text>
 
           <View style={{flexDirection: 'row'}}>
@@ -565,10 +809,9 @@ const DatingSearchFilterScreen = ({route}) => {
                 lineHeight: hp(21),
                 fontFamily: fontFamily.poppins400,
               }}>
-              {card?.datingData[0]?.Occupation || 'N.A'} |{' '}
-              {capitalizeFirstLetter(card?.datingData[0]?.Ethnicity) || 'N.A'},{' '}
-              {capitalizeFirstLetter(card?.datingData[0]?.CurrentlyLiving) ||
-                'N.A'}
+              {formatText(card?.datingData?.[0]?.Occupation)} |{' '}
+              {formatText(card?.datingData?.[0]?.Ethnicity)} ,{' '}
+              {formatText(card?.datingData?.[0]?.CurrentlyLiving)}
             </Text>
           </View>
         </TouchableOpacity>
@@ -658,7 +901,7 @@ const DatingSearchFilterScreen = ({route}) => {
               </TouchableOpacity>
             )}
 
-            {card?.friendsDetails[0]?.status === 'requested' ? (
+            {card?.friendsDetails?.[0]?.status === 'requested' ? (
               <TouchableOpacity
                 style={{
                   width: hp(70),
@@ -699,6 +942,10 @@ const DatingSearchFilterScreen = ({route}) => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View style={{zIndex: 99, top: -60}}>
+        <Toast config={customToastConfig} />
+      </View>
+
       <View style={style.headerContainer}>
         <View style={style.headerBody}>
           <Image
@@ -1019,7 +1266,7 @@ const DatingSearchFilterScreen = ({route}) => {
                     // height: 50,
                   }}>
                   <LinearGradient
-                    colors={['#0D4EB3', '#9413D0']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0.5}}
                     style={{
@@ -1152,6 +1399,174 @@ const DatingSearchFilterScreen = ({route}) => {
           </View>
         )}
       </View>
+
+      {/*FREE CREDIT OVER MODAL*/}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={freeCreditModal}
+        onRequestClose={() => setFreeCreditModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+                marginTop: hp(42),
+              }}>
+              Free plan ended — upgrade to
+            </Text>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+              }}>
+              send more requests.
+            </Text>
+
+            {/* Close Button */}
+            <TouchableOpacity
+              onPress={() => {
+                setFreeCreditModal(false);
+                navigation.navigate('Upgrader');
+              }}
+              activeOpacity={0.7}
+              style={{marginTop: hp(23), marginBottom: hp(43)}}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={{
+                  width: wp(123),
+                  height: hp(44),
+                  borderRadius: 50,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    marginLeft: hp(20),
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                    marginRight: wp(7),
+                    top: 2,
+                  }}>
+                  Upgrade
+                </Text>
+                <Image
+                  source={icons.crownIcon}
+                  style={{
+                    width: hp(16.52),
+                    height: hp(14),
+                    tintColor: colors.white,
+                    marginRight: hp(22.12),
+                  }}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* PURCHASE CREDIT OVER MODAL */}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={creditOverModal}
+        onRequestClose={() => setCreditOverModal(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+                marginTop: hp(42),
+              }}>
+              No credits left. Purchase more to
+            </Text>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: colors.pureBlack,
+              }}>
+              send requests.
+            </Text>
+
+            {/* Close Button */}
+            <TouchableOpacity
+              onPress={() => {
+                setCreditOverModal(false);
+                navigation.navigate('Upgrader');
+              }}
+              activeOpacity={0.7}
+              style={{marginTop: hp(23), marginBottom: hp(43)}}>
+              <LinearGradient
+                colors={['#0D4EB3', '#9413D0']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
+                style={{
+                  width: wp(123),
+                  height: hp(44),
+                  borderRadius: 50,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    marginLeft: hp(20),
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                    marginRight: wp(7),
+                    top: 2,
+                  }}>
+                  Upgrade
+                </Text>
+                <Image
+                  source={icons.crownIcon}
+                  style={{
+                    width: hp(16.52),
+                    height: hp(14),
+                    tintColor: colors.white,
+                    marginRight: hp(22.12),
+                  }}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

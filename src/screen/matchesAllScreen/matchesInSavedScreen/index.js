@@ -798,9 +798,11 @@ const MatchesInSavedScreen = () => {
             />
 
             <View style={styles.imageBottomDataContainer}>
-              <View style={styles.onlineTextBody}>
-                <Text style={styles.onlineText}>Online</Text>
-              </View>
+              {item?.friendList?.isUserActive && (
+                <View style={styles.onlineTextBody}>
+                  <Text style={styles.onlineText}>Online</Text>
+                </View>
+              )}
 
               <View>
                 <TouchableOpacity

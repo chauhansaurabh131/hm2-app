@@ -830,24 +830,26 @@ const MatchesInSentScreen = () => {
                 width: '100%',
                 marginLeft: wp(21),
               }}>
-              <View
-                style={{
-                  width: wp(34.8),
-                  height: hp(12),
-                  borderRadius: 5,
-                  backgroundColor: '#24FF00A8',
-                  justifyContent: 'center',
-                }}>
-                <Text
+              {item?.friendList?.isUserActive && (
+                <View
                   style={{
-                    color: colors.black,
-                    fontSize: fontSize(9),
-                    lineHeight: hp(12),
-                    textAlign: 'center',
+                    width: wp(34.8),
+                    height: hp(12),
+                    borderRadius: 5,
+                    backgroundColor: '#24FF00A8',
+                    justifyContent: 'center',
                   }}>
-                  Online
-                </Text>
-              </View>
+                  <Text
+                    style={{
+                      color: colors.black,
+                      fontSize: fontSize(9),
+                      lineHeight: hp(12),
+                      textAlign: 'center',
+                    }}>
+                    Online
+                  </Text>
+                </View>
+              )}
 
               <TouchableOpacity
                 onPress={() => {

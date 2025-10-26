@@ -758,9 +758,11 @@ const MatchesInReceivedScreen = () => {
               />
 
               <View style={style.UserDetailsContainer}>
-                <View style={style.onlineBodyStyle}>
-                  <Text style={style.bodyTextStyle}>Online</Text>
-                </View>
+                {item?.user?.isUserActive && (
+                  <View style={style.onlineBodyStyle}>
+                    <Text style={style.bodyTextStyle}>Online</Text>
+                  </View>
+                )}
 
                 <TouchableOpacity
                   onPress={() => {

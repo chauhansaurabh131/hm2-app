@@ -206,6 +206,7 @@ const DOBTextInputComponent = ({
               />
             </View>
             <TouchableOpacity
+              activeOpacity={0.6}
               style={styles.setDateButton}
               onPress={handleSetDate}>
               <Text style={styles.setDateButtonText}>Set Date</Text>

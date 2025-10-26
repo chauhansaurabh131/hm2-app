@@ -22,6 +22,7 @@ const NewBottomSheetMultipleValueSelect = ({
   onSelect,
   bottomSheetHeight,
   maxSelections = 5,
+  textInputStyle,
 }) => {
   const [selectedValues, setSelectedValues] = useState([]);
   const bottomSheetRef = useRef(null);
@@ -81,7 +82,7 @@ const NewBottomSheetMultipleValueSelect = ({
         <TextInput
           placeholder={label || 'Select options'}
           value={selectedValues.length === 0 ? '' : undefined}
-          style={style.textInput}
+          style={[style.textInput, textInputStyle]}
           editable={false}
           placeholderTextColor={'black'}
         />

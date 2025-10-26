@@ -734,7 +734,7 @@
 
 import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import MainNavigator from './src/navigations';
+import MainNavigator, {navigationRef} from './src/navigations';
 import {
   LogBox,
   Platform,
@@ -743,8 +743,10 @@ import {
   Text,
   Animated,
   StyleSheet,
+  AppState,
+  Linking,
 } from 'react-native';
-import {Provider, useSelector} from 'react-redux'; // Keep this import
+import {Provider, useDispatch, useSelector} from 'react-redux'; // Keep this import
 import {persistor, store} from './src/reducer/store';
 import {
   ForegroundMessages,
@@ -757,6 +759,10 @@ import messaging from '@react-native-firebase/messaging';
 import notifee, {AndroidImportance} from '@notifee/react-native';
 import NetInfo from '@react-native-community/netinfo';
 import {SocketProvider} from './src/utils/context/SocketContext';
+import Toast from 'react-native-toast-message';
+import {useFocusEffect} from '@react-navigation/native';
+import io from 'socket.io-client';
+import {changeStack, logout} from './src/actions/authActions';
 
 LogBox.ignoreAllLogs();
 
@@ -768,6 +774,11 @@ const MainApp = () => {
   const timerRef = useRef(null);
 
   const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const dispatch = useDispatch();
+
+  console.log(' === user ===> ', user?.tokens);
+
   // console.log(' === user----- ===> ', user?.user);
 
   useEffect(() => {
@@ -804,6 +815,64 @@ const MainApp = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    // ✅ Create socket instance
+    const socketIo = io('https://stag.mntech.website', {
+      path: '/api/socket.io',
+      query: {token: accessToken},
+      transports: ['websocket'], // recommended
+    });
+
+    console.log('📡 Trying to connect socket...');
+
+    // ✅ On connect
+    socketIo.on('connect', () => {
+      console.log('✅ Connected to socket');
+      socketIo.emit('userActive');
+    });
+
+    // ✅ Online user list
+    socketIo.on('onlineUser', data => {
+      console.log('👥 Online users:', data);
+    });
+
+    // ✅ On disconnect
+    socketIo.on('disconnect', () => {
+      console.log('❌ Disconnected from socket');
+    });
+
+    // ✅ AppState listener (foreground / background)
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'background' || state === 'inactive') {
+        console.log('📴 App went to background → userInActive');
+        socketIo.emit('userInActive');
+      } else if (state === 'active') {
+        console.log('📱 App became active → userActive');
+        socketIo.emit('userActive');
+      }
+    });
+
+    // ✅ Heartbeat (every 20s)
+    const heartbeat = setInterval(() => {
+      if (socketIo.connected) {
+        socketIo.emit('ping'); // server should listen for this
+        // console.log('💓 Sent heartbeat ping');
+      }
+    }, 20000);
+
+    // ✅ Cleanup on unmount
+    return () => {
+      subscription.remove();
+      clearInterval(heartbeat);
+      socketIo.disconnect();
+      console.log('🛑 Socket disconnected on unmount');
+    };
+  }, [accessToken]);
 
   const slideIn = () => {
     Animated.timing(translateY, {
@@ -971,6 +1040,7 @@ const App = () => {
           <MainApp />
         </PersistGate>
       </Provider>
+      {/*<Toast />*/}
     </SafeAreaProvider>
   );
 };

@@ -57,17 +57,7 @@ const DatingPartnerPreferenceScreen = () => {
     Adventurous: 'adventurous',
   };
 
-  const Prefer_Country = [
-    'India',
-    'Canada',
-    'Us',
-    'Afghanistan',
-    'China',
-    'Myanmar',
-    'Nepal',
-    'Sri-lanka',
-    'Pakistan',
-  ];
+  const Prefer_Country = ['India'];
 
   // Function to map the selected labels to their corresponding values
   const getMappedDatingValues = selectedLabels => {
@@ -192,7 +182,7 @@ const DatingPartnerPreferenceScreen = () => {
               label="Select Interested In"
               options={Dating_List}
               onSelect={handleInterestedInSelect}
-              bottomSheetHeight={hp(450)}
+              bottomSheetHeight={hp(400)}
             />
 
             <View style={{alignItems: 'center', marginTop: hp(50)}}>
@@ -227,7 +217,7 @@ const DatingPartnerPreferenceScreen = () => {
                 label="Select Prefer Country"
                 options={Prefer_Country}
                 onSelect={handleSelect} // Pass the onSelect handler to capture selected values
-                bottomSheetHeight={hp(450)}
+                bottomSheetHeight={hp(100)}
               />
             </View>
           </View>
@@ -270,6 +260,7 @@ const DatingPartnerPreferenceScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            activeOpacity={0.7}
             onPress={onDashboardPress}
             // disabled={isUpdatingProfile}
             style={{

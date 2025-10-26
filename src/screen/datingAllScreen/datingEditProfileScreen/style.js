@@ -17,7 +17,7 @@ export const style = StyleSheet.create({
     height: hp(24),
     borderRadius: 50,
     marginRight: hp(10.5),
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     right: -7,
     marginTop: hp(2),
   },
@@ -128,8 +128,8 @@ export const style = StyleSheet.create({
   },
   purposeSelectedContainerView: {
     backgroundColor: '#f0f0f0',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
     borderRadius: 20,
     marginRight: 10,
     marginBottom: 10,
@@ -139,6 +139,8 @@ export const style = StyleSheet.create({
   purpose: {
     color: 'black',
     marginRight: 10,
+    fontSize: fontSize(15),
+    fontFamily: fontFamily.poppins500,
   },
   imageRenderImageAddContainer: {
     width: hp(106),
@@ -242,7 +244,9 @@ export const style = StyleSheet.create({
   },
   bottomSheetOptionText: {
     color: 'black',
-    marginTop: 15,
+    marginTop: hp(15),
+    fontSize: fontSize(16),
+    fontFamily: fontFamily.poppins500,
   },
   basicInfoContainer: {
     flex: 1,
@@ -308,10 +312,11 @@ export const style = StyleSheet.create({
     marginBottom: hp(10),
   },
   currentlyBottomSheetContainer: {
-    padding: 20,
+    // padding: 20,
+    marginHorizontal: 17,
   },
   currentlyBottomSheetOption: {
-    marginBottom: hp(15),
+    // marginBottom: hp(15),
   },
 
   hobbiesAndInterestContainer: {

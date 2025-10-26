@@ -238,6 +238,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         'gothra',
         'zodiac',
         'email',
+        'datingData',
       ];
     } else if (selectedPrivacy === 'privateProfile') {
       privacySettingCustom.privateProfile = [
@@ -275,6 +276,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         'gothra',
         'zodiac',
         'email',
+        'datingData',
       ];
       // Automatically set showPhotoToFriendsOnly to true for privateProfile
       privacySettingCustom.showPhotoToFriendsOnly = true;
@@ -335,6 +337,7 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
         'gothra',
         'zodiac',
         'email',
+        'datingData',
       ];
     }
 

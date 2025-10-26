@@ -257,6 +257,7 @@ const PrivacyScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'datingData',
         'email',
       ];
       // Automatically set showPhotoToFriendsOnly to true for privateProfile
@@ -317,6 +318,7 @@ const PrivacyScreen = ({route}) => {
         'manglikStatus',
         'gothra',
         'zodiac',
+        'datingData',
         'email',
       ];
     }

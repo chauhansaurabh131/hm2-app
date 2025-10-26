@@ -26,7 +26,7 @@ export const style = StyleSheet.create({
     height: hp(24),
     borderRadius: 50,
     marginRight: hp(10.5),
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     right: -7,
     marginTop: hp(2),
   },

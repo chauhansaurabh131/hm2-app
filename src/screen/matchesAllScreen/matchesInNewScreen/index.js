@@ -555,6 +555,8 @@ const MatchesInNewScreen = () => {
       ? item.userProfilePic.map(pic => pic.url)
       : [];
 
+    console.log(' === item__ ===> ', item?.isUserActive);
+
     const blockedFriendId = item?._id;
     const uniqueId = item?.userUniqueId;
 
@@ -678,9 +680,11 @@ const MatchesInNewScreen = () => {
             />
 
             <View style={style.UserDetailsContainer}>
-              <View style={style.onlineBodyStyle}>
-                <Text style={style.bodyTextStyle}>Online</Text>
-              </View>
+              {item?.isUserActive && (
+                <View style={style.onlineBodyStyle}>
+                  <Text style={style.bodyTextStyle}>Online</Text>
+                </View>
+              )}
 
               <TouchableOpacity
                 onPress={() => {

@@ -68,6 +68,7 @@ export const setPasswordFail = () => ({type: TYPES.SET_PASSWORD_FAILED});
 
 export function logout(clear) {
   return {type: TYPES.LOGOUT_START, clear};
+  resetToLogin(); // ⬅️ instantly navigate to Login screen
 }
 
 export const changeStack = data => ({type: TYPES.CHANGE_STACK, data});

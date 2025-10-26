@@ -37,7 +37,7 @@ const DatingEditProfileScreen = () => {
 
   // console.log(' === var ===> ', user?.user?.id);
 
-  console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
+  // console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
   // console.log(' === DatingEditProfileScreen ===> ', user?.user);
 
   const [aboutText, setAboutText] = useState('');
@@ -69,7 +69,19 @@ const DatingEditProfileScreen = () => {
     user?.user?.datingData[0]?.annualIncome || 'Not available',
   );
   const [selectedMotherTongue, setSelectedMotherTongue] = useState([]);
+
   const [selectedHobbies, setSelectedHobbies] = useState([]);
+
+  // console.log(' === selectedHobbies ===> ', selectedHobbies);
+
+  const formatHobby = hobby =>
+    hobby
+      .split('_') // replace underscores
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize each word
+      .join(' ');
+
+  const hobbiesArray =
+    selectedHobbies[0]?.split(',').map(hobby => hobby.trim()) || [];
 
   const dispatch = useDispatch();
   const apiDispatch = useDispatch();
@@ -88,6 +100,16 @@ const DatingEditProfileScreen = () => {
   const imageWidth = screenWidth / 3 - 10; // Divide screen width by 3 and add margin
 
   const topModalBottomSheetRef = useRef(null);
+
+  const formatText = text => {
+    if (!text) {
+      return 'N.A';
+    }
+    return text
+      .split('_') // split by underscore
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
+      .join(' '); // join with space
+  };
 
   const openTopBottomSheet = () => {
     topModalBottomSheetRef.current.open();
@@ -117,30 +139,18 @@ const DatingEditProfileScreen = () => {
   };
 
   // List of all country names
-  const countries = [
-    'India',
-    'United States',
-    'United Kingdom',
-    'Canada',
-    'Australia',
-    'Germany',
-    'France',
-    'China',
-    'Japan',
-    'Brazil',
-    'Russia',
-    'South Africa',
-    'Mexico',
-  ];
+  const countries = ['India'];
 
   // List of all Religion names
   const religion = [
     'Hindu',
-    'Christianity',
-    'Sikhism',
-    'Buddhism',
-    'Jainism',
     'Muslim',
+    'Christian',
+    'Sikh',
+    'Buddhist',
+    'Jain',
+    'Islam',
+    'Other',
   ];
 
   // List of all Ethnicity names
@@ -154,20 +164,45 @@ const DatingEditProfileScreen = () => {
 
   // List of all Education names
   const educationList = [
-    'Software Engineer',
-    'Civil Engineer',
-    'Mechanical Engineer',
-    'Electrical Engineer',
-    'Dentist',
-    'Lawyer',
-    'Advocate',
-    'Pharmacist',
-    'Professor',
-    'Graphic Designer',
+    'Bachelors Arts',
+    'Science',
+    'Commerce',
+    'B Phil',
+    'Bachelors Engineering',
+    'Computers',
+    'BCA',
+    'MCA',
+    'BBA',
+    'BSC',
+    'MSC',
+    'Diploma',
+    'Higher Secondary',
+    'Secondary',
+    'Legal BL',
+    'ML',
+    'LLB',
+    'LLM',
+    'Management BBA',
+    'MBA',
+    'Masters Arts',
+    'Masters Science',
+    'Masters Commerce',
+    'M Phil',
+    'Masters Engineering',
+    'Computers (Masters)',
+    'Medicine General',
+    'Dental',
+    'Surgeon',
+    'Ph.D',
+    'IAS',
+    'IPS',
+    'IRS',
+    'IES',
+    'IF',
   ];
 
   // List of all Occupation names
-  const OccupationList = ['Job', 'Business', 'Job & Business'];
+  const OccupationList = ['Government', 'Private', 'Retired', 'Homemaker'];
 
   // List of all AnnualList names
   const AnnualList = [
@@ -176,30 +211,44 @@ const DatingEditProfileScreen = () => {
     'Above 5 Lacs',
     'Above 7 Lacs',
     'Above 9 Lacs',
+    'Above 11 Lacs',
+    'Above 15 Lacs',
+    'Above 18 Lacs',
+    'Above 20 Lacs',
   ];
 
   useEffect(() => {
     if (user?.user?.hobbies) {
-      const hobbies =
-        typeof user?.user?.hobbies === 'string'
-          ? user?.user?.hobbies.split(',').map(item => item.trim()) // Split string into array and trim spaces
-          : user?.user?.hobbies; // Ensure it's an array
+      let hobbiesArray = [];
 
-      setSelectedHobbies(hobbies);
+      if (typeof user.user.hobbies === 'string') {
+        hobbiesArray = user.user.hobbies.split(',').map(item => item.trim());
+      } else if (Array.isArray(user.user.hobbies)) {
+        hobbiesArray = user.user.hobbies;
+      }
+
+      setSelectedHobbies(hobbiesArray);
     }
-  }, [user?.user?.hobbies]);
+  }, []);
 
-  const handleHobbiesSelectPurpose = purpose => {
-    if (selectedHobbies.includes(purpose)) {
-      setSelectedHobbies(selectedHobbies.filter(item => item !== purpose));
+  const handleHobbiesSelectPurpose = hobby => {
+    if (selectedHobbies.includes(hobby)) {
+      setSelectedHobbies(prev => prev.filter(item => item !== hobby));
     } else {
-      setSelectedHobbies([...selectedHobbies, purpose]);
+      setSelectedHobbies(prev => [...prev, hobby]);
     }
   };
 
   // Function to remove a selected purpose
-  const handleHobbiesRemovePurpose = purpose => {
-    setSelectedHobbies(selectedHobbies.filter(item => item !== purpose));
+  // const handleHobbiesRemovePurpose = purpose => {
+  //   setSelectedHobbies(selectedHobbies.filter(item => item !== purpose));
+  // };
+
+  const handleHobbiesRemovePurpose = hobbyToRemove => {
+    const updatedHobbies = hobbiesArray.filter(
+      hobby => hobby !== hobbyToRemove,
+    );
+    setSelectedHobbies([updatedHobbies.join(', ')]); // join back if you want to keep original format
   };
 
   // Ensure that motherTongue is handled as an array
@@ -1038,8 +1087,17 @@ const DatingEditProfileScreen = () => {
 
             <View style={style.dateContainer}>
               {/* Display the selected country */}
-              <Text style={style.dateStyle}>{selectedCountry}</Text>
-              <TouchableOpacity onPress={openBottomSheet}>
+              <TouchableOpacity
+                onPress={openBottomSheet}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                <Text style={style.dateStyle}>
+                  {formatText(selectedCountry)}
+                </Text>
                 <Image
                   source={icons.rightSideIcon}
                   style={style.purposeRightSideIcon}
@@ -1050,7 +1108,7 @@ const DatingEditProfileScreen = () => {
             {/* Bottom Sheet */}
             <RBSheet
               ref={currentlybottomSheetRef}
-              height={350}
+              height={hp(150)}
               openDuration={250}
               closeOnDragDown={true}
               customStyles={{
@@ -1061,9 +1119,11 @@ const DatingEditProfileScreen = () => {
               }}>
               <View style={style.currentlyBottomSheetContainer}>
                 <Text style={style.purposeBottomSheet}>Select Country</Text>
-                <View style={style.bottomSheetLine} />
+              </View>
+              <View style={style.bottomSheetLine} />
 
-                {/* FlatList to render all country names */}
+              {/* FlatList to render all country names */}
+              <View style={style.currentlyBottomSheetContainer}>
                 <FlatList
                   data={countries}
                   keyExtractor={(item, index) => index.toString()}
@@ -1097,7 +1157,9 @@ const DatingEditProfileScreen = () => {
                       <View
                         key={index}
                         style={style.purposeSelectedContainerView}>
-                        <Text style={style.purpose}>{purpose}</Text>
+                        <Text style={style.purpose}>
+                          {purpose.charAt(0).toUpperCase() + purpose.slice(1)}
+                        </Text>
                         <TouchableOpacity
                           style={style.purposeCancelContainer}
                           onPress={() =>
@@ -1116,7 +1178,7 @@ const DatingEditProfileScreen = () => {
             {/* Bottom Sheet Component */}
             <RBSheet
               ref={motherTongueBottomSheetRef}
-              height={400}
+              height={hp(250)}
               openDuration={250}
               closeOnDragDown={true}
               closeOnPressMask={true}
@@ -1128,8 +1190,13 @@ const DatingEditProfileScreen = () => {
                 },
               }}>
               <View>
-                <Text style={{fontSize: 18, fontFamily: fontFamily.poppins600}}>
-                  Select Purpose
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: fontFamily.poppins600,
+                    color: 'black',
+                  }}>
+                  Select Language
                 </Text>
                 <TouchableOpacity
                   onPress={() => handleMotherTongueSelectPurpose('Hindi')}>
@@ -1145,21 +1212,6 @@ const DatingEditProfileScreen = () => {
                   onPress={() => handleMotherTongueSelectPurpose('English')}>
                   <Text style={style.bottomSheetOptionText}>English</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleMotherTongueSelectPurpose('Maharati')}>
-                  <Text style={style.bottomSheetOptionText}>Maharati</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleMotherTongueSelectPurpose('Punjabi')}>
-                  <Text style={style.bottomSheetOptionText}>Punjabi</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleMotherTongueSelectPurpose('Marvadi')}>
-                  <Text style={style.bottomSheetOptionText}>Marvadi</Text>
-                </TouchableOpacity>
               </View>
             </RBSheet>
 
@@ -1167,8 +1219,17 @@ const DatingEditProfileScreen = () => {
 
             <View style={style.dateContainer}>
               {/* Display the selected Religion */}
-              <Text style={style.dateStyle}>{selectedReligion}</Text>
-              <TouchableOpacity onPress={openReligionBottomSheet}>
+              <TouchableOpacity
+                onPress={openReligionBottomSheet}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}>
+                <Text style={style.dateStyle}>
+                  {formatText(selectedReligion)}
+                </Text>
                 <Image
                   source={icons.rightSideIcon}
                   style={style.purposeRightSideIcon}
@@ -1179,7 +1240,7 @@ const DatingEditProfileScreen = () => {
             {/* Bottom Sheet Religion */}
             <RBSheet
               ref={religionBottomSheetRef}
-              height={300}
+              height={hp(430)}
               openDuration={250}
               closeOnDragDown={true}
               customStyles={{
@@ -1190,7 +1251,11 @@ const DatingEditProfileScreen = () => {
               }}>
               <View style={style.currentlyBottomSheetContainer}>
                 <Text style={style.purposeBottomSheet}>Selected Religion</Text>
+              </View>
 
+              <View style={style.bottomSheetLine} />
+
+              <View style={style.currentlyBottomSheetContainer}>
                 {/* FlatList to render all country names */}
                 <FlatList
                   data={religion}
@@ -1268,6 +1333,8 @@ const DatingEditProfileScreen = () => {
                     mode="date"
                     onDateChange={setTempDate} // Update tempDate when user changes date
                     maximumDate={new Date()} // Ensure date doesn't exceed today
+                    textColor={'black'}
+                    style={{height: 130, width: 300}}
                   />
                 </View>
 
@@ -1299,8 +1366,15 @@ const DatingEditProfileScreen = () => {
 
             <View style={style.dateContainer}>
               {/* Display the selected Religion */}
-              <Text style={style.dateStyle}>{selectedEducation}</Text>
-              <TouchableOpacity onPress={openEducationBottomSheet}>
+              <TouchableOpacity
+                onPress={openEducationBottomSheet}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%',
+                }}>
+                <Text style={style.dateStyle}>{selectedEducation}</Text>
                 <Image
                   source={icons.rightSideIcon}
                   style={style.purposeRightSideIcon}
@@ -1311,7 +1385,7 @@ const DatingEditProfileScreen = () => {
             {/* Bottom Sheet education */}
             <RBSheet
               ref={educationBottomSheetRef}
-              height={370}
+              height={hp(480)}
               openDuration={250}
               closeOnDragDown={true}
               customStyles={{
@@ -1322,7 +1396,11 @@ const DatingEditProfileScreen = () => {
               }}>
               <View style={style.currentlyBottomSheetContainer}>
                 <Text style={style.purposeBottomSheet}>Selected Education</Text>
+              </View>
 
+              <View style={style.bottomSheetLine} />
+
+              <View style={style.currentlyBottomSheetContainer}>
                 {/* FlatList to render all country names */}
                 <FlatList
                   data={educationList}
@@ -1341,8 +1419,17 @@ const DatingEditProfileScreen = () => {
             <Text style={{color: '#5F6368', marginTop: 20}}>Occupation</Text>
             <View style={style.dateContainer}>
               {/* Display the selected Religion */}
-              <Text style={style.dateStyle}>{selectedOccupation}</Text>
-              <TouchableOpacity onPress={openOccupationBottomSheet}>
+              <TouchableOpacity
+                onPress={openOccupationBottomSheet}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  alignItems: 'center',
+                }}>
+                <Text style={style.dateStyle}>
+                  {formatText(selectedOccupation)}
+                </Text>
                 <Image
                   source={icons.rightSideIcon}
                   style={style.purposeRightSideIcon}
@@ -1351,7 +1438,7 @@ const DatingEditProfileScreen = () => {
 
               <RBSheet
                 ref={OccupationBottomSheetRef}
-                height={370}
+                height={hp(280)}
                 openDuration={250}
                 closeOnDragDown={true}
                 customStyles={{
@@ -1364,7 +1451,11 @@ const DatingEditProfileScreen = () => {
                   <Text style={style.purposeBottomSheet}>
                     Selected Occupation
                   </Text>
+                </View>
 
+                <View style={style.bottomSheetLine} />
+
+                <View style={style.currentlyBottomSheetContainer}>
                   {/* FlatList to render all country names */}
                   <FlatList
                     data={OccupationList}
@@ -1384,8 +1475,15 @@ const DatingEditProfileScreen = () => {
             <Text style={{color: '#5F6368', marginTop: 20}}>Annual Income</Text>
             <View style={style.dateContainer}>
               {/* Display the selected Religion */}
-              <Text style={style.dateStyle}>{selectedAnnual}</Text>
-              <TouchableOpacity onPress={openAnnualBottomSheet}>
+              <TouchableOpacity
+                onPress={openAnnualBottomSheet}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%',
+                }}>
+                <Text style={style.dateStyle}>{selectedAnnual}</Text>
                 <Image
                   source={icons.rightSideIcon}
                   style={style.purposeRightSideIcon}
@@ -1394,7 +1492,7 @@ const DatingEditProfileScreen = () => {
 
               <RBSheet
                 ref={AnnualBottomSheetRef}
-                height={370}
+                height={hp(480)}
                 openDuration={250}
                 closeOnDragDown={true}
                 customStyles={{
@@ -1407,7 +1505,11 @@ const DatingEditProfileScreen = () => {
                   <Text style={style.purposeBottomSheet}>
                     Selected Occupation
                   </Text>
+                </View>
 
+                <View style={style.bottomSheetLine} />
+
+                <View style={style.currentlyBottomSheetContainer}>
                   {/* FlatList to render all country names */}
                   <FlatList
                     data={AnnualList}
@@ -1436,9 +1538,16 @@ const DatingEditProfileScreen = () => {
         />
 
         <View style={style.hobbiesAndInterestContainer}>
-          <Text style={style.editText}>Hobbies & Interest</Text>
           <TouchableOpacity
-            onPress={() => hobbiesBottomSheetRef.current.open()}>
+            onPress={() => hobbiesBottomSheetRef.current.open()}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+            }}>
+            <Text style={style.editText}>Hobbies & Interest</Text>
+
             <Image
               source={icons.rightSideIcon}
               style={style.purposeRightSideIcon}
@@ -1450,24 +1559,24 @@ const DatingEditProfileScreen = () => {
           {/* Display each purpose in a separate box */}
           <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 10}}>
             {selectedHobbies.length > 0 ? (
-              selectedHobbies.map((purpose, index) => (
+              selectedHobbies.map((hobby, index) => (
                 <View key={index} style={style.purposeSelectedContainerView}>
-                  <Text style={style.purpose}>{purpose}</Text>
+                  <Text style={style.purpose}>{formatHobby(hobby)}</Text>
                   <TouchableOpacity
                     style={style.purposeCancelContainer}
-                    onPress={() => handleHobbiesRemovePurpose(purpose)}>
+                    onPress={() => handleHobbiesSelectPurpose(hobby)}>
                     <Text style={style.purposeCancelXIcon}>X</Text>
                   </TouchableOpacity>
                 </View>
               ))
             ) : (
-              <Text style={{color: 'grey'}}>No purpose selected</Text>
+              <Text style={{color: 'grey'}}>No hobby selected</Text>
             )}
           </View>
 
           <RBSheet
             ref={hobbiesBottomSheetRef}
-            height={400}
+            height={hp(500)}
             openDuration={250}
             closeOnDragDown={true}
             closeOnPressMask={true}
@@ -1475,47 +1584,196 @@ const DatingEditProfileScreen = () => {
               container: {
                 borderTopLeftRadius: 20,
                 borderTopRightRadius: 20,
-                paddingHorizontal: 20,
+                // paddingHorizontal: 20,
               },
             }}>
             <View>
-              <Text style={{fontSize: 18, fontFamily: fontFamily.poppins600}}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontFamily: fontFamily.poppins600,
+                  color: 'black',
+                  marginHorizontal: 17,
+                }}>
                 Select Purpose
               </Text>
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Writing')}>
-                <Text style={style.bottomSheetOptionText}>Writing</Text>
-              </TouchableOpacity>
+              <View style={style.bottomSheetLine} />
 
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Play Instrument')}>
-                <Text style={style.bottomSheetOptionText}>Play Instrument</Text>
-              </TouchableOpacity>
+              <ScrollView
+                style={{marginHorizontal: 17}}
+                showsVerticalScrollIndicator={false}>
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('writing')}>
+                  <Text style={style.bottomSheetOptionText}>Writing</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Game')}>
-                <Text style={style.bottomSheetOptionText}>Game</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('play_instrument')}>
+                  <Text style={style.bottomSheetOptionText}>
+                    Play Instrument
+                  </Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Movie')}>
-                <Text style={style.bottomSheetOptionText}>Movie</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('poetry')}>
+                  <Text style={style.bottomSheetOptionText}>Poetry</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Sports')}>
-                <Text style={style.bottomSheetOptionText}>Sports</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('cooking')}>
+                  <Text style={style.bottomSheetOptionText}>Cooking</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Running')}>
-                <Text style={style.bottomSheetOptionText}>Running</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('painting')}>
+                  <Text style={style.bottomSheetOptionText}>Painting</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => handleHobbiesSelectPurpose('Cycling')}>
-                <Text style={style.bottomSheetOptionText}>Cycling</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('gardening')}>
+                  <Text style={style.bottomSheetOptionText}>Gardening</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('singing')}>
+                  <Text style={style.bottomSheetOptionText}>Singing</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('diy_crafts')}>
+                  <Text style={style.bottomSheetOptionText}>Diy Crafts</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('blogging')}>
+                  <Text style={style.bottomSheetOptionText}>Blogging</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('photography')}>
+                  <Text style={style.bottomSheetOptionText}>Photography</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('dancing')}>
+                  <Text style={style.bottomSheetOptionText}>Dancing</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    handleHobbiesSelectPurpose('content_creation')
+                  }>
+                  <Text style={style.bottomSheetOptionText}>
+                    Content Creation
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('movie')}>
+                  <Text style={style.bottomSheetOptionText}>Movie</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('sports')}>
+                  <Text style={style.bottomSheetOptionText}>Sports</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('biking')}>
+                  <Text style={style.bottomSheetOptionText}>Biking</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('music')}>
+                  <Text style={style.bottomSheetOptionText}>music</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('social_media')}>
+                  <Text style={style.bottomSheetOptionText}>Social Media</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('clubbing')}>
+                  <Text style={style.bottomSheetOptionText}>Clubbing</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('travelling')}>
+                  <Text style={style.bottomSheetOptionText}>Travelling</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('gaming')}>
+                  <Text style={style.bottomSheetOptionText}>Gaming</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('shopping')}>
+                  <Text style={style.bottomSheetOptionText}>Shopping</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('reading')}>
+                  <Text style={style.bottomSheetOptionText}>Reading</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('binge_watching')}>
+                  <Text style={style.bottomSheetOptionText}>
+                    Binge Watching
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('theater_events')}>
+                  <Text style={style.bottomSheetOptionText}>
+                    Theater Events
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('running')}>
+                  <Text style={style.bottomSheetOptionText}>Running</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('cycling')}>
+                  <Text style={style.bottomSheetOptionText}>Cycling</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('yoga')}>
+                  <Text style={style.bottomSheetOptionText}>Yoga</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('walking')}>
+                  <Text style={style.bottomSheetOptionText}>Walking</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('working_out')}>
+                  <Text style={style.bottomSheetOptionText}>Working Out</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('trekking')}>
+                  <Text style={style.bottomSheetOptionText}>Trekking</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('aerobics_zumba')}>
+                  <Text style={style.bottomSheetOptionText}>
+                    Aerobics Zumba
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleHobbiesSelectPurpose('swimming')}>
+                  <Text style={style.bottomSheetOptionText}>Swimming</Text>
+                </TouchableOpacity>
+              </ScrollView>
             </View>
           </RBSheet>
         </View>
@@ -1528,7 +1786,7 @@ const DatingEditProfileScreen = () => {
           activeOpacity={0.7}
           style={style.saveButtonContainer}>
           <LinearGradient
-            colors={['#0D4EB3', '#9413D0']}
+            colors={['#7045EB', '#4819CB']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1.5}}
             style={style.saveButtonGradientContainer}>

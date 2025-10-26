@@ -955,9 +955,11 @@ const SearchUserDataScreen = ({route}) => {
         />
 
         <View style={style.imageBodyDetailContainer}>
-          <View style={style.onlineTextBody}>
-            <Text style={style.onlineText}>Online</Text>
-          </View>
+          {item?.isUserActive && (
+            <View style={style.onlineTextBody}>
+              <Text style={style.onlineText}>Online</Text>
+            </View>
+          )}
 
           <TouchableOpacity
             onPress={() => {
@@ -1274,9 +1276,11 @@ const SearchUserDataScreen = ({route}) => {
           style={style.imageBottomShadow}
         />
         <View style={style.imageBodyDetailContainer}>
-          <View style={style.onlineTextBody}>
-            <Text style={style.onlineText}>Online</Text>
-          </View>
+          {item?.isUserActive && (
+            <View style={style.onlineTextBody}>
+              <Text style={style.onlineText}>Online</Text>
+            </View>
+          )}
 
           <TouchableOpacity
             onPress={() => {
@@ -1524,8 +1528,6 @@ const SearchUserDataScreen = ({route}) => {
 
         <View style={style.headerBottomContainer}>
           <Text style={style.headerBottomTittle}>
-            {/*{' '}*/}
-            {/*{singleUserData ? 1 : totalDocs} Search Results*/}
             {mode === 'single' ? 1 : totalDocs || 0} Search Results
           </Text>
 

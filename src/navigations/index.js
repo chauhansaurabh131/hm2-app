@@ -1,8 +1,8 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import {Image, Text, TouchableOpacity} from 'react-native';
+import {Image, Linking, Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import GeneralInformationScreen from '../screen/generalInformationScreen';
 import RegistrationScreen from '../screen/registrationScreen';
@@ -96,6 +96,7 @@ import AuthenticationEnterOtpScreen from '../screen/authenticationEnterOtpScreen
 import BottomSheetPrivacySettingScreen from '../screen/bottomSheetPrivacySettingScreen';
 import DatingBlockAllScreen from '../screen/datingAllScreen/datingBlockAllScreen';
 import PlanCancelScreen from '../screen/planCancelScreen';
+import DatingUpgradeScreen from '../screen/datingUpgradeScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -103,10 +104,48 @@ const ExtraStack = createStackNavigator();
 
 export const navigationRef = React.createRef();
 
+// const linking = {
+//   prefixes: ['happymilan://'],
+//   config: {screens: {NewUserDetailsScreen: 'user'}},
+// };
+
 const MainNavigator = () => {
   const {isLoggedIn, appUsesType, user} = useSelector(state => state.auth);
 
   const appType = user?.user?.appUsesType;
+  const isReadyRef = useRef(false);
+
+  useEffect(() => {
+    const handleDeepLink = ({url}) => {
+      console.log('🔗 Deep link opened:', url);
+      try {
+        const parsed = new URL(url);
+        const userId = parsed.searchParams.get('userId');
+        if (userId) {
+          navigationRef.current?.navigate('NewUserDetailsScreen', {userId});
+        }
+      } catch (err) {
+        console.log('URL parse error:', err);
+      }
+    };
+
+    const init = async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        // Wait until navigation is ready
+        const checkReady = setInterval(() => {
+          if (isReadyRef.current && navigationRef.current) {
+            clearInterval(checkReady);
+            handleDeepLink({url: initialUrl});
+          }
+        }, 300);
+      }
+    };
+    init();
+
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+    return () => subscription.remove();
+  }, []);
 
   const AuthStack = () => (
     <Stack.Navigator
@@ -607,7 +646,8 @@ const MainNavigator = () => {
         />
         <Tab.Screen
           name="Upgrader"
-          component={UpgradeScreen}
+          // component={UpgradeScreen}
+          component={appType === 'dating' ? DatingUpgradeScreen : UpgradeScreen}
           options={{
             tabBarIcon: ({color, size, focused}) => (
               <Image
@@ -702,7 +742,30 @@ const MainNavigator = () => {
 
   return useMemo(
     () => (
-      <NavigationContainer ref={navigationRef}>
+      // <NavigationContainer ref={navigationRef} linking={linking}>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+        }}
+        linking={{
+          prefixes: [
+            'happymilan://',
+            'https://happymilan.com',
+            'https://www.happymilan.com',
+          ],
+          config: {
+            screens: {
+              HomeScreen: 'home',
+              NewUserDetailsScreen: {
+                path: 'openApp',
+                parse: {
+                  userId: userId => `${userId}`,
+                },
+              },
+            },
+          },
+        }}>
         {isLoggedIn ? <HomeStack /> : <AuthStack />}
       </NavigationContainer>
     ),

@@ -6,6 +6,8 @@ import {
   Text,
   Image,
   ScrollView,
+  ToastAndroid,
+  Platform,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet'; // Import RBSheet
 import {colors} from '../../utils/colors';
@@ -19,18 +21,61 @@ const DropdownComponent = ({
   height,
   selectedItems,
   setSelectedItems,
+  limit = 5,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
   const bottomSheetRef = useRef(null); // Reference for the bottom sheet
 
+  // const handleDropdownChange = item => {
+  //   const index = selectedItems.indexOf(item.value);
+  //   if (index === -1) {
+  //     setSelectedItems([...selectedItems, item.value]); // Select if not already selected
+  //     bottomSheetRef.current.close();
+  //   } else {
+  //     const newSelectedItems = [...selectedItems];
+  //     newSelectedItems.splice(index, 1); // Deselect if already selected
+  //     setSelectedItems(newSelectedItems);
+  //   }
+  // };
+
+  // const handleDropdownChange = item => {
+  //   const index = selectedItems.indexOf(item.value);
+  //
+  //   if (index === -1) {
+  //     // ✅ Check limit before adding new item
+  //     if (selectedItems.length < limit) {
+  //       setSelectedItems([...selectedItems, item.value]);
+  //     }
+  //   } else {
+  //     // ✅ Remove item if already selected
+  //     const newSelectedItems = [...selectedItems];
+  //     newSelectedItems.splice(index, 1);
+  //     setSelectedItems(newSelectedItems);
+  //   }
+  // };
+
   const handleDropdownChange = item => {
     const index = selectedItems.indexOf(item.value);
+
     if (index === -1) {
-      setSelectedItems([...selectedItems, item.value]); // Select if not already selected
-      bottomSheetRef.current.close();
+      // ✅ Check limit before adding new item
+      if (selectedItems.length < limit) {
+        setSelectedItems([...selectedItems, item.value]);
+      } else {
+        if (Platform.OS === 'android') {
+          ToastAndroid.show(
+            `You can select up to ${limit} items only`,
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP,
+          );
+        } else {
+          alert(`You can select up to ${limit} items only`);
+        }
+      }
     } else {
+      // ✅ Remove item if already selected
       const newSelectedItems = [...selectedItems];
-      newSelectedItems.splice(index, 1); // Deselect if already selected
+      newSelectedItems.splice(index, 1);
       setSelectedItems(newSelectedItems);
     }
   };
@@ -57,13 +102,30 @@ const DropdownComponent = ({
     });
   };
 
+  // const renderItem = item => {
+  //   return (
+  //     <TouchableOpacity
+  //       onPress={() => handleDropdownChange(item)}
+  //       style={styles.item}>
+  //       <View style={{marginHorizontal: 17}}>
+  //         <Text style={styles.textItem}>{item.label}</Text>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+
   const renderItem = item => {
+    const isSelected = selectedItems.includes(item.value);
+
     return (
       <TouchableOpacity
         onPress={() => handleDropdownChange(item)}
         style={styles.item}>
         <View style={{marginHorizontal: 17}}>
-          <Text style={styles.textItem}>{item.label}</Text>
+          <Text
+            style={[styles.textItem, {color: isSelected ? 'gray' : 'black'}]}>
+            {item.label}
+          </Text>
         </View>
       </TouchableOpacity>
     );

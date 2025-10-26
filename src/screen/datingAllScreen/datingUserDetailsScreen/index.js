@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import ImagePaginationComponent from '../../../components/imagePaginationComponent';
 import {useSelector} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import {icons, images} from '../../../assets';
@@ -24,13 +23,137 @@ import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
-import {getAllAcceptedDating} from '../../../actions/homeActions';
 import ProfileAvatar from '../../../components/letterProfileComponent';
+import Toast from 'react-native-toast-message';
+
+const customToastConfig = {
+  like: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  disLike: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  sentReq: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  cancelReq: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+  copy: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+
+  reqRejected: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+
+  reqAccepted: ({text1}) => (
+    <View
+      style={{
+        backgroundColor: 'black',
+        paddingVertical: 12,
+        borderRadius: 25,
+        marginTop: 50,
+        alignSelf: 'center',
+        width: wp(162),
+        height: hp(45),
+        alignItems: 'center',
+      }}>
+      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+        {text1}
+      </Text>
+    </View>
+  ),
+};
 
 const DatingUserDetailsScreen = ({route}) => {
   const {userData, item} = route.params;
 
-  // console.log(' === userData++ ===> ', userData);
+  console.log(' === userData++ ===> ', userData?._id);
 
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
@@ -52,21 +175,33 @@ const DatingUserDetailsScreen = ({route}) => {
   );
   const [aboutText, setAboutText] = useState('');
   const [isReportModalVisible, setReportModalVisible] = useState(false);
-
-  // console.log(' === userDetails.... ===> ', userDetails);
+  const [freeCreditModal, setFreeCreditModal] = useState(false);
+  const [creditOverModal, setCreditOverModal] = useState(false);
 
   const navigation = useNavigation();
   const bottomNotFriendSheetRef = useRef(null);
   const bottomFriendSheetRef = useRef(null);
   const ReportBottomSheetRef = useRef();
 
-  // console.log(' === userDetails ===> ', userDetails?.data);
+  // console.log(
+  //   ' === +++ userDetails +++ ===> ',
+  //   userDetails?.data?.[0]?.friendsDetails?.[0]?.user,
+  // );
+  //
+  // console.log(' === frind id ===> ', userDetails?.data?.[0]?._id);
+  //
+  // console.log(
+  //   ' === Status ===> ',
+  //   userDetails?.data?.[0]?.friendsDetails?.[0]?.status,
+  // );
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/user/get-dating-user/${userData?._id}`,
+          `https://stag.mntech.website/api/v1/user/user/get-dating-user/${
+            userData?._id || userData?.id
+          }`,
           {
             method: 'GET',
             headers: {
@@ -90,10 +225,148 @@ const DatingUserDetailsScreen = ({route}) => {
       }
     };
 
-    if (userData?._id) {
+    if (userData?._id || userData?.id) {
       fetchUserData();
     }
   }, [userData, accessToken]);
+
+  // const onRejectRequest = async () => {
+  //   const rejectedData = userDetails?.data?.[0]?.friendsDetails;
+  //
+  //   // console.log(' === onRejectRequest ===> ', rejectedData[0]?._id);
+  //
+  //   try {
+  //     // Make the API call to reject the request
+  //     const response = await axios.post(
+  //       'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+  //       {
+  //         user: rejectedData[0]?.friend, // Assuming you want to reject for the logged-in user
+  //         request: rejectedData[0]?._id, // Assuming item._id is the request id
+  //         status: 'rejected',
+  //       },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${accessToken}`, // Add the token dynamically from state
+  //         },
+  //       },
+  //     );
+  //
+  //     console.log('API Response:', response.data);
+  //
+  //     // Only update the state if the API call was successful
+  //     if (response.status === 200) {
+  //       // Mark as declined when the cancel button is clicked and API is successful
+  //
+  //       console.log(' === response.status ===> ', response.status);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error rejecting friend request:', error);
+  //     // Handle the error (e.g., show an error message)
+  //   }
+  // };
+
+  const onRejectRequest = async () => {
+    const rejectedData = userDetails?.data?.[0]?.friendsDetails;
+
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        {
+          user: rejectedData[0]?.friend,
+          request: rejectedData[0]?._id,
+          status: 'rejected',
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      console.log('API Response:', response.data);
+
+      if (response.status === 200) {
+        setUserDetails(prev => {
+          if (!prev) {
+            return prev;
+          }
+          return {
+            ...prev,
+            data: prev.data.map(user => ({
+              ...user,
+              friendsDetails: user.friendsDetails.map(friend =>
+                friend._id === rejectedData[0]?._id
+                  ? {...friend, status: 'rejected'} // or filter it out
+                  : friend,
+              ),
+            })),
+          };
+        });
+        // 🔹 Show toast after unlike
+        Toast.show({
+          type: 'reqRejected',
+          text1: 'Request Rejected',
+          position: 'top',
+          visibilityTime: 1500,
+        });
+      }
+    } catch (error) {
+      console.error('Error rejecting friend request:', error);
+    }
+  };
+
+  const onAcceptRequest = async () => {
+    const rejectedData = userDetails?.data?.[0]?.friendsDetails;
+
+    try {
+      const response = await axios.post(
+        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        {
+          user: rejectedData[0]?.friend,
+          request: rejectedData[0]?._id,
+          status: 'accepted',
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      console.log('API Response:', response.data);
+
+      if (response.status === 200) {
+        setUserDetails(prev => {
+          if (!prev) {
+            return prev;
+          }
+          return {
+            ...prev,
+            data: prev.data.map(user => ({
+              ...user,
+              friendsDetails: user.friendsDetails.map(friend =>
+                friend._id === rejectedData[0]?._id
+                  ? {...friend, status: 'accepted'} // 🔹 update status
+                  : friend,
+              ),
+            })),
+          };
+        });
+
+        Toast.show({
+          type: 'reqAccepted',
+          text1: 'Request Accepted',
+          position: 'top',
+          visibilityTime: 1500,
+        });
+      }
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
+  };
 
   const topModalBottomSheetRef = useRef(null);
   const openTopBottomSheet = () => {
@@ -153,7 +426,16 @@ const DatingUserDetailsScreen = ({route}) => {
             },
           },
         );
+
         updatedLikeStatus = false;
+
+        // 🔹 Show toast after unlike
+        Toast.show({
+          type: 'disLike',
+          text1: 'Profile Disliked',
+          position: 'top',
+          visibilityTime: 1500,
+        });
       } else {
         // Liking the user
         response = await axios.post(
@@ -170,6 +452,12 @@ const DatingUserDetailsScreen = ({route}) => {
           },
         );
         updatedLikeStatus = true;
+        Toast.show({
+          type: 'like',
+          text1: 'Profile Liked',
+          position: 'top',
+          visibilityTime: 1500,
+        });
       }
 
       if (response?.data?.status === 'Success') {
@@ -201,10 +489,10 @@ const DatingUserDetailsScreen = ({route}) => {
   const onSendRequest = async () => {
     const friendStatus = userDetails?.data[0]?.friendsDetails[0]?.status;
 
-    console.log(
-      ' === userDetails ===> ',
-      userDetails?.data[0]?.friendsDetails[0]?.friend,
-    );
+    // console.log(
+    //   ' === userDetails ===> ',
+    //   userDetails?.data[0]?.friendsDetails[0]?.friend,
+    // );
 
     if (friendStatus === 'requested') {
       // Call the API to respond to the friend request
@@ -246,6 +534,13 @@ const DatingUserDetailsScreen = ({route}) => {
               },
             ],
           }));
+
+          Toast.show({
+            type: 'cancelReq',
+            text1: 'Cancel Request ',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           Alert.alert(
             'Error',
@@ -290,6 +585,13 @@ const DatingUserDetailsScreen = ({route}) => {
               },
             ],
           }));
+
+          Toast.show({
+            type: 'sentReq',
+            text1: 'Request Sent',
+            position: 'top',
+            visibilityTime: 1500,
+          });
         } else {
           Alert.alert(
             'Error',
@@ -298,7 +600,20 @@ const DatingUserDetailsScreen = ({route}) => {
         }
       } catch (error) {
         console.error('Error sending friend request:', error);
-        Alert.alert('Error', 'Something went wrong. Please try again.');
+        // Alert.alert('Error', 'Something went wrong. Please try again...');
+
+        const errorMessage =
+          error?.response?.data?.message ||
+          'Something went wrong. Please try again.';
+
+        console.error('API Error:', errorMessage);
+
+        if (errorMessage.includes('Credit record not found')) {
+          setFreeCreditModal(true);
+        } else {
+          setCreditOverModal(true);
+          // Alert.alert('Error', errorMessage);
+        }
       }
     }
   };
@@ -329,7 +644,12 @@ const DatingUserDetailsScreen = ({route}) => {
   };
 
   const onCopyIdPress = async userID => {
-    console.log(' === selectedUniqueId ===> ', userID);
+    Toast.show({
+      type: 'copy',
+      text1: 'Copied',
+      position: 'top',
+      visibilityTime: 1500,
+    });
     await Clipboard.setString(userID);
     bottomNotFriendSheetRef.current.close();
     bottomFriendSheetRef.current.close();
@@ -637,8 +957,6 @@ const DatingUserDetailsScreen = ({route}) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
-  console.log(' === userDetails----- ===> ', userDetails?.data[0]?.firstName);
-
   const firstName = capitalizeFirstLetter(
     userDetails?.data[0]?.firstName || userDetails?.data[0]?.name,
   );
@@ -649,19 +967,24 @@ const DatingUserDetailsScreen = ({route}) => {
   const Occupation = capitalizeFirstLetter(
     userDetails?.data[0]?.userProfessional?.jobTitle,
   );
+
+  // const workCity = capitalizeFirstLetter(
+  //   userDetails?.data?.[0]?.datingData?.[0]?.Ethnicity || 'N/A',
+  // );
+
   const workCity = capitalizeFirstLetter(
-    userDetails?.data[0]?.datingData[0]?.Ethnicity,
+    userDetails?.data?.[0]?.datingData?.[0]?.Ethnicity || 'N/A',
   );
   const workCountry = capitalizeFirstLetter(
-    userDetails?.data[0]?.datingData[0]?.CurrentlyLiving,
+    userDetails?.data[0]?.datingData?.[0]?.CurrentlyLiving || 'N/A',
   );
   const writeBoutYourSelf = userDetails?.data[0]?.writeBoutYourSelf;
   const formattedDate = formatDate(userDetails?.data[0]?.dateOfBirth);
   const CurrentlyLiving = capitalizeFirstLetter(
-    userDetails?.data[0]?.datingData[0]?.CurrentlyLiving,
+    userDetails?.data[0]?.datingData?.[0]?.CurrentlyLiving || 'N/A',
   );
   const Ethnicity = capitalizeFirstLetter(
-    userDetails?.data[0]?.datingData[0]?.Ethnicity,
+    userDetails?.data[0]?.datingData?.[0]?.Ethnicity || 'N/A',
   );
   const religion = capitalizeFirstLetter(userDetails?.data[0]?.religion);
   const languages =
@@ -669,10 +992,10 @@ const DatingUserDetailsScreen = ({route}) => {
     [];
 
   const educationLevel = capitalizeFirstLetter(
-    userDetails?.data[0]?.datingData[0]?.educationLevel,
+    userDetails?.data[0]?.datingData?.[0]?.educationLevel || 'N/A',
   );
   const Occupations = capitalizeFirstLetter(
-    userDetails?.data[0]?.datingData[0]?.Occupation,
+    userDetails?.data[0]?.datingData?.[0]?.Occupation || 'N/A',
   );
 
   const hasValidImage =
@@ -715,10 +1038,24 @@ const DatingUserDetailsScreen = ({route}) => {
     navigation.navigate('UserUploadImageFullScreen', {allImages});
   };
 
+  const formatText = text => {
+    if (!text) {
+      return 'N.A';
+    }
+    return text
+      .split('_') // split by underscore
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
+      .join(' '); // join with space
+  };
+
   // console.log(' === var ===> ', userData);
 
   return (
     <SafeAreaView style={style.container}>
+      <View style={{zIndex: 99, top: -60}}>
+        <Toast config={customToastConfig} />
+      </View>
+
       <View style={style.headerContainer}>
         <Image source={images.happyMilanColorLogo} style={style.appLogo} />
 
@@ -790,9 +1127,11 @@ const DatingUserDetailsScreen = ({route}) => {
           <View>
             <View style={style.bodyImageContainer}>
               <View style={style.imageBodyContainer}>
-                <View style={style.onlineBody}>
-                  <Text style={style.onlineText}>Online</Text>
-                </View>
+                {userDetails?.data?.[0]?.isUserActive && (
+                  <View style={style.onlineBody}>
+                    <Text style={style.onlineText}>Online</Text>
+                  </View>
+                )}
 
                 <View style={style.imageTittleContainer}>
                   <Text style={style.imageTittleText}>
@@ -803,12 +1142,19 @@ const DatingUserDetailsScreen = ({route}) => {
                 </View>
 
                 <View style={style.imageSubTittleContainer}>
-                  <Text style={style.imageSubTittleText}>{Occupations}</Text>
+                  <Text style={style.imageSubTittleText}>
+                    {formatText(Occupations)}
+                  </Text>
 
                   <View style={style.verticalLine} />
 
-                  <Text style={style.imageSubTittleText}>{workCity},</Text>
-                  <Text style={style.imageSubTittleText}> {workCountry}</Text>
+                  <Text style={style.imageSubTittleText}>
+                    {formatText(workCity)},
+                  </Text>
+                  <Text style={style.imageSubTittleText}>
+                    {' '}
+                    {formatText(workCountry)}
+                  </Text>
                 </View>
 
                 <View
@@ -873,20 +1219,173 @@ const DatingUserDetailsScreen = ({route}) => {
         </View>
 
         <View style={style.iconsContainer}>
-          {userDetails?.data[0]?.friendsDetails[0]?.status !== 'accepted' && (
+          {/*{userDetails?.data[0]?.friendsDetails[0]?.status !== 'accepted' && (*/}
+          {/*  <View style={style.iconsBodyContainer}>*/}
+          {/*    <TouchableOpacity*/}
+          {/*      style={style.imagesContainer}*/}
+          {/*      onPress={() => {*/}
+          {/*        navigation.navigate('Upgrader');*/}
+          {/*      }}>*/}
+          {/*      <Image*/}
+          {/*        source={icons.date_boost_icon}*/}
+          {/*        style={style.cancelIcon}*/}
+          {/*      />*/}
+          {/*    </TouchableOpacity>*/}
+
+          {/*    {userDetails?.data[0]?.userLikeDetails[0]?.isLike ? (*/}
+          {/*      <TouchableOpacity*/}
+          {/*        style={{*/}
+          {/*          width: hp(70),*/}
+          {/*          height: hp(40),*/}
+          {/*          backgroundColor: '#9E28D7',*/}
+          {/*          borderRadius: 30,*/}
+          {/*          justifyContent: 'center',*/}
+          {/*          alignItems: 'center',*/}
+          {/*          marginRight: hp(15),*/}
+          {/*        }}*/}
+          {/*        onPress={() => OnLikePress(userDetails?.data[0])}>*/}
+          {/*        <Image*/}
+          {/*          source={icons.dating_white_heart}*/}
+          {/*          style={{*/}
+          {/*            width: hp(19),*/}
+          {/*            height: hp(17),*/}
+          {/*            resizeMode: 'contain',*/}
+          {/*          }}*/}
+          {/*        />*/}
+          {/*      </TouchableOpacity>*/}
+          {/*    ) : (*/}
+          {/*      <TouchableOpacity*/}
+          {/*        style={{*/}
+          {/*          width: hp(70),*/}
+          {/*          height: hp(40),*/}
+          {/*          backgroundColor: colors.white,*/}
+          {/*          borderRadius: 30,*/}
+          {/*          justifyContent: 'center',*/}
+          {/*          alignItems: 'center',*/}
+          {/*          marginRight: hp(15),*/}
+          {/*          borderWidth: 1.5,*/}
+          {/*          borderColor: '#E5E5E5CC',*/}
+          {/*        }}*/}
+          {/*        onPress={() => OnLikePress(userDetails?.data[0])}>*/}
+          {/*        <Image*/}
+          {/*          source={icons.date_like_icon}*/}
+          {/*          style={{*/}
+          {/*            width: hp(19),*/}
+          {/*            height: hp(17),*/}
+          {/*            resizeMode: 'contain',*/}
+          {/*          }}*/}
+          {/*        />*/}
+          {/*      </TouchableOpacity>*/}
+          {/*    )}*/}
+
+          {/*    {userDetails?.data[0]?.friendsDetails[0]?.status ===*/}
+          {/*    'requested' ? (*/}
+          {/*      <TouchableOpacity*/}
+          {/*        style={{*/}
+          {/*          width: hp(70),*/}
+          {/*          height: hp(40),*/}
+          {/*          backgroundColor: '#7045EB',*/}
+          {/*          borderRadius: 30,*/}
+          {/*          justifyContent: 'center',*/}
+          {/*          alignItems: 'center',*/}
+          {/*        }}*/}
+          {/*        onPress={onSendRequest}>*/}
+          {/*        <Image*/}
+          {/*          source={icons.date_white_send_icon}*/}
+          {/*          style={style.sendIcon}*/}
+          {/*        />*/}
+          {/*      </TouchableOpacity>*/}
+          {/*    ) : (*/}
+          {/*      <TouchableOpacity*/}
+          {/*        style={{*/}
+          {/*          width: hp(70),*/}
+          {/*          height: hp(40),*/}
+          {/*          backgroundColor: colors.white,*/}
+          {/*          borderRadius: 30,*/}
+          {/*          justifyContent: 'center',*/}
+          {/*          alignItems: 'center',*/}
+          {/*          borderWidth: 1.5,*/}
+          {/*          borderColor: '#E5E5E5CC',*/}
+          {/*        }}*/}
+          {/*        onPress={onSendRequest}>*/}
+          {/*        <Image source={icons.date_send_icon} style={style.sendIcon} />*/}
+          {/*      </TouchableOpacity>*/}
+          {/*    )}*/}
+          {/*  </View>*/}
+          {/*)}*/}
+
+          {userDetails?.data?.[0]?.friendsDetails?.[0]?.status ===
+            'requested' &&
+          userDetails?.data?.[0]?.friendsDetails?.[0]?.user ===
+            userDetails?.data?.[0]?._id ? (
+            // ✅ Case 1: Show Accept + Reject buttons
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                gap: hp(10),
+                marginTop: hp(25),
+              }}>
+              <TouchableOpacity activeOpacity={0.5} onPress={onAcceptRequest}>
+                <LinearGradient
+                  colors={['#7045EB', '#4819CB']}
+                  start={{x: 1, y: 0}}
+                  end={{x: 0, y: 0}}
+                  style={{
+                    borderRadius: 20,
+                    justifyContent: 'center',
+                    width: hp(96),
+                    height: hp(40),
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      textAlign: 'center',
+                      fontSize: fontSize(14),
+                      lineHeight: hp(21),
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    Accept
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#EEEEEE',
+                  borderRadius: 20,
+                  width: hp(96),
+                  height: hp(40),
+                  justifyContent: 'center',
+                  marginRight: 14,
+                }}
+                onPress={onRejectRequest}>
+                <Text
+                  style={{
+                    color: 'black',
+                    textAlign: 'center',
+                    fontSize: fontSize(14),
+                    lineHeight: hp(21),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Decline
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : userDetails?.data?.[0]?.friendsDetails?.[0]?.status !==
+            'accepted' ? (
+            // ✅ Case 2: Normal icons block
             <View style={style.iconsBodyContainer}>
               <TouchableOpacity
                 style={style.imagesContainer}
-                onPress={() => {
-                  navigation.navigate('Upgrader');
-                }}>
+                onPress={() => navigation.navigate('Upgrader')}>
                 <Image
                   source={icons.date_boost_icon}
                   style={style.cancelIcon}
                 />
               </TouchableOpacity>
 
-              {userDetails?.data[0]?.userLikeDetails[0]?.isLike ? (
+              {userDetails?.data?.[0]?.userLikeDetails?.[0]?.isLike ? (
                 <TouchableOpacity
                   style={{
                     width: hp(70),
@@ -897,7 +1396,7 @@ const DatingUserDetailsScreen = ({route}) => {
                     alignItems: 'center',
                     marginRight: hp(15),
                   }}
-                  onPress={() => OnLikePress(userDetails?.data[0])}>
+                  onPress={() => OnLikePress(userDetails?.data?.[0])}>
                   <Image
                     source={icons.dating_white_heart}
                     style={{
@@ -920,7 +1419,7 @@ const DatingUserDetailsScreen = ({route}) => {
                     borderWidth: 1.5,
                     borderColor: '#E5E5E5CC',
                   }}
-                  onPress={() => OnLikePress(userDetails?.data[0])}>
+                  onPress={() => OnLikePress(userDetails?.data?.[0])}>
                   <Image
                     source={icons.date_like_icon}
                     style={{
@@ -932,7 +1431,7 @@ const DatingUserDetailsScreen = ({route}) => {
                 </TouchableOpacity>
               )}
 
-              {userDetails?.data[0]?.friendsDetails[0]?.status ===
+              {userDetails?.data?.[0]?.friendsDetails?.[0]?.status ===
               'requested' ? (
                 <TouchableOpacity
                   style={{
@@ -966,7 +1465,7 @@ const DatingUserDetailsScreen = ({route}) => {
                 </TouchableOpacity>
               )}
             </View>
-          )}
+          ) : null}
 
           <Text style={style.descriptionText}>{writeBoutYourSelf}</Text>
         </View>
@@ -976,14 +1475,22 @@ const DatingUserDetailsScreen = ({route}) => {
           <Text style={style.purposeText}>Purpose</Text>
 
           <View style={style.purposeSubTittleContainer}>
-            {userDetails?.data[0]?.datingData[0]?.interestedIn?.map(
-              (purpose, index) => (
-                <View key={index} style={style.purposeSubTittleBody}>
-                  <Text style={style.purposeSubTittleText}>
-                    {capitalizeFirstLetter(purpose.replace('-', ' '))}{' '}
-                  </Text>
-                </View>
-              ),
+            {userDetails?.data[0]?.datingData?.[0]?.interestedIn?.map(
+              (purpose, index) => {
+                const formattedPurpose = purpose
+                  .replace(/-/g, ' ') // replace all hyphens with space
+                  .split(' ')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize each word
+                  .join(' ');
+
+                return (
+                  <View key={index} style={style.purposeSubTittleBody}>
+                    <Text style={style.purposeSubTittleText}>
+                      {formattedPurpose}
+                    </Text>
+                  </View>
+                );
+              },
             )}
           </View>
         </View>
@@ -1039,7 +1546,9 @@ const DatingUserDetailsScreen = ({route}) => {
 
           <View style={style.baseInfoMargin}>
             <Text style={style.baseInfoTittle}>Occupation</Text>
-            <Text style={style.baseInfoSubTittle}>{Occupations}</Text>
+            <Text style={style.baseInfoSubTittle}>
+              {formatText(Occupations)}
+            </Text>
           </View>
         </View>
 
@@ -1049,13 +1558,21 @@ const DatingUserDetailsScreen = ({route}) => {
           <Text style={style.purposeText}>Hobbies & Interest</Text>
 
           <View style={style.purposeSubTittleContainer}>
-            {userDetails?.data[0]?.hobbies?.map((purpose, index) => (
-              <View key={index} style={style.purposeSubTittleBody}>
-                <Text style={style.purposeSubTittleText}>
-                  {capitalizeFirstLetter(purpose.replace('-', ' '))}{' '}
-                </Text>
-              </View>
-            ))}
+            {userDetails?.data[0]?.hobbies?.map((purpose, index) => {
+              const formattedPurpose = purpose
+                .replace(/_/g, ' ') // replace underscores with space
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize each word
+                .join(' ');
+
+              return (
+                <View key={index} style={style.purposeSubTittleBody}>
+                  <Text style={style.purposeSubTittleText}>
+                    {formattedPurpose}
+                  </Text>
+                </View>
+              );
+            })}
           </View>
         </View>
 
@@ -1833,7 +2350,7 @@ const DatingUserDetailsScreen = ({route}) => {
                     handleConfirmBlock();
                   }}>
                   <LinearGradient
-                    colors={['#2D46B9', '#8D1D8D']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 1}}
                     style={{
@@ -1949,7 +2466,7 @@ const DatingUserDetailsScreen = ({route}) => {
                   activeOpacity={0.7}
                   onPress={handleConfirmBlockUnfriend}>
                   <LinearGradient
-                    colors={['#2D46B9', '#8D1D8D']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 1}}
                     style={{
@@ -2011,6 +2528,174 @@ const DatingUserDetailsScreen = ({route}) => {
                   </LinearGradient>
                 </TouchableOpacity>
               </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/*FREE CREDIT OVER MODAL*/}
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={freeCreditModal}
+          onRequestClose={() => setFreeCreditModal(false)}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'rgba(0,0,0,0.4)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                width: '90%',
+                backgroundColor: 'white',
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.pureBlack,
+                  marginTop: hp(42),
+                }}>
+                Free plan ended — upgrade to
+              </Text>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.pureBlack,
+                }}>
+                send more requests.
+              </Text>
+
+              {/* Close Button */}
+              <TouchableOpacity
+                onPress={() => {
+                  setFreeCreditModal(false);
+                  navigation.navigate('Upgrader');
+                }}
+                activeOpacity={0.7}
+                style={{marginTop: hp(23), marginBottom: hp(43)}}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1.5}}
+                  style={{
+                    width: wp(123),
+                    height: hp(44),
+                    borderRadius: 50,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.white,
+                      marginLeft: hp(20),
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins400,
+                      marginRight: wp(7),
+                      top: 2,
+                    }}>
+                    Upgrade
+                  </Text>
+                  <Image
+                    source={icons.crownIcon}
+                    style={{
+                      width: hp(16.52),
+                      height: hp(14),
+                      tintColor: colors.white,
+                      marginRight: hp(22.12),
+                    }}
+                  />
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* PURCHASE CREDIT OVER MODAL */}
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={creditOverModal}
+          onRequestClose={() => setCreditOverModal(false)}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'rgba(0,0,0,0.4)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                width: '90%',
+                backgroundColor: 'white',
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.pureBlack,
+                  marginTop: hp(42),
+                }}>
+                No credits left. Purchase more to
+              </Text>
+              <Text
+                style={{
+                  fontSize: fontSize(16),
+                  fontFamily: fontFamily.poppins400,
+                  color: colors.pureBlack,
+                }}>
+                send requests.
+              </Text>
+
+              {/* Close Button */}
+              <TouchableOpacity
+                onPress={() => {
+                  setCreditOverModal(false);
+                  navigation.navigate('Upgrader');
+                }}
+                activeOpacity={0.7}
+                style={{marginTop: hp(23), marginBottom: hp(43)}}>
+                <LinearGradient
+                  colors={['#0D4EB3', '#9413D0']}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1.5}}
+                  style={{
+                    width: wp(123),
+                    height: hp(44),
+                    borderRadius: 50,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.white,
+                      marginLeft: hp(20),
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins400,
+                      marginRight: wp(7),
+                      top: 2,
+                    }}>
+                    Upgrade
+                  </Text>
+                  <Image
+                    source={icons.crownIcon}
+                    style={{
+                      width: hp(16.52),
+                      height: hp(14),
+                      tintColor: colors.white,
+                      marginRight: hp(22.12),
+                    }}
+                  />
+                </LinearGradient>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>

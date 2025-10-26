@@ -19,9 +19,15 @@ import DOBTextInputComponent from '../../../components/DOBTextInputComponent';
 import {icons} from '../../../assets';
 
 const DatingCreatingProfile = () => {
+  const {user} = useSelector(state => state.auth);
+
+  // console.log(' === var ===> ', user?.user?.dateOfBirth);
+
   const [datingSelectedOption, setDatingSelectedOption] = useState([]);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState(
+    user?.user?.name || user?.user?.firstName || '',
+  );
+  const [lastName, setLastName] = useState(user?.user?.lastName || '');
   const [dateOfBirth, setDateOfBirth] = useState('');
 
   const dropdownData = [
@@ -48,10 +54,91 @@ const DatingCreatingProfile = () => {
       .replace(/[^a-z0-9-]/g, ''); // Remove any non-alphanumeric characters (except hyphen)
   };
 
+  // const onStartNowPress = () => {
+  //   if (datingSelectedOption.length > 3) {
+  //     Alert.alert(
+  //       'Selection Limit',
+  //       'You can only select up to 3 options.',
+  //       [{text: 'OK'}],
+  //       {cancelable: false},
+  //     );
+  //     return;
+  //   }
+  //
+  //   const selectedLabels = datingSelectedOption
+  //     .map(option => {
+  //       const found = dropdownData.find(item => item.value === option);
+  //       return found ? toKebabCase(found.label) : null; // Transform to kebab case
+  //     })
+  //     .filter(label => label !== null); // Filter out null values
+  //
+  //   const [day, month, year] = dateOfBirth.split('/');
+  //   const dob = new Date(`${year}-${month}-${day}`);
+  //
+  //   if (selectedLabels.length === 0) {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Missing Information',
+  //       text2: 'Please select an option.',
+  //     });
+  //     return;
+  //   }
+  //
+  //   // Check for empty firstName and lastName
+  //   if (!firstName.trim()) {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Missing Information',
+  //       text2: 'Please enter your first name.',
+  //     });
+  //     return;
+  //   }
+  //
+  //   if (!lastName.trim()) {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Missing Information',
+  //       text2: 'Please enter your last name.',
+  //     });
+  //     return;
+  //   }
+  //
+  //   if (isNaN(dob.getTime())) {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Invalid Date',
+  //       text2: 'Please enter a valid date.',
+  //     });
+  //     return;
+  //   }
+  //
+  //   // Create the expected object structure
+  //   const payload = {
+  //     datingData: [
+  //       {
+  //         interestedIn: selectedLabels,
+  //       },
+  //     ],
+  //
+  //     firstName: firstName,
+  //     lastName: lastName,
+  //     dateOfBirth: dob,
+  //   };
+  //
+  //   console.log(' === payload----- ===> ', payload);
+  //
+  //   // Dispatch the payload and handle navigation based on success
+  //   // apiDispatch(
+  //   //   updateDetails(payload, () => {
+  //   //     navigation.navigate('AddDatingPersonalInfo');
+  //   //   }),
+  //   // );
+  // };
+
   const onStartNowPress = () => {
     if (datingSelectedOption.length > 3) {
       Alert.alert(
-        'Selection Limit',
+        'Interested In Limit',
         'You can only select up to 3 options.',
         [{text: 'OK'}],
         {cancelable: false},
@@ -62,9 +149,9 @@ const DatingCreatingProfile = () => {
     const selectedLabels = datingSelectedOption
       .map(option => {
         const found = dropdownData.find(item => item.value === option);
-        return found ? toKebabCase(found.label) : null; // Transform to kebab case
+        return found ? toKebabCase(found.label) : null;
       })
-      .filter(label => label !== null); // Filter out null values
+      .filter(label => label !== null);
 
     const [day, month, year] = dateOfBirth.split('/');
     const dob = new Date(`${year}-${month}-${day}`);
@@ -78,7 +165,6 @@ const DatingCreatingProfile = () => {
       return;
     }
 
-    // Check for empty firstName and lastName
     if (!firstName.trim()) {
       Toast.show({
         type: 'error',
@@ -106,28 +192,40 @@ const DatingCreatingProfile = () => {
       return;
     }
 
-    // Create the expected object structure
+    // ✅ Age validation
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--; // adjust if birthday hasn’t occurred yet this year
+    }
+
+    if (age < 18) {
+      Toast.show({
+        type: 'error',
+        text1: 'Age Restriction',
+        text2: 'You must be at least 18 years old.',
+      });
+      return;
+    }
+
     const payload = {
       datingData: [
         {
           interestedIn: selectedLabels,
         },
       ],
-
       firstName: firstName,
       lastName: lastName,
       dateOfBirth: dob,
     };
 
-    // Dispatch the payload and handle navigation based on success
     apiDispatch(
       updateDetails(payload, () => {
         navigation.navigate('AddDatingPersonalInfo');
       }),
     );
   };
-
-  // navigation.navigate('AddDatingPersonalInfo'),
 
   return (
     <SafeAreaView style={style.container}>
@@ -143,6 +241,7 @@ const DatingCreatingProfile = () => {
             placeholder={'Select Interested In'}
             selectedItems={datingSelectedOption}
             setSelectedItems={setDatingSelectedOption}
+            // limit={3}
           />
 
           <View style={style.bodySpaceStyle}>

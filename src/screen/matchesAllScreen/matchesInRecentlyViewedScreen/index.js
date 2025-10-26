@@ -784,9 +784,11 @@ const MatchesInRecentlyViewedScreen = () => {
           />
 
           <View style={style.imageBottomDataContainer}>
-            <View style={style.onlineTextBody}>
-              <Text style={style.onlineText}>Online</Text>
-            </View>
+            {item?.user?.isUserActive && (
+              <View style={style.onlineTextBody}>
+                <Text style={style.onlineText}>Online</Text>
+              </View>
+            )}
 
             <View>
               <TouchableOpacity

@@ -131,16 +131,16 @@ export const Fun = [
   {label: 'Theater & Events', value: '12'},
 ];
 
-export const DemoImage = [
-  {label: '1', image: require('../assets/images/demo_4.png')},
-  {label: '2', image: require('../assets/images/demo_3.png')},
-  {label: '3', image: require('../assets/images/demo_2.png')},
-  {label: '4', image: require('../assets/images/demo_1.png')},
-  {label: '5', image: require('../assets/images/demo_3.png')},
-  {label: '6', image: require('../assets/images/demo_1.png')},
-  {label: '7', image: require('../assets/images/demo_4.png')},
-  {label: '8', image: require('../assets/images/demo_1.png')},
-];
+// export const DemoImage = [
+//   {label: '1', image: require('../assets/images/demo_4.png')},
+//   {label: '2', image: require('../assets/images/demo_3.png')},
+//   {label: '3', image: require('../assets/images/demo_2.png')},
+//   {label: '4', image: require('../assets/images/demo_1.png')},
+//   {label: '5', image: require('../assets/images/demo_3.png')},
+//   {label: '6', image: require('../assets/images/demo_1.png')},
+//   {label: '7', image: require('../assets/images/demo_4.png')},
+//   {label: '8', image: require('../assets/images/demo_1.png')},
+// ];
 
 export const userData = [
   {
@@ -289,7 +289,7 @@ export const USER_LIST = [
   {
     id: 2,
     name: 'Aarav Joshi',
-    image: require('../assets/images/user_two.png'),
+
     gender: 'Male',
     age: '36',
     height: '4\'55"',

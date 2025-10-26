@@ -1,5 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Clipboard,
   FlatList,
   Image,
@@ -26,10 +27,11 @@ import {
   non_friend_Blocked,
 } from '../../actions/homeActions';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 import axios from 'axios';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import Abc from '../abc';
 
 const imageData = [
   {id: '1', source: images.meet_new_friends_img, title: 'Meet New Friends'},
@@ -56,6 +58,8 @@ const DatingExploreScreen = () => {
   const [selectFriendRequestedId, setSelectFriendRequestId] = useState('');
   const [userFullDetails, setUserFullDetails] = useState('');
   const [selectedUniqueId, setSelectedUniqueId] = useState('');
+  const [selectedLastInitiatorUser, setSelectedLastInitiatorUser] =
+    useState('');
   const [reportReasons, setReportReasons] = useState([]);
   const [isAboutClicked, setIsAboutClicked] = useState(false);
   const [questionText, setQuestionText] = useState(
@@ -64,12 +68,22 @@ const DatingExploreScreen = () => {
   const [aboutText, setAboutText] = useState('');
   const [isReportModalVisible, setReportModalVisible] = useState(false);
 
+  const [data, setData] = useState([]); // full list
+  const [loading, setLoading] = useState(false); // for first load
+  const [loadingMore, setLoadingMore] = useState(false); // for pagination loader
+  const [page, setPage] = useState(1); // current page
+  const [hasMore, setHasMore] = useState(true); // check if more data exists
+  const [loadings, setLoadings] = useState(false); // for first load
+  const [loadingMores, setLoadingMores] = useState(false); // for pagination loader
+  const [pages, setPages] = useState(1); // current page
+  const [hasMores, setHasMores] = useState(true); // check if more data exists
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllRequestedDating());
-    dispatch(getAllAcceptedDating());
+    // dispatch(getAllAcceptedDating());
   }, [dispatch]);
 
   const {user} = useSelector(state => state.auth);
@@ -85,6 +99,125 @@ const DatingExploreScreen = () => {
   const ReportBottomSheetRef = useRef();
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
+  };
+
+  const fetchRequests = async (pageNum = 1, isLoadMore = false) => {
+    try {
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await axios.get(
+        'https://stag.mntech.website/api/v1/user/friend/get-frd-dating-req-v2',
+        {
+          params: {
+            appUsesType: 'dating',
+            page: pageNum,
+            limit: 10,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const newData = response.data?.data?.results || [];
+      const totalPages = response.data?.data?.totalPages || 1;
+
+      if (isLoadMore) {
+        setData(prev => [...prev, ...newData]); // append
+      } else {
+        setData(newData); // reset on first load
+      }
+
+      setHasMore(pageNum < totalPages); // check if next page exists
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      setPage(1);
+      fetchRequests(1, false);
+    }, [accessToken]),
+  );
+
+  const loadMore = () => {
+    if (!loadingMore && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchRequests(nextPage, true);
+    }
+  };
+
+  const fetchAccepted = async (pageNum = 1, isLoadMore = false) => {
+    try {
+      if (isLoadMore) {
+        setLoadingMores(true);
+      } else {
+        setLoadings(true);
+      }
+
+      const response = await axios.get(
+        `https://stag.mntech.website/api/v1/user/friend/get-frd-mobile?page=${pageNum}&limit=10`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const newData = response.data?.data?.results || [];
+      const totalPages = response.data?.data?.totalPages || 1;
+
+      if (isLoadMore) {
+        setFilteredUsers(prev => [...prev, ...newData]);
+      } else {
+        setFilteredUsers(newData);
+      }
+
+      setHasMores(pageNum < totalPages);
+    } catch (error) {
+      console.error(
+        'Error fetching requests:',
+        error.response?.data || error.message,
+      );
+    } finally {
+      setLoadings(false);
+      setLoadingMores(false);
+    }
+  };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setPages(1);
+  //     fetchAccepted(1, false);
+  //   }, [accessToken]),
+  // );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (filteredUsers.length === 0) {
+        setPages(1);
+        fetchAccepted(1, false);
+      }
+    }, [accessToken]),
+  );
+
+  const loadMores = () => {
+    if (!loadingMores && hasMores) {
+      const nextPage = pages + 1;
+      setPages(nextPage);
+      fetchAccepted(nextPage, true);
+    }
   };
 
   useEffect(() => {
@@ -135,7 +268,7 @@ const DatingExploreScreen = () => {
   };
 
   const handleConfirmBlockUnfriend = async item => {
-    // console.log(' === handleConfirmBlockUnfriend ===> ', user?.user?.id);
+    console.log(' === handleConfirmBlockUnfriend ===> ', user?.user?.id);
 
     try {
       const response = await fetch(
@@ -187,6 +320,8 @@ const DatingExploreScreen = () => {
   };
 
   const renderAcceptedItem = ({item}) => {
+    // console.log(' === var ===> ', );
+
     const user = item.friendList || [];
     const profilePic = user?.profilePic;
     const name = user?.firstName || user?.name;
@@ -195,12 +330,7 @@ const DatingExploreScreen = () => {
     const friendRequestedId = item?.friendList?._id || item?._id;
     const userDetails = item;
     const usersUniqueId = user?.userUniqueId;
-
-    // console.log(' === userDetails ===> ', userDetails?.friendList);
-
-    // console.log(' === var... ===> ', userDetails);
-
-    // console.log(' === var ===> ', user?.userUniqueId);
+    const lastInitiatorUserId = item;
 
     const onThreeDotPress = () => {
       bottomSheetRef.current.open();
@@ -209,7 +339,21 @@ const DatingExploreScreen = () => {
       setSelectFriendRequestId(friendRequestedId);
       setUserFullDetails(userDetails);
       setSelectedUniqueId(usersUniqueId);
+      setSelectedLastInitiatorUser(lastInitiatorUserId);
     };
+
+    const formatText = text => {
+      if (!text) {
+        return 'N.A';
+      }
+      return text
+        .split('_') // split by underscore
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // capitalize
+        .join(' '); // join with space
+    };
+
+    const capitalizeFirstLetter = str =>
+      str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
 
     return (
       <TouchableHighlight
@@ -254,17 +398,7 @@ const DatingExploreScreen = () => {
               profileTexts={{fontSize: fontSize(17)}}
             />
           )}
-          {/*<Image*/}
-          {/*  source={profilePic ? {uri: profilePic} : images.empty_male_Image}*/}
-          {/*  style={{*/}
-          {/*    width: wp(47), // Adjust the size as needed*/}
-          {/*    height: hp(47),*/}
-          {/*    borderRadius: 50,*/}
-          {/*    marginRight: wp(10),*/}
-          {/*    resizeMode: 'cover',*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*source={profilePic ? {uri: profilePic} : images.empty_male_Image}*/}
+
           <View>
             <View style={{flexDirection: 'row'}}>
               <Text
@@ -274,8 +408,23 @@ const DatingExploreScreen = () => {
                   fontFamily: fontFamily.poppins600,
                   lineHeight: hp(21),
                 }}>
-                {name}
+                {capitalizeFirstLetter(name)}
               </Text>
+
+              {user?.isUserActive && (
+                <Text
+                  style={{
+                    fontSize: fontSize(8),
+                    lineHeight: hp(12),
+                    fontFamily: fontFamily.poppins500,
+                    marginTop: hp(6),
+                    marginLeft: wp(5),
+                    color: colors.blue,
+                  }}>
+                  Online
+                </Text>
+              )}
+
               {item.labelOnline && (
                 <View
                   style={{
@@ -307,7 +456,7 @@ const DatingExploreScreen = () => {
                 fontFamily: fontFamily.poppins400,
                 color: colors.black,
               }}>
-              {Occupation}
+              {formatText(Occupation)}
             </Text>
           </View>
           <TouchableOpacity
@@ -319,11 +468,6 @@ const DatingExploreScreen = () => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            // onPress={() => {
-            //   setSelectedUser(item.title); // Set the selected user's name
-            //   bottomSheetRef.current.open(); // Open the bottom sheet
-            //   console.log(' === item.title ===> ', user);
-            // }}
             onPress={onThreeDotPress}>
             <Image
               source={icons.three_dots_icon}
@@ -370,6 +514,7 @@ const DatingExploreScreen = () => {
   };
 
   const requestRenderItem = ({item}) => {
+    // console.log(' === var ===> ', item?.user);
     const user = item.user; // Assuming `user` contains name, profilePic, and datingData
     const occupation = user?.datingData?.[0]?.Occupation;
     const relativeTime = timeAgo(item?.updatedAt);
@@ -388,6 +533,8 @@ const DatingExploreScreen = () => {
       str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : 'N/A';
 
     const handleCancelClick = async () => {
+      console.log(' === handleCancelClick ===> ', userId, item._id);
+
       try {
         // Make the API call to reject the request
         const response = await axios.post(
@@ -422,12 +569,6 @@ const DatingExploreScreen = () => {
     };
 
     const handleAcceptClick = async () => {
-      // Mark as accepted when check button is clicked
-      // setClickedUsers(prev => ({
-      //   ...prev,
-      //   [item._id]: {declined: false, accepted: true},
-      // }));
-
       try {
         // Make the API call to reject the request
         const response = await axios.post(
@@ -462,18 +603,14 @@ const DatingExploreScreen = () => {
     };
 
     const onClicked = () => {
-      // console.log(' === onClicked ===> ', user);
+      console.log(' === onClicked ===> ', user);
+
       navigation.navigate('DatingUserDetailsScreen', {userData: user});
-      // navigation.navigate('Abc', {userData: user});
     };
 
     return (
       <View style={style.requestRenderContainer}>
         <TouchableOpacity activeOpacity={0.6} onPress={onClicked}>
-          {/*<Image*/}
-          {/*  source={profilePic ? {uri: profilePic} : images.empty_male_Image}*/}
-          {/*  style={style.renderUserProfileImage}*/}
-          {/*/>*/}
           {profilePic ? (
             <>
               <Image
@@ -515,10 +652,6 @@ const DatingExploreScreen = () => {
               <Text style={style.requestRenderRelative}>{relativeTime}</Text>
             </View>
 
-            {/*<Text style={style.requestRenderOccupation}>*/}
-            {/*  Sent you a request*/}
-            {/*</Text>*/}
-
             {!isAccepted && !isDeclined && (
               <Text style={style.requestRenderOccupation}>
                 Sent you a request
@@ -535,47 +668,10 @@ const DatingExploreScreen = () => {
             )}
           </TouchableOpacity>
 
-          {/*{isDeclined ? (*/}
-          {/*  <Text style={style.requestRenderOccupation}>Declined</Text>*/}
-          {/*) : isAccepted ? (*/}
-          {/*  <Text style={style.requestRenderOccupation}>Accepted</Text>*/}
-          {/*) : (*/}
-          {/*  <View style={{flexDirection: 'row', top: 10}}>*/}
-          {/*    <TouchableOpacity onPress={handleCancelClick}>*/}
-          {/*      <Image*/}
-          {/*        source={icons.dating_cancel_icon}*/}
-          {/*        style={[style.requestRenderButton, {marginRight: hp(12)}]}*/}
-          {/*      />*/}
-          {/*    </TouchableOpacity>*/}
-
-          {/*    <TouchableOpacity onPress={handleAcceptClick}>*/}
-          {/*      <Image*/}
-          {/*        source={icons.dating_check_icon}*/}
-          {/*        style={style.requestRenderButton}*/}
-          {/*      />*/}
-          {/*    </TouchableOpacity>*/}
-          {/*  </View>*/}
-          {/*)}*/}
-
-          {/*{!isAccepted && !isDeclined && (*/}
-          {/*  <Text style={style.requestRenderOccupation}>*/}
-          {/*    Sent you a request*/}
-          {/*  </Text>*/}
-          {/*)}*/}
-
-          {/* Show "Declined" if isDeclined is true */}
-
           {/* If neither is accepted nor declined, show the action buttons */}
           <View style={{marginBottom: 10, marginTop: hp(13)}}>
             {!isAccepted && !isDeclined && (
               <View style={{flexDirection: 'row'}}>
-                {/*<TouchableOpacity onPress={handleCancelClick}>*/}
-                {/*  <Image*/}
-                {/*    source={icons.dating_cancel_icon}*/}
-                {/*    style={[style.requestRenderButton, {marginRight: hp(12)}]}*/}
-                {/*  />*/}
-                {/*</TouchableOpacity>*/}
-
                 <TouchableOpacity
                   onPress={handleCancelClick}
                   activeOpacity={0.5}
@@ -599,18 +695,11 @@ const DatingExploreScreen = () => {
                   </Text>
                 </TouchableOpacity>
 
-                {/*<TouchableOpacity onPress={handleAcceptClick}>*/}
-                {/*  <Image*/}
-                {/*    source={icons.dating_check_icon}*/}
-                {/*    style={style.requestRenderButton}*/}
-                {/*  />*/}
-                {/*</TouchableOpacity>*/}
-
                 <TouchableOpacity
                   activeOpacity={0.5}
                   onPress={handleAcceptClick}>
                   <LinearGradient
-                    colors={['#9413D0', '#0D4EB3']}
+                    colors={['#7045EB', '#4819CB']}
                     start={{x: 1, y: 0}}
                     end={{x: 0, y: 0}}
                     style={{
@@ -641,7 +730,7 @@ const DatingExploreScreen = () => {
 
   const onAcceptedPress = () => {
     setSelectedText('Accepted');
-    dispatch(getAllAcceptedDating());
+    // dispatch(getAllAcceptedDating());
   };
 
   const onRequestedPress = () => {
@@ -649,11 +738,18 @@ const DatingExploreScreen = () => {
     dispatch(getAllRequestedDating());
   };
 
+  useEffect(() => {
+    if (selectedText === 'Requests') {
+      dispatch(getAllRequestedDating());
+    }
+  }, [selectedText, dispatch]);
+
   const handleConfirmBlock = async () => {
     // console.log(
     //   ' === handleConfirmBlock 333===> ',
-    //   userId,
-    //   selectFriendRequestedId,
+    //   // userId,
+    //   // selectFriendRequestedId,
+    //   selectedLastInitiatorUser?._id,
     // );
 
     try {
@@ -668,8 +764,8 @@ const DatingExploreScreen = () => {
             Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
-            user: selectFriendRequestedId,
-            request: userFullDetails?._id,
+            user: selectedLastInitiatorUser?.lastInitiatorUser,
+            request: selectedLastInitiatorUser?._id,
             status: 'removed',
           }),
         },
@@ -926,7 +1022,7 @@ const DatingExploreScreen = () => {
           <TouchableOpacity onPress={() => setSelectedText('Category')}>
             {selectedText === 'Category' ? (
               <LinearGradient
-                colors={['#8225AF', '#0F52BA']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 1.0, y: 0.5}}
                 end={{x: 0.0, y: 0.5}}
                 style={style.activeButton}>
@@ -945,7 +1041,7 @@ const DatingExploreScreen = () => {
           <TouchableOpacity onPress={onAcceptedPress}>
             {selectedText === 'Accepted' ? (
               <LinearGradient
-                colors={['#8225AF', '#0F52BA']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 1.0, y: 0.5}}
                 end={{x: 0.0, y: 0.5}}
                 style={style.activeButton}>
@@ -962,7 +1058,7 @@ const DatingExploreScreen = () => {
           <TouchableOpacity onPress={onRequestedPress}>
             {selectedText === 'Requests' ? (
               <LinearGradient
-                colors={['#8225AF', '#0F52BA']}
+                colors={['#7045EB', '#4819CB']}
                 start={{x: 1.0, y: 0.5}}
                 end={{x: 0.0, y: 0.5}}
                 style={style.activeButton}>
@@ -992,7 +1088,7 @@ const DatingExploreScreen = () => {
             />
           )}
           {selectedText === 'Accepted' && (
-            <>
+            <View>
               <View
                 style={{
                   marginBottom: hp(10),
@@ -1025,30 +1121,46 @@ const DatingExploreScreen = () => {
                 />
               </View>
 
-              {filteredUsers?.length === 0 ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingTop: hp(10),
-                  }}>
-                  <Text
+              <View>
+                {filteredUsers?.length === 0 ? (
+                  <View
                     style={{
-                      fontSize: 16,
-                      color: '#999',
-                      fontFamily: fontFamily.poppins400,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingTop: hp(10),
                     }}>
-                    No Data Found
-                  </Text>
-                </View>
-              ) : (
-                <FlatList
-                  data={filteredUsers}
-                  renderItem={renderAcceptedItem}
-                  keyExtractor={item => item._id}
-                  contentContainerStyle={{paddingBottom: hp(20)}}
-                />
-              )}
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: '#999',
+                        fontFamily: fontFamily.poppins400,
+                      }}>
+                      No Data Found
+                    </Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    data={filteredUsers}
+                    keyExtractor={(item, index) => item._id || index.toString()}
+                    renderItem={renderAcceptedItem}
+                    onEndReached={loadMores} // triggered when scrolling to bottom
+                    onEndReachedThreshold={0.5} // load more when 50% away from bottom
+                    ListEmptyComponent={
+                      <Text style={{textAlign: 'center', marginTop: 20}}>
+                        No requests found
+                      </Text>
+                    }
+                    ListFooterComponent={
+                      loadingMores ? (
+                        <ActivityIndicator style={{margin: 10}} size="small" />
+                      ) : null
+                    }
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{paddingBottom: hp(400)}}
+                  />
+                )}
+              </View>
+
               <RBSheet
                 ref={bottomSheetRef}
                 height={hp(430)} // Adjust height as needed
@@ -1813,8 +1925,9 @@ const DatingExploreScreen = () => {
                   </View>
                 </View>
               </Modal>
-            </>
+            </View>
           )}
+
           {selectedText === 'Requests' && (
             // <View style={{marginTop: hp(34)}}>
 
@@ -1836,21 +1949,42 @@ const DatingExploreScreen = () => {
                   </Text>
                 </View>
               ) : (
+                // <FlatList
+                //   data={users}
+                //   keyExtractor={item => item._id}
+                //   renderItem={requestRenderItem}
+                // />
+
+                // <FlatList
+                //   data={users}
+                //   keyExtractor={item => item._id}
+                //   renderItem={requestRenderItem}
+                //   showsVerticalScrollIndicator={false} // 🔹 hide scroll line
+                //   contentContainerStyle={{
+                //     paddingBottom: hp(100), // 🔹 bottom spacing (adjust hp as you like)
+                //   }}
+                // />
                 <FlatList
-                  data={users}
-                  keyExtractor={item => item._id}
+                  data={data}
+                  keyExtractor={(item, index) => item._id || index.toString()}
                   renderItem={requestRenderItem}
+                  onEndReached={loadMore} // triggered when scrolling to bottom
+                  onEndReachedThreshold={0.5} // load more when 50% away from bottom
+                  ListEmptyComponent={
+                    <Text style={{textAlign: 'center', marginTop: 20}}>
+                      No requests found
+                    </Text>
+                  }
+                  ListFooterComponent={
+                    loadingMore ? (
+                      <ActivityIndicator style={{margin: 10}} size="small" />
+                    ) : null
+                  }
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{paddingBottom: hp(120)}}
                 />
               )}
             </>
-
-            // <View>
-            //   <FlatList
-            //     data={users}
-            //     keyExtractor={item => item._id}
-            //     renderItem={requestRenderItem}
-            //   />
-            // </View>
           )}
         </View>
       </View>

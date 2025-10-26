@@ -651,9 +651,11 @@ const MatchesInBlockedScreen = () => {
               />
 
               <View style={style.UserDetailsContainer}>
-                <View style={style.onlineBodyStyle}>
-                  <Text style={style.bodyTextStyle}>Online</Text>
-                </View>
+                {item?.friend?.isUserActive && (
+                  <View style={style.onlineBodyStyle}>
+                    <Text style={style.bodyTextStyle}>Online</Text>
+                  </View>
+                )}
 
                 <TouchableOpacity
                   onPress={() => {

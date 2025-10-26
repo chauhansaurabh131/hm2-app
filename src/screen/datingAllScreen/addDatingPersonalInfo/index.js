@@ -1,8 +1,9 @@
-import React, {useReducer, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  Keyboard,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -99,8 +100,28 @@ const AddDatingPersonalInfo = ({navigation}) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [annualIncome, setAnnualIncome] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   // console.log(' === loading ===> ', loading);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setIsKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setIsKeyboardVisible(false);
+      },
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
     const tintColor = () => (index <= activeIndex ? '#000000' : '#B0B0B0');
@@ -171,12 +192,23 @@ const AddDatingPersonalInfo = ({navigation}) => {
         Ethnicity: ethnicityData, // Add new Ethnicity field
       };
 
+      const toCamelCase = str => {
+        return str
+          .toLowerCase()
+          .replace(/[^a-zA-Z0-9 ]/g, '') // remove special chars
+          .split(' ')
+          .map((word, index) =>
+            index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1),
+          )
+          .join('');
+      };
+
       apiDispatch(
         updateDetails(
           {
-            gender: genderSelectedOption.toLowerCase(),
+            gender: toCamelCase(genderSelectedOption),
             height: userHeight,
-            motherTongue: motherTongueString,
+            motherTongue: motherTongueString.toLowerCase(),
             religion: religionSelectedOption.toLowerCase(),
             datingData: [updatedDatingData],
             writeBoutYourSelf: bio,
@@ -190,9 +222,9 @@ const AddDatingPersonalInfo = ({navigation}) => {
     } else if (activeIndex === 1) {
       const updatedDatingData = {
         ...user?.user?.datingData[0],
-        CurrentlyLiving: currentLiving,
+        CurrentlyLiving: currentLiving.toLowerCase(),
         educationLevel: educationLevel,
-        Occupation: occupation,
+        Occupation: occupation.toLowerCase(),
         annualIncome: annualIncome,
       };
 
@@ -206,11 +238,15 @@ const AddDatingPersonalInfo = ({navigation}) => {
         ),
       );
     } else if (activeIndex === 2) {
+      const formatted = selectedItems
+        .map(item => item.toLowerCase().replace(/\s+/g, '_'))
+        .join(', ');
+
       apiDispatch(
         updateDetails(
           {
             // hobbies: selectedItems.map(item => item.label),
-            hobbies: selectedItems,
+            hobbies: formatted,
           },
           // () => navigation.navigate('SetProfilePictureScreen'),
           () => setLoading(false),
@@ -322,63 +358,66 @@ const AddDatingPersonalInfo = ({navigation}) => {
         />
       )}
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginHorizontal: 17,
-          height: hp(87),
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.7}
+      {!isKeyboardVisible && (
+        <View
           style={{
-            width: wp(133),
-            height: hp(44),
-            borderRadius: 25,
-            borderWidth: 1,
-            borderColor: colors.black,
-            justifyContent: 'center',
-          }}
-          onPress={navigateToBack}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontSize: fontSize(16),
-              lineHeight: hp(24),
-              fontFamily: fontFamily.poppins400,
-              color: colors.black,
-            }}>
-            Back
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={navigateToNext}
-          style={{
-            width: wp(176),
-            height: hp(44),
-            borderRadius: 30,
-            backgroundColor: colors.black,
-            justifyContent: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginHorizontal: 17,
+            height: hp(87),
             alignItems: 'center',
           }}>
-          {loading ? (
-            <ActivityIndicator size="large" color={colors.white} />
-          ) : (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{
+              width: wp(133),
+              height: hp(44),
+              borderRadius: 25,
+              borderWidth: 1,
+              borderColor: colors.black,
+              justifyContent: 'center',
+            }}
+            onPress={navigateToBack}>
             <Text
               style={{
-                color: colors.white,
+                textAlign: 'center',
                 fontSize: fontSize(16),
                 lineHeight: hp(24),
                 fontFamily: fontFamily.poppins400,
+                color: colors.black,
               }}>
-              {/*Continue*/}
-              {activeIndex === 2 ? 'Add Photos' : 'Continue'}
+              Back
             </Text>
-          )}
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={navigateToNext}
+            style={{
+              width: wp(176),
+              height: hp(44),
+              borderRadius: 30,
+              backgroundColor: colors.black,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.white} />
+            ) : (
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                {/*Continue*/}
+                {activeIndex === 2 ? 'Add Photos' : 'Continue'}
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );

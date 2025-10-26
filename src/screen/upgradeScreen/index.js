@@ -40,6 +40,9 @@ const UpgradeScreen = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showPlanModal, setShowPlanModal] = useState(false);
+  const [credits, setCredits] = useState(null);
+
+  console.log(' === credits ===> ', credits?.credit?.creditBalance);
 
   const navigation = useNavigation();
 
@@ -54,6 +57,8 @@ const UpgradeScreen = () => {
   const dispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
+  const accessToken = user?.tokens?.access?.token;
+  const userId = user?.user?.id;
 
   // console.log(' === user ===> ', user?.user?.mobileNumber);
 
@@ -99,116 +104,6 @@ const UpgradeScreen = () => {
   const handleSheetClosed = () => {
     setIsBottomSheetOpen(false);
   };
-
-  // useEffect(() => {
-  //   const fetchPlansAndUserPlan = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await fetch(
-  //         'https://stag.mntech.website/api/v1/user/plan/get-plan',
-  //         {
-  //           method: 'GET',
-  //           headers: {
-  //             Authorization: `Bearer ${AccessToken}`,
-  //             'Content-Type': 'application/json',
-  //           },
-  //         },
-  //       );
-  //
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-  //
-  //       const json = await response.json();
-  //
-  //       // Transform API data into your expected format
-  //       const transformedPlans = {
-  //         silver: [],
-  //         gold: [],
-  //       };
-  //
-  //       const labelMap = {
-  //         monthly: 'One',
-  //         'two-month': 'Two',
-  //         'three-month': 'Three',
-  //       };
-  //
-  //       const labelsMap = {
-  //         monthly: 'Month',
-  //         'two-month': 'Month',
-  //         'three-month': 'Month',
-  //       };
-  //
-  //       json?.data?.forEach((plan, index) => {
-  //         // console.log(' === plan ===> ', plan);
-  //         const {
-  //           planName,
-  //           planDuration,
-  //           price,
-  //           totalPrice,
-  //           discount,
-  //           discountAmount,
-  //           allowNumberOfProfile,
-  //           allowNumberOfRequest,
-  //         } = plan;
-  //
-  //         const planItem = {
-  //           key: String(index + 1),
-  //           NewPrice: Math.round(totalPrice).toString(),
-  //           OldPrice: Math.round(price).toString(),
-  //           Discount: `${discount}% off`,
-  //           label: labelMap[planDuration] || '',
-  //           labels: labelsMap[planDuration] || '',
-  //           DiscountPrice: Math.round(discountAmount).toString(),
-  //           PlanName: planName,
-  //           MessageNumber: allowNumberOfProfile.toString(),
-  //           SendRequestNumber: allowNumberOfRequest.toString(),
-  //           planName, // store for comparison
-  //           planDuration, // store for comparison
-  //         };
-  //
-  //         if (planName === 'silver') {
-  //           transformedPlans.silver.push(planItem);
-  //         } else if (planName === 'gold') {
-  //           transformedPlans.gold.push(planItem);
-  //         }
-  //       });
-  //
-  //       setSubscriptionPlans(transformedPlans);
-  //
-  //       // 2️⃣ Fetch user's current plan
-  //       const userPlanRes = await fetch(
-  //         'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
-  //         {
-  //           method: 'GET',
-  //           headers: {
-  //             Authorization: `Bearer ${AccessToken}`,
-  //             'Content-Type': 'application/json',
-  //           },
-  //         },
-  //       );
-  //
-  //       if (!userPlanRes.ok) {
-  //         throw new Error(`HTTP error! status: ${userPlanRes.status}`);
-  //       }
-  //
-  //       const userPlanJson = await userPlanRes.json();
-  //       console.log('=== USER PLAN DETAILS ===', userPlanJson);
-  //
-  //       setUserPlan(userPlanJson.data); // store for later use
-  //     } catch (err) {
-  //       console.error('Error fetching plan:', err);
-  //       console.log(err.message);
-  //       // setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //
-  //   if (AccessToken) {
-  //     fetchPlansAndUserPlan();
-  //   }
-  // }, [AccessToken]);
 
   useFocusEffect(
     useCallback(() => {
@@ -317,18 +212,75 @@ const UpgradeScreen = () => {
     }, [AccessToken]),
   );
 
-  const handleContinuePayment = userPlan => {
-    const hasAnyPlan = !!userPlan; // true if user has purchased any plan
+  useFocusEffect(
+    useCallback(() => {
+      const fetchCredits = async () => {
+        try {
+          const response = await axios.get(
+            `https://stag.mntech.website/api/v1/user/user/get-credit/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            },
+          );
+          console.log(' === Credits API response ===> ', response.data);
+          setCredits(response.data);
+        } catch (error) {
+          console.error(
+            'Error fetching credits:',
+            error.response?.data || error.message,
+          );
+        }
+      };
 
-    console.log(' === handleContinuePayment--- ===> ', selectedPlan);
+      if (accessToken && userId) {
+        fetchCredits();
+      }
+    }, [accessToken, userId]),
+  );
+
+  // const handleContinuePayment = userPlan => {
+  //   const hasAnyPlan = !!userPlan; // true if user has purchased any plan
+  //
+  //   console.log(' === hasAnyPlan ===> ', hasAnyPlan);
+  //
+  //   console.log(' === handleContinuePayment--- ===> ', selectedPlan);
+  //
+  //   if (hasAnyPlan) {
+  //     setShowPlanModal(true); // show modal for any purchased plan
+  //     RBSheetRef.current?.close();
+  //   } else {
+  //     console.log('You can buy a plan');
+  //     handlePayment();
+  //     RBSheetRef.current?.close();
+  //   }
+  // };
+
+  const handleContinuePayment = userPlan => {
+    const hasAnyPlan = !!userPlan; // user has any purchased plan [file:1]
+    const creditBalance = Number(credits?.credit?.creditBalance ?? 0); // normalize to number [file:1]
+    const hasZeroCredits = creditBalance === 0; // true if 0 [file:1]
+
+    console.log('=== hasAnyPlan ===> ', hasAnyPlan); // [file:1]
+    console.log('=== credits ===> ', creditBalance); // [file:1]
+    console.log('=== handleContinuePayment--- ===> ', selectedPlan); // [file:1]
+
+    if (hasZeroCredits) {
+      // Allow purchasing when credits are 0, regardless of existing plan [file:1]
+      handlePayment(); // proceed to Razorpay flow [file:1]
+      RBSheetRef.current?.close(); // close sheet [file:1]
+      return; // stop here [file:1]
+    }
 
     if (hasAnyPlan) {
-      setShowPlanModal(true); // show modal for any purchased plan
-      RBSheetRef.current?.close();
+      // Non-zero credits and an active plan: show restriction modal [file:1]
+      setShowPlanModal(true); // [file:1]
+      RBSheetRef.current?.close(); // [file:1]
     } else {
-      console.log('You can buy a plan');
-      handlePayment();
-      RBSheetRef.current?.close();
+      // No plan and non-zero credits: proceed to buy [file:1]
+      handlePayment(); // [file:1]
+      RBSheetRef.current?.close(); // [file:1]
     }
   };
 
@@ -362,7 +314,7 @@ const UpgradeScreen = () => {
       // 3. Razorpay Options
       const options = {
         key: 'rzp_live_OyWOR7Tj1c7Vnh',
-        name: 'Happy Milan',
+        name: 'Hapmeet',
         description: 'Credits towards consultation',
         image: 'https://i.imgur.com/3g7nmJC.png',
         order_id: orderId,
@@ -389,7 +341,8 @@ const UpgradeScreen = () => {
           console.error('Payment Failed:', error);
           Alert.alert(
             'Payment Error',
-            error.description || 'Please try again.',
+            // error.description || 'Please try again.',
+            'Please try again.',
           );
         });
     } catch (error) {
@@ -400,6 +353,21 @@ const UpgradeScreen = () => {
       Alert.alert('Error', 'Unable to initiate payment.');
     }
   };
+
+  // Safe helpers
+  const creditBalance = Number(credits?.credit?.creditBalance ?? 0);
+  const hasZeroCredits = creditBalance === 0;
+
+  // Existing equality checks
+  const isSamePlan =
+    userPlan?.planId?.planName?.toLowerCase() ===
+    selectedPlan?.planName?.toLowerCase();
+
+  const isSamePrice =
+    Math.round(userPlan?.planId?.totalPrice) === Number(selectedPlan?.NewPrice);
+
+  // Only show "Already Purchased" if credits are NOT zero
+  const canShowAlreadyPurchased = isSamePlan && isSamePrice && !hasZeroCredits;
 
   const toggleModal = () => {
     setTopModalVisible(!topModalVisible);
@@ -772,35 +740,56 @@ const UpgradeScreen = () => {
             </View>
 
             <View style={style.bottomSheetBottomButtonContainer}>
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => {*/}
+              {/*    handleContinuePayment(userPlan);*/}
+              {/*  }}*/}
+              {/*  disabled={*/}
+              {/*    userPlan?.planId?.planName?.toLowerCase() ===*/}
+              {/*      selectedPlan?.planName?.toLowerCase() &&*/}
+              {/*    Math.round(userPlan?.planId?.totalPrice) ===*/}
+              {/*      Number(selectedPlan?.NewPrice)*/}
+              {/*  }*/}
+              {/*  style={{*/}
+              {/*    opacity:*/}
+              {/*      userPlan?.planId?.planName?.toLowerCase() ===*/}
+              {/*        selectedPlan?.planName?.toLowerCase() &&*/}
+              {/*      Math.round(userPlan?.planId?.totalPrice) ===*/}
+              {/*        Number(selectedPlan?.NewPrice)*/}
+              {/*        ? 0.5*/}
+              {/*        : 1,*/}
+              {/*  }}>*/}
+              {/*  <LinearGradient*/}
+              {/*    colors={['#7045EB', '#4819CB']} // keep original colors*/}
+              {/*    start={{x: 0, y: 0}}*/}
+              {/*    end={{x: 1, y: 0}}*/}
+              {/*    style={style.payButtonColorGradient}>*/}
+              {/*    <Text style={style.payButtonText}>*/}
+              {/*      {userPlan?.planId?.planName?.toLowerCase() ===*/}
+              {/*        selectedPlan?.planName?.toLowerCase() &&*/}
+              {/*      Math.round(userPlan?.planId?.totalPrice) ===*/}
+              {/*        Number(selectedPlan?.NewPrice)*/}
+              {/*        ? 'Already Purchased'*/}
+              {/*        : 'Continue Payment'}*/}
+              {/*    </Text>*/}
+              {/*  </LinearGradient>*/}
+              {/*</TouchableOpacity>*/}
+
               <TouchableOpacity
                 onPress={() => {
                   handleContinuePayment(userPlan);
                 }}
-                disabled={
-                  userPlan?.planId?.planName?.toLowerCase() ===
-                    selectedPlan?.planName?.toLowerCase() &&
-                  Math.round(userPlan?.planId?.totalPrice) ===
-                    Number(selectedPlan?.NewPrice)
-                }
+                disabled={canShowAlreadyPurchased}
                 style={{
-                  opacity:
-                    userPlan?.planId?.planName?.toLowerCase() ===
-                      selectedPlan?.planName?.toLowerCase() &&
-                    Math.round(userPlan?.planId?.totalPrice) ===
-                      Number(selectedPlan?.NewPrice)
-                      ? 0.5
-                      : 1,
+                  opacity: canShowAlreadyPurchased ? 0.5 : 1,
                 }}>
                 <LinearGradient
-                  colors={['#7045EB', '#4819CB']} // keep original colors
+                  colors={['#7045EB', '#4819CB']}
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 0}}
                   style={style.payButtonColorGradient}>
                   <Text style={style.payButtonText}>
-                    {userPlan?.planId?.planName?.toLowerCase() ===
-                      selectedPlan?.planName?.toLowerCase() &&
-                    Math.round(userPlan?.planId?.totalPrice) ===
-                      Number(selectedPlan?.NewPrice)
+                    {canShowAlreadyPurchased
                       ? 'Already Purchased'
                       : 'Continue Payment'}
                   </Text>
@@ -1091,7 +1080,7 @@ const UpgradeScreen = () => {
                     }}>
                     <View style={style.queryTittleContainer}>
                       <Text style={style.queryTittle}>
-                        Can I cancel the plan at any time?
+                        Can I cancel my subscription plan after purchase?
                       </Text>
 
                       <Image
@@ -1112,12 +1101,10 @@ const UpgradeScreen = () => {
                     {expandedIndex === 1 && ( // Show text only if expanded
                       <View style={style.querySubTittleContainer}>
                         <Text style={style.querySubTittle}>
-                          Yes, you can cancel your subscription at any time.
-                          {'\n'}If you cancel during an active subscription
-                          period,{'\n'}your premium features will remain
-                          available until{'\n'}the end of the billing cycle.
-                          After that, your{'\n'}account will revert to a free
-                          plan.
+                          Yes, you can cancel your plan within 24 to 48{'\n'}
+                          hours of purchase, provided you haven't used any{'\n'}
+                          premium features such as viewing contact{'\n'}numbers
+                          or sending messages.
                         </Text>
                       </View>
                     )}
@@ -1251,17 +1238,6 @@ const UpgradeScreen = () => {
                 Current Plan is active, after expired{'\n'}or cancelled then
                 only will allow to{'\n'}activate new plan.
               </Text>
-              {/*<TouchableOpacity*/}
-              {/*  onPress={() => setShowPlanModal(false)}*/}
-              {/*  style={{*/}
-              {/*    marginTop: 20,*/}
-              {/*    backgroundColor: '#0D4EB3',*/}
-              {/*    paddingVertical: 8,*/}
-              {/*    paddingHorizontal: 20,*/}
-              {/*    borderRadius: 8,*/}
-              {/*  }}>*/}
-              {/*  <Text style={{color: '#fff', fontSize: 14}}>OK</Text>*/}
-              {/*</TouchableOpacity>*/}
 
               <GradientButton
                 onPress={() => setShowPlanModal(false)}

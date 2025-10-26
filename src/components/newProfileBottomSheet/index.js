@@ -35,7 +35,12 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
 
+  // console.log(' === creditData___ ===> ', creditData);
+  // console.log(' === var ===> ', planDetails);
+
   const appType = user?.user?.appUsesType;
+
+  // console.log(' === appType ===> ', appType);
 
   const userImage = user?.user?.profilePic;
 
@@ -279,6 +284,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
             {/*</TouchableOpacity>*/}
           </View>
 
+          {/*{creditData?.credit?.creditBalance > 0 ? (*/}
           {planDetails?.planId?.planName ? (
             // When API gives planName
             <View style={{marginHorizontal: 27}}>
@@ -313,21 +319,17 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
                     fontFamily: fontFamily.poppins500,
                     color: colors.pureBlack,
                   }}>
-                  {capitalizeFirstLetter(planDetails?.planId?.planName)} -{' '}
+                  {/*{capitalizeFirstLetter(planDetails?.planId?.planName)} -{' '}*/}
+                  {appType === 'marriage' && planDetails?.planId?.planName
+                    ? `${capitalizeFirstLetter(
+                        planDetails?.planId?.planName,
+                      )} - `
+                    : ''}
                   {formatPlanDuration(
-                    planDurationDetails?.planId?.planDuration,
+                    planDurationDetails?.planId?.planDuration || ' ',
                   )}
                 </Text>
               </View>
-
-              {/*<View*/}
-              {/*  style={{*/}
-              {/*    width: '100%',*/}
-              {/*    height: 2,*/}
-              {/*    backgroundColor: '#F2F2F2',*/}
-              {/*    marginTop: hp(13),*/}
-              {/*  }}*/}
-              {/*/>*/}
 
               <Text
                 style={{
