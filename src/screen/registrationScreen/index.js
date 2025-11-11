@@ -149,7 +149,7 @@ const RegistrationScreen = () => {
 
             <View style={[style.privacyPolicyTextContainer, {marginTop: 34}]}>
               <Text style={style.privacyPolicyTextStyle}>
-                By creating account, I Agee to Happy Milan{' '}
+                By creating account, I Agee to Hapmeet{' '}
               </Text>
 
               <TouchableOpacity>

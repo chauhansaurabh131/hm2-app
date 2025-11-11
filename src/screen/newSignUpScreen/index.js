@@ -326,7 +326,7 @@ const NewSignUpScreen = () => {
                   lineHeight: hp(20),
                   fontFamily: fontFamily.poppins400,
                 }}>
-                By creating account, I Agree to Happy Milan
+                By creating account, I Agree to Hapmeet
               </Text>
               {/*<View>*/}
               {/*  <Text*/}

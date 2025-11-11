@@ -33,12 +33,10 @@ const EditPartnerPreferencesScreen = ({navigation}) => {
     'India',
     'Canada',
     'Us',
-    'Afghanistan',
     'China',
     'Myanmar',
     'Nepal',
     'Sri-lanka',
-    'Pakistan',
   ];
 
   const Prefer_State = [

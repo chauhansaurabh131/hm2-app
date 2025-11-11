@@ -34,12 +34,10 @@ export const COUNTRY_LIST = [
   {label: 'india', value: '1'},
   {label: 'canada', value: '2'},
   {label: 'us', value: '3'},
-  {label: 'afghanistan', value: '4'},
-  {label: 'china', value: '5'},
-  {label: 'Myanmar', value: '6'},
-  {label: 'nepal', value: '7'},
-  {label: 'sri-lanka', value: '8'},
-  {label: 'pakistan', value: '9'},
+  {label: 'china', value: '4'},
+  {label: 'Myanmar', value: '5'},
+  {label: 'nepal', value: '6'},
+  {label: 'sri-lanka', value: '7'},
 ];
 
 //  const Dating_List = [

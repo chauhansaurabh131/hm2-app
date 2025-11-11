@@ -21,10 +21,10 @@ const NewMainScreen = () => {
   const navigation = useNavigation();
 
   const imageData = [
-    {id: '1', src: images.main_Screen_Img_one},
-    {id: '2', src: images.main_Screen_Img_two},
-    {id: '3', src: images.main_Screen_Img_three},
-    {id: '4', src: images.main_Screen_Img_four},
+    {id: '1', src: images.main_screen_image_five},
+    {id: '2', src: images.main_screen_image_six},
+    {id: '3', src: images.main_screen_image_seven},
+    {id: '4', src: images.main_screen_image_eight},
   ];
 
   const texts = [

@@ -6,7 +6,6 @@ export const images = {
   profileVectorLogo: require('./images/profile_vector_logo.png'),
   happyMilanColorLogo: require('./images/hapMeet_icon.png'),
   profileDisplayImage: require('./images/profile_display_img.png'),
-  demo_One_Image: require('./images/demo_1.png'),
   story_Add_Image: require('./images/story_Add_img.png'),
   demo_Five_Image: require('./images/demo_5.png'),
   demo_Six_Image: require('./images/demo_6.png'),
@@ -42,6 +41,10 @@ export const images = {
   add_Stories_img: require('./images/new_add_stroies_image.png'),
   gradient_header_background_img: require('./images/new_gradient_header_background_img.png'),
   gradient_border_button_img: require('./images/gradientBorder_button.png'),
+  main_screen_image_five: require('./images/main_Screen_Img_five.png'),
+  main_screen_image_six: require('./images/main_screen_image_six.png'),
+  main_screen_image_seven: require('./images/main_screen_image_seven.png'),
+  main_screen_image_eight: require('./images/main_screen_image_eight.png'),
 };
 
 export const icons = {

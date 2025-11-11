@@ -300,12 +300,6 @@ const AdminAddressDetailsScreen = (...params) => {
 
               <TouchableOpacity
                 style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('afghanistan')}>
-                <Text style={style.bottomSheetOptionText}>Afghanistan</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
                 onPress={() => handleSelectCuntry('china')}>
                 <Text style={style.bottomSheetOptionText}>China</Text>
               </TouchableOpacity>
@@ -326,12 +320,6 @@ const AdminAddressDetailsScreen = (...params) => {
                 style={{marginTop: hp(15)}}
                 onPress={() => handleSelectCuntry('sri-lanka')}>
                 <Text style={style.bottomSheetOptionText}>Sri-lanka</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('pakistan')}>
-                <Text style={style.bottomSheetOptionText}>Pakistan</Text>
               </TouchableOpacity>
             </RBSheet>
 

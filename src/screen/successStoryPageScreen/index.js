@@ -347,7 +347,7 @@ const SuccessStoryPageScreen = ({route}) => {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message: 'Happy Milan App', // Message to share
+        message: 'Hapmeet App', // Message to share
       });
 
       if (result.action === Share.sharedAction) {

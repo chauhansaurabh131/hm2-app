@@ -374,14 +374,19 @@ const PlanScreen = () => {
                 </View>
 
                 <View style={style.descriptionTextContainer}>
+                  {/*<Image*/}
+                  {/*  source={*/}
+                  {/*    creditData?.credit?.creditBalance === 0*/}
+                  {/*      ? icons.red_cancel_icon*/}
+                  {/*      : icons.green_check_icon*/}
+                  {/*  }*/}
+                  {/*  style={style.greenCheckIcon}*/}
+                  {/*/>*/}
                   <Image
-                    source={
-                      creditData?.credit?.creditBalance === 0
-                        ? icons.red_cancel_icon
-                        : icons.green_check_icon
-                    }
+                    source={icons.green_check_icon}
                     style={style.greenCheckIcon}
                   />
+
                   <Text style={style.descriptionText}>
                     Contact Details for{' '}
                     <Text style={style.textColor}>
@@ -395,7 +400,9 @@ const PlanScreen = () => {
                     source={icons.green_check_icon}
                     style={style.greenCheckIcon}
                   />
-                  <Text style={style.descriptionText}>Online Support</Text>
+                  <Text style={style.descriptionText}>
+                    Priority Online Support
+                  </Text>
                 </View>
 
                 <View style={style.planIssueContainer}>

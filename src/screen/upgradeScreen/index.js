@@ -638,10 +638,10 @@ const UpgradeScreen = () => {
 
               <View style={style.tittleBodyContainer}>
                 <Text style={style.tittleOneTextStyle}>
-                  Message to{' '}
-                  <Text style={style.tittleTextColor}>
-                    {selectedPlan?.MessageNumber} Profiles
-                  </Text>
+                  Send Unlimited Messages
+                  {/*<Text style={style.tittleTextColor}>*/}
+                  {/*  {selectedPlan?.MessageNumber} Profiles*/}
+                  {/*</Text>*/}
                 </Text>
 
                 <Image
@@ -652,7 +652,7 @@ const UpgradeScreen = () => {
 
               <View style={style.tittleBodyContainer}>
                 <Text style={style.tittleOneTextStyle}>
-                  Send request to{' '}
+                  Contact Details for{' '}
                   <Text style={style.tittleTextColor}>
                     {selectedPlan?.SendRequestNumber} Profiles
                   </Text>
@@ -665,7 +665,9 @@ const UpgradeScreen = () => {
               </View>
 
               <View style={style.tittleBodyContainer}>
-                <Text style={style.tittleOneTextStyle}>Online Support</Text>
+                <Text style={style.tittleOneTextStyle}>
+                  Priority Online Support
+                </Text>
                 <Image
                   source={icons.confirm_check_icon}
                   style={style.checkIcon}

@@ -1543,11 +1543,6 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lowkey/react-native-gif@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/@lowkey/react-native-gif/-/react-native-gif-3.1.0.tgz"
-  integrity sha512-OXoI2p3xHdVkYvA22BjPR7fXp/7CsCwf0/UFrNGAb17lQFluRgkSmi4TLyuK0kYdguPSZdTnDm3NW+siS0w9uQ==
-
 "@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1":
   version "5.1.1-v1"
   resolved "https://registry.npmjs.org/@nicolo-ribaudo/eslint-scope-5-internals/-/eslint-scope-5-internals-5.1.1-v1.tgz"
@@ -1952,24 +1947,24 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-firebase/app@^19.2.2":
+"@react-native-firebase/app@19.2.2":
   version "19.2.2"
-  resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-19.2.2.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-19.2.2.tgz#71db0afdfaa41fff1fc75ce9f5c249eeeec393e3"
   integrity sha512-yucIZT/n567XH+gU8Qf/Z8Awtrc0dadu0LYDJU/dq228DwoQa8xyCoDqXqVM2Ppj9R8csQ+ga4VdMYBSHblYQw==
   dependencies:
     opencollective-postinstall "^2.0.3"
     superstruct "^0.6.2"
 
-"@react-native-firebase/auth@^19.2.2":
-  version "19.3.0"
-  resolved "https://registry.npmjs.org/@react-native-firebase/auth/-/auth-19.3.0.tgz"
-  integrity sha512-sccxpBAWNBg8Wmqye+SPYrvHb31mAuNYbgcuyOw19P9yxPBy/WRXwZDuJ/ctM8Nn3Caw3nCBiLTQHgMf6Zc6mw==
+"@react-native-firebase/auth@19.2.2":
+  version "19.2.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-19.2.2.tgz#ec44f29c8a4427048db19a1c61df1415139d74fe"
+  integrity sha512-2TbbieNAmZSR3wqJZdQyFAT4vISESfvB3I3j/ll+3SS91fV2h0/H4xnBapoOEeXBGxioBGKXBOP3C4ySRXNV6g==
   dependencies:
     plist "^3.1.0"
 
-"@react-native-firebase/messaging@^19.2.2":
+"@react-native-firebase/messaging@19.2.2":
   version "19.2.2"
-  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-19.2.2.tgz"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-19.2.2.tgz#e59e21e9e9d047b9c83197a1c569be50156bfda6"
   integrity sha512-oZNamTvYH3rBneJQ+m0PZED5dzyxcEwyjzwszk/jMjJRgzUrIK3TGu65d6txxIFm6LU5MigpjyqyxrHxrT8aCg==
 
 "@react-native-google-signin/google-signin@^13.2.0":

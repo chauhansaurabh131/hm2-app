@@ -422,10 +422,10 @@ const DatingUpgradeScreen = () => {
 
               <View style={style.tittleBodyContainer}>
                 <Text style={style.tittleOneTextStyle}>
-                  Message to{' '}
-                  <Text style={style.tittleTextColor}>
-                    {selectedPlan.allowNumberOfProfile} Profiles
-                  </Text>
+                  Send Unlimited Messages
+                  {/*<Text style={style.tittleTextColor}>*/}
+                  {/*  {selectedPlan.allowNumberOfProfile} Profiles*/}
+                  {/*</Text>*/}
                 </Text>
 
                 <Image
@@ -436,7 +436,7 @@ const DatingUpgradeScreen = () => {
 
               <View style={style.tittleBodyContainer}>
                 <Text style={style.tittleOneTextStyle}>
-                  Send request to{' '}
+                  Contact Details for{' '}
                   <Text style={style.tittleTextColor}>
                     {selectedPlan.allowNumberOfRequest} Profiles
                   </Text>
@@ -449,7 +449,9 @@ const DatingUpgradeScreen = () => {
               </View>
 
               <View style={style.tittleBodyContainer}>
-                <Text style={style.tittleOneTextStyle}>Online Support</Text>
+                <Text style={style.tittleOneTextStyle}>
+                  Priority Online Support
+                </Text>
                 <Image
                   source={icons.confirm_check_icon}
                   style={style.checkIcon}

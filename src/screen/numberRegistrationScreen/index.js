@@ -220,7 +220,7 @@ const NumberRegistrationScreen = ({navigation}) => {
 
       <View style={style.privacyPolicyTextContainer}>
         <Text style={style.privacyPolicyTextStyle}>
-          By creating account, I Agee to Happy Milan{' '}
+          By creating account, I Agee to Hapmeet{' '}
         </Text>
 
         <TouchableOpacity>
