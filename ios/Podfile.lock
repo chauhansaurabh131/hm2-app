@@ -1010,9 +1010,6 @@ PODS:
     - React-Core
   - react-native-document-picker (9.3.0):
     - React-Core
-  - react-native-gif (3.1.0):
-    - React-Core
-    - SDWebImage (~> 5.0)
   - react-native-image-picker (7.1.2):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1218,7 +1215,7 @@ PODS:
   - RNFBApp (19.2.2):
     - Firebase/CoreOnly (= 10.24.0)
     - React-Core
-  - RNFBAuth (19.3.0):
+  - RNFBAuth (19.2.2):
     - Firebase/Auth (= 10.24.0)
     - React-Core
     - RNFBApp
@@ -1319,7 +1316,6 @@ DEPENDENCIES:
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
-  - "react-native-gif (from `../node_modules/@lowkey/react-native-gif`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pinchable (from `../node_modules/react-native-pinchable`)
@@ -1467,8 +1463,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
-  react-native-gif:
-    :path: "../node_modules/@lowkey/react-native-gif"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -1568,7 +1562,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
-  boost: d3f49c53809116a5d38da093a8aa78bf551aed09
+  boost: 69c3d61aee7f5f7facabe24312f0302003b5af29
   BVLinearGradient: 880f91a7854faff2df62518f0281afb1c60d49a3
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: 39ba45baf4e398618f8b3a4bb6ba8fcdb7fc2133
@@ -1621,7 +1615,6 @@ SPEC CHECKSUMS:
   react-native-config: 3367df9c1f25bb96197007ec531c7087ed4554c3
   react-native-date-picker: 312c387d2ff873c66c5e4cf78ff6827fa91644e2
   react-native-document-picker: 5b97e24a7f1a1e4a50a72c540a043f32d29a70a2
-  react-native-gif: 71d42bec3de98ac0bead5b6b074e3025cfb4f799
   react-native-image-picker: fefff630cfa3ee6a809f6ac6569981f4a34e0050
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-pinchable: b4381b0807d15c12b14bfacd927128f52d96f0f1
@@ -1657,7 +1650,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBApp: 91311b27bc9a33e23b76a62825afd1635501018a
-  RNFBAuth: 40b9953bc9a8e2e207843e424aa82aa84bf34057
+  RNFBAuth: 92172d8976baaa829825017174106e2b2c550319
   RNFBMessaging: e86747e8bba79cb464f3f1f22aaae19f38ee7397
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: a51b249f3c779e38a5d9ec45cb107d8780b39fb2
@@ -1678,4 +1671,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 63cebf193e292a85214218aa5095ca537058b46b
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2

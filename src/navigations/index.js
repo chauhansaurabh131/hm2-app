@@ -97,6 +97,9 @@ import BottomSheetPrivacySettingScreen from '../screen/bottomSheetPrivacySetting
 import DatingBlockAllScreen from '../screen/datingAllScreen/datingBlockAllScreen';
 import PlanCancelScreen from '../screen/planCancelScreen';
 import DatingUpgradeScreen from '../screen/datingUpgradeScreen';
+import ServiceHomeScreen from '../screen/serviceHomeScreen';
+import ServicesProfileScreen from '../screen/servicesProfileScreen';
+import ServicesSearchScreen from '../screen/servicesSearchScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -110,7 +113,7 @@ export const navigationRef = React.createRef();
 // };
 
 const MainNavigator = () => {
-  const {isLoggedIn, appUsesType, user} = useSelector(state => state.auth);
+  const {isLoggedIn, user} = useSelector(state => state.auth);
 
   const appType = user?.user?.appUsesType;
   const isReadyRef = useRef(false);
@@ -151,6 +154,16 @@ const MainNavigator = () => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="NewMainScreen">
+      <Stack.Screen name="ServiceHomeScreen" component={ServiceHomeScreen} />
+      <Stack.Screen
+        name="ServicesSearchScreen"
+        component={ServicesSearchScreen}
+      />
+      <Stack.Screen
+        name="ServicesProfileScreen"
+        component={ServicesProfileScreen}
+      />
+
       <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
@@ -492,6 +505,11 @@ const MainNavigator = () => {
           name={'ChangeNameRequestScreen'}
           component={ChangeNameRequestScreen}
         />
+
+        {/*<Stack.Screen*/}
+        {/*  name={'ServiceHomeScreen'}*/}
+        {/*  component={ServiceHomeScreen}*/}
+        {/*/>*/}
       </Stack.Navigator>
     );
   };

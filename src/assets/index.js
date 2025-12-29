@@ -45,6 +45,8 @@ export const images = {
   main_screen_image_six: require('./images/main_screen_image_six.png'),
   main_screen_image_seven: require('./images/main_screen_image_seven.png'),
   main_screen_image_eight: require('./images/main_screen_image_eight.png'),
+  photo_studio_background_img: require('./images/photo_studio_background.png'),
+  photo_studio_img: require('./images/photo_studio_img.png'),
 };
 
 export const icons = {
@@ -205,6 +207,20 @@ export const icons = {
   red_cancel_icon: require('./icons/red_cancel_icon.png'),
   no_plan_found_icon: require('./icons/no_plan_found.png'),
   blue_screen_eye: require('./icons/blue_sceen_eye.png'),
+  wedding_Planner_icon: require('./icons/wedding_Planner.png'),
+  wedding_Studio_icon: require('./icons/wedding_Studio.png'),
+  decorators_icon: require('./icons/decorators.png'),
+  caterers_icon: require('./icons/caterers_icon.png'),
+  jewellery_Shops_icon: require('./icons/jewellery_Shops.png'),
+  cosmetics_icon: require('./icons/cosmetics.png'),
+  meeting_Points_icon: require('./icons/meeting_Points.png'),
+  makeup_Artist_icon: require('./icons/makeup_Artisti.png'),
+  salons_icon: require('./icons/salons.png'),
+  black_heart_icon: require('./icons/black_heart_icon.png'),
+  purple_phone_icon: require('./icons/purple_phone_icon.png'),
+  instagram_icon: require('./icons/instagram_icon.png'),
+  youtube_icon: require('./icons/youtube_icon.png'),
+  whatsapp_icon: require('./icons/whatsapp_icon.png'),
 };
 
 export const gif = {
