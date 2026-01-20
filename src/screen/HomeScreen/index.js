@@ -758,45 +758,58 @@ const HomeScreen = ({route}) => {
           </>
         )}
 
-        <View
-          style={{
-            // marginTop: hp(22),
-            // marginBottom: hp(20),
-            marginHorizontal: 17,
+        {/*<View*/}
+        {/*  style={{*/}
+        {/*    // marginTop: hp(22),*/}
+        {/*    // marginBottom: hp(20),*/}
+        {/*    marginHorizontal: 17,*/}
+        {/*  }}>*/}
+        {/*  <View>*/}
+        {/*    <Image*/}
+        {/*      source={images.add_Stories_img}*/}
+        {/*      style={{width: '100%', height: hp(160), borderRadius: 10}}*/}
+        {/*    />*/}
+        {/*    <TouchableOpacity*/}
+        {/*      onPress={() => {*/}
+        {/*        navigation.navigate('SuccessStoryEditInformationScreen');*/}
+        {/*      }}*/}
+        {/*      activeOpacity={0.7}*/}
+        {/*      style={{*/}
+        {/*        position: 'absolute',*/}
+        {/*        width: hp(134),*/}
+        {/*        height: hp(40),*/}
+        {/*        borderRadius: 20,*/}
+        {/*        backgroundColor: colors.white,*/}
+        {/*        right: wp(42),*/}
+        {/*        bottom: hp(30),*/}
+        {/*        alignItems: 'center',*/}
+        {/*        justifyContent: 'center',*/}
+        {/*      }}>*/}
+        {/*      <Text*/}
+        {/*        style={{*/}
+        {/*          color: colors.black,*/}
+        {/*          fontSize: fontSize(14),*/}
+        {/*          lineHeight: hp(18),*/}
+        {/*          fontFamily: fontFamily.poppins500,*/}
+        {/*        }}>*/}
+        {/*        Add Your Story*/}
+        {/*      </Text>*/}
+        {/*    </TouchableOpacity>*/}
+        {/*  </View>*/}
+        {/*</View>*/}
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={{marginHorizontal: 17}}
+          onPress={() => {
+            navigation.navigate('SuccessStoryEditInformationScreen');
           }}>
-          <View>
-            <Image
-              source={images.add_Stories_img}
-              style={{width: '100%', height: hp(160), borderRadius: 10}}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('SuccessStoryEditInformationScreen');
-              }}
-              activeOpacity={0.7}
-              style={{
-                position: 'absolute',
-                width: hp(134),
-                height: hp(40),
-                borderRadius: 20,
-                backgroundColor: colors.white,
-                right: wp(42),
-                bottom: hp(30),
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  color: colors.black,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(18),
-                  fontFamily: fontFamily.poppins500,
-                }}>
-                Add Your Story
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+          <Image
+            source={images.new_add_story_img}
+            style={{height: hp(159), width: '100%'}}
+            resizeMode={'cover'}
+          />
+        </TouchableOpacity>
 
         {/*VERIFICATION MODAL OPEN */}
         <View style={style.verificationModalContainer}>

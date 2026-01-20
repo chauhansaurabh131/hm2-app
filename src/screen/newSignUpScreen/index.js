@@ -210,6 +210,8 @@ const NewSignUpScreen = () => {
 
       const idToken = response.idToken || response?.data?.idToken;
 
+      console.log(' === response?.data--- ===> ', response?.data);
+
       if (!idToken) {
         console.log('No idToken found in response');
         return;

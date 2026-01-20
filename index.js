@@ -9,6 +9,10 @@ import {name as appName} from './app.json';
 import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
 
+if (__DEV__) {
+  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'));
+}
+
 // const navigation = useNavigation();
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log(

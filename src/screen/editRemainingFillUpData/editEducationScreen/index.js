@@ -13,6 +13,8 @@ import NewDropDownTextInput from '../../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import {useDispatch, useSelector} from 'react-redux';
 import {educationDetails} from '../../../actions/homeActions';
+import NewSelectValueComponent from '../../../components/newSelectValueComponent';
+import NewEnterSelectValueComponent from '../../../components/newEnterSelectValueComponent';
 
 const EditEducationScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
@@ -102,37 +104,68 @@ const EditEducationScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+      <Text
+        style={{
+          color: colors.black,
+          fontSize: fontSize(16),
+          lineHeight: hp(30),
+          fontFamily: fontFamily.poppins600,
+          textAlign: 'center',
+          marginTop: hp(12),
+          marginBottom: hp(12),
+        }}>
+        Education Details
+      </Text>
+
+      <View
+        style={{width: '100%', height: hp(4), backgroundColor: '#F9F7FF'}}
+      />
+
+      <NewSelectValueComponent
+        title="Select Degree"
+        value={degree}
+        dropdownData={degreeDropdownData}
+        onValueChange={value => {
+          // setSelectedDegreeStatus(value);
+          setDegree?.(value);
+        }}
+        bottomSheetHeight={hp(450)}
+      />
+
+      <View style={{marginTop: hp(10)}}>
+        <NewEnterSelectValueComponent
+          title="College / Uni."
+          value={collage}
+          emptyText="Add"
+          modalTitle="College / Uni."
+          EnterModalPlaceholderTittle={'Enter College / Uni.'}
+          onValueChange={value => {
+            // setSelectedCollegeStatus(value);
+            setCollage?.(value);
+          }}
+        />
+      </View>
+
       <View style={{marginHorizontal: 17, flex: 1}}>
-        <AppColorLogo />
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
-            fontFamily: fontFamily.poppins600,
-            textAlign: 'center',
-            marginTop: 10,
-          }}>
-          Education Details
-        </Text>
+        {/*<AppColorLogo />*/}
 
-        <View style={{marginTop: hp(30)}}>
-          <NewDropDownTextInput
-            placeholder="Degree"
-            dropdownData={degreeDropdownData}
-            onValueChange={setDegree}
-            value={degree}
-            bottomSheetHeight={getDropdownHeight('Degree')} // Dynamic height
-          />
-        </View>
+        {/*<View style={{marginTop: hp(30)}}>*/}
+        {/*  <NewDropDownTextInput*/}
+        {/*    placeholder="Degree"*/}
+        {/*    dropdownData={degreeDropdownData}*/}
+        {/*    onValueChange={setDegree}*/}
+        {/*    value={degree}*/}
+        {/*    bottomSheetHeight={getDropdownHeight('Degree')} // Dynamic height*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: hp(50)}}>
-          <FloatingLabelInput
-            label="College/University"
-            value={collage}
-            onChangeText={setCollage}
-          />
-        </View>
+        {/*<View style={{marginTop: hp(50)}}>*/}
+        {/*  <FloatingLabelInput*/}
+        {/*    label="College/University"*/}
+        {/*    value={collage}*/}
+        {/*    onChangeText={setCollage}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
         <View
           style={{

@@ -71,6 +71,13 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
@@ -80,8 +87,8 @@ android {
         applicationId "com.happymilan2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.2"
+        versionCode 12
+        versionName "2.1"
         multiDexEnabled= true
         vectorDrawables.useSupportLibrary = true
         missingDimensionStrategy 'react-native-camera', 'general'

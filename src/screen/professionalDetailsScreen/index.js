@@ -1,122 +1,112 @@
-import React from 'react';
-import {SafeAreaView, ScrollView, Text, TextInput, View} from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView, ScrollView, View} from 'react-native';
 import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
-import NewDropDownTextInput from '../../components/newDropdownTextinput';
+import {hp} from '../../utils/helpers';
+import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
+import NewSelectValueComponent from '../../components/newSelectValueComponent';
 
 const ProfessionalsDetailsScreen = ({
-  jobTitle,
   setJobTitle,
-  jobType,
   setJobType,
-  companyName,
   setCompanyName,
-  salary,
   setSalary,
-  workInCity,
   setWorkInCity,
-  workInCountry,
   setWorkInCountry,
 }) => {
   const jobTypeDropdownData = ['Government', 'Private', 'Retired', 'Homemaker'];
-  const jobWorkCityDropdownData = ['Surat', 'Ahmadabad', 'Navsari', 'Bardoli'];
   const jobWorkContryDropdownData = ['India'];
-  const anuallSalary = ['1 lakh', '2 lakh', '3 lakh', '5 lakh', '10 lakh'];
+  const anuallSalary = ['1 LPA', '2 LPA', '3 LPA', '5 LPA', '10 LPA'];
 
-  // Dynamic height assignment based on dropdown type
-  const getDropdownHeight = dropdownType => {
-    switch (dropdownType) {
-      case 'Job Type':
-        return hp(220); // Set height for gender dropdown
-      case 'Annual Salary':
-        return hp(250); // Set height for marital status dropdown
-      case 'Work City':
-        return hp(230); // Set height for caste dropdown
-      case 'Country':
-        return hp(100); // Set height for caste dropdown
-      default:
-        return 300; // Default height
-    }
-  };
+  const [selectedDesignationStatus, setSelectedDesignationStatus] =
+    useState('');
+  const [selectedJobStatus, setSelectedJobStatus] = useState('');
+  const [selectedCompanyStatus, setSelectedCompanyStatus] = useState('');
+  const [selectedSalaryStatus, setSelectedSalaryStatus] = useState('');
+  const [selectedCityStatus, setSelectedCityStatus] = useState('');
+  const [selectedCountryStatus, setSelectedCountryStatus] = useState('');
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17)}}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{marginTop: hp(10)}}>
-            <FloatingLabelInput
-              label="Current Designation"
-              value={jobTitle}
-              onChangeText={setJobTitle}
-            />
-          </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <NewEnterSelectValueComponent
+          title="Current Designation"
+          value={selectedDesignationStatus}
+          emptyText="Add"
+          modalTitle="Current Designation"
+          EnterModalPlaceholderTittle={'Enter Current Designation'}
+          onValueChange={value => {
+            setSelectedDesignationStatus(value);
+            setJobTitle?.(value);
+          }}
+        />
 
-          <View style={{marginTop: hp(37)}}>
-            <NewDropDownTextInput
-              placeholder="Job Type"
-              dropdownData={jobTypeDropdownData}
-              onValueChange={setJobType}
-              bottomSheetHeight={getDropdownHeight('Job Type')} // Dynamic height
-            />
-          </View>
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Job Type"
+            value={selectedJobStatus}
+            dropdownData={jobTypeDropdownData}
+            onValueChange={value => {
+              setSelectedJobStatus(value);
+              setJobType?.(value);
+            }}
+            bottomSheetHeight={hp(250)}
+          />
+        </View>
 
-          <View style={{marginTop: hp(37)}}>
-            <FloatingLabelInput
-              label="Company Name"
-              value={companyName}
-              onChangeText={setCompanyName}
-            />
-          </View>
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Company"
+            value={selectedCompanyStatus}
+            emptyText="Add"
+            modalTitle="Company"
+            EnterModalPlaceholderTittle={'Enter Company Name'}
+            onValueChange={value => {
+              setSelectedCompanyStatus(value);
+              setCompanyName?.(value);
+            }}
+          />
+        </View>
 
-          <View style={{marginTop: hp(37)}}>
-            {/*<FloatingLabelInput*/}
-            {/*  label="Annual Salary"*/}
-            {/*  value={salary}*/}
-            {/*  onChangeText={setSalary}*/}
-            {/*  showUnit={true}*/}
-            {/*/>*/}
-            <NewDropDownTextInput
-              placeholder="Annual Salary"
-              dropdownData={anuallSalary}
-              onValueChange={setSalary}
-              bottomSheetHeight={getDropdownHeight('Annual Salary')} // Dynamic height
-            />
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Annual Salary"
+            value={selectedSalaryStatus}
+            dropdownData={anuallSalary}
+            onValueChange={value => {
+              setSelectedSalaryStatus(value);
+              setSalary?.(value);
+            }}
+            bottomSheetHeight={hp(300)}
+          />
+        </View>
 
-            {/*<FloatingLabelInput*/}
-            {/*  label="Annual Salary"*/}
-            {/*  value={salary}*/}
-            {/*  onChangeText={setSalary}*/}
-            {/*/>*/}
-          </View>
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Work City"
+            value={selectedCityStatus}
+            emptyText="Add"
+            modalTitle="Work City"
+            EnterModalPlaceholderTittle={'Enter Work City'}
+            onValueChange={value => {
+              setSelectedCityStatus(value);
+              setWorkInCity?.(value);
+            }}
+          />
+        </View>
 
-          <View style={{marginTop: hp(37)}}>
-            {/*<NewDropDownTextInput*/}
-            {/*  placeholder="Work City"*/}
-            {/*  dropdownData={jobWorkCityDropdownData}*/}
-            {/*  onValueChange={setWorkInCity}*/}
-            {/*  bottomSheetHeight={getDropdownHeight('Work City')} // Dynamic height*/}
-            {/*/>*/}
-
-            <FloatingLabelInput
-              label="Work City"
-              value={workInCity}
-              onChangeText={setWorkInCity}
-            />
-          </View>
-
-          <View style={{marginTop: hp(37)}}>
-            <NewDropDownTextInput
-              placeholder="Country"
-              dropdownData={jobWorkContryDropdownData}
-              onValueChange={setWorkInCountry}
-              bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height
-            />
-          </View>
-          <View style={{height: 50}} />
-        </ScrollView>
-      </View>
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Work Country"
+            value={selectedCountryStatus}
+            dropdownData={jobWorkContryDropdownData}
+            onValueChange={value => {
+              setSelectedCountryStatus(value);
+              setWorkInCountry?.(value);
+            }}
+            bottomSheetHeight={hp(100)}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

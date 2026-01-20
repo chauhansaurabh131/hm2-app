@@ -4,23 +4,20 @@ import {style} from './style';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import {hp, wp} from '../../utils/helpers';
+import NewSelectValueComponent from '../../components/newSelectValueComponent';
+import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
 
 const GeneralInformationDetailsScreen = ({
   genderSetSelectedOption,
   maritalSetSelectedOption,
-  selectCaste,
   setSelectCaste,
   setSelectReligion,
   setUserHeight,
   setUserWeight,
-  userHeight,
-  userWeight,
   setSelectManglik,
   setSelectGothra,
   setSelectZodiac,
   setSelectLanguage,
-  about,
-  setAbout,
 }) => {
   const genderDropdownData = [
     'Male',
@@ -29,13 +26,7 @@ const GeneralInformationDetailsScreen = ({
     'Prefer Not To Say',
     'Other',
   ];
-  const maritalDropdownData = [
-    'Single',
-    'Never-Married',
-    'Married',
-    'Divorcee',
-  ];
-  const casteDropdownData = ['Rajput', 'Shah', 'Jain', 'Surti', 'Kathiawar'];
+
   const religionDropdownData = [
     'Hindu',
     'Muslim',
@@ -135,140 +126,156 @@ const GeneralInformationDetailsScreen = ({
     'Urdu',
   ];
 
-  // Dynamic height assignment based on dropdown type
-  const getDropdownHeight = dropdownType => {
-    switch (dropdownType) {
-      case 'gender':
-        return hp(255); // Set height for gender dropdown
-      case 'marital':
-        return hp(220); // Set height for marital status dropdown
-      case 'caste':
-        return hp(300); // Set height for caste dropdown
-      case 'Religion':
-        return hp(390); // Set height for caste dropdown
-      case 'Manglik':
-        return hp(220); // Set height for caste dropdown
-      case 'Gothra':
-        return hp(420); // Set height for caste dropdown
-      case 'Zodiac':
-        return hp(350); // Set height for caste dropdown
-      case 'Toungue':
-        return hp(450); // Set height for caste dropdown
-      default:
-        return 300; // Default height
-    }
-  };
+  const [selectedGenderStatus, setSelectedGenderStatus] = useState('');
+  const [selectedMaritalStatus, setSelectedMaritalStatus] = useState('');
+  const [selectedReligionStatus, setSelectedReligionStatus] = useState('');
+  const [selectedCasteStatus, setSelectedCasteStatus] = useState('');
+  const [selectedHeightStatus, setSelectedHeightStatus] = useState('');
+  const [selectedWeightStatus, setSelectedWeightStatus] = useState('');
+  const [selectedManglikStatus, setSelectedManglikStatus] = useState('');
+  const [selectedGothraStatus, setSelectedGothraStatus] = useState('');
+  const [selectedZodiacStatus, setSelectedZodiacStatus] = useState('');
+  const [selectedLanguageStatus, setSelectedLanguageStatus] = useState('');
 
   return (
     <SafeAreaView style={style.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <NewSelectValueComponent
+          title="Gender"
+          value={selectedGenderStatus}
+          dropdownData={genderDropdownData}
+          onValueChange={value => {
+            setSelectedGenderStatus(value); // ✅ update UI
+            genderSetSelectedOption?.(value); // ✅ optional: update parent
+          }}
+          bottomSheetHeight={hp(300)}
+        />
+
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Marital Status"
+            value={selectedMaritalStatus}
+            dropdownData={['Single', 'Never-Married', 'Married', 'Divorcee']}
+            onValueChange={value => {
+              setSelectedMaritalStatus(value);
+              maritalSetSelectedOption?.(value);
+            }}
+            bottomSheetHeight={hp(250)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Religion"
+            value={selectedReligionStatus}
+            dropdownData={religionDropdownData}
+            onValueChange={value => {
+              setSelectedReligionStatus(value);
+              setSelectReligion?.(value);
+            }}
+            bottomSheetHeight={hp(450)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Caste"
+            value={selectedCasteStatus}
+            emptyText="Add"
+            modalTitle="Caste"
+            EnterModalPlaceholderTittle={'Add Caste'}
+            onValueChange={value => {
+              setSelectedCasteStatus(value);
+              setSelectCaste?.(value);
+            }}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Height"
+            value={selectedHeightStatus}
+            emptyText="Add"
+            modalTitle="Height"
+            modalEgTitle="(e.g 5.3ft)"
+            keyboardTypes="decimal-pad"
+            onValueChange={value => {
+              setSelectedHeightStatus(value);
+              setUserHeight?.(value);
+            }}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Weight"
+            value={selectedWeightStatus}
+            emptyText="Add"
+            modalTitle="Weight"
+            modalEgTitle="(e.g 60 kg)"
+            keyboardTypes="decimal-pad"
+            EnterModalPlaceholderTittle={'Enter Weight'}
+            onValueChange={value => {
+              setSelectedWeightStatus(value);
+              setUserWeight?.(value);
+            }}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Manglik Status"
+            value={selectedManglikStatus}
+            dropdownData={ManglikStatusDropdownData}
+            onValueChange={value => {
+              setSelectedManglikStatus(value);
+              setSelectManglik?.(value);
+            }}
+            bottomSheetHeight={hp(260)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Gothra"
+            value={selectedGothraStatus}
+            dropdownData={GothraStatusDropdownData}
+            onValueChange={value => {
+              setSelectedGothraStatus(value);
+              setSelectGothra?.(value);
+            }}
+            bottomSheetHeight={hp(500)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Zodiac"
+            value={selectedZodiacStatus}
+            dropdownData={ZodiacStatusDropdownData}
+            onValueChange={value => {
+              setSelectedZodiacStatus(value);
+              setSelectZodiac?.(value);
+            }}
+            bottomSheetHeight={hp(500)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Mother Tongue"
+            value={selectedLanguageStatus}
+            dropdownData={languageDropdownData}
+            onValueChange={value => {
+              setSelectedLanguageStatus(value);
+              setSelectLanguage?.(value);
+            }}
+            bottomSheetHeight={hp(500)}
+          />
+        </View>
+
         <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
           <View>
-            <NewDropDownTextInput
-              placeholder="Gender"
-              dropdownData={genderDropdownData}
-              onValueChange={genderSetSelectedOption}
-              bottomSheetHeight={getDropdownHeight('gender')} // Dynamic height
-            />
-            <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Marital Status"
-                dropdownData={maritalDropdownData}
-                onValueChange={maritalSetSelectedOption}
-                bottomSheetHeight={getDropdownHeight('marital')} // Dynamic height
-              />
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              {/*<NewDropDownTextInput*/}
-              {/*  placeholder="Caste"*/}
-              {/*  dropdownData={casteDropdownData}*/}
-              {/*  onValueChange={setSelectCaste}*/}
-              {/*  bottomSheetHeight={getDropdownHeight('caste')} // Dynamic height*/}
-              {/*/>*/}
-
-              <FloatingLabelInput
-                label="Caste"
-                value={selectCaste}
-                onChangeText={setSelectCaste}
-              />
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Religion"
-                dropdownData={religionDropdownData}
-                onValueChange={setSelectReligion}
-                bottomSheetHeight={getDropdownHeight('Religion')} // Dynamic height
-              />
-            </View>
-
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <View style={{marginTop: hp(37), width: '45%'}}>
-                <FloatingLabelInput
-                  label="Height"
-                  value={userHeight}
-                  onChangeText={setUserHeight}
-                  showUnitText={'(Ft)'}
-                  showUnit={true}
-                />
-              </View>
-              <View style={{marginTop: hp(37), width: '45%'}}>
-                <FloatingLabelInput
-                  label="Weight"
-                  value={userWeight}
-                  onChangeText={setUserWeight}
-                  showUnitText={'(Kg)'}
-                  showUnit={true}
-                />
-              </View>
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Manglik Status"
-                dropdownData={ManglikStatusDropdownData}
-                onValueChange={setSelectManglik}
-                bottomSheetHeight={getDropdownHeight('Manglik')} // Dynamic height
-              />
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Select Your Gothra"
-                dropdownData={GothraStatusDropdownData}
-                onValueChange={setSelectGothra}
-                bottomSheetHeight={getDropdownHeight('Gothra')} // Dynamic height
-              />
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Zodiac Sign"
-                dropdownData={ZodiacStatusDropdownData}
-                onValueChange={setSelectZodiac}
-                bottomSheetHeight={getDropdownHeight('Zodiac')} // Dynamic height
-              />
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              <NewDropDownTextInput
-                placeholder="Mother Toungue"
-                dropdownData={languageDropdownData}
-                onValueChange={setSelectLanguage}
-                bottomSheetHeight={getDropdownHeight('Toungue')} // Dynamic height
-              />
-            </View>
-
-            <View style={{marginTop: hp(37)}}>
-              <FloatingLabelInput
-                label="About Yourself"
-                value={about}
-                onChangeText={setAbout}
-              />
-            </View>
-
             <View style={{height: hp(50)}} />
           </View>
         </View>

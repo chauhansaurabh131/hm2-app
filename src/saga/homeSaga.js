@@ -139,8 +139,6 @@ function* non_friendBlockedRequest(action) {
 }
 
 function* setUpdateDetails(action) {
-  const accessToken = yield call(AsyncStorage.getItem, TOKEN);
-  // console.log(' === accessToken ===> ', accessToken);
   try {
     const response = yield call(home.setUserUpdateDetails, action.data.payload);
     yield put(homeActions.setUpdateDetailsSuccess(response.data));

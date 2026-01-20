@@ -11,12 +11,11 @@ export const style = StyleSheet.create({
     marginHorizontal: wp(17),
   },
   headingTextStyle: {
-    fontSize: fontSize(20),
+    fontSize: fontSize(16),
     lineHeight: hp(30),
     fontFamily: fontFamily.poppins600,
     color: colors.black,
     textAlign: 'center',
-    marginTop: hp(100),
   },
   bodyHeightStyle: {
     marginTop: hp(60),
@@ -29,7 +28,7 @@ export const style = StyleSheet.create({
     height: hp(50),
     borderRadius: 50,
     backgroundColor: 'black',
-    marginTop: hp(90),
+    // marginTop: hp(90),
     justifyContent: 'center',
     marginBottom: 50,
   },

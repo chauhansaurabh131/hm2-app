@@ -591,18 +591,18 @@ const ChatScreen = ({navigation}) => {
             </Text>
           </View>
         ) : filteredFriends.length === 0 && !userInput ? (
-          <View style={{alignItems: 'center', marginTop: hp(200)}}>
+          <View style={{alignItems: 'center', marginTop: hp(130)}}>
             <Image
-              source={icons.no_message_icon}
-              style={{width: hp(48), height: hp(44), resizeMode: 'contain'}}
+              source={icons.empty_state_icon}
+              style={{width: hp(212), height: hp(170), resizeMode: 'contain'}}
             />
             <Text
               style={{
-                marginTop: hp(14),
+                // marginTop: hp(5),
                 color: colors.black,
-                fontSize: fontSize(18),
+                fontSize: fontSize(20),
                 lineHeight: hp(27),
-                fontFamily: fontFamily.poppins400,
+                fontFamily: fontFamily.poppins700,
               }}>
               No messages
             </Text>
@@ -610,10 +610,11 @@ const ChatScreen = ({navigation}) => {
               style={{
                 fontSize: fontSize(14),
                 lineHeight: hp(21),
-                fontFamily: fontFamily.poppins400,
+                // fontFamily: fontFamily.poppins400,
                 color: colors.gray,
+                fontWeight: '400',
               }}>
-              New messages will appear here.
+              You have no active chats
             </Text>
           </View>
         ) : (

@@ -1,7 +1,7 @@
-import React from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
-import NewBottomSheetMultipleValueSelect from '../../../components/newBottomSheetMultipleValueSelect';
+import NewMultiSelectValueComponent from '../../../components/newMultiSelectValueComponent';
 
 const DatingHobbiesScreen = ({selectedItems, setSelectedItems}) => {
   const options = [
@@ -39,21 +39,20 @@ const DatingHobbiesScreen = ({selectedItems, setSelectedItems}) => {
     'Swimming',
   ];
 
-  const handleSelect = selectedValue => {
-    setSelectedItems(selectedValue);
-  };
+  const [multiHobbiesStatus, setMultiHobbiesStatus] = useState([]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{marginHorizontal: 17, marginTop: hp(30)}}>
-        {/* Use the NewBottomSheetMultipleValueSelect component */}
-        <NewBottomSheetMultipleValueSelect
-          label="Select Hobbies"
-          options={options}
-          onSelect={handleSelect} // Pass the onSelect handler to capture selected values
-          bottomSheetHeight={hp(350)}
-        />
-      </View>
+      <NewMultiSelectValueComponent
+        title="Add Hobbies"
+        value={multiHobbiesStatus} // 👈 ARRAY
+        dropdownData={options}
+        onValueChange={value => {
+          setMultiHobbiesStatus(value); // ✅ update UI
+          setSelectedItems?.(value); // ✅ optional: update parent
+        }}
+        bottomSheetHeight={hp(500)}
+      />
     </SafeAreaView>
   );
 };

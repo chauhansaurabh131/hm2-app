@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
-import NewBottomSheetMultipleValueSelect from '../../components/newBottomSheetMultipleValueSelect';
+import {SafeAreaView, View} from 'react-native';
 import {hp} from '../../utils/helpers';
+import NewMultiSelectValueComponent from '../../components/newMultiSelectValueComponent';
 
 const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
   // Define the options for the bottom sheet
@@ -51,24 +51,27 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
     setSelectedLanguage(selectedValue);
   };
 
+  const [multiHobbiesStatus, setMultiHobbiesStatus] = useState([]);
+  const [multiLanguageStatus, setMultiLanguageStatus] = useState([]);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 17, marginTop: hp(7)}}>
-        {/* Use the NewBottomSheetMultipleValueSelect component */}
-        <NewBottomSheetMultipleValueSelect
-          label="Select Hobbies"
-          options={options}
-          onSelect={handleSelect} // Pass the onSelect handler to capture selected values
-          bottomSheetHeight={hp(400)}
-        />
+      <NewMultiSelectValueComponent
+        title="Add Hobbies"
+        value={multiHobbiesStatus} // 👈 ARRAY
+        dropdownData={options}
+        onValueChange={setMultiHobbiesStatus} // 👈 ARRAY SETTER
+        bottomSheetHeight={hp(500)}
+      />
 
-        <View style={{marginTop: hp(20)}}>
-          <NewBottomSheetMultipleValueSelect
-            label="Language Known"
-            options={language}
-            onSelect={languageSelect} // Pass the onSelect handler to capture selected values
-          />
-        </View>
+      <View style={{marginTop: hp(40)}}>
+        <NewMultiSelectValueComponent
+          title="Add Language Known"
+          value={multiLanguageStatus} // 👈 ARRAY
+          dropdownData={language}
+          onValueChange={setMultiLanguageStatus} // 👈 ARRAY SETTER
+          bottomSheetHeight={hp(200)}
+        />
       </View>
     </SafeAreaView>
   );

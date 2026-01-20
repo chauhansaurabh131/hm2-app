@@ -31,7 +31,27 @@ const NewMainScreen = () => {
     'Single App\n Multiple Choices',
     'Create\n Long Term Profile',
     'Create\n Dating Profile',
-    'Create\n Social Profile',
+    'Search Nearby\n Vendors',
+  ];
+
+  const subTexts = [
+    [
+      'Welcome to Hapmeet—your place to find a',
+      'life partner, explore dating, and build \n meaningful connections.',
+      // 'meaningful connections.',
+    ],
+    [
+      'Find verified dating and matrimony service ',
+      'providers near you—all in one place with \n Hapmeet.',
+    ],
+    [
+      'By creating this profile, you can discover profiles ',
+      'for casual relationships',
+    ],
+    [
+      'Find verified dating and matrimony service',
+      'providers near you—all in one place with \n Hapmeet.',
+    ],
   ];
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
@@ -119,9 +139,9 @@ const NewMainScreen = () => {
         style={{
           marginTop: hp(29),
           marginLeft: wp(33),
-          resizeMode: 'stretch',
-          width: hp(96),
-          height: hp(24),
+          resizeMode: 'contain',
+          width: hp(100),
+          height: hp(26),
           alignSelf: 'center',
         }}
       />
@@ -165,37 +185,64 @@ const NewMainScreen = () => {
           {texts[currentTextIndex]}
         </Animated.Text>
 
-        <Text
-          style={{
-            textAlign: 'center',
-            color: colors.black,
-            marginTop: hp(17),
-            fontSize: fontSize(12),
-            lineHeight: hp(18),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          Welcome to HappyMilan your hub for finding a life
-        </Text>
-        <Text
-          style={{
-            textAlign: 'center',
-            color: colors.black,
-            fontSize: fontSize(12),
-            lineHeight: hp(18),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          partner, exploring dating opportunities, and{' '}
-        </Text>
-        <Text
-          style={{
-            textAlign: 'center',
-            color: colors.black,
-            fontSize: fontSize(12),
-            lineHeight: hp(18),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          making new friends.{' '}
-        </Text>
+        {/*<Text*/}
+        {/*  style={{*/}
+        {/*    textAlign: 'center',*/}
+        {/*    color: colors.black,*/}
+        {/*    marginTop: hp(17),*/}
+        {/*    fontSize: fontSize(12),*/}
+        {/*    lineHeight: hp(18),*/}
+        {/*    fontFamily: fontFamily.poppins400,*/}
+        {/*  }}>*/}
+        {/*  Welcome to HappyMilan your hub for finding a life*/}
+        {/*</Text>*/}
+        {/*<Text*/}
+        {/*  style={{*/}
+        {/*    textAlign: 'center',*/}
+        {/*    color: colors.black,*/}
+        {/*    fontSize: fontSize(12),*/}
+        {/*    lineHeight: hp(18),*/}
+        {/*    fontFamily: fontFamily.poppins400,*/}
+        {/*  }}>*/}
+        {/*  partner, exploring dating opportunities, and{' '}*/}
+        {/*</Text>*/}
+        {/*<Text*/}
+        {/*  style={{*/}
+        {/*    textAlign: 'center',*/}
+        {/*    color: colors.black,*/}
+        {/*    fontSize: fontSize(12),*/}
+        {/*    lineHeight: hp(18),*/}
+        {/*    fontFamily: fontFamily.poppins400,*/}
+        {/*  }}>*/}
+        {/*  making new friends.{' '}*/}
+        {/*</Text>*/}
+
+        <View style={{height: hp(80)}}>
+          <Animated.Text
+            style={{
+              textAlign: 'center',
+              color: colors.black,
+              marginTop: hp(15),
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              opacity: fadeAnim, // ✅ SAME animation
+            }}>
+            {subTexts[currentTextIndex][0]}
+          </Animated.Text>
+
+          <Animated.Text
+            style={{
+              textAlign: 'center',
+              color: colors.black,
+              fontSize: fontSize(12),
+              lineHeight: hp(18),
+              fontFamily: fontFamily.poppins400,
+              opacity: fadeAnim, // ✅ SAME animation
+            }}>
+            {subTexts[currentTextIndex][1]}
+          </Animated.Text>
+        </View>
 
         {/* Pagination Dots with Color Animation */}
         <View
@@ -203,7 +250,8 @@ const NewMainScreen = () => {
             flexDirection: 'row',
             justifyContent: 'center',
             // backgroundColor: 'red',
-            // marginTop: hp(10),
+            marginTop: hp(-15),
+            // top: -20,
           }}>
           {texts.map((_, index) => {
             const dotColor = dotAnimations[index].interpolate({

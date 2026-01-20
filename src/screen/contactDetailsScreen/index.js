@@ -1,15 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
 import {colors} from '../../utils/colors';
-import {hp, wp} from '../../utils/helpers';
+import {hp} from '../../utils/helpers';
+import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
 
 const ContactDetailsScreen = ({
   mobileNumbers, // fallback prop
   setMobileNumber,
-  homeNumber,
-  setHomeNumber,
   setUserEmail,
 }) => {
   const {user} = useSelector(state => state.auth);
@@ -40,38 +38,31 @@ const ContactDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
-        <View style={{marginTop: 20}}>
-          <FloatingLabelInput
-            label="Mobile Number"
-            value={mobileNumber}
-            showUnit={true}
-            onChangeText={text => {
-              updateMobileNumber(text);
-              setMobileNumber?.(text); // Always update parent
-            }}
-          />
-        </View>
+      <NewEnterSelectValueComponent
+        title="Mobile Number"
+        value={mobileNumber}
+        emptyText="Add"
+        modalTitle="Mobile Number"
+        keyboardTypes="decimal-pad"
+        EnterModalPlaceholderTittle={'Enter Mobile Number'}
+        onValueChange={value => {
+          updateMobileNumber(value);
+          setMobileNumber?.(value);
+        }}
+      />
 
-        {/*<View style={{marginTop: hp(37)}}>*/}
-        {/*  <FloatingLabelInput*/}
-        {/*    label="Home Number"*/}
-        {/*    value={homeNumber}*/}
-        {/*    onChangeText={setHomeNumber}*/}
-        {/*    showUnit={true}*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        <View style={{marginTop: hp(37)}}>
-          <FloatingLabelInput
-            label="Email"
-            value={email}
-            onChangeText={text => {
-              setLocalEmail(text);
-              setUserEmail?.(text);
-            }}
-          />
-        </View>
+      <View style={{marginTop: hp(10)}}>
+        <NewEnterSelectValueComponent
+          title="Email"
+          value={email}
+          emptyText="Add"
+          modalTitle="Email Address"
+          EnterModalPlaceholderTittle={'Enter Email'}
+          onValueChange={value => {
+            setLocalEmail(value);
+            setUserEmail?.(value);
+          }}
+        />
       </View>
     </SafeAreaView>
   );

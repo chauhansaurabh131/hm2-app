@@ -27,32 +27,17 @@ import NewBottomSheetSingleValueSelect from '../../components/newBottomSheetSing
 import {colors} from '../../utils/colors';
 import MultipleValueSelectTextInput from '../../components/mutipleValueSelectTextInput';
 import Toast from 'react-native-toast-message';
+import NewSelectValueComponent from '../../components/newSelectValueComponent';
+import NewMultiSelectValueComponent from '../../components/newMultiSelectValueComponent';
+import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
+import NewEnterMultipleSelectValueComponent from '../../components/newEnterMultipleSelectValueComponent';
 
 const PartnerPreferencesScreen = () => {
-  const [countryList, setCountryList] = useState([]);
-  const [selectedAgeFrom, setSelectedAgeFrom] = useState('');
-  const [selectedAgeTo, setSelectedAgeTo] = useState('');
-  const [selectHeightFrom, setSelectHeightFrom] = useState('');
-  const [selectedHeightTo, setSelectedHeightTo] = useState('');
-  const [stateList, setStateList] = useState([]);
-  const [partnerPreferCity, setPartnerPreferCity] = useState([]);
-  // const [preferDiet, setPreferDiet] = useState('');
-  const [preferIncome, setPreferIncome] = useState('');
-  const [hobbies, setHobbies] = useState([]);
-
-  const AgeFrom = ['22', '23', '24']; // Your options
-  const AgeFromTo = ['32', '33', '34']; // Your options
-  const HeightRangeFrom = ['4', '5.5', '6']; // Your options
-  const HeightRangeTo = ['5.7', '6.1', '7']; // Your options
-  const dropdownValues = ['vegetarian', 'non_vegetarian'];
-  const dropdownPreferIncome = ['100000', '200000', '300000'];
-
   // NEW
   const [ageRange, setAgeRange] = useState([25, 35]); // Initial age range
   const [heightRange, setHeightRange] = useState([4, 6.5]); // Initial age range
   const [preferCountry, setPreferCountry] = useState([]);
   const [preferState, setPreferState] = useState([]);
-  // const [preferCity, setPreferCity] = useState([]);
   const [preferDiet, setPreferDiet] = useState([]);
   const [annualIncome, setAnnualIncome] = useState([7, 12]); // Initial age range
   const [preferHobbies, setPreferHobbies] = useState([]);
@@ -60,13 +45,18 @@ const PartnerPreferencesScreen = () => {
   const [cities, setCities] = useState([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
+  const [ageRanges, setAgeRanges] = useState(['Select']); // Initial age range
+  const [heightRanges, setHeightRanges] = useState(['Select']); // Initial age range
+  const [country, setCountry] = useState('');
+  const [preferStates, setPreferStates] = useState([]);
+  const [preferCity, setPreferCity] = useState([]);
+  const [annualIncomes, setAnnualIncomes] = useState(['Select']); // Initial age range
+  const [preferDiets, setPreferDiets] = useState([]);
+  const [hobbies, setHobbies] = useState([]);
+
   const dispatch = useDispatch();
   const apiDispatch = useDispatch();
   const navigation = useNavigation();
-
-  const {user} = useSelector(state => state.auth);
-
-  // console.log(' === PartnerPreferencesScreen..... ===> ', user);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -120,18 +110,6 @@ const PartnerPreferencesScreen = () => {
     'West Bengal',
   ];
 
-  const Prefer_City = [
-    'Surat',
-    'Navsari',
-    'Bardoli',
-    'Vadodara',
-    'valod',
-    'Mumbai',
-    'Delhi',
-    'Daman',
-    'Sirdi',
-  ];
-
   const Prefer_Diet = [
     'Vegetarian',
     'Eggetarian',
@@ -180,69 +158,76 @@ const PartnerPreferencesScreen = () => {
   ];
 
   const onDashboardPress = () => {
-    if (!preferCountry.length) {
-      // Alert.alert('Missing Field', 'Please select at least one country');
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Field',
-        text2: 'Please select a country.',
-      });
-      return;
-    }
+    const getAgeRange = range => {
+      if (!range || range === 'Select') {
+        return {};
+      }
 
-    if (!preferState.length) {
-      // Alert.alert('Missing Field', 'Please select at least one state');
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Field',
-        text2: 'Please select at least one state.',
-      });
-      return;
-    }
+      const [min, max] = range.split('-').map(v => v.trim());
+      return {min, max};
+    };
 
-    if (!cities.length) {
-      // Alert.alert('Missing Field', 'Please enter at least one city');
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Field',
-        text2: 'Please enter at least one city.',
-      });
-      return;
-    }
+    const ageRange = getAgeRange(ageRanges);
 
-    if (!preferDiet.length) {
-      // Alert.alert('Missing Field', 'Please select a diet preference');
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Field',
-        text2: 'Please enter a diet preference.',
-      });
-      return;
-    }
+    const getHeightRange = range => {
+      if (!range || range === 'Select') {
+        return {};
+      }
 
-    if (!preferHobbies.length) {
-      // Alert.alert('Missing Field', 'Please select at least one hobby');
-      Toast.show({
-        type: 'error',
-        text1: 'Missing Field',
-        text2: 'Please select at least one hobby.',
-      });
-      return;
-    }
+      // Remove "ft" and extra spaces
+      const clean = range.replace('ft', '').trim();
+
+      const [min, max] = clean.split('-').map(v => v.trim());
+      return {min, max};
+    };
+
+    const heightRange = getHeightRange(heightRanges);
+
+    const getIncomeRange = income => {
+      if (!income || income === 'Select') {
+        return {};
+      }
+
+      // remove "LPA"
+      const clean = income.replace('LPA', '').trim();
+
+      const [min, max] = clean.split('-').map(v => v.trim());
+      return {min, max};
+    };
+
+    const incomeRange = getIncomeRange(annualIncomes);
 
     const payload = {
-      age: {min: ageRange[0], max: ageRange[1]},
-      height: {min: heightRange[0], max: heightRange[1]},
-      country: preferCountry.map(country => country.toLowerCase()), // Convert to lowercase
-      state: preferState.map(state => state.toLowerCase().replace(/\s+/g, '-')),
-      city: cities.map(city => city.toLowerCase().replace(/\s+/g, '-')),
-      diet: Array.isArray(preferDiet)
-        ? preferDiet.map(diet => diet.toLowerCase().replace(/\s+/g, '_'))
-        : [preferDiet.toLowerCase().replace(/\s+/g, '_')], // convert single string to array
-      income: {min: annualIncome[0], max: annualIncome[1]}, // Send a single numeric value for income
-      hobbies: Array.isArray(preferHobbies)
-        ? preferHobbies.map(hobby => hobby.toLowerCase().replace(/\s+/g, '_'))
-        : [preferHobbies.toLowerCase().replace(/\s+/g, '_')],
+      // age: {min: ageRange[0], max: ageRange[1]},
+      // height: {min: heightRange[0], max: heightRange[1]},
+      // country: preferCountry.map(country => country.toLowerCase()), // Convert to lowercase
+      // state: preferState.map(state => state.toLowerCase().replace(/\s+/g, '-')),
+      // city: cities.map(city => city.toLowerCase().replace(/\s+/g, '-')),
+      // income: {min: annualIncome[0], max: annualIncome[1]},
+      // diet: Array.isArray(preferDiet)
+      //     ? preferDiet.map(diet => diet.toLowerCase().replace(/\s+/g, '_'))
+      //     : [preferDiet.toLowerCase().replace(/\s+/g, '_')], // convert single string to array
+
+      // hobbies: Array.isArray(preferHobbies)
+      //     ? preferHobbies.map(hobby => hobby.toLowerCase().replace(/\s+/g, '_'))
+      //     : [preferHobbies.toLowerCase().replace(/\s+/g, '_')],
+
+      age: ageRange,
+      height: heightRange,
+      // country: country.toLowerCase(),
+      country: country.map(c => c.toLowerCase()),
+      state: preferStates.map(state =>
+        state.toLowerCase().replace(/\s+/g, '-'),
+      ),
+      city: preferCity.map(city => city.toLowerCase().replace(/\s+/g, '-')),
+      income: incomeRange,
+      diet: Array.isArray(preferDiets)
+        ? preferDiets.map(diet => diet.toLowerCase().replace(/\s+/g, '_'))
+        : [preferDiets.toLowerCase().replace(/\s+/g, '_')], // convert single string to array
+
+      hobbies: Array.isArray(hobbies)
+        ? hobbies.map(hobby => hobby.toLowerCase().replace(/\s+/g, '_'))
+        : [hobbies.toLowerCase().replace(/\s+/g, '_')],
     };
 
     console.log(' === var ===> ', payload);
@@ -304,156 +289,182 @@ const PartnerPreferencesScreen = () => {
     <SafeAreaView style={style.container}>
       <View style={style.headerContainer}>
         {/*<AppColorLogo />*/}
-        <Text style={style.headingText}>Add Partner Preference</Text>
+        <Text style={style.headingText}>Add Your Preferences</Text>
       </View>
 
+      <View
+        style={{
+          width: '100%',
+          height: 4,
+          backgroundColor: '#F9F7FF',
+          marginBottom: hp(5),
+        }}
+      />
+
       <ScrollView showsVerticalScrollIndicator={false}>
+        <NewSelectValueComponent
+          title="Select Age Range"
+          value={ageRanges}
+          dropdownData={[
+            '18 - 25',
+            '26 - 35',
+            '36 - 45',
+            '46 - 52',
+            '53 - 60',
+            '60 - 70',
+          ]}
+          onValueChange={setAgeRanges}
+          bottomSheetHeight={500}
+          showDivider={false}
+        />
+
+        <View style={{marginTop: hp(5)}}>
+          <NewSelectValueComponent
+            title="Select Height Range"
+            value={heightRanges}
+            dropdownData={[
+              '3 - 4 ft',
+              '4 - 5 ft',
+              '6 - 7 ft',
+              '7 - 8 ft',
+              '9 - 10 ft',
+            ]}
+            onValueChange={setHeightRanges}
+            bottomSheetHeight={500}
+            showDivider={false}
+          />
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 1,
+            backgroundColor: '#E9E9E9',
+            marginTop: hp(20),
+          }}
+        />
+
+        <Text
+          style={{
+            marginHorizontal: 17,
+            marginTop: hp(26),
+            color: '#7148E4',
+            fontSize: fontSize(14),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          Select Preferred Location
+        </Text>
+
+        <NewSelectValueComponent
+          title="Country"
+          value={country}
+          dropdownData={Prefer_Country}
+          // onValueChange={setCountry}
+          onValueChange={val => setCountry([val])}
+          bottomSheetHeight={hp(120)}
+          showDivider={false}
+        />
+
+        <NewMultiSelectValueComponent
+          title="State"
+          value={preferStates} // 👈 ARRAY
+          dropdownData={Prefer_State}
+          onValueChange={setPreferStates} // 👈 ARRAY SETTER
+          bottomSheetHeight={hp(500)}
+          showDivider={false}
+          showSearch={true}
+          selectedContainerStyle={{top: -10}}
+          maxSelection={5}
+        />
+
+        <NewEnterMultipleSelectValueComponent
+          title="City"
+          value={preferCity}
+          onValueChange={setPreferCity}
+          modalTitle="City"
+          EnterModalPlaceholderTittle="Enter City"
+          showDivider={false}
+          valuesBelowContainerStyle={{top: -12}}
+        />
+
+        <View
+          style={{
+            width: '100%',
+            height: 1,
+            backgroundColor: '#E9E9E9',
+            marginTop: hp(20),
+          }}
+        />
+
+        <View style={{marginTop: hp(20)}}>
+          <NewSelectValueComponent
+            title="Select Annual Income"
+            value={annualIncomes}
+            dropdownData={[
+              '1 - 5 LPA',
+              '6 - 10 LPA',
+              '11 - 15 LPA',
+              '16 - 20 LPA',
+              '21 - 25 LPA',
+              '26 - 30 LPA',
+              '31 - 35 LPA',
+              '36 - 40 LPA',
+              '41 - 50 LPA',
+            ]}
+            onValueChange={setAnnualIncomes}
+            bottomSheetHeight={hp(520)}
+            showDivider={false}
+          />
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 1,
+            backgroundColor: '#E9E9E9',
+            marginTop: hp(20),
+          }}
+        />
+
+        <View style={{marginTop: hp(20)}}>
+          <NewMultiSelectValueComponent
+            title="Prefer Diet"
+            value={preferDiets} // 👈 ARRAY
+            dropdownData={Prefer_Diet}
+            onValueChange={setPreferDiets} // 👈 ARRAY SETTER
+            bottomSheetHeight={hp(520)}
+            showDivider={false}
+            selectedContainerStyle={{top: -10}}
+            maxSelection={3}
+          />
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            height: 1,
+            backgroundColor: '#E9E9E9',
+            marginTop: hp(20),
+          }}
+        />
+
+        <View style={{marginTop: hp(20)}}>
+          <NewMultiSelectValueComponent
+            title="Prefer Hobbies"
+            value={hobbies}
+            dropdownData={Prefer_hobbies}
+            onValueChange={setHobbies}
+            bottomSheetHeight={hp(520)}
+            showDivider={false}
+            selectedContainerStyle={{top: -10}}
+            maxSelection={5}
+          />
+        </View>
+
         <View style={style.bodyContainer}>
-          <View style={{alignItems: 'center'}}>
-            <AgeRangeSlider
-              initialRange={ageRange}
-              onSubmitRange={handleRangeSubmit}
-              tittleLabelText={'Select Age Range'}
-              min={18}
-              max={50}
-              containerStyle={{width: '100%'}}
-              labelContainerStyle={{
-                marginHorizontal: 3,
-                marginBottom: 5,
-              }}
-              rangeLabel={{
-                fontsize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins600,
-              }}
-              tittleLabel={{
-                fontsize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-                color: '#9A9A9A',
-              }}
-              trackStyle={{height: 3}}
-            />
-          </View>
+          <View style={{marginTop: hp(30)}} />
 
-          <View style={{alignItems: 'center', marginTop: hp(30)}}>
-            <HeightRangeSlider
-              initialRange={heightRange}
-              onSubmitRange={handleHeightRangeSubmit}
-              tittleLabelText={'Select Height Range'}
-              containerStyle={{width: '100%'}}
-              labelContainerStyle={{
-                marginHorizontal: 3,
-                marginBottom: 5,
-              }}
-              rangeLabel={{
-                fontsize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins600,
-              }}
-              tittleLabel={{
-                fontsize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-                color: '#9A9A9A',
-              }}
-              trackStyle={{height: 3}}
-            />
-          </View>
-
-          <View style={{marginTop: hp(30)}}>
-            <NewBottomSheetMultipleValueSelect
-              label="Select Prefer Country"
-              options={Prefer_Country}
-              onSelect={handleSelect} // Pass the onSelect handler to capture selected values
-              bottomSheetHeight={hp(100)}
-              maxSelections={5}
-            />
-          </View>
-
-          <View style={{marginTop: hp(30)}}>
-            <NewBottomSheetMultipleValueSelect
-              label="Select Prefer State"
-              options={Prefer_State}
-              onSelect={handleStateSelect} // Pass the onSelect handler to capture selected values
-              bottomSheetHeight={hp(450)}
-              maxSelections={5}
-            />
-          </View>
-
-          <View style={{marginTop: hp(30)}}>
-            {/*<NewBottomSheetMultipleValueSelect*/}
-            {/*  label="Select Prefer City"*/}
-            {/*  options={Prefer_City}*/}
-            {/*  onSelect={handleCitySelect} // Pass the onSelect handler to capture selected values*/}
-            {/*  bottomSheetHeight={hp(450)}*/}
-            {/*  maxSelections={5}*/}
-            {/*/>*/}
-
-            <MultipleValueSelectTextInput
-              placeholder="Select Prefer City"
-              maxItems={5}
-              value={cities}
-              onChange={setCities}
-            />
-          </View>
-
-          <View style={{marginTop: hp(30)}}>
-            {/*<NewBottomSheetSingleValueSelect*/}
-            {/*  label="Prefer Diet"*/}
-            {/*  options={Prefer_Diet}*/}
-            {/*  onSelect={handleDietSelect} // Pass the onSelect handler to capture the selected value*/}
-            {/*  bottomSheetHeight={hp(430)}*/}
-            {/*/>*/}
-
-            <NewBottomSheetMultipleValueSelect
-              label="Prefer Diet"
-              options={Prefer_Diet}
-              onSelect={handleDietSelect} // Pass the onSelect handler to capture selected values
-              bottomSheetHeight={hp(450)}
-              maxSelections={3}
-            />
-          </View>
-
-          <View style={{alignItems: 'center', marginTop: hp(50)}}>
-            <AgeRangeSlider
-              initialRange={annualIncome}
-              onSubmitRange={handleAnnualIncomeSubmit}
-              tittleLabelText={'Select Annual Income'}
-              rangeDatalabel={' Lacs'}
-              min={5}
-              max={30}
-              containerStyle={{width: '100%'}}
-              labelContainerStyle={{
-                marginHorizontal: 3,
-                marginBottom: 5,
-              }}
-              rangeLabel={{
-                fontsize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins600,
-              }}
-              tittleLabel={{
-                fontsize: fontSize(16),
-                lineHeight: hp(24),
-                fontFamily: fontFamily.poppins400,
-                color: '#9A9A9A',
-              }}
-              trackStyle={{height: 3}}
-            />
-          </View>
-
-          <View style={{marginTop: hp(30)}}>
-            <NewBottomSheetMultipleValueSelect
-              label="Select Hobbies"
-              options={Prefer_hobbies}
-              onSelect={handleHobbiesSelect} // Pass the onSelect handler to capture selected values
-              bottomSheetHeight={hp(500)}
-              maxSelections={5}
-            />
-          </View>
-
-          <View style={{height: hp(70)}} />
+          <View style={{height: hp(10)}} />
         </View>
       </ScrollView>
 
@@ -480,7 +491,7 @@ const PartnerPreferencesScreen = () => {
           </TouchableOpacity>
         </View>
       )}
-      {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
+      <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );
 };

@@ -71,11 +71,14 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
   //   }
   // };
 
-  const tintColor = () => (index <= activeIndex ? '#000000' : '#B0B0B0');
+  const tintColor = () => (index <= activeIndex ? '#7148E4' : '#000000');
 
   return (
     <TouchableOpacity
-      style={{marginTop: hp(15)}}
+      style={{
+        marginTop: hp(15),
+        marginHorizontal: 18,
+      }}
       disabled={index > activeIndex + 1}
       activeOpacity={1}
       onPress={() => onPressIcon(index)}>
@@ -93,8 +96,8 @@ const renderIcons = ({item, index, activeIndex, onPressIcon}) => {
       <Image
         source={item.icon}
         style={{
-          height: hp(18),
-          width: hp(18),
+          height: hp(16),
+          width: hp(16),
           tintColor: tintColor(),
           // backgroundColor: 'red',
         }}
@@ -191,7 +194,7 @@ const AddPersonalInfo = ({navigation}) => {
 
   const PersonalInfoPhases = [
     {
-      phaseName: 'General Information',
+      phaseName: 'General Details',
       Component: GeneralInformationDetailsScreen,
       icon: require('../../assets/icons/profile_logo.png'),
     },
@@ -212,12 +215,12 @@ const AddPersonalInfo = ({navigation}) => {
     },
 
     {
-      phaseName: 'Job Details',
+      phaseName: 'Occupation Details',
       Component: ProfessionalsDetailsScreen,
       icon: require('../../assets/icons/professional_logo.png'),
     },
     {
-      phaseName: 'Hobbies',
+      phaseName: 'Hobbies and Interest',
       Component: HobbiesAndInterestScreen,
       // Component: Abc,
       icon: require('../../assets/icons/interner_logo.png'),
@@ -271,85 +274,6 @@ const AddPersonalInfo = ({navigation}) => {
   };
 
   const navigateToNext = () => {
-    // if (!genderSelectedOption) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Gender.',
-    //   });
-    //   return;
-    // } else if (!maritalSelectedOption) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Marital.',
-    //   });
-    //   return;
-    // } else if (!selectCaste) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Caste.',
-    //   });
-    //   return;
-    // } else if (!selectReligion) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Religion.',
-    //   });
-    //   return;
-    // } else if (!userHeight) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Height.',
-    //   });
-    //   return;
-    // } else if (!userWeight) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Weight.',
-    //   });
-    //   return; // Stop navigation if caste is not religion
-    // } else if (!selectManglik) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Manglik.',
-    //   });
-    //   return;
-    // } else if (!selectLanguage) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please select your Language.',
-    //   });
-    //   return;
-    // } else if (!about) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please Add About Yourself.',
-    //   });
-    //   return;
-    // } else if (!mobileNumber) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please Add Mobile Number.',
-    //   });
-    //   return;
-    // } else if (!userEmail) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Missing Information',
-    //     text2: 'Please Add Email.',
-    //   });
-    //   return;
-    // }
-
     if (activeIndex === 0) {
       if (!genderSelectedOption) {
         return Toast.show({
@@ -407,13 +331,13 @@ const AddPersonalInfo = ({navigation}) => {
           text2: 'Please select your Language.',
         });
       }
-      if (!about) {
-        return Toast.show({
-          type: 'error',
-          text1: 'Missing Information',
-          text2: 'Please Add About Yourself.',
-        });
-      }
+      // if (!about) {
+      //   return Toast.show({
+      //     type: 'error',
+      //     text1: 'Missing Information',
+      //     text2: 'Please Add About Yourself.',
+      //   });
+      // }
     } else if (activeIndex === 1) {
       if (!currentCountry) {
         return Toast.show({
@@ -495,7 +419,6 @@ const AddPersonalInfo = ({navigation}) => {
             gothra: selectGothra,
             zodiac: selectZodiac,
             motherTongue: selectLanguage.toLowerCase(),
-            writeBoutYourSelf: about,
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
@@ -631,6 +554,19 @@ const AddPersonalInfo = ({navigation}) => {
     }
   };
 
+  const showSkip = activeIndex === 3 || activeIndex === 4 || activeIndex === 5;
+
+  const handleSkip = () => {
+    if (activeIndex === 5) {
+      // 👈 Last screen skip action
+      openGallery();
+      // navigation.navigate('SetProfilePictureScreen');
+    } else {
+      // 👈 Normal skip → next screen
+      dispatch({type: NEXT_SCREEN});
+    }
+  };
+
   return (
     <SafeAreaView style={style.container}>
       {/*<Image*/}
@@ -647,40 +583,43 @@ const AddPersonalInfo = ({navigation}) => {
 
       <View
         style={{
-          // flexDirection: 'row',
-          // justifyContent: 'space-between',
-          marginHorizontal: 17,
+          height: 54,
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
         }}>
+        {/* CENTER TITLE */}
         <Text
           style={{
-            color: colors.black,
-            marginTop: hp(25),
             textAlign: 'center',
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
+            fontSize: fontSize(14),
             fontFamily: fontFamily.poppins600,
-            marginBottom: hp(10),
+            color: colors.pureBlack,
           }}>
           {PersonalInfoPhases[activeIndex].phaseName}
         </Text>
 
-        {/*{activeIndex > 0 && (*/}
-        {/*  <TouchableOpacity*/}
-        {/*    onPress={() => {*/}
-        {/*      navigation.navigate('HomeTabs');*/}
-        {/*    }}>*/}
-        {/*    <Text*/}
-        {/*      style={{*/}
-        {/*        fontSize: fontSize(14),*/}
-        {/*        lineHeight: hp(21),*/}
-        {/*        fontFamily: fontFamily.poppins400,*/}
-        {/*        color: colors.blue,*/}
-        {/*        marginTop: hp(15),*/}
-        {/*      }}>*/}
-        {/*      Skip*/}
-        {/*    </Text>*/}
-        {/*  </TouchableOpacity>*/}
-        {/*)}*/}
+        {/* RIGHT SIDE SKIP */}
+        {showSkip && (
+          <TouchableOpacity
+            onPress={handleSkip}
+            activeOpacity={0.7}
+            style={{
+              position: 'absolute',
+              right: 16,
+              top: '50%',
+              transform: [{translateY: -8}],
+            }}>
+            <Text
+              style={{
+                fontSize: fontSize(12),
+                fontFamily: fontFamily.poppins400,
+                color: '#7148E4',
+              }}>
+              Skip
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={{height: hp(48)}}>
@@ -692,8 +631,9 @@ const AddPersonalInfo = ({navigation}) => {
             // height: hp(48),
             // justifyContent: 'space-evenly',
             justifyContent: 'space-between',
-            marginHorizontal: 18,
+            // marginHorizontal: 18,
             // marginTop: 20,
+            backgroundColor: '#F9F7FF',
           }}
           data={PersonalInfoPhases}
           renderItem={({item, index}) =>
@@ -871,7 +811,7 @@ const AddPersonalInfo = ({navigation}) => {
             <Text
               style={{
                 textAlign: 'center',
-                fontSize: fontSize(16),
+                fontSize: fontSize(14),
                 lineHeight: hp(24),
                 fontFamily: fontFamily.poppins400,
                 color: colors.black,
@@ -897,11 +837,11 @@ const AddPersonalInfo = ({navigation}) => {
               <Text
                 style={{
                   color: colors.white,
-                  fontSize: fontSize(16),
+                  fontSize: fontSize(14),
                   lineHeight: hp(24),
                   fontFamily: fontFamily.poppins400,
                 }}>
-                {activeIndex === 5 ? 'Add Photos' : 'Continue'}
+                {activeIndex === 5 ? 'Add Photos' : 'Save & Next'}
               </Text>
             )}
           </TouchableOpacity>

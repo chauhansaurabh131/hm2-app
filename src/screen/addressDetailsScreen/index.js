@@ -1,23 +1,12 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, Text, TextInput, View} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 import style from './style';
-import {colors} from '../../utils/colors';
-import CheckBox from 'react-native-check-box';
-import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
-import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
+import {hp} from '../../utils/helpers';
 import Toast from 'react-native-toast-message';
-import NewDropDownTextInput from '../../components/newDropdownTextinput';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
+import NewSelectValueComponent from '../../components/newSelectValueComponent';
+import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
 
 const AddressDetailsScreen = ({
-  selectCurrentCity,
-  currentResidingAddress,
-  setCurrentResidingAddress,
-  selectCurrentLiving,
-  setSelectCurrentLiving,
-
-  currentAddress,
-  setCurrentAddress,
   setCurrentCountry,
   setCurrentState,
   setSelectCurrentCity,
@@ -55,57 +44,51 @@ const AddressDetailsScreen = ({
     'West Bengal',
   ];
 
-  const currentCityNameDropdown = [
-    'Ahmedabad',
-    'Surat',
-    'Gandhinagar',
-    'Patan',
-    'Mehsana',
-    'Himmatnagar',
-  ];
+  const [selectedCountryStatus, setSelectedCountryStatus] = useState('');
+  const [selectedStateStatus, setSelectedStateStatus] = useState('');
+  const [selectedCityStatus, setSelectedCityStatus] = useState('');
 
   return (
     <SafeAreaView style={style.container}>
-      <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
-        {/*<View style={{marginTop: 30}}>*/}
-        {/*  <FloatingLabelInput*/}
-        {/*    label="Current Address"*/}
-        {/*    value={currentAddress}*/}
-        {/*    onChangeText={setCurrentAddress}*/}
-        {/*  />*/}
-        {/*</View>*/}
+      <NewSelectValueComponent
+        title="Select Current Country"
+        value={selectedCountryStatus}
+        dropdownData={currentCountryDropDown}
+        onValueChange={value => {
+          setSelectedCountryStatus(value); // ✅ update UI
+          setCurrentCountry?.(value); // ✅ optional: update parent
+        }}
+        bottomSheetHeight={hp(100)}
+      />
 
-        <View>
-          <NewDropDownTextInput
-            placeholder="Country"
-            dropdownData={currentCountryDropDown}
-            onValueChange={setCurrentCountry}
-            bottomSheetHeight={hp(100)}
-          />
-        </View>
-
-        <View style={{marginTop: hp(37)}}>
-          <NewDropDownTextInput
-            placeholder="State"
-            dropdownData={currentStateDropdown}
-            onValueChange={setCurrentState}
-          />
-        </View>
-
-        <View style={{marginTop: hp(37)}}>
-          {/*<NewDropDownTextInput*/}
-          {/*  placeholder="City"*/}
-          {/*  dropdownData={currentCityNameDropdown}*/}
-          {/*  onValueChange={setSelectCurrentCity}*/}
-          {/*/>*/}
-
-          <FloatingLabelInput
-            label="City"
-            value={selectCurrentCity}
-            onChangeText={setSelectCurrentCity}
-          />
-        </View>
+      <View style={{marginTop: hp(10)}}>
+        <NewSelectValueComponent
+          title="Select Current State"
+          value={selectedStateStatus}
+          dropdownData={currentStateDropdown}
+          onValueChange={value => {
+            setSelectedStateStatus(value); // ✅ update UI
+            setCurrentState?.(value); // ✅ optional: update parent
+          }}
+          bottomSheetHeight={hp(500)}
+          showSearch={true}
+        />
       </View>
+
+      <View style={{marginTop: hp(10)}}>
+        <NewEnterSelectValueComponent
+          title="Select Current City"
+          value={selectedCityStatus}
+          emptyText="Add"
+          modalTitle="Current City"
+          EnterModalPlaceholderTittle={'Enter Current City'}
+          onValueChange={value => {
+            setSelectedCityStatus(value);
+            setSelectCurrentCity?.(value);
+          }}
+        />
+      </View>
+
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );

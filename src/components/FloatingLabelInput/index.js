@@ -101,9 +101,11 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 40, // Add padding to the right to ensure the unit text doesn't overlap the input text
     color: 'black',
-    fontSize: fontSize(20),
+    fontSize: fontSize(16),
     lineHeight: 30,
-    fontFamily: fontFamily.poppins500,
+    // fontFamily: fontFamily.poppins500,
+    fontFamily: 'inter',
+    fontWeight: '800',
     borderBottomWidth: 1, // Display only the bottom border line
     borderBottomColor: '#C0C0C0', // Set color for the bottom border line
   },

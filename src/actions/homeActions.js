@@ -107,6 +107,7 @@ export const non_friend_Blocked_Failure = () => ({
 
 //UPDATE USER DETAILS
 export function updateDetails(payload, callBack) {
+  console.log(' === Home Action ===> ', payload, callBack);
   return {type: TYPES.SET_UPDATE_USER_DETAILS, data: {payload, callBack}};
 }
 

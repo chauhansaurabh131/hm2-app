@@ -1,25 +1,11 @@
-import React from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
-import TextInputWithDropDownComponent from '../../components/textInputWithDropDownComponent';
+import React, {useState} from 'react';
+import {SafeAreaView, View} from 'react-native';
 import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import TextInputSearchAndDropDowm from '../../components/textInputSearchAndDropDown';
-import NewDropDownTextInput from '../../components/newDropdownTextinput';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
+import {hp} from '../../utils/helpers';
+import NewSelectValueComponent from '../../components/newSelectValueComponent';
+import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
 
-const EducationDetailsScreen = ({
-  degree,
-  setDegree,
-  collage,
-  setCollage,
-  collageCity,
-  setCollageCity,
-  collageState,
-  setCollageState,
-  collageCountry,
-  setCollageCountry,
-}) => {
+const EducationDetailsScreen = ({setDegree, collage, setCollage}) => {
   const degreeDropdownData = [
     'Bachelors Arts',
     'Science',
@@ -55,79 +41,34 @@ const EducationDetailsScreen = ({
     'IPS',
   ];
 
-  const educationCityDropdownData = [
-    'Gandhinagar',
-    'Mehsana',
-    'Himmatnagar',
-    'Kalol',
-  ];
-
-  const educationStateDropdownData = ['Gujarat', 'Delhi', 'Kolkata', 'Mumbai'];
-
-  const educationCountryDropdownData = ['India', 'Sri-Lanka', 'US', 'UK'];
-
-  // Dynamic height assignment based on dropdown type
-  const getDropdownHeight = dropdownType => {
-    switch (dropdownType) {
-      case 'Degree':
-        return hp(400); // Set height for gender dropdown
-      case 'City':
-        return hp(230); // Set height for marital status dropdown
-      case 'State':
-        return hp(230); // Set height for caste dropdown
-      case 'Country':
-        return hp(250); // Set height for caste dropdown
-      default:
-        return hp(300); // Default height
-    }
-  };
+  const [selectedDegreeStatus, setSelectedDegreeStatus] = useState('');
+  const [selectedCollegeStatus, setSelectedCollegeStatus] = useState('');
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17), marginTop: hp(7)}}>
-        <View>
-          <NewDropDownTextInput
-            placeholder="Degree"
-            dropdownData={degreeDropdownData}
-            onValueChange={setDegree}
-            bottomSheetHeight={getDropdownHeight('Degree')} // Dynamic height
-          />
-        </View>
+      <NewSelectValueComponent
+        title="Select Degree"
+        value={selectedDegreeStatus}
+        dropdownData={degreeDropdownData}
+        onValueChange={value => {
+          setSelectedDegreeStatus(value);
+          setDegree?.(value);
+        }}
+        bottomSheetHeight={hp(450)}
+      />
 
-        <View style={{marginTop: hp(37)}}>
-          <FloatingLabelInput
-            label="College/University"
-            value={collage}
-            onChangeText={setCollage}
-          />
-        </View>
-
-        {/*<View style={{marginTop: 37}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="City"*/}
-        {/*    dropdownData={educationCityDropdownData}*/}
-        {/*    onValueChange={setCollageCity}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('City')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        {/*<View style={{marginTop: 37}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="State"*/}
-        {/*    dropdownData={educationStateDropdownData}*/}
-        {/*    onValueChange={setCollageState}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('State')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        {/*<View style={{marginTop: 37}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="Country"*/}
-        {/*    dropdownData={educationCountryDropdownData}*/}
-        {/*    onValueChange={setCollageCountry}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('Country')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
+      <View style={{marginTop: hp(10)}}>
+        <NewEnterSelectValueComponent
+          title="College / Uni."
+          value={selectedCollegeStatus}
+          emptyText="Add"
+          modalTitle="College / Uni."
+          EnterModalPlaceholderTittle={'Enter College / Uni.'}
+          onValueChange={value => {
+            setSelectedCollegeStatus(value);
+            setCollage?.(value);
+          }}
+        />
       </View>
     </SafeAreaView>
   );

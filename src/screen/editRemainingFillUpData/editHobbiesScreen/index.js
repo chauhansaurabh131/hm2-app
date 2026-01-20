@@ -12,6 +12,7 @@ import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import NewBottomSheetMultipleValueSelect from '../../../components/newBottomSheetMultipleValueSelect';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../../actions/homeActions';
+import NewMultiSelectValueComponent from '../../../components/newMultiSelectValueComponent';
 
 const EditHobbiesScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
@@ -78,14 +79,28 @@ const EditHobbiesScreen = ({navigation}) => {
   };
 
   const onSubmitPress = () => {
+    const formatHobby = hobby => {
+      if (!hobby) {
+        return '';
+      }
+      return hobby.toLowerCase().replace(/\s+/g, '_');
+    };
+
+    const formattedItems = selectedItems.map(formatHobby);
+    const formattedItemsLanguage = selectedLang.map(formatHobby);
+
+    console.log(' === 13 ===> ', formattedItems, formattedItemsLanguage);
+
     const formattedHobbies = formatHobbies(selectedItems);
 
     setLoading(true);
     apiDispatch(
       updateDetails(
         {
-          hobbies: formattedHobbies,
-          language: selectedLang.map(lang => lang.toLowerCase()).join(', '),
+          // hobbies: formattedHobbies,
+          // language: selectedLang.map(lang => lang.toLowerCase()).join(', '),
+          hobbies: formattedItems,
+          language: formattedItemsLanguage,
         },
         () => {
           setLoading(false);
@@ -101,37 +116,62 @@ const EditHobbiesScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+      <Text
+        style={{
+          color: colors.black,
+          fontSize: fontSize(16),
+          lineHeight: hp(30),
+          fontFamily: fontFamily.poppins600,
+          textAlign: 'center',
+          marginTop: hp(12),
+          marginBottom: hp(12),
+        }}>
+        Hobbies and Interest
+      </Text>
+
+      <View
+        style={{width: '100%', height: hp(4), backgroundColor: '#F9F7FF'}}
+      />
+
+      <NewMultiSelectValueComponent
+        title="Add Hobbies"
+        value={selectedItems} // 👈 ARRAY
+        dropdownData={options}
+        onValueChange={setSelectedItems} // 👈 ARRAY SETTER
+        bottomSheetHeight={hp(500)}
+        maxSelection={5}
+      />
+
+      <View style={{marginTop: hp(40)}}>
+        <NewMultiSelectValueComponent
+          title="Add Language Known"
+          value={selectedLang} // 👈 ARRAY
+          dropdownData={LanguageOptions}
+          onValueChange={setSelectedLang} // 👈 ARRAY SETTER
+          bottomSheetHeight={hp(200)}
+        />
+      </View>
+
       <View style={{marginHorizontal: 17, flex: 1}}>
-        <AppColorLogo />
-        <Text
-          style={{
-            color: colors.black,
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
-            fontFamily: fontFamily.poppins600,
-            textAlign: 'center',
-            marginTop: 10,
-          }}>
-          Hobbies
-        </Text>
+        {/*<AppColorLogo />*/}
 
-        <View style={{marginTop: hp(37)}}>
-          <NewBottomSheetMultipleValueSelect
-            label="Select Hobbies"
-            options={options}
-            onSelect={handleSelect} // Pass the onSelect handler to capture selected values
-            bottomSheetHeight={hp(500)}
-          />
-        </View>
+        {/*<View style={{marginTop: hp(37)}}>*/}
+        {/*  <NewBottomSheetMultipleValueSelect*/}
+        {/*    label="Select Hobbies"*/}
+        {/*    options={options}*/}
+        {/*    onSelect={handleSelect} // Pass the onSelect handler to capture selected values*/}
+        {/*    bottomSheetHeight={hp(500)}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
-        <View style={{marginTop: hp(37)}}>
-          <NewBottomSheetMultipleValueSelect
-            label="Language Known"
-            options={LanguageOptions}
-            onSelect={handleSelectLanguage} // Pass the onSelect handler to capture selected values
-            bottomSheetHeight={hp(200)}
-          />
-        </View>
+        {/*<View style={{marginTop: hp(37)}}>*/}
+        {/*  <NewBottomSheetMultipleValueSelect*/}
+        {/*    label="Language Known"*/}
+        {/*    options={LanguageOptions}*/}
+        {/*    onSelect={handleSelectLanguage} // Pass the onSelect handler to capture selected values*/}
+        {/*    bottomSheetHeight={hp(200)}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
         <View
           style={{

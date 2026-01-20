@@ -17,41 +17,6 @@ const NewStartExploreScreen = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
-  // const selectionOptionClick = () => {
-  //   // if (selectedBox === 'marriage') {
-  //   // dispatch(changeStack());
-  //   // } else {
-  //   // }
-  //   setLoading(true);
-  //   if (selectedOption === 'longTerm') {
-  //     console.log('marriage');
-  //     apiDispatch(
-  //       updateDetails(
-  //         {
-  //           appUsesType: 'marriage',
-  //         },
-  //         () => dispatch(changeStack('marriage')),
-  //         setLoading(false),
-  //       ),
-  //     );
-  //   } else if (selectedOption === 'dating') {
-  //     // setLoading(true);
-  //     console.log('dating');
-  //     apiDispatch(
-  //       updateDetails(
-  //         {
-  //           appUsesType: 'dating',
-  //         },
-  //         () => dispatch(changeStack('dating')),
-  //         setLoading(false),
-  //       ),
-  //     );
-  //   } else if (selectedOption === 'social') {
-  //     console.log('social');
-  //   }
-  //   setLoading(false);
-  // };
-
   const selectionOptionClick = () => {
     setLoading(true);
 

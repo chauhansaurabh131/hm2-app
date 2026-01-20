@@ -327,9 +327,11 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 35, // Space for the icon on the right side
     color: 'black',
-    fontSize: fontSize(20),
+    fontSize: fontSize(16),
     lineHeight: 30, // Ensure hp(30) returns a valid number
-    fontFamily: fontFamily.poppins500, // Ensure this font family is correctly loaded
+    // fontFamily: fontFamily.poppins500, // Ensure this font family is correctly loaded
+    fontFamily: 'inter',
+    fontWeight: '800',
   },
   icon: {
     position: 'absolute',
@@ -337,8 +339,8 @@ const styles = StyleSheet.create({
     top: 25,
   },
   iconStyle: {
-    height: 6,
-    width: 10,
+    height: 9,
+    width: 12,
     tintColor: colors.black,
     transform: [{rotate: '-90deg'}],
   },

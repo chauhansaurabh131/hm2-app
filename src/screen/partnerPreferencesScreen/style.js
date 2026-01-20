@@ -13,7 +13,7 @@ const style = StyleSheet.create({
   headingText: {
     color: 'black',
     marginTop: hp(10),
-    fontSize: fontSize(20),
+    fontSize: fontSize(16),
     lineHeight: hp(30),
     fontFamily: fontFamily.poppins600,
     textAlign: 'center',

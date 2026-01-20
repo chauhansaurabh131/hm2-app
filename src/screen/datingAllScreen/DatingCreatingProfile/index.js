@@ -4,11 +4,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
-import AppColorLogo from '../../../components/appColorLogo';
-import DropDownMutipleValueComponent from '../../../components/DropDownMutipleValueComponent';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -17,11 +15,12 @@ import Toast from 'react-native-toast-message';
 import {style} from './style';
 import DOBTextInputComponent from '../../../components/DOBTextInputComponent';
 import {icons} from '../../../assets';
+import {fontSize, hp} from '../../../utils/helpers';
+import NewMultiSelectValueComponent from '../../../components/newMultiSelectValueComponent';
+import {colors} from '../../../utils/colors';
 
 const DatingCreatingProfile = () => {
   const {user} = useSelector(state => state.auth);
-
-  // console.log(' === var ===> ', user?.user?.dateOfBirth);
 
   const [datingSelectedOption, setDatingSelectedOption] = useState([]);
   const [firstName, setFirstName] = useState(
@@ -29,16 +28,17 @@ const DatingCreatingProfile = () => {
   );
   const [lastName, setLastName] = useState(user?.user?.lastName || '');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const [description, setDescription] = useState('');
 
   const dropdownData = [
-    {label: 'Meet New Friends', value: '1'},
-    {label: 'Looking for Love', value: '2'},
-    {label: 'Movie Date', value: '3'},
-    {label: 'Foodies', value: '4'},
-    {label: 'Travel Buddies', value: '5'},
-    {label: 'Game Lover', value: '6'},
-    {label: 'Chit-Chat', value: '7'},
-    {label: 'Adventurous', value: '8'},
+    'Meet New Friends',
+    'Looking for Love',
+    'Movie Date',
+    'Foodies',
+    'Travel Buddies',
+    'Game Lover',
+    'Chit-Chat',
+    'Adventurous',
   ];
 
   const navigation = useNavigation();
@@ -54,109 +54,11 @@ const DatingCreatingProfile = () => {
       .replace(/[^a-z0-9-]/g, ''); // Remove any non-alphanumeric characters (except hyphen)
   };
 
-  // const onStartNowPress = () => {
-  //   if (datingSelectedOption.length > 3) {
-  //     Alert.alert(
-  //       'Selection Limit',
-  //       'You can only select up to 3 options.',
-  //       [{text: 'OK'}],
-  //       {cancelable: false},
-  //     );
-  //     return;
-  //   }
-  //
-  //   const selectedLabels = datingSelectedOption
-  //     .map(option => {
-  //       const found = dropdownData.find(item => item.value === option);
-  //       return found ? toKebabCase(found.label) : null; // Transform to kebab case
-  //     })
-  //     .filter(label => label !== null); // Filter out null values
-  //
-  //   const [day, month, year] = dateOfBirth.split('/');
-  //   const dob = new Date(`${year}-${month}-${day}`);
-  //
-  //   if (selectedLabels.length === 0) {
-  //     Toast.show({
-  //       type: 'error',
-  //       text1: 'Missing Information',
-  //       text2: 'Please select an option.',
-  //     });
-  //     return;
-  //   }
-  //
-  //   // Check for empty firstName and lastName
-  //   if (!firstName.trim()) {
-  //     Toast.show({
-  //       type: 'error',
-  //       text1: 'Missing Information',
-  //       text2: 'Please enter your first name.',
-  //     });
-  //     return;
-  //   }
-  //
-  //   if (!lastName.trim()) {
-  //     Toast.show({
-  //       type: 'error',
-  //       text1: 'Missing Information',
-  //       text2: 'Please enter your last name.',
-  //     });
-  //     return;
-  //   }
-  //
-  //   if (isNaN(dob.getTime())) {
-  //     Toast.show({
-  //       type: 'error',
-  //       text1: 'Invalid Date',
-  //       text2: 'Please enter a valid date.',
-  //     });
-  //     return;
-  //   }
-  //
-  //   // Create the expected object structure
-  //   const payload = {
-  //     datingData: [
-  //       {
-  //         interestedIn: selectedLabels,
-  //       },
-  //     ],
-  //
-  //     firstName: firstName,
-  //     lastName: lastName,
-  //     dateOfBirth: dob,
-  //   };
-  //
-  //   console.log(' === payload----- ===> ', payload);
-  //
-  //   // Dispatch the payload and handle navigation based on success
-  //   // apiDispatch(
-  //   //   updateDetails(payload, () => {
-  //   //     navigation.navigate('AddDatingPersonalInfo');
-  //   //   }),
-  //   // );
-  // };
-
   const onStartNowPress = () => {
-    if (datingSelectedOption.length > 3) {
-      Alert.alert(
-        'Interested In Limit',
-        'You can only select up to 3 options.',
-        [{text: 'OK'}],
-        {cancelable: false},
-      );
-      return;
-    }
-
-    const selectedLabels = datingSelectedOption
-      .map(option => {
-        const found = dropdownData.find(item => item.value === option);
-        return found ? toKebabCase(found.label) : null;
-      })
-      .filter(label => label !== null);
-
     const [day, month, year] = dateOfBirth.split('/');
     const dob = new Date(`${year}-${month}-${day}`);
 
-    if (selectedLabels.length === 0) {
+    if (datingSelectedOption.length === 0) {
       Toast.show({
         type: 'error',
         text1: 'Missing Information',
@@ -192,6 +94,15 @@ const DatingCreatingProfile = () => {
       return;
     }
 
+    if (!description.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Description',
+        text2: 'Please enter your Description.',
+      });
+      return;
+    }
+
     // ✅ Age validation
     const today = new Date();
     let age = today.getFullYear() - dob.getFullYear();
@@ -200,24 +111,35 @@ const DatingCreatingProfile = () => {
       age--; // adjust if birthday hasn’t occurred yet this year
     }
 
-    if (age < 18) {
-      Toast.show({
-        type: 'error',
-        text1: 'Age Restriction',
-        text2: 'You must be at least 18 years old.',
-      });
-      return;
-    }
+    // if (age < 18) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Age Restriction',
+    //     text2: 'You must be at least 18 years old.',
+    //   });
+    //   return;
+    // }
+
+    const slugify = text =>
+      text
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-');
+
+    const selectedSlugArray = datingSelectedOption.map(item => slugify(item));
 
     const payload = {
       datingData: [
         {
-          interestedIn: selectedLabels,
+          // interestedIn: selectedLabels,
+          interestedIn: selectedSlugArray,
         },
       ],
       firstName: firstName,
       lastName: lastName,
       dateOfBirth: dob,
+      writeBoutYourSelf: description,
     };
 
     apiDispatch(
@@ -229,58 +151,114 @@ const DatingCreatingProfile = () => {
 
   return (
     <SafeAreaView style={style.container}>
+      <View
+        style={{
+          height: hp(54),
+          justifyContent: 'center',
+        }}>
+        <Text style={style.headingTextStyle}>Profile Info</Text>
+      </View>
+
+      <View style={{marginTop: hp(10)}}>
+        <NewMultiSelectValueComponent
+          title="I am looking for"
+          value={datingSelectedOption} // 👈 ARRAY
+          dropdownData={dropdownData}
+          onValueChange={setDatingSelectedOption} // 👈 ARRAY SETTER
+          bottomSheetHeight={hp(500)}
+        />
+      </View>
+
+      <View
+        style={{
+          // backgroundColor: 'skyblue',
+          marginTop: hp(37),
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: 17,
+        }}>
+        <View style={{width: '45%'}}>
+          <FloatingLabelInput
+            label="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+        </View>
+
+        <View style={{width: '45%'}}>
+          <FloatingLabelInput
+            label="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+          />
+        </View>
+      </View>
+
+      <View style={{marginHorizontal: 17, marginTop: hp(8)}}>
+        <View style={style.bodySpaceStyle}>
+          <DOBTextInputComponent
+            label="Date of Birth"
+            value={dateOfBirth} // Bind the value to dateOfBirth state
+            onChangeText={setDateOfBirth} // Set the onChangeText handler
+            imageSource={icons.down_arrow_icon}
+          />
+        </View>
+      </View>
+
+      <View style={{marginHorizontal: 17}}>
+        <Text
+          style={{
+            marginTop: hp(20),
+            color: '#7148E4',
+            fontSize: fontSize(14),
+            fontWeight: '600',
+            fontFamily: 'inter',
+          }}>
+          About Yourself
+        </Text>
+
+        <View style={{marginTop: hp(18)}}>
+          <TextInput
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Write description..."
+            multiline
+            numberOfLines={5}
+            textAlignVertical="top" // 🔥 very important for Android
+            style={{
+              height: hp(230),
+              borderWidth: 1,
+              borderColor: '#B1B1B1',
+              borderRadius: 8,
+              fontSize: fontSize(16),
+              padding: 10,
+              backgroundColor: '#fff',
+              fontWeight: '800',
+              fontFamily: 'inter',
+              color: colors.pureBlack,
+            }}
+          />
+        </View>
+      </View>
+
       <View style={style.bodyContainer}>
         {/*<AppColorLogo />*/}
-        <Text style={style.headingTextStyle}>I’m Looking for?</Text>
 
-        <View style={style.bodyHeightStyle}>
-          <DropDownMutipleValueComponent
-            data={dropdownData}
-            height={35}
-            searchPlaceholder={'Search Option'}
-            placeholder={'Select Interested In'}
-            selectedItems={datingSelectedOption}
-            setSelectedItems={setDatingSelectedOption}
-            // limit={3}
-          />
+        <View style={style.bodyHeightStyle} />
+      </View>
 
-          <View style={style.bodySpaceStyle}>
-            <FloatingLabelInput
-              label="First Name"
-              value={firstName}
-              onChangeText={setFirstName}
-            />
-          </View>
-
-          <View style={style.bodySpaceStyle}>
-            <FloatingLabelInput
-              label="Last Name"
-              value={lastName}
-              onChangeText={setLastName}
-            />
-          </View>
-
-          <View style={style.bodySpaceStyle}>
-            <DOBTextInputComponent
-              label="Date of Birth"
-              value={dateOfBirth} // Bind the value to dateOfBirth state
-              onChangeText={setDateOfBirth} // Set the onChangeText handler
-              imageSource={icons.calendar_icon}
-            />
-          </View>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={onStartNowPress}
-            disabled={isUpdatingProfile}
-            style={style.startButtonContainer}>
-            {isUpdatingProfile ? (
-              <ActivityIndicator size="large" color="#FFFFFF" />
-            ) : (
-              <Text style={style.buttonText}>Start Now</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+      <View style={{marginHorizontal: 17}}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={onStartNowPress}
+          disabled={isUpdatingProfile}
+          style={style.startButtonContainer}>
+          {isUpdatingProfile ? (
+            <ActivityIndicator size="large" color="#FFFFFF" />
+          ) : (
+            <Text style={style.buttonText}>Start Now</Text>
+          )}
+        </TouchableOpacity>
       </View>
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>

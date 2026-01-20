@@ -5,8 +5,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {Image, Linking, Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import GeneralInformationScreen from '../screen/generalInformationScreen';
-import RegistrationScreen from '../screen/registrationScreen';
-import LoginScreen from '../screen/loginScreen';
 import VerificationScreen from '../screen/verificationScreen';
 import SetPasswordScreen from '../screen/setPasswordScreen';
 import NumberRegistrationScreen from '../screen/numberRegistrationScreen';
@@ -20,7 +18,6 @@ import AlertsScreen from '../screen/alertsScreen';
 import UpgradeScreen from '../screen/upgradeScreen';
 import {icons} from '../assets';
 import {fontSize, hp, isIOS} from '../utils/helpers';
-import MainScreenDemo from '../screen/mainScreenDemo';
 import ExploreScreen from '../screen/exploreScreen';
 import DemoPractiveCodeScreen from '../screen/demoPractiveCodeScreen';
 import ChatUserScreen from '../screen/chatUserScreen';
@@ -164,7 +161,6 @@ const MainNavigator = () => {
         component={ServicesProfileScreen}
       />
 
-      <Stack.Screen name="MainScreenDemo" component={MainScreenDemo} />
       <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
       <Stack.Screen name="NewSignUpScreen" component={NewSignUpScreen} />
@@ -204,8 +200,6 @@ const MainNavigator = () => {
         name="GeneralInformation"
         component={GeneralInformationScreen}
       />
-      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
       <Stack.Screen name="SetPasswordScreen" component={SetPasswordScreen} />
       <Stack.Screen

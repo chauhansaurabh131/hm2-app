@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Image,
   SafeAreaView,
   Text,
   TouchableOpacity,
   View,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
-import {icons, images} from '../../assets';
+import {icons} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,7 +18,8 @@ import style from './style';
 import DOBTextInputComponent from '../../components/DOBTextInputComponent';
 import BirthOfTimeTextInput from '../../components/BirthOfTimeTextInput';
 import moment from 'moment-timezone';
-import {hp} from '../../utils/helpers';
+import {fontSize, hp} from '../../utils/helpers';
+import {colors} from '../../utils/colors';
 
 const CreatingProfileScreen = () => {
   const dropdownData = [
@@ -37,15 +38,11 @@ const CreatingProfileScreen = () => {
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [birthOfTime, setBirthOfTime] = useState('');
-
-  // console.log(' === dateOfBirth ===> ', dateOfBirth);
+  const [description, setDescription] = useState('');
 
   const navigation = useNavigation();
   const apiDispatch = useDispatch();
   const {isUpdatingProfile, user} = useSelector(state => state.auth);
-
-  // console.log(' === user?.user ===> ', user?.user);
-  // console.log(' === creatingProfileFor ===> ', user?.user?.creatingProfileFor);
 
   useEffect(() => {
     // Set first name and last name from the user object with proper formatting
@@ -92,11 +89,6 @@ const CreatingProfileScreen = () => {
   }, [user?.user?.creatingProfileFor]);
 
   const onStartNowPress = () => {
-    // const formattedOption = selectedOption
-    //   .split(' ')
-    //   .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    //   .join(' ');
-
     const formattedOption = selectedOption
       .split(' ')
       .map((word, index) => {
@@ -187,9 +179,14 @@ const CreatingProfileScreen = () => {
         text2: 'Please enter a valid time.',
       });
       return;
+    } else if (!description) {
+      Toast.show({
+        type: 'error',
+        text1: 'Add Description',
+        text2: 'Please enter Description.',
+      });
+      return; // stop here if under 18
     }
-
-    // console.log(' === dob ===> ', dob);
 
     apiDispatch(
       updateDetails(
@@ -199,6 +196,7 @@ const CreatingProfileScreen = () => {
           lastName: lastName,
           dateOfBirth: dob,
           birthTime: formattedDateTime, // Send as ISO string
+          writeBoutYourSelf: description,
         },
         () => {
           navigation.navigate('GeneralInformationScreen');
@@ -210,13 +208,18 @@ const CreatingProfileScreen = () => {
   return (
     <SafeAreaView style={style.container}>
       <View style={style.containerBody}>
-        <Image source={images.happyMilanColorLogo} style={style.appLogoStyle} />
-
-        <Text style={style.tittleText}>I’m creating profile for?</Text>
+        <View
+          style={{
+            width: '100%',
+            height: hp(54),
+            justifyContent: 'center',
+          }}>
+          <Text style={style.tittleText}>Profile Info</Text>
+        </View>
 
         <View style={style.bodyContainer}>
           <NewDropDownTextInput
-            placeholder="Select an option"
+            placeholder="Creating for Profile?"
             dropdownData={dropdownData}
             onValueChange={setSelectedOption}
             value={selectedOption} // This will bind the selected value to the dropdown
@@ -224,58 +227,109 @@ const CreatingProfileScreen = () => {
           />
         </View>
 
-        <View style={style.spaceMarginStyle}>
-          <FloatingLabelInput
-            label="First Name"
-            value={firstName}
-            onChangeText={text => {
-              const nameParts = text.split(' ');
-              setFirstName(nameParts[0]);
-              setLastName(
-                nameParts.length > 1 ? nameParts.slice(1).join(' ') : '',
-              );
+        <View
+          style={{
+            marginTop: hp(37),
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{width: '45%'}}>
+            <FloatingLabelInput
+              label="First Name"
+              value={firstName}
+              onChangeText={text => {
+                const nameParts = text.split(' ');
+                setFirstName(nameParts[0]);
+                setLastName(
+                  nameParts.length > 1 ? nameParts.slice(1).join(' ') : '',
+                );
+              }}
+            />
+          </View>
+
+          <View style={{width: '45%'}}>
+            <FloatingLabelInput
+              label="Last Name"
+              value={lastName}
+              onChangeText={setLastName}
+            />
+          </View>
+        </View>
+
+        <View
+          style={{
+            marginTop: hp(37),
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{width: '45%'}}>
+            <DOBTextInputComponent
+              label="Date of Birth"
+              value={dateOfBirth}
+              onChangeText={setDateOfBirth}
+              imageSource={icons.drooDownLogo}
+            />
+          </View>
+
+          <View style={{width: '45%'}}>
+            <BirthOfTimeTextInput
+              label="Time of Birth"
+              value={birthOfTime}
+              onChangeText={setBirthOfTime}
+              showImage={true}
+              imageSource={icons.drooDownLogo}
+            />
+          </View>
+        </View>
+
+        <Text
+          style={{
+            marginTop: hp(36),
+            color: '#7148E4',
+            fontSize: fontSize(14),
+            fontWeight: '600',
+            fontFamily: 'inter',
+          }}>
+          About Yourself
+        </Text>
+
+        <View style={{marginTop: hp(18)}}>
+          <TextInput
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Write description..."
+            multiline
+            numberOfLines={5}
+            textAlignVertical="top" // 🔥 very important for Android
+            style={{
+              height: hp(230),
+              borderWidth: 1,
+              borderColor: '#B1B1B1',
+              borderRadius: 8,
+              fontSize: fontSize(16),
+              padding: 10,
+              backgroundColor: '#fff',
+              fontWeight: '800',
+              fontFamily: 'inter',
+              color: colors.pureBlack,
             }}
           />
         </View>
-
-        <View style={style.spaceMarginStyle}>
-          <FloatingLabelInput
-            label="Last Name"
-            value={lastName}
-            onChangeText={setLastName}
-          />
+      </View>
+      <View style={{position: 'absolute', bottom: 17, width: '100%'}}>
+        <View style={{marginHorizontal: 17}}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={onStartNowPress}
+            style={style.startButton}
+            disabled={isUpdatingProfile}>
+            {isUpdatingProfile ? (
+              <ActivityIndicator size="large" color="#FFFFFF" />
+            ) : (
+              <Text style={style.startText}>Add More Info</Text>
+            )}
+          </TouchableOpacity>
         </View>
-
-        <View style={style.spaceMarginStyle}>
-          <DOBTextInputComponent
-            label="Date of Birth"
-            value={dateOfBirth}
-            onChangeText={setDateOfBirth}
-            imageSource={icons.calendar_icon}
-          />
-        </View>
-
-        <View style={style.spaceMarginStyle}>
-          <BirthOfTimeTextInput
-            label="Time of Birth"
-            value={birthOfTime}
-            onChangeText={setBirthOfTime}
-            showImage={true}
-            imageSource={icons.select_time_icon}
-          />
-        </View>
-
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={onStartNowPress}
-          style={style.startButton}
-          disabled={isUpdatingProfile}>
-          {isUpdatingProfile ? (
-            <ActivityIndicator size="large" color="#FFFFFF" />
-          ) : (
-            <Text style={style.startText}>Start Now</Text>
-          )}
-        </TouchableOpacity>
       </View>
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>

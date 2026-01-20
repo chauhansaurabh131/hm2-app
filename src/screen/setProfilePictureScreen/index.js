@@ -294,6 +294,7 @@ const SetProfilePictureScreen = ({route}) => {
             width: 50,
             height: 50,
             resizeMode: 'contain',
+            tintColor: '#7148E4',
           }}
         />
       </View>
@@ -351,7 +352,7 @@ const SetProfilePictureScreen = ({route}) => {
           {loading ? (
             <ActivityIndicator size="large" color={colors.white} />
           ) : (
-            <Text style={styles.addButtonText}>Add</Text>
+            <Text style={styles.addButtonText}>Add Preferences</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -362,12 +363,12 @@ const SetProfilePictureScreen = ({route}) => {
 const styles = StyleSheet.create({
   titleText: {
     color: 'black',
-    fontSize: fontSize(20),
+    fontSize: fontSize(16),
     lineHeight: hp(30),
     textAlign: 'center',
-    fontFamily: fontFamily.poppins600,
-    marginTop: hp(20),
-    marginBottom: hp(43),
+    fontFamily: fontFamily.poppins700,
+    marginTop: hp(16),
+    marginBottom: hp(16),
   },
   container: {
     flex: 1,
@@ -381,7 +382,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F1F1F1',
+    // backgroundColor: '#F1F1F1',
+    backgroundColor: '#F9F7FF',
   },
   imageWrapper: {
     position: 'relative',
@@ -393,7 +395,8 @@ const styles = StyleSheet.create({
   },
   selectedOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(15, 82, 186, 0.7)',
+    // backgroundColor: 'rgba(15, 82, 186, 0.7)',
+    backgroundColor: '#7148E4C7',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -453,7 +456,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     textAlign: 'center',
-    fontSize: fontSize(16),
+    fontSize: fontSize(14),
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
     color: colors.black,
@@ -468,7 +471,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: colors.white,
-    fontSize: fontSize(16),
+    fontSize: fontSize(14),
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
   },

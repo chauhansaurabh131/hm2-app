@@ -47,6 +47,7 @@ export const images = {
   main_screen_image_eight: require('./images/main_screen_image_eight.png'),
   photo_studio_background_img: require('./images/photo_studio_background.png'),
   photo_studio_img: require('./images/photo_studio_img.png'),
+  new_add_story_img: require('./images/new_add_story_img.png'),
 };
 
 export const icons = {
@@ -221,6 +222,7 @@ export const icons = {
   instagram_icon: require('./icons/instagram_icon.png'),
   youtube_icon: require('./icons/youtube_icon.png'),
   whatsapp_icon: require('./icons/whatsapp_icon.png'),
+  empty_state_icon: require('./icons/empty_state.png'),
 };
 
 export const gif = {

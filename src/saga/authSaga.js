@@ -162,51 +162,123 @@ function* googleLogin(action) {
   try {
     const response = yield call(auth.googleLoggin, action.data.payload);
 
-    // Check if appUsesType exists in the response
-    const appUsesType = response.data.data?.user?.appUsesType;
+    const appUsesType = response?.data?.data?.user?.appUsesType;
 
-    console.log(' === googleLoginSuccess+++++ ===> ', appUsesType);
+    // Save tokens
+    yield setAsyncStorageData(
+      TOKEN,
+      `Bearer ${response?.data?.data?.tokens?.access?.token}`,
+    );
+
+    yield setAsyncStorageData(
+      REFRESH_TOKEN,
+      `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
+    );
 
     if (appUsesType) {
-      // If appUsesType exists, trigger success and the success callback
+      // ✅ Success
       yield put(authAction.googleLoginSuccess(response.data.data));
-      yield setAsyncStorageData(
-        TOKEN,
-        `Bearer ${response?.data?.data?.tokens?.access?.token}`,
-      );
-      yield setAsyncStorageData(
-        REFRESH_TOKEN,
-        `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
-      );
 
-      // Trigger success callback if provided
-      if (action.data.callback) {
-        console.log(' === Success Callback ===> ', appUsesType);
-        action.data.callback();
-      }
-      console.log('Done');
+      // Success callback
+      action.data?.successCallback?.();
     } else {
-      // If appUsesType does not exist, trigger failure
+      // ❌ App uses type missing → treat as failure
       yield put(authAction.googleLoginFail());
 
-      // Trigger failure callback if provided
-      if (action.data.failedCallback) {
-        console.log(' === Failure Callback ===> appUsesType is undefined');
-        action.data.failedCallback();
-      }
-      console.log('Failed');
+      action.data?.failureCallback?.();
     }
   } catch (error) {
-    // Handle any errors during login
-    yield put(authAction.googleLoginFail());
-    console.log('Error during login: ', error);
+    const statusCode = error?.response?.status;
+    const errorMessage = error?.response?.data?.message || 'An error occurred.';
+    const otpType = error?.response?.data?.otpType;
+    const otpEmail = error?.response?.data?.email;
+    const otpMobileNumber = error?.response?.data?.mobileNumber;
 
-    if (action.data.failedCallback) {
-      action.data.failedCallback();
+    console.log('=== google login error status ===>', statusCode);
+    console.log('=== google login error message ===>', errorMessage);
+
+    // ❌ SAME CONDITIONS AS NORMAL LOGIN
+    if (errorMessage === 'Incorrect email or password') {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Credentials',
+        text2: 'Incorrect email or password',
+      });
+    } else if (statusCode === 502) {
+      Toast.show({
+        type: 'error',
+        text1: 'Server Error',
+        text2: 'Service temporarily unavailable. Please try again later.',
+      });
+    } else if (errorMessage === 'Your account has been deleted.') {
+      Toast.show({
+        type: 'error',
+        text1: 'Account Deleted',
+        text2: 'This account has been deleted. Please contact support.',
+      });
+    } else {
+      // ✅ OTP / verification flow
+      action.data?.failureCallback?.(otpType, otpEmail, otpMobileNumber);
     }
-    console.log('Failed');
+
+    yield put(authAction.googleLoginFail());
   }
 }
+
+// function* googleLogin(action) {
+//   try {
+//     const response = yield call(auth.googleLoggin, action.data.payload);
+//
+//     // Check if appUsesType exists in the response
+//     const appUsesType = response.data.data?.user?.appUsesType;
+//
+//     console.log(' === googleLoginSuccess+++++ ===> ', appUsesType);
+//
+//     yield setAsyncStorageData(
+//       TOKEN,
+//       `Bearer ${response?.data?.data?.tokens?.access?.token}`,
+//     );
+//
+//     if (appUsesType) {
+//       // If appUsesType exists, trigger success and the success callback
+//       yield put(authAction.googleLoginSuccess(response.data.data));
+//       yield setAsyncStorageData(
+//         TOKEN,
+//         `Bearer ${response?.data?.data?.tokens?.access?.token}`,
+//       );
+//       yield setAsyncStorageData(
+//         REFRESH_TOKEN,
+//         `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
+//       );
+//
+//       // Trigger success callback if provided
+//       if (action.data.callback) {
+//         console.log(' === Success Callback ===> ', appUsesType);
+//         action.data.callback();
+//       }
+//       console.log('Done');
+//     } else {
+//       // If appUsesType does not exist, trigger failure
+//       yield put(authAction.googleLoginFail());
+//
+//       // Trigger failure callback if provided
+//       if (action.data.failedCallback) {
+//         console.log(' === Failure Callback ===> appUsesType is undefined');
+//         action.data.failedCallback();
+//       }
+//       console.log('Failed');
+//     }
+//   } catch (error) {
+//     // Handle any errors during login
+//     yield put(authAction.googleLoginFail());
+//     console.log('Error during login: ', error);
+//
+//     if (action.data.failedCallback) {
+//       action.data.failedCallback();
+//     }
+//     console.log('Failed');
+//   }
+// }
 
 // Set Password saga
 function* setPassword(action) {
