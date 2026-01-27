@@ -103,14 +103,14 @@ const AccountsScreen = ({navigation}) => {
         // if (kycDataArray && kycDataArray.length > 0) {
         //   setKycData(kycDataArray[kycDataArray.length - 1]); // Get the last item
         // }
-        setKycData(kycDataArray)
+        setKycData(kycDataArray);
       } else {
         console.error('Failed to fetch KYC details');
-        Toast.show({
-          type: 'error',
-          text1: 'Failed to Fetch KYC',
-          text2: 'Could not retrieve KYC details.',
-        });
+        // Toast.show({
+        //   type: 'error',
+        //   text1: 'Failed to Fetch KYC',
+        //   text2: 'Could not retrieve KYC details.',
+        // });
       }
     } catch (error) {
       console.error('Error fetching KYC details:', error);

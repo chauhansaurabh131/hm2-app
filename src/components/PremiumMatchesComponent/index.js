@@ -144,32 +144,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
     }
   };
 
-  // const createLike = async likedUserId => {
-  //   try {
-  //     const response = await axios.post(
-  //       'https://stag.mntech.website/api/v1/user/like/create-like',
-  //       {
-  //         likedUserId: likedUserId,
-  //         isLike: true,
-  //       },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       },
-  //     );
-  //     // Handle successful response, maybe update local state or show success message
-  //     console.log('Like created successfully:', response.data);
-  //     ProfileLike();
-  //     fetchData();
-  //   } catch (error) {
-  //     console.error('Error creating like:', error);
-  //     Alert.alert('Error', 'Failed to create like.');
-  //     fetchData();
-  //   }
-  // };
-
   const updateLike = async likedUserId => {
     const likeId =
       likedUserId?.userLikeDetails?._id || likedUserId?.userLikeDetails?.id;
@@ -221,32 +195,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       // Alert.alert('Error', 'Failed to update like.');
     }
   };
-
-  // const updateLike = async likedUserId => {
-  //   try {
-  //     const response = await axios.put(
-  //       `https://stag.mntech.website/api/v1/user/like/update-like/${likedUserId}`,
-  //       {
-  //         likedUserId: likedUserId,
-  //         isLike: false,
-  //       },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       },
-  //     );
-  //     // Handle successful response, maybe update local state or show success message
-  //     console.log('Like updated successfully:', response.data);
-  //     ProfileDisLike();
-  //     fetchData();
-  //   } catch (error) {
-  //     console.error('Error updating like:', error);
-  //     Alert.alert('Error', 'Failed to update like.');
-  //     fetchData();
-  //   }
-  // };
 
   const handleLikePress = item => {
     const isLiked = item?.userLikeDetails?.isLike; // Access the isLike property
@@ -303,15 +251,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
     }
   };
 
-  // const OnsendRequestedSend = item => {
-  //   console.log(' === item>>> ===> ', item);
-  //   dispatch(
-  //     sendRequest({friend: item?._id, user: user.user.id}, () => {
-  //       fetchData();
-  //     }),
-  //   );
-  // };
-
   const handleRequestAction = async (item, requestId) => {
     if (item?.friendsDetails?.status === 'requested') {
       try {
@@ -353,47 +292,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
     }
   };
 
-  // const handleRequestAction = (item, requestId) => {
-  //   if (item?.friendsDetails?.status === 'requested') {
-  //     // If the request status is 'requested', decline or remove the request
-  //     dispatch(
-  //       accepted_Decline_Request(
-  //         {
-  //           user: item?._id,
-  //           request: requestId, // Use the existing request ID
-  //           status: 'removed', // Decline the request or remove it
-  //         },
-  //         () => {
-  //           fetchData();
-  //         },
-  //       ),
-  //     );
-  //   }
-  // };
-
-  // const addToShortlist = async shortlistId => {
-  //   try {
-  //     const response = await axios.post(
-  //       'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
-  //       {
-  //         shortlistId: shortlistId,
-  //       },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
-  //         },
-  //       },
-  //     );
-  //     console.log('Shortlist created successfully:', response.data);
-  //     ShowToast();
-  //     fetchData(); // Refresh the user data after adding to shortlist
-  //   } catch (error) {
-  //     console.error('Error adding to shortlist:', error);
-  //     Alert.alert('Error', 'Failed to add to shortlist.');
-  //   }
-  // };
-
   const addToShortlist = async shortlistId => {
     try {
       const response = await axios.post(
@@ -427,26 +325,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
       // Alert.alert('Error', 'Failed to add to shortlist.');
     }
   };
-
-  // const removeFromShortlist = async shortlistId => {
-  //   console.log(' === removeFromShortlist_______ ===> ', shortlistId);
-  //   try {
-  //     const response = await axios.delete(
-  //       `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`, // Ensure you use the correct access token here
-  //         },
-  //       },
-  //     );
-  //     console.log('Shortlist removed successfully:', response.data);
-  //     RemoveShortlisted();
-  //     fetchData(); // Refresh the user data after removing from the shortlist
-  //   } catch (error) {
-  //     console.error('Error removing from shortlist:', error);
-  //     Alert.alert('Error', 'Failed to remove from shortlist.');
-  //   }
-  // };
 
   const removeFromShortlist = async shortlistId => {
     try {
@@ -482,8 +360,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
   // Render each item in the list
   const renderItem = ({item}) => {
-    // console.log(' === renderItem ===> ', item?.age);
-
     const {selectedPlan, status} = item?.subscriptionDetails || {};
 
     // Determine if the selected plan is 'gold' (for the crown icon)

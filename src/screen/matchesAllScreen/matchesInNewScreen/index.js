@@ -555,7 +555,7 @@ const MatchesInNewScreen = () => {
       ? item.userProfilePic.map(pic => pic.url)
       : [];
 
-    console.log(' === item__ ===> ', item?.isUserActive);
+    // console.log(' === item__ ===> ', item?.isUserActive);
 
     const blockedFriendId = item?._id;
     const uniqueId = item?.userUniqueId;

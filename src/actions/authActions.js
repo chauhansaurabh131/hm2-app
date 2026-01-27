@@ -1,10 +1,10 @@
 import * as TYPES from './actionTypes';
-import {SET_LOADING} from './actionTypes';
+import { SET_LOADING } from './actionTypes';
 
 /* ------------- REGISTER ------------- */
 export const register = (payload, callback) => ({
   type: TYPES.REGISTER,
-  data: {payload, callback},
+  data: { payload, callback },
 });
 
 export const registerSuccess = () => ({
@@ -18,7 +18,7 @@ export const registerFail = () => ({
 /* ------------- LOGIN ------------- */
 export const login = (payload, successCallback, failureCallback) => ({
   type: TYPES.LOGIN,
-  data: {payload, successCallback, failureCallback},
+  data: { payload, successCallback, failureCallback },
 });
 
 export const loginSuccess = data => ({
@@ -31,9 +31,9 @@ export const loginFail = () => ({
 });
 
 /* ------------- GOOGLE_LOGIN ------------- */
-export const googleLogin = (payload, callback, failedCallback) => ({
+export const googleLogin = (payload, successCallback, failureCallback) => ({
   type: TYPES.GOOGLE_LOGIN,
-  data: {payload, callback, failedCallback},
+  data: { payload, successCallback, failureCallback },
 });
 
 export const googleLoginSuccess = data => ({
@@ -48,7 +48,7 @@ export const googleLoginFail = () => ({
 // Verify OTP Actions
 export const verifyOTP = (payload, callback) => ({
   type: TYPES.VERIFY_OTP,
-  data: {payload, callback},
+  data: { payload, callback },
 });
 
 export const verifyOTPSuccess = data => ({
@@ -56,23 +56,22 @@ export const verifyOTPSuccess = data => ({
   data,
 });
 
-export const verifyOTPFail = () => ({type: TYPES.VERIFY_OTP_FAILED});
+export const verifyOTPFail = () => ({ type: TYPES.VERIFY_OTP_FAILED });
 
 // Set Password Actions
 export const setPassword = (payload, callback) => ({
   type: TYPES.SET_PASSWORD,
-  data: {payload, callback},
+  data: { payload, callback },
 });
-export const setPasswordSuccess = () => ({type: TYPES.SET_PASSWORD_SUCCESS});
-export const setPasswordFail = () => ({type: TYPES.SET_PASSWORD_FAILED});
+export const setPasswordSuccess = () => ({ type: TYPES.SET_PASSWORD_SUCCESS });
+export const setPasswordFail = () => ({ type: TYPES.SET_PASSWORD_FAILED });
 
 export function logout(clear) {
-  return {type: TYPES.LOGOUT_START, clear};
-  resetToLogin(); // ⬅️ instantly navigate to Login screen
+  return { type: TYPES.LOGOUT_START, clear };
 }
 
-export const changeStack = data => ({type: TYPES.CHANGE_STACK, data});
+export const changeStack = data => ({ type: TYPES.CHANGE_STACK, data });
 
 export const SetLoading = payload => {
-  return {type: SET_LOADING, payload};
+  return { type: SET_LOADING, payload };
 };

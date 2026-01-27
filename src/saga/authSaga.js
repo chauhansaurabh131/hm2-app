@@ -1,15 +1,15 @@
-import {all, call, put, takeLatest} from 'redux-saga/effects';
+import { all, call, put, takeLatest } from 'redux-saga/effects';
 
 import * as TYPES from '../actions/actionTypes';
 
 import * as authAction from '../actions/authActions';
-import {auth} from '../apis/authApi';
-import {setAsyncStorageData} from '../utils/global';
-import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
+import { auth } from '../apis/authApi';
+import { setAsyncStorageData } from '../utils/global';
+import { REFRESH_TOKEN, TOKEN } from '../utils/constants';
 import navigations from '../navigations';
-import {SET_2FA_AUTO} from '../actions/actionTypes';
-import {authOtpVerifyFail, authOtpVerifySuccess} from '../actions/authActions';
-import {AsyncStorage} from 'react-native';
+import { SET_2FA_AUTO } from '../actions/actionTypes';
+import { authOtpVerifyFail, authOtpVerifySuccess } from '../actions/authActions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 
 // Register saga
@@ -175,16 +175,14 @@ function* googleLogin(action) {
       `Bearer ${response?.data?.data?.tokens?.refresh?.token}`,
     );
 
-    if (appUsesType) {
-      // ✅ Success
-      yield put(authAction.googleLoginSuccess(response.data.data));
+    // Put success even if appUsesType is missing so we have user info in Redux
+    yield put(authAction.googleLoginSuccess(response.data.data));
 
-      // Success callback
+    if (appUsesType) {
+      // Success callback (already in home stack or finished setup)
       action.data?.successCallback?.();
     } else {
-      // ❌ App uses type missing → treat as failure
-      yield put(authAction.googleLoginFail());
-
+      // Failure callback (need to select app type / setup profile)
       action.data?.failureCallback?.();
     }
   } catch (error) {
@@ -293,6 +291,16 @@ function* setPassword(action) {
   }
 }
 
+function* logout() {
+  try {
+    yield call(AsyncStorage.clear);
+    yield put({ type: TYPES.LOGOUT_SUCCESS });
+  } catch (error) {
+    console.log('Logout Error: ', error);
+    yield put({ type: TYPES.LOGOUT_SUCCESS }); // Force logout even if clear fails
+  }
+}
+
 // Root auth saga
 function* authSaga() {
   yield all([
@@ -301,6 +309,7 @@ function* authSaga() {
     takeLatest(TYPES.GOOGLE_LOGIN, googleLogin),
     takeLatest(TYPES.VERIFY_OTP, verifyOTP),
     takeLatest(TYPES.SET_PASSWORD, setPassword),
+    takeLatest(TYPES.LOGOUT_START, logout),
     // takeLatest(TYPES.GET_USER_DATA, getUserData),
   ]);
 }

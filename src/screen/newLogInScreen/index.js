@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from 'react-native';
+
 import {colors} from '../../utils/colors';
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
@@ -16,7 +18,7 @@ import {changeStack, googleLogin, login} from '../../actions/authActions';
 import {useDispatch, useSelector} from 'react-redux';
 import CommonGradientButton from '../../components/commonGradientButton';
 import Toast from 'react-native-toast-message';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -34,6 +36,19 @@ const NewLogInScreen = () => {
   const [fcmToken, setFcmToken] = useState(null);
 
   const {loading} = useSelector(state => state.auth);
+
+  const {sessionExpired} = useRoute().params || {};
+
+  useEffect(() => {
+    if (sessionExpired) {
+      Alert.alert(
+        // 'Session Expired',
+        'Opps!',
+        'Something went wrong, please try to login again',
+        [{text: 'OK'}],
+      );
+    }
+  }, [sessionExpired]);
 
   useEffect(() => {
     const RequestUserPermission = async () => {

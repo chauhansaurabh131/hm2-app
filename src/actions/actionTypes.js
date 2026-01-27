@@ -176,3 +176,4 @@ export const CHANGE_STACK = 'CHANGE_STACK';
 export const SET_LOADING = 'SET_LOADING';
 
 export const LOGOUT_START = 'LOGOUT_START';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';

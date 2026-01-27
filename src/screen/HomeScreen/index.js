@@ -160,19 +160,17 @@ const HomeScreen = ({route}) => {
   }, [accessToken]);
 
   useEffect(() => {
-    dispatch(userDatas());
+    if (user?.user && userProfileCompleted) {
+      dispatch(userDatas());
+    }
     dispatch(getSuccessStories());
-  }, [dispatch]);
+  }, [dispatch, user, userProfileCompleted]);
 
   const {userData} = useSelector(state => state.home);
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 
   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
-
-  // console.log(' === userProfileCompleted ===> ', userProfileCompleted);
-
-  // console.log(' === userPartnerPreCompleted ===> ', userPartnerPreCompleted);
 
   useEffect(() => {
     if (userPartnerPreCompleted === false) {
@@ -181,13 +179,6 @@ const HomeScreen = ({route}) => {
       setShowModal(false);
     }
   }, [userPartnerPreCompleted]);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // This will hide the modal when the screen is focused
-  //     setShowModal(true);
-  //   }, []),
-  // );
 
   const handleButtonClick = () => {
     if (activeLine === 3) {
@@ -210,28 +201,6 @@ const HomeScreen = ({route}) => {
       setActiveLine(prev => prev + 1);
     }
   };
-
-  // const handleButtonClick = () => {
-  //   const userProfileCompleted = user?.user?.userProfileCompleted;
-  //   const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
-  //
-  //   if (!userProfileCompleted) {
-  //     // Navigate to CreatingProfileScreen if user profile is not completed
-  //     navigation.navigate('CreatingProfileScreen');
-  //   } else if (!userPartnerPreCompleted) {
-  //     // Navigate to Abc if partner pre-profile is not completed
-  //     navigation.navigate('Abc');
-  //   } else {
-  //     // If both conditions are true, don't display modal and proceed with existing logic
-  //     setShowModal(false);
-  //   }
-  //
-  //   if (activeLine === 3) {
-  //     setActiveLine(1); // Reset the active line
-  //   } else {
-  //     setActiveLine(prev => prev + 1);
-  //   }
-  // };
 
   useFocusEffect(
     useCallback(() => {

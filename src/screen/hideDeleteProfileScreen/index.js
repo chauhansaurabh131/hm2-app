@@ -192,55 +192,106 @@ const HideDeleteProfileScreen = () => {
   };
 
   const onDeleteAccountPress = async () => {
-    console.log('Selected Reason Value:', selectedDelete);
-
-    setLoading(true); // show loader
-
-    let payload = {
-      profileHideAndDelete: {
-        isProfileDelete: true,
-      },
-    };
-
-    if (selectedDelete === 'other') {
-      console.log('Custom Reason:', customReason);
-      payload.profileHideAndDelete.reason = 'delete profile';
-    } else {
-      payload.profileHideAndDelete.reasonForProfileDelete = selectedDelete;
+    if (!selectedDelete) {
+      Alert.alert('Please select a reason');
+      return;
     }
+
+    setLoading(true);
 
     const token = user?.tokens?.access?.token;
 
+    const deleteReason =
+      selectedDelete === 'other'
+        ? customReason || 'Other reason'
+        : getDeleteReasonLabel(selectedDelete);
+
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/auth/update-user',
+        'https://stag.mntech.website/api/v1/user/user/delete-account',
         {
-          method: 'PUT',
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            deleteReason: deleteReason,
+          }),
         },
       );
 
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Account deletion request successful:', data);
-        dispatch(logout(), () => dispatch(changeStack()));
-        // Show success message or navigate
+        console.log('✅ Account deleted successfully:', data);
+
+        // 🔥 LOGOUT + MOVE TO LOGIN
+        dispatch(logout());
+        dispatch(changeStack());
       } else {
-        console.error('Failed to delete account:', data);
-        // Handle API error
+        console.error('❌ Delete account failed:', data);
+        Alert.alert('Error', data?.message || 'Failed to delete account');
       }
     } catch (error) {
-      console.error('Network error:', error);
+      console.error('❌ Network error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
       setModalVisible(false);
     }
   };
+
+  // const onDeleteAccountPress = async () => {
+  //   console.log('Selected Reason Value:', selectedDelete);
+  //
+  //   setLoading(true); // show loader
+  //
+  //   let payload = {
+  //     profileHideAndDelete: {
+  //       isProfileDelete: true,
+  //     },
+  //   };
+  //
+  //   if (selectedDelete === 'other') {
+  //     console.log('Custom Reason:', customReason);
+  //     payload.profileHideAndDelete.reason = 'delete profile';
+  //   } else {
+  //     payload.profileHideAndDelete.reasonForProfileDelete = selectedDelete;
+  //   }
+  //
+  //   const token = user?.tokens?.access?.token;
+  //
+  //   try {
+  //     const response = await fetch(
+  //       'https://stag.mntech.website/api/v1/user/auth/update-user',
+  //       {
+  //         method: 'PUT',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(payload),
+  //       },
+  //     );
+  //
+  //     const data = await response.json();
+  //
+  //     if (response.ok) {
+  //       console.log('Account deletion request successful:', data);
+  //       dispatch(logout(), () => dispatch(changeStack()));
+  //       // Show success message or navigate
+  //     } else {
+  //       console.error('Failed to delete account:', data);
+  //       // Handle API error
+  //     }
+  //   } catch (error) {
+  //     console.error('Network error:', error);
+  //   } finally {
+  //     setLoading(false);
+  //     setModalVisible(false);
+  //   }
+  // };
 
   const selectSetDurationModalOPen = () => {
     setSelectDurationModal(true);
@@ -486,7 +537,7 @@ const HideDeleteProfileScreen = () => {
                   style={{
                     marginTop: hp(15),
                     fontSize: fontSize(16),
-                    lineHeight: hp(24),
+                    // lineHeight: hp(24),
                     fontFamily: fontFamily.poppins400,
                     color: colors.black,
                     marginBottom: hp(21),
@@ -514,6 +565,7 @@ const HideDeleteProfileScreen = () => {
                           fontFamily: fontFamily.poppins400,
                           color: colors.black,
                           marginTop: hp(24),
+                          height: hp(24),
                         }}>
                         {reason.label}
                       </Text>

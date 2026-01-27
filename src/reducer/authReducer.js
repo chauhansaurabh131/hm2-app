@@ -18,8 +18,13 @@ export default (state = initialState, action) => {
     case TYPES.GOOGLE_LOGIN:
     case TYPES.VERIFY_OTP:
     case TYPES.SET_PASSWORD:
-    case TYPES.LOGOUT:
       return {...state, loading: true};
+
+    case TYPES.LOGOUT_START:
+      return {...state, loading: true};
+
+    case TYPES.LOGOUT_SUCCESS:
+      return {...initialState, isLoggedIn: false};
 
     case TYPES.LOGIN_SUCCESS:
 

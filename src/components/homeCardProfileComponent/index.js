@@ -135,7 +135,7 @@ const HomeCardProfileComponent = () => {
 
   const UserUniqueId = user?.user?.userUniqueId;
 
-  console.log(' === UserUniqueId ===> ', UserUniqueId);
+  // console.log(' === UserUniqueId ===> ', UserUniqueId);
 
   return (
     <SafeAreaView style={style.container}>

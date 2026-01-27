@@ -4,24 +4,19 @@ import {
   Image,
   Modal,
   SafeAreaView,
-  ScrollView,
   Text,
-  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
-
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
-
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
-import RBSheet from 'react-native-raw-bottom-sheet';
 import axios from 'axios';
 import ProfileAvatar from '../../components/letterProfileComponent';
 
@@ -66,7 +61,10 @@ const PrivacyScreen = ({route}) => {
   const [modalMessage, setModalMessage] = useState('');
 
   const {user} = useSelector(state => state.auth);
-  const accessToken = user?.tokens?.access?.token;
+
+  console.log(' === userData---- ===> ', user?.user?.appUsesType);
+  const isDatingUser = user?.user?.appUsesType === 'dating';
+
   const userImage = user?.user?.profilePic;
 
   const privacySetting = user?.user?.privacySetting;
@@ -265,26 +263,6 @@ const PrivacyScreen = ({route}) => {
       privacySettingCustom.profilePhotoPrivacy = true;
     } else if (selectedPrivacy === 'premiumProfile') {
       privacySettingCustom.premiumProfile = [
-        // 'profilePic',
-        // 'userProfilePic',
-        // 'userProfileVideo',
-        // 'firstName',
-        // 'lastName',
-        // 'dateOfBirth',
-        // 'birthTime',
-        // 'religion',
-        // 'caste',
-        // 'height',
-        // 'weight',
-        // 'displayName',
-        // 'name',
-        // 'randomId',
-        // 'maritalStatus',
-        // 'userEducation',
-        // 'userProfessional',
-        // 'hobbies',
-        // 'userPartnerDetails',
-        // 'privacySetting',
         'profilePic',
         'userProfilePic',
         'userProfileVideo',
@@ -352,11 +330,9 @@ const PrivacyScreen = ({route}) => {
 
       setModalMessage(message); // Set the modal message
       setIsModalVisible(true); // Show the modal
-
-      // alert('Privacy settings updated successfully!');
     } catch (error) {
       console.error('API Error:', error.response?.data || error.message);
-      alert('Failed to update privacy settings.');
+      // alert('Failed to update privacy settings.');
       setLoading(false);
     }
   };
@@ -370,7 +346,6 @@ const PrivacyScreen = ({route}) => {
             style={style.customerHeaderImage}
           />
 
-          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
             {userImage ? (
               <Image
@@ -385,10 +360,6 @@ const PrivacyScreen = ({route}) => {
                 profileTexts={{fontSize: fontSize(10)}}
               />
             )}
-            {/*<Image*/}
-            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-            {/*  style={style.profileImageStyle}*/}
-            {/*/>*/}
           </TouchableOpacity>
         </View>
 
@@ -439,6 +410,10 @@ const PrivacyScreen = ({route}) => {
             extraTexts: [],
           },
         ].map(option => {
+          if (isDatingUser && option.value === PROFILE_TYPES.PREMIUM) {
+            return null;
+          }
+
           const isSelected = selectedPrivacy === option.value;
           const shouldShowExtraText =
             isSelected && option.extraTexts.length > 0;

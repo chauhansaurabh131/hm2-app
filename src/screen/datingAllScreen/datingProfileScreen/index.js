@@ -184,6 +184,8 @@ const DatingProfileScreen = () => {
 
   const profileImage = user?.user?.profilePic;
 
+  console.log(' === profileImage ===> ', profileImage);
+
   const formatText = text => {
     if (!text) {
       return 'N.A';
