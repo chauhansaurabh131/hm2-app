@@ -314,7 +314,7 @@ const PartnerPreferencesScreen = () => {
             '60 - 70',
           ]}
           onValueChange={setAgeRanges}
-          bottomSheetHeight={500}
+          bottomSheetHeight={hp(380)}
           showDivider={false}
         />
 
@@ -330,7 +330,7 @@ const PartnerPreferencesScreen = () => {
               '9 - 10 ft',
             ]}
             onValueChange={setHeightRanges}
-            bottomSheetHeight={500}
+            bottomSheetHeight={hp(310)}
             showDivider={false}
           />
         </View>

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TouchableHighlight,
+  ImageBackground,
 } from 'react-native';
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
@@ -48,6 +49,9 @@ const HomeScreen = ({route}) => {
   const [activeLine, setActiveLine] = useState(1);
   const [planDetails, setPlanDetails] = useState('');
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+
   const [status, setStatus] = useState('Disconnected');
   const socketRef = useRef(null);
 
@@ -61,6 +65,15 @@ const HomeScreen = ({route}) => {
   // console.log(' === user?.user---= ===> ', user?.user);
 
   const {storiesData} = useSelector(state => state.home);
+
+  const showCustomAlert = message => {
+    setAlertMessage(message);
+    setShowAlert(true);
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 1500);
+  };
 
   // console.log(' === user____ ===> ', user);
 
@@ -326,107 +339,30 @@ const HomeScreen = ({route}) => {
     topModalBottomSheetRef.current.open();
   };
 
-  const toastConfigs = {
-    AddShortlisted: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          marginTop: -25,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
-      </View>
-    ),
-    RemoveShortlisted: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          marginTop: -25,
-          width: wp(300),
-          height: hp(55),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
-      </View>
-    ),
-    ProfileLike: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          marginTop: -25,
-          width: wp(150),
-          height: hp(40),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
-      </View>
-    ),
-    ProfileDisLike: ({text1}) => (
-      <View
-        style={{
-          backgroundColor: '#333333', // Toast background color
-          // padding: 10,
-          borderRadius: 100,
-          marginHorizontal: 20,
-          marginTop: -25,
-          width: wp(150),
-          height: hp(40),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white', // Toast text color
-            fontSize: fontSize(16),
-            textAlign: 'center',
-            lineHeight: hp(24),
-            fontFamily: fontFamily.poppins400,
-          }}>
-          {text1}
-        </Text>
-      </View>
-    ),
-  };
-
   return (
     <SafeAreaView style={style.container}>
+      {showAlert && (
+        <View
+          style={{
+            position: 'absolute',
+            top: hp(40),
+            alignSelf: 'center',
+            backgroundColor: '#333',
+            paddingHorizontal: 20,
+            paddingVertical: 12,
+            borderRadius: 30,
+            zIndex: 1000,
+          }}>
+          <Text
+            style={{
+              color: '#fff',
+              fontFamily: fontFamily.poppins400,
+            }}>
+            {alertMessage}
+          </Text>
+        </View>
+      )}
+
       <View style={{marginHorizontal: 17}}>
         <View style={style.headerViewContainer}>
           <Image
@@ -486,18 +422,18 @@ const HomeScreen = ({route}) => {
         </View>
       </View>
 
-      <LinearGradient
-        colors={['white', 'transparent']}
-        style={{
-          height: 15,
-          width: '100%',
-          position: 'absolute',
-          top: 100, // 👈 exactly below header
-          left: 0,
-          right: 0,
-          zIndex: 1,
-        }}
-      />
+      {/*<LinearGradient*/}
+      {/*  colors={['white', 'transparent']}*/}
+      {/*  style={{*/}
+      {/*    height: 15,*/}
+      {/*    width: '100%',*/}
+      {/*    position: 'absolute',*/}
+      {/*    top: 100, // 👈 exactly below header*/}
+      {/*    left: 0,*/}
+      {/*    right: 0,*/}
+      {/*    zIndex: 1,*/}
+      {/*  }}*/}
+      {/*/>*/}
 
       <Modal
         animationType="none"
@@ -635,14 +571,16 @@ const HomeScreen = ({route}) => {
           onBackButtonPress={toggleModal}
         />
 
-        <View style={{marginHorizontal: 17}}>
+        <View>
           <View style={style.premiumTextContainer}>
             <Text style={style.premiumTextStyle}>New Matches</Text>
           </View>
 
           {/*PREMIUM MATCHES COMPONENT*/}
           <View style={style.PremiumMatchesTextContainer}>
-            <PremiumMatchesComponent toastConfigs={toastConfigs} />
+            <PremiumMatchesComponent
+              onShowAlert={showCustomAlert} // 👈 PASS CALLBACK
+            />
           </View>
         </View>
 
@@ -664,25 +602,9 @@ const HomeScreen = ({route}) => {
 
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
-        {/*<View style={{marginHorizontal: 17}}>*/}
-        {/*  <View style={[style.premiumTextContainer, {marginTop: 28}]}>*/}
-        {/*    <Text style={style.premiumTextStyle}>New Matches</Text>*/}
-        {/*    <Text style={style.premiumTextsStyle}>*/}
-        {/*      /!*{userData?.data[0]?.totalDocs}*!/*/}
-        {/*    </Text>*/}
-        {/*  </View>*/}
-
-        {/*  {userProfileCompleted === true && userPartnerPreCompleted === true ? (*/}
-        {/*    <PremiumMatchesComponent toastConfigs={toastConfigs} />*/}
-        {/*  ) : (*/}
-        {/*    <Text style={{color: 'black'}}>Fill form</Text>*/}
-        {/*  )}*/}
-        {/*</View>*/}
-
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
         {/* Start Recently view code*/}
-
         <View>
           <RecentlyViewComponent />
         </View>
@@ -773,12 +695,22 @@ const HomeScreen = ({route}) => {
           onPress={() => {
             navigation.navigate('SuccessStoryEditInformationScreen');
           }}>
-          <Image
+          <ImageBackground
             source={images.new_add_story_img}
             style={{height: hp(159), width: '100%'}}
-            resizeMode={'cover'}
+            imageStyle={{borderRadius: 12}} // ✅ iOS friendly
+            resizeMode="contain"
           />
         </TouchableOpacity>
+
+        {/*<View style={{marginTop: 50, marginHorizontal: 17}}>*/}
+        {/*  <ImageBackground*/}
+        {/*    source={images.new_add_story_img}*/}
+        {/*    style={{height: hp(159), width: '100%'}}*/}
+        {/*    imageStyle={{borderRadius: 12}} // ✅ iOS friendly*/}
+        {/*    resizeMode="contain"*/}
+        {/*  />*/}
+        {/*</View>*/}
 
         {/*VERIFICATION MODAL OPEN */}
         <View style={style.verificationModalContainer}>
@@ -828,9 +760,6 @@ const HomeScreen = ({route}) => {
 
         <View style={{height: isIOS ? hp(20) : hp(20)}} />
       </ScrollView>
-      {/*</View>*/}
-      {/*<Toast ref={ref => Toast.setRef(ref)} />*/}
-      {/*<Toast config={toastConfigs} />*/}
     </SafeAreaView>
   );
 };

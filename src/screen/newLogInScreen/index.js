@@ -143,54 +143,34 @@ const NewLogInScreen = () => {
         text1: 'No Internet Connection',
         text2: 'Please check your network and try again',
       });
-      return; // ⛔ Stop login flow
+      return;
     }
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
+    if (!trimmedPassword) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Password',
+        text2: 'Please enter your password',
+      });
+      return;
+    }
+
     const isEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
       trimmedEmail,
     );
-    let loginPayload = {};
+
+    let loginPayload = {
+      password: trimmedPassword,
+    };
 
     if (isEmail) {
-      if (!trimmedPassword) {
-        Toast.show({
-          type: 'error',
-          text1: 'Missing Password',
-          text2: 'Please enter your password',
-        });
-        return;
-      }
-
-      console.log('Logging in with Email:', trimmedEmail);
-      loginPayload = {
-        email: trimmedEmail,
-        password: trimmedPassword,
-      };
+      loginPayload.email = trimmedEmail;
     } else {
-      const mobileNumber = trimmedEmail.replace(/\D/g, ''); // removes non-digits
-      const isMobile = mobileNumber.length === 10;
-
-      if (isMobile) {
-        if (!trimmedPassword) {
-          Toast.show({
-            type: 'error',
-            text1: 'Missing Password',
-            text2: 'Please enter your password',
-          });
-          return;
-        }
-
-        console.log('Logging in with Mobile Number:', mobileNumber);
-        loginPayload = {
-          countryCodeId: '68df8125ae450858978682ec',
-          mobileNumber,
-          password: trimmedPassword,
-          deviceToken: fcmToken,
-        };
-      } else {
+      const mobileNumber = trimmedEmail.replace(/\D/g, '');
+      if (mobileNumber.length !== 10) {
         Toast.show({
           type: 'error',
           text1: 'Invalid Mobile Number',
@@ -198,18 +178,101 @@ const NewLogInScreen = () => {
         });
         return;
       }
+
+      loginPayload.countryCodeId = '68df8125ae450858978682ec';
+      loginPayload.mobileNumber = mobileNumber;
     }
 
-    dispatch(
-      login(
-        {...loginPayload, deviceToken: fcmToken},
-        successCallback,
-        failureCallback,
-      ),
-    );
+    // ✅ iOS-safe deviceToken handling
+    if (fcmToken && typeof fcmToken === 'string') {
+      loginPayload.deviceToken = fcmToken;
+    }
+
+    console.log('LOGIN PAYLOAD 👉', loginPayload);
+
+    dispatch(login(loginPayload, successCallback, failureCallback));
+
     setEmail('');
     setPassword('');
   };
+
+  // const onPressLogin = async () => {
+  //   Keyboard.dismiss();
+  //
+  //   const netState = await NetInfo.fetch();
+  //   if (!netState.isConnected) {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'No Internet Connection',
+  //       text2: 'Please check your network and try again',
+  //     });
+  //     return; // ⛔ Stop login flow
+  //   }
+  //
+  //   const trimmedEmail = email.trim();
+  //   const trimmedPassword = password.trim();
+  //
+  //   const isEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+  //     trimmedEmail,
+  //   );
+  //   let loginPayload = {};
+  //
+  //   if (isEmail) {
+  //     if (!trimmedPassword) {
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: 'Missing Password',
+  //         text2: 'Please enter your password',
+  //       });
+  //       return;
+  //     }
+  //
+  //     console.log('Logging in with Email:', trimmedEmail);
+  //     loginPayload = {
+  //       email: trimmedEmail,
+  //       password: trimmedPassword,
+  //     };
+  //   } else {
+  //     const mobileNumber = trimmedEmail.replace(/\D/g, ''); // removes non-digits
+  //     const isMobile = mobileNumber.length === 10;
+  //
+  //     if (isMobile) {
+  //       if (!trimmedPassword) {
+  //         Toast.show({
+  //           type: 'error',
+  //           text1: 'Missing Password',
+  //           text2: 'Please enter your password',
+  //         });
+  //         return;
+  //       }
+  //
+  //       console.log('Logging in with Mobile Number:', mobileNumber);
+  //       loginPayload = {
+  //         countryCodeId: '68df8125ae450858978682ec',
+  //         mobileNumber,
+  //         password: trimmedPassword,
+  //         deviceToken: fcmToken,
+  //       };
+  //     } else {
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: 'Invalid Mobile Number',
+  //         text2: 'Please enter a valid 10-digit mobile number or email',
+  //       });
+  //       return;
+  //     }
+  //   }
+  //
+  //   dispatch(
+  //     login(
+  //       {...loginPayload, deviceToken: fcmToken},
+  //       successCallback,
+  //       failureCallback,
+  //     ),
+  //   );
+  //   setEmail('');
+  //   setPassword('');
+  // };
 
   const signIn = async () => {
     console.log(' === signIn Press ===> ');

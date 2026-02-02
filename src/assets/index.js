@@ -223,6 +223,9 @@ export const icons = {
   youtube_icon: require('./icons/youtube_icon.png'),
   whatsapp_icon: require('./icons/whatsapp_icon.png'),
   empty_state_icon: require('./icons/empty_state.png'),
+  start_like_icon: require('./icons/start_like.png'),
+  start_unLike_icon: require('./icons/start_unLike.png'),
+  left_arrow_icon: require('./icons/left_arrow_icon.png'),
 };
 
 export const gif = {

@@ -12,7 +12,7 @@ import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons} from '../../assets';
 import ProfileAvatar from '../letterProfileComponent';
 import {colors} from '../../utils/colors';
@@ -67,6 +67,8 @@ const RecentlyViewComponent = () => {
   );
 
   const renderItem = ({item}) => {
+    // console.log(' === var ===> ', item?.user);
+
     const {selectedPlan, status} = item?.user?.subscriptionDetails || {};
 
     const isGoldPlan = selectedPlan === 'gold';
@@ -146,7 +148,8 @@ const RecentlyViewComponent = () => {
         }}>
         <View
           style={{
-            height: hp(200),
+            width: wp(156),
+            height: hp(251),
             borderRadius: 10,
             backgroundColor: '#FFFFFF',
             borderWidth: 1,
@@ -162,8 +165,8 @@ const RecentlyViewComponent = () => {
               <Image
                 source={{uri: item?.user?.profilePic}}
                 style={{
-                  width: 110,
-                  height: 136,
+                  width: '100%',
+                  height: hp(198),
                   justifyContent: 'center',
                   borderRadius: 10,
                   overflow: 'hidden',
@@ -204,8 +207,8 @@ const RecentlyViewComponent = () => {
             <>
               <ProfileAvatar
                 firstName={item?.user?.firstName || item?.user?.name}
-                lastName={item.lastName}
-                textStyle={{width: 110, height: 136, marginBottom: 10}}
+                lastName={item?.user?.lastName}
+                textStyle={{width: '100%', height: hp(198), marginBottom: 10}}
               />
               {subPlan && (
                 <Image
@@ -236,40 +239,60 @@ const RecentlyViewComponent = () => {
               {firstName || name} {lastName}
             </Text>
 
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', top: 5}}>
               <Text
                 style={{
                   fontSize: fontSize(9),
                   lineHeight: hp(12),
                   color: colors.black,
                   fontFamily: fontFamily.poppins400,
-                  top: 5,
+                  // top: 5,
                 }}>
-                {item?.user?.age} yrs,
+                {item?.user?.age} yr, {item?.user?.height}
               </Text>
+              {/*<Text*/}
+              {/*  style={{*/}
+              {/*    fontSize: fontSize(9),*/}
+              {/*    lineHeight: hp(12),*/}
+              {/*    color: colors.black,*/}
+              {/*    fontFamily: fontFamily.poppins400,*/}
+              {/*    top: 5,*/}
+              {/*  }}>*/}
+              {/*  {' '}*/}
+              {/*  {item?.user?.height}*/}
+              {/*</Text>*/}
+
+              <View
+                style={{
+                  width: wp(1),
+                  height: hp(12),
+                  backgroundColor: '#D4D4D4',
+                  marginLeft: wp(5),
+                  marginRight: wp(5),
+                }}
+              />
+
               <Text
                 style={{
                   fontSize: fontSize(9),
                   lineHeight: hp(12),
                   color: colors.black,
                   fontFamily: fontFamily.poppins400,
-                  top: 5,
                 }}>
-                {' '}
-                {item?.user?.height}
+                {currentCity || 'N/A'}, {currentCountry || 'N/A'}
               </Text>
             </View>
 
-            <Text
-              style={{
-                fontSize: fontSize(9),
-                lineHeight: hp(12),
-                color: colors.black,
-                fontFamily: fontFamily.poppins400,
-                top: 5,
-              }}>
-              {currentCity || 'N/A'}, {currentCountry || 'N/A'}
-            </Text>
+            {/*<Text*/}
+            {/*  style={{*/}
+            {/*    fontSize: fontSize(9),*/}
+            {/*    lineHeight: hp(12),*/}
+            {/*    color: colors.black,*/}
+            {/*    fontFamily: fontFamily.poppins400,*/}
+            {/*    top: 5,*/}
+            {/*  }}>*/}
+            {/*  {currentCity || 'N/A'}, {currentCountry || 'N/A'}*/}
+            {/*</Text>*/}
           </View>
         </View>
       </TouchableOpacity>
@@ -280,7 +303,7 @@ const RecentlyViewComponent = () => {
     <SafeAreaView style={{flex: 1}}>
       {(loading || profileData.length > 0) && (
         <>
-          <View style={{marginHorizontal: 17, marginTop: hp(20)}}>
+          <View style={{marginTop: hp(20)}}>
             <Text
               style={{
                 color: colors.black,
@@ -289,6 +312,7 @@ const RecentlyViewComponent = () => {
                 fontFamily: fontFamily.poppins600,
                 marginRight: hp(3),
                 marginBottom: 10,
+                paddingLeft: 17, // ✅ CONTROL LEFT SPACE HERE
               }}>
               Recently Viewed
             </Text>
@@ -306,6 +330,7 @@ const RecentlyViewComponent = () => {
                       borderRadius: 10,
                       marginRight: 5,
                       marginTop: 15,
+                      paddingLeft: 17, // ✅ CONTROL LEFT SPACE HERE
                     }}>
                     <View
                       style={{
@@ -368,7 +393,7 @@ const RecentlyViewComponent = () => {
                 renderItem={renderItem}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{paddingRight: 10}}
+                contentContainerStyle={{paddingRight: 10, paddingLeft: 17}}
               />
             )}
           </View>

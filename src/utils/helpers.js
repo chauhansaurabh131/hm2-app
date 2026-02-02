@@ -1,6 +1,6 @@
-import {STANDARD_SCREEN_HEIGHT, STANDARD_SCREEN_WIDTH} from './constants';
-import {Dimensions, Platform} from 'react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { STANDARD_SCREEN_HEIGHT, STANDARD_SCREEN_WIDTH } from './constants';
+import { Dimensions, Platform } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
@@ -33,15 +33,15 @@ export const isAndroid = Platform.OS === 'android';
 export const isIOS = Platform.OS === 'ios';
 
 export const fontFamily = {
-  inter700: isAndroid ? 'inter_bold' : 'Inter Bold',
-  inter600: isAndroid ? 'inter_semi_bold' : 'Inter SemiBold',
-  inter500: isAndroid ? 'inter_medium' : 'Inter Medium',
-  inter400: isAndroid ? 'inter_regular' : 'Inter Regular',
+  inter700: isAndroid ? 'inter_bold' : 'Inter-Bold',
+  inter600: isAndroid ? 'inter_semi_bold' : 'Inter-SemiBold',
+  inter500: isAndroid ? 'inter_medium' : 'Inter-Medium',
+  inter400: isAndroid ? 'inter_regular' : 'Inter-Regular',
 
-  poppins700: isAndroid ? 'poppins_bold' : 'Poppins Bold',
-  poppins600: isAndroid ? 'poppins_semi_bold' : 'Poppins SemiBold',
-  poppins500: isAndroid ? 'poppins_medium' : 'Poppins Medium',
-  poppins400: isAndroid ? 'poppins_regular' : 'Poppins Regular',
+  poppins700: isAndroid ? 'poppins_bold' : 'Poppins-Bold',
+  poppins600: isAndroid ? 'poppins_semi_bold' : 'Poppins-SemiBold',
+  poppins500: isAndroid ? 'poppins_medium' : 'Poppins-Medium',
+  poppins400: isAndroid ? 'poppins_regular' : 'Poppins-Regular',
 
   bebesneue400: isAndroid ? 'bebasneue_regular' : 'Bebas Neue',
   nunito200: isAndroid ? 'nunito_extra_light' : 'Nunito ExtraLight',

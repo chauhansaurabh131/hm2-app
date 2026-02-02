@@ -1,13 +1,33 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiSaucePlugin from 'reactotron-apisauce';
+import { NativeModules } from 'react-native';
 import Reactotron from 'reactotron-react-native';
-import {reactotronRedux} from 'reactotron-redux';
+import { reactotronRedux } from 'reactotron-redux';
 import sagaPlugin from 'reactotron-redux-saga';
 
-export default Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
-  .configure() // controls connection & communication settings
-  .useReactNative() // add all built-in react native plugins
+let host = 'localhost';
+if (__DEV__) {
+  const scriptURL = NativeModules?.SourceCode?.scriptURL;
+  if (scriptURL) {
+    host = scriptURL.split('://')[1].split(':')[0];
+  }
+}
+
+const reactotron = Reactotron.setAsyncStorageHandler(AsyncStorage)
+  .configure({
+    name: 'HappyMilan',
+    host: host,
+  })
+  .useReactNative()
   .use(apiSaucePlugin())
   .use(sagaPlugin())
   .use(reactotronRedux())
-  .connect(); // let's connect!
+  .connect();
+
+// Clear Reactotron on every bundle load
+Reactotron.clear();
+
+// Extend console with tron for easy access
+console.tron = Reactotron;
+
+export default reactotron;

@@ -21,6 +21,7 @@ import educationLogo from '../../../assets/icons/education_logo.png';
 import professionalLogo from '../../../assets/icons/professional_logo.png';
 import LinearGradient from 'react-native-linear-gradient';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {icons} from '../../../assets';
 
 const RemainingDataUiScreen = () => {
   const {user} = useSelector(state => state.auth);
@@ -127,42 +128,50 @@ const RemainingDataUiScreen = () => {
 
     // Determine the background color and image based on the category
     let backgroundColor;
+    let borderColor;
     let imageSource;
     let imageStyle;
 
     switch (item.category) {
       case 'basicDetails':
         backgroundColor = '#F2F7FF'; // Light blue for basicDetails
+        borderColor = '#0D4EB3'; // blue
         imageSource = profileLogo; // Profile image for basicDetails
         imageStyle = styles.profileImage; // Style for profile image
         break;
       case 'contactDetails':
         backgroundColor = '#e8f5d6'; // Light purple for contactDetails
+        borderColor = '#4CAF50'; // green
         imageSource = addressLocationLogo; // Address logo for contactDetails
         imageStyle = styles.addressImage; // Style for address logo
         break;
       case 'hobbiesAndInterest':
         backgroundColor = '#ECFAFF'; // Light yellow for hobbiesAndInterest
+        borderColor = '#00BFFF'; // sky blue
         imageSource = hobbiesLogo; // Hobbies image for hobbiesAndInterest
         imageStyle = styles.hobbiesImage; // Style for hobbies image
         break;
       case 'locationDetails':
         backgroundColor = '#FAF1FF'; // Light green for locationDetails
+        borderColor = '#9C27B0'; // purple
         imageSource = locationLogo; // Location logo for locationDetails
         imageStyle = styles.locationImage; // Style for location logo
         break;
       case 'educationDetails':
         backgroundColor = '#F4F1FF'; // Light pink for educationDetails
+        borderColor = '#673AB7'; // deep purple
         imageSource = educationLogo; // Education image for educationDetails
         imageStyle = styles.educationImage; // Style for education image
         break;
       case 'professional':
         backgroundColor = '#FFEBF7'; // Light lavender for professional
+        borderColor = '#E91E63'; // pink
         imageSource = professionalLogo; // Professional image for professional
         imageStyle = styles.professionalImage; // Style for professional image
         break;
       default:
         backgroundColor = '#FFFFFF'; // Default background color
+        borderColor = '#E0E0E0';
         imageSource = null; // No image for unknown categories
         imageStyle = styles.defaultImage; // Default image style
         break;
@@ -170,9 +179,16 @@ const RemainingDataUiScreen = () => {
 
     return (
       <SafeAreaView>
-        <View style={{width: hp(190), marginHorizontal: 10}}>
+        {/*<View style={{width: hp(190), marginHorizontal: 10}}>*/}
+        <TouchableOpacity
+          style={{width: '100%'}}
+          onPress={() => handleAddPress(item)}>
           <View style={{alignItems: 'center'}}>
-            <View style={[styles.categoryContainer, {backgroundColor}]}>
+            <View
+              style={[
+                styles.categoryContainer,
+                {backgroundColor, borderColor},
+              ]}>
               {imageSource && (
                 <Image
                   source={imageSource}
@@ -184,17 +200,28 @@ const RemainingDataUiScreen = () => {
               </Text>
 
               <TouchableOpacity onPress={() => handleAddPress(item)}>
-                <LinearGradient
-                  colors={['#0D4EB3', '#9413D0']}
-                  style={styles.addButtonContainer}>
-                  <View style={[styles.addButtonBody, {backgroundColor}]}>
-                    <Text style={styles.addButtonText}>Add Details</Text>
-                  </View>
-                </LinearGradient>
+                {/*<LinearGradient*/}
+                {/*  colors={['#0D4EB3', '#9413D0']}*/}
+                {/*  style={styles.addButtonContainer}>*/}
+                {/*  <View style={[styles.addButtonBody, {backgroundColor}]}>*/}
+                {/*    <Text style={styles.addButtonText}>Add Details</Text>*/}
+                {/*  </View>*/}
+                {/*</LinearGradient>*/}
+
+                <Image
+                  source={icons.plus_icon}
+                  style={{
+                    tintColor: colors.black,
+                    width: hp(15),
+                    height: hp(15),
+                    resizeMode: 'contain',
+                    marginTop: hp(18),
+                  }}
+                />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
         <View
           style={{
@@ -263,21 +290,30 @@ const styles = StyleSheet.create({
   categoryContainer: {
     borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
-    width: hp(190), // You can adjust the width
-    height: hp(190), // You can adjust the height
-    marginRight: hp(23),
+    // justifyContent: 'center',
+    width: hp(156), // You can adjust the width
+    height: hp(156), // You can adjust the height
+    // marginRight: hp(23),
+    marginRight: wp(14),
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    // elevation: 3,
+    // shadowColor: '#000', // iOS
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
   },
   categoryTitle: {
-    fontSize: fontSize(14),
+    fontSize: fontSize(12),
     color: colors.black,
     lineHeight: hp(21),
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
   },
   categoryImage: {
-    width: hp(60), // Base size for images
-    height: hp(60), // Base size for images
+    width: hp(42), // Base size for images
+    height: hp(32), // Base size for images
     marginBottom: 10, // Add some spacing between image and title
+    marginTop: hp(27),
   },
   profileImage: {
     width: hp(37),

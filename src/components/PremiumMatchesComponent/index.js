@@ -28,7 +28,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ProfileAvatar from '../letterProfileComponent';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
-const PremiumMatchesComponent = ({toastConfigs}) => {
+const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -138,9 +138,12 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             : user,
         );
       });
+
+      onShowAlert?.('Profile Like'); // 🔔 ALERT
     } catch (error) {
       console.error('Error creating like:', error);
       // Alert.alert('Error', 'Failed to create like.');
+      onShowAlert?.('Failed to Profile Like');
     }
   };
 
@@ -190,9 +193,13 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
       // If necessary, re-fetch the data after updating
       // await fetchNewUserData();
+
+      onShowAlert?.('Profile Disliked'); // 🔔 ALERT
     } catch (error) {
       console.error('Error updating like:', error);
       // Alert.alert('Error', 'Failed to update like.');
+
+      onShowAlert?.('Failed to Profile Disliked');
     }
   };
 
@@ -213,7 +220,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
   const OnsendRequestedSend = async item => {
     try {
-      console.log(' === Sending Friend Request ===> ', item);
+      // console.log(' === Sending Friend Request ===> ', item);
 
       const response = await axios.post(
         'https://stag.mntech.website/api/v1/user/friend/create-friend',
@@ -245,9 +252,12 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             : userItem,
         ),
       );
+
+      onShowAlert?.('Friend request sent');
     } catch (error) {
       // Alert.alert('Error', 'Failed to send friend request.');
       console.log(' === Error ===> ', 'Failed to send friend request.');
+      onShowAlert?.('Failed to send request');
     }
   };
 
@@ -269,7 +279,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
           },
         );
 
-        console.log('Friend request removed successfully:', response.data);
+        // console.log('Friend request removed successfully:', response.data);
 
         // ✅ Update UI locally by removing the "requested" status
         setUsers(prevData =>
@@ -285,9 +295,12 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
               : userItem,
           ),
         );
+
+        onShowAlert?.('Friend request removed'); // 🔔 ALERT
       } catch (error) {
         console.log(' === error ===> ', error);
         // Alert.alert('Error', 'Failed to remove friend request.');
+        onShowAlert?.('Failed to remove request');
       }
     }
   };
@@ -320,6 +333,8 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
       // Optionally, trigger another API to refresh the list if needed
       // fetchNewUserData(); // Re-fetch user data
+
+      onShowAlert?.('Profile has been shortlisted'); // 🔔 ALERT
     } catch (error) {
       console.error('Error adding to shortlist:', error);
       // Alert.alert('Error', 'Failed to add to shortlist.');
@@ -352,6 +367,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             : user,
         );
       });
+      onShowAlert?.('Shortlisted has been removed'); // 🔔 ALERT
     } catch (error) {
       console.error('Error removing from shortlist:', error);
       // Alert.alert('Error', 'Failed to remove from shortlist.');
@@ -467,36 +483,25 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
     // Determine the star icon based on userShortListDetails
     const starIconSource = item?.userShortListDetails?.id
-      ? icons.black_check_icon
-      : icons.black_start_icon;
+      ? icons.start_like_icon
+      : icons.start_unLike_icon;
 
     return (
       <TouchableOpacity
         style={styles.itemContainer}
         activeOpacity={0.6}
-        // onPress={handlePress}
         onPress={() => {
           handlePress(item);
         }}>
         <View
           style={{
-            height: hp(225),
+            width: wp(156),
+            height: hp(285),
             borderRadius: 10,
             backgroundColor: '#FFFFFF',
             borderWidth: 1,
             borderColor: '#EFEFEF',
           }}>
-          {/*<Image*/}
-          {/*  style={*/}
-          {/*    item.profilePic*/}
-          {/*      ? styles.image*/}
-          {/*      : [styles.image, styles.imageWithBorder]*/}
-          {/*  }*/}
-          {/*  source={*/}
-          {/*    item.profilePic ? {uri: item.profilePic} : images.empty_male_Image*/}
-          {/*  }*/}
-          {/*/>*/}
-
           {hasValidImage ? (
             <>
               <Image source={{uri: item.profilePic}} style={styles.image} />
@@ -535,7 +540,7 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
               <ProfileAvatar
                 firstName={item.firstName || item.name}
                 lastName={item.lastName}
-                textStyle={{width: hp(110), height: hp(136), marginBottom: 10}}
+                textStyle={{width: '100%', height: hp(198), marginBottom: 10}}
               />
               {subPlan && (
                 <Image
@@ -546,7 +551,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
                     resizeMode: 'contain',
                     height: hp(12),
                     width: hp(12),
-                    // tintColor: 'white',
                     tintColor: crownTintColor,
                     left: 15,
                   }}
@@ -555,50 +559,93 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
             </>
           )}
 
-          <View style={styles.overlayContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                if (item?.userShortListDetails?.id) {
-                  // If the user is already in the shortlist, remove them
-                  removeFromShortlist(item.userShortListDetails.id);
-                } else {
-                  // If the user is not in the shortlist, add them
-                  addToShortlist(item._id);
-                }
-              }}
-              style={{position: 'absolute', right: 0, padding: 10}}>
-              <Image source={starIconSource} style={styles.starIcon} />
-            </TouchableOpacity>
-          </View>
+          {item?.isUserActive && (
+            <View style={styles.overlayContainer}>
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  right: 7,
+                  top: 7,
+                  backgroundColor: 'black',
+                  width: wp(43),
+                  height: hp(16),
+                  borderRadius: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(9),
+                    fontFamily: fontFamily.poppins400,
+                    lineHeight: hp(15),
+                  }}>
+                  Online
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/*<View style={styles.overlayContainer} />*/}
 
           <View style={{alignItems: 'center'}}>
             <Text style={styles.itemText}>
               {firstName || name} {lastName}
             </Text>
 
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', top: 5}}>
               <Text style={styles.nameDetailTextStyle}>
-                {item?.age || 'N/A'} yrs,
+                {item?.age || 'N/A'} yr, {item?.height || 'N/A'}
               </Text>
+
+              <View
+                style={{
+                  width: wp(1),
+                  height: hp(12),
+                  backgroundColor: '#D4D4D4',
+                  marginLeft: wp(5),
+                  marginRight: wp(5),
+                }}
+              />
               <Text style={styles.nameDetailTextStyle}>
-                {' '}
-                {item?.height || 'N/A'}
+                {currentCity || 'N/A'}, {currentCountry || 'N/A'}
               </Text>
             </View>
 
-            <Text style={styles.nameDetailTextStyle}>
-              {currentCity || 'N/A'}, {currentCountry || 'N/A'}
-            </Text>
+            {/*<Text style={styles.nameDetailTextStyle}> #D4D4D4 */}
+            {/*  {currentCity || 'N/A'}, {currentCountry || 'N/A'}*/}
+            {/*</Text>*/}
 
-            <View style={{flexDirection: 'row', marginTop: hp(12)}}>
+            <View style={{flexDirection: 'row', marginTop: hp(15)}}>
               <TouchableOpacity onPress={() => handleLikePress(item)}>
                 <Image
                   source={
                     isLiked ? icons.new_user_like_icon : icons.new_like_icon
                   }
                   style={{
-                    width: hp(38),
-                    height: hp(22),
+                    width: hp(41),
+                    height: hp(24),
+                    resizeMode: 'stretch',
+                    marginRight: 8,
+                  }}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  if (item?.userShortListDetails?.id) {
+                    // If the user is already in the shortlist, remove them
+                    removeFromShortlist(item.userShortListDetails.id);
+                  } else {
+                    // If the user is not in the shortlist, add them
+                    addToShortlist(item._id);
+                  }
+                }}>
+                <Image
+                  source={starIconSource}
+                  style={{
+                    width: hp(41),
+                    height: hp(24),
                     resizeMode: 'stretch',
                     marginRight: 8,
                   }}
@@ -620,8 +667,8 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
                 <Image
                   source={friendIconSource}
                   style={{
-                    width: hp(38),
-                    height: hp(22),
+                    width: hp(41),
+                    height: hp(24),
                     resizeMode: 'stretch',
                   }}
                 />
@@ -658,159 +705,6 @@ const PremiumMatchesComponent = ({toastConfigs}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      {/* Check if there are paginatedResults to display */}
-      {/*{loading ? (*/}
-      {/*  <FlatList*/}
-      {/*    data={[1, 1, 1, 1]}*/}
-      {/*    horizontal={true}*/}
-      {/*    showsHorizontalScrollIndicator={false}*/}
-      {/*    renderItem={() => {*/}
-      {/*      return (*/}
-      {/*        <View*/}
-      {/*          style={{*/}
-      {/*            width: 120,*/}
-      {/*            height: 200,*/}
-      {/*            borderRadius: 10,*/}
-      {/*            // backgroundColor: 'orange',*/}
-      {/*          }}>*/}
-      {/*          <View*/}
-      {/*            style={{*/}
-      {/*              width: 100,*/}
-      {/*              height: 170,*/}
-      {/*              backgroundColor: '#9e9e9e',*/}
-      {/*              opacity: 0.4,*/}
-      {/*              alignItems: 'center',*/}
-      {/*              borderRadius: 10,*/}
-      {/*            }}>*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: '80%',*/}
-      {/*                height: 80,*/}
-      {/*                backgroundColor: 'black',*/}
-      {/*                marginTop: 10,*/}
-      {/*                borderRadius: 10,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: '60%',*/}
-      {/*                height: 10,*/}
-      {/*                backgroundColor: 'black',*/}
-      {/*                marginTop: 30,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <View*/}
-      {/*              style={{*/}
-      {/*                flexDirection: 'row',*/}
-      {/*                justifyContent: 'space-between',*/}
-      {/*                marginTop: 12,*/}
-      {/*              }}>*/}
-      {/*              <ShimmerPlaceholder*/}
-      {/*                style={{*/}
-      {/*                  width: 30,*/}
-      {/*                  height: 15,*/}
-      {/*                  backgroundColor: 'black',*/}
-      {/*                  borderRadius: 25,*/}
-      {/*                }}*/}
-      {/*              />*/}
-      {/*              <ShimmerPlaceholder*/}
-      {/*                style={{*/}
-      {/*                  width: 30,*/}
-      {/*                  height: 15,*/}
-      {/*                  backgroundColor: 'black',*/}
-      {/*                  borderRadius: 25,*/}
-      {/*                  marginLeft: 15,*/}
-      {/*                }}*/}
-      {/*              />*/}
-      {/*            </View>*/}
-      {/*          </View>*/}
-      {/*        </View>*/}
-      {/*      );*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*) :*/}
-      {/*{users.length > 0 ? (*/}
-      {/*  <FlatList*/}
-      {/*    data={users}*/}
-      {/*    keyExtractor={(item, index) => String(index)} // Use a unique key or index for now*/}
-      {/*    renderItem={renderItem}*/}
-      {/*    horizontal // Make the FlatList horizontal*/}
-      {/*    showsHorizontalScrollIndicator={false} // Optionally hide the horizontal scroll indicator*/}
-      {/*    contentContainerStyle={styles.listContainer} // Optional styling for the list*/}
-      {/*  />*/}
-      {/*) : (*/}
-      {/*  // <Text style={{textAlign: 'center', marginTop: 20, color: 'black'}}>*/}
-      {/*  //   No Premium Matches Found.............................*/}
-      {/*  // </Text>*/}
-      {/*  <FlatList*/}
-      {/*    data={[1, 1, 1, 1]}*/}
-      {/*    horizontal={true}*/}
-      {/*    showsHorizontalScrollIndicator={false}*/}
-      {/*    renderItem={() => {*/}
-      {/*      return (*/}
-      {/*        <View*/}
-      {/*          style={{*/}
-      {/*            width: 120,*/}
-      {/*            height: 200,*/}
-      {/*            borderRadius: 10,*/}
-      {/*            // backgroundColor: 'orange',*/}
-      {/*          }}>*/}
-      {/*          <View*/}
-      {/*            style={{*/}
-      {/*              width: 100,*/}
-      {/*              height: 170,*/}
-      {/*              backgroundColor: '#9e9e9e',*/}
-      {/*              opacity: 0.4,*/}
-      {/*              alignItems: 'center',*/}
-      {/*              borderRadius: 10,*/}
-      {/*            }}>*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: '80%',*/}
-      {/*                height: 80,*/}
-      {/*                backgroundColor: 'black',*/}
-      {/*                marginTop: 10,*/}
-      {/*                borderRadius: 10,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <ShimmerPlaceholder*/}
-      {/*              style={{*/}
-      {/*                width: '60%',*/}
-      {/*                height: 10,*/}
-      {/*                backgroundColor: 'black',*/}
-      {/*                marginTop: 30,*/}
-      {/*              }}*/}
-      {/*            />*/}
-      {/*            <View*/}
-      {/*              style={{*/}
-      {/*                flexDirection: 'row',*/}
-      {/*                justifyContent: 'space-between',*/}
-      {/*                marginTop: 12,*/}
-      {/*              }}>*/}
-      {/*              <ShimmerPlaceholder*/}
-      {/*                style={{*/}
-      {/*                  width: 30,*/}
-      {/*                  height: 15,*/}
-      {/*                  backgroundColor: 'black',*/}
-      {/*                  borderRadius: 25,*/}
-      {/*                }}*/}
-      {/*              />*/}
-      {/*              <ShimmerPlaceholder*/}
-      {/*                style={{*/}
-      {/*                  width: 30,*/}
-      {/*                  height: 15,*/}
-      {/*                  backgroundColor: 'black',*/}
-      {/*                  borderRadius: 25,*/}
-      {/*                  marginLeft: 15,*/}
-      {/*                }}*/}
-      {/*              />*/}
-      {/*            </View>*/}
-      {/*          </View>*/}
-      {/*        </View>*/}
-      {/*      );*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*)}*/}
       {loading ? (
         <FlatList
           data={[1, 1, 1, 1]}
@@ -911,7 +805,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   listContainer: {
-    // paddingLeft: 10, // Padding for the first item
+    paddingLeft: 17, // ✅ CONTROL LEFT SPACE HERE
     paddingRight: 10, // Padding for the last item
   },
   itemContainer: {
@@ -933,13 +827,13 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: fontSize(12),
-    lineHeight: hp(15),
+    lineHeight: hp(16),
     fontFamily: fontFamily.poppins700,
     color: colors.black,
   },
   image: {
-    width: wp(110),
-    height: hp(136),
+    width: '100%',
+    height: hp(198),
     borderRadius: 6,
     marginBottom: 8,
   },
@@ -960,11 +854,11 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   nameDetailTextStyle: {
-    fontSize: fontSize(9),
+    fontSize: fontSize(8),
     lineHeight: hp(12),
     color: colors.black,
     fontFamily: fontFamily.poppins400,
-    top: 5,
+    // top: 5,
   },
   toastContainer: {
     backgroundColor: '#333333', // Toast background color

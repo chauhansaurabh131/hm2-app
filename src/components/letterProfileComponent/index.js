@@ -55,30 +55,19 @@ import {hp} from '../../utils/helpers';
 // Function to get a color based on name
 const getColorFromName = name => {
   const colors = [
-    '#FFA500', // orange
+    '#FFA500',
     '#CD5C5C',
     '#9932CC',
-    '#FFC0CB',
-    '#FFA07A',
     '#663399',
-    '#FFDAB9',
     '#FFD700',
-    '#E6E6FA',
-    '#E0FFFF',
     '#6A5ACD',
-    '#FFDAB9',
-    '#FFEBCD',
-    '#F5F5DC',
     '#7B68EE',
-    '#FFA07A',
     '#C0C0C0',
     '#2F4F4F',
     '#B22222',
     '#696969',
     '#A9A9A9',
     '#8B0000',
-    '#FFF0F5',
-    '#F5F5DC',
     '#800000',
     '#CD853F',
     '#DEB887',
@@ -86,17 +75,16 @@ const getColorFromName = name => {
     '#A0522D',
     '#6495ED',
     '#000080',
-    '#B0C4DE',
+    '#4682B4',
     '#8FBC8B',
     '#800080',
-    '#00BFFF', // deep sky blue
-    '#32CD32', // lime green
-    '#FF69B4', // hot pink
-    '#9370DB', // medium purple
-    '#FF6347', // tomato
-    '#2E8B57', // sea green
-    '#20B2AA', // light sea green
-    '#CD5C5C',
+    '#00BFFF',
+    '#32CD32',
+    '#FF69B4',
+    '#9370DB',
+    '#FF6347',
+    '#2E8B57',
+    '#20B2AA',
   ];
 
   // Create a simple hash from the name string

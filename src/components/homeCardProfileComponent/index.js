@@ -13,7 +13,7 @@ import ProfileAvatar from '../letterProfileComponent';
 import {icons} from '../../assets';
 import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
 const HomeCardProfileComponent = () => {
@@ -141,9 +141,9 @@ const HomeCardProfileComponent = () => {
     <SafeAreaView style={style.container}>
       <View style={style.cardContainer}>
         <LinearGradient
-          colors={['#7045EB', '#4819CB']}
+          colors={['#A586FF', '#7045EB']}
           start={{x: 0, y: 0}}
-          end={{x: 0, y: 1.5}}
+          end={{x: 1, y: 1}}
           style={style.cardBodyStyle}>
           <View style={style.cardViewStyle}>
             {profilePicUrl ? (
@@ -219,22 +219,59 @@ const HomeCardProfileComponent = () => {
                     </Text>
                   </View>
 
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 1.1,
+                      backgroundColor: '#DED3FF36',
+                      marginTop: hp(29),
+                    }}
+                  />
+
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
                       navigation.navigate('Upgrader');
                     }}
-                    style={style.cardButtonContainer}>
-                    <View style={style.cardButtonBodyStyle}>
-                      <View style={style.cardButtonTextContainer}>
-                        <Text style={style.cardButtonTextStyle}>Upgrade</Text>
-                        <Image
-                          source={icons.crownIcon}
-                          style={style.cardButtonImageStyle}
-                        />
-                      </View>
-                    </View>
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      // marginTop: hp(15),
+                      // backgroundColor: 'red',
+                      height: hp(50),
+                    }}>
+                    <Text
+                      style={{
+                        color: colors.white,
+                        fontSize: fontSize(12),
+                        lineHeight: hp(18),
+                        fontFamily: fontFamily.poppins500,
+                      }}>
+                      Upgrade
+                    </Text>
+                    <Image
+                      source={icons.left_arrow_icon}
+                      style={{width: wp(5), height: hp(8)}}
+                    />
                   </TouchableOpacity>
+
+                  {/*<TouchableOpacity*/}
+                  {/*  activeOpacity={0.7}*/}
+                  {/*  onPress={() => {*/}
+                  {/*    navigation.navigate('Upgrader');*/}
+                  {/*  }}*/}
+                  {/*  style={style.cardButtonContainer}>*/}
+                  {/*  <View style={style.cardButtonBodyStyle}>*/}
+                  {/*    <View style={style.cardButtonTextContainer}>*/}
+                  {/*      <Text style={style.cardButtonTextStyle}>Upgrade</Text>*/}
+                  {/*      <Image*/}
+                  {/*        source={icons.crownIcon}*/}
+                  {/*        style={style.cardButtonImageStyle}*/}
+                  {/*      />*/}
+                  {/*    </View>*/}
+                  {/*  </View>*/}
+                  {/*</TouchableOpacity>*/}
                 </>
               )}
             </View>

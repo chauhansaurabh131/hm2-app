@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import {icons} from '../../assets';
 
@@ -77,15 +77,16 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     height: hp(50),
-    // paddingHorizontal: 15,
     fontSize: fontSize(16),
     color: '#333',
-    // width: wp(400),
     marginLeft: hp(13),
     paddingRight: hp(15),
-    lineHeight: hp(24),
     fontFamily: fontFamily.poppins400,
-    top: 3,
+
+    // ✅ FIX
+    textAlignVertical: 'center', // Android fix
+    paddingVertical: 0, // iOS fix
+    top: isIOS ? 0 : 3,
   },
   iconRight: {
     marginRight: 15,

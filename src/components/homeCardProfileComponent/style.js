@@ -29,6 +29,7 @@ export const style = StyleSheet.create({
     marginLeft: wp(10),
     borderRadius: 5,
     resizeMode: 'cover',
+    marginTop: hp(4),
   },
   cardTextContainer: {
     marginLeft: hp(30),

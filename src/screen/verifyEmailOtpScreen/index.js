@@ -132,6 +132,7 @@ const VerifyEmailOtpScreen = ({route}) => {
   };
 
   const resendOtpEmail = async () => {
+    Keyboard.dismiss();
     const isMobile = /^[0-9]{10}$/.test(email); // Basic mobile number check
 
     try {

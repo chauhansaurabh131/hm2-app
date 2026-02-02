@@ -22,6 +22,8 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useSelector} from 'react-redux';
 import RNBlobUtil from 'react-native-blob-util';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import ProfileAvatar from '../../components/letterProfileComponent';
+import style from '../HomeScreen/style';
 
 const SuccessStoryEditInformationScreen = ({route}) => {
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -303,15 +305,29 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     setSelectedImages(prevImages => prevImages.filter(image => image !== uri));
   };
 
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Image source={images.happyMilanColorLogo} style={styles.logo} />
         <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-          <Image
-            source={userImage ? {uri: userImage} : images.empty_male_Image}
-            style={styles.profileImage}
-          />
+          {hasValidImage ? (
+            <Image
+              source={userImage ? {uri: userImage} : images.empty_male_Image}
+              style={styles.profileImage}
+            />
+          ) : (
+            <ProfileAvatar
+              firstName={user?.user?.firstName || name}
+              lastName={user?.user?.lastName}
+              textStyle={style.headerTopSheetImageStyle}
+              profileTexts={{fontSize: fontSize(10)}}
+            />
+          )}
         </TouchableOpacity>
       </View>
 

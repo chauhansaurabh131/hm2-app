@@ -76,7 +76,7 @@ const NewEnterMultipleSelectValueComponent = ({
       <Modal
         visible={visible}
         transparent
-        animationType="fade"
+        animationType="none"
         onRequestClose={() => setVisible(false)}>
         <View style={styles.centerWrapper}>
           {/* BACKDROP */}

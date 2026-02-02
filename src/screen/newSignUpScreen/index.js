@@ -25,6 +25,21 @@ import {
 } from '@react-native-google-signin/google-signin';
 import messaging from '@react-native-firebase/messaging';
 
+const BLOCKED_EMAIL_DOMAINS = [
+  'yopmail.com',
+  'yopmail.fr',
+  'yopmail.net',
+  'yapmail.com',
+  'mailinator.com',
+  'tempmail.com',
+  '10minutemail.com',
+  'guerrillamail.com',
+  'throwawaymail.com',
+  'example.com',
+  'example.org',
+  'example.net',
+];
+
 const NewSignUpScreen = () => {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
@@ -36,19 +51,6 @@ const NewSignUpScreen = () => {
   const [fcmToken, setFcmToken] = useState(null);
 
   const {loading} = useSelector(state => state.auth);
-
-  // const validateName = () => {
-  //   if (name.length < 3) {
-  //     setNameError('Name must be at least 3 characters');
-  //     return false;
-  //   } else if (name.length > 15) {
-  //     setNameError('Name must be less than 15 characters');
-  //     return false;
-  //   } else {
-  //     setNameError('');
-  //     return true;
-  //   }
-  // };
 
   useEffect(() => {
     const RequestUserPermission = async () => {
@@ -88,17 +90,6 @@ const NewSignUpScreen = () => {
       return true;
     }
   };
-
-  // const validateEmail = () => {
-  //   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!emailPattern.test(email)) {
-  //     setEmailError('Invalid E-mail Address or Mobile Number');
-  //     return false;
-  //   } else {
-  //     setEmailError('');
-  //     return true;
-  //   }
-  // };
 
   const openPrivacyPolicy = async () => {
     const url = 'https://happymilan.vercel.app/privacypolicy';
@@ -142,25 +133,38 @@ const NewSignUpScreen = () => {
     return false;
   };
 
-  // const handleSignUp = async () => {
-  //   const isNameValid = validateName();
-  //   const isEmailValid = validateEmail();
-  //   if (isNameValid && isEmailValid) {
-  //     dispatch(
-  //       register({name, email}, () => {
-  //         navigation.navigate('VerifyEmailOtpScreen', {name, email});
-  //       }),
-  //     );
-  //   }
-  // };
+  /* 🚫 CHECK DISPOSABLE EMAIL */
+  const isBlockedEmailDomain = email => {
+    if (!email.includes('@')) {
+      return false;
+    }
+    const domain = email.split('@')[1].toLowerCase();
+    return BLOCKED_EMAIL_DOMAINS.includes(domain);
+  };
 
   const handleSignUp = () => {
+    Keyboard.dismiss();
     // Validate both name and email/mobile input before proceeding
     const isNameValid = validateName();
     const emailOrMobileValid = validateEmailOrMobile();
 
     // If either validation fails, return early
+
+    // if (!isNameValid || !emailOrMobileValid) {
+    //   return;
+    // }
+
     if (!isNameValid || !emailOrMobileValid) {
+      return;
+    }
+
+    // 🚫 BLOCK FAKE EMAIL DOMAINS
+    if (emailOrMobileValid === 'email' && isBlockedEmailDomain(email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Email Address',
+        text2: 'Temporary or disposable email addresses are not allowed',
+      });
       return;
     }
 

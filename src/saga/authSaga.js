@@ -1,14 +1,14 @@
-import { all, call, put, takeLatest } from 'redux-saga/effects';
+import {all, call, put, takeLatest} from 'redux-saga/effects';
 
 import * as TYPES from '../actions/actionTypes';
 
 import * as authAction from '../actions/authActions';
-import { auth } from '../apis/authApi';
-import { setAsyncStorageData } from '../utils/global';
-import { REFRESH_TOKEN, TOKEN } from '../utils/constants';
+import {auth} from '../apis/authApi';
+import {setAsyncStorageData} from '../utils/global';
+import {REFRESH_TOKEN, TOKEN} from '../utils/constants';
 import navigations from '../navigations';
-import { SET_2FA_AUTO } from '../actions/actionTypes';
-import { authOtpVerifyFail, authOtpVerifySuccess } from '../actions/authActions';
+import {SET_2FA_AUTO} from '../actions/actionTypes';
+import {authOtpVerifyFail, authOtpVerifySuccess} from '../actions/authActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 
@@ -294,10 +294,10 @@ function* setPassword(action) {
 function* logout() {
   try {
     yield call(AsyncStorage.clear);
-    yield put({ type: TYPES.LOGOUT_SUCCESS });
+    yield put({type: TYPES.LOGOUT_SUCCESS});
   } catch (error) {
     console.log('Logout Error: ', error);
-    yield put({ type: TYPES.LOGOUT_SUCCESS }); // Force logout even if clear fails
+    yield put({type: TYPES.LOGOUT_SUCCESS}); // Force logout even if clear fails
   }
 }
 

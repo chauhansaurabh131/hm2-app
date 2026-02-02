@@ -6,6 +6,7 @@ import {
   View,
   ActivityIndicator,
   TextInput,
+  Keyboard,
 } from 'react-native';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
@@ -43,6 +44,7 @@ const CreatingProfileScreen = () => {
   const navigation = useNavigation();
   const apiDispatch = useDispatch();
   const {isUpdatingProfile, user} = useSelector(state => state.auth);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
     // Set first name and last name from the user object with proper formatting
@@ -87,6 +89,20 @@ const CreatingProfileScreen = () => {
       setSelectedOption(user.user.creatingProfileFor); // Set the value for dropdown
     }
   }, [user?.user?.creatingProfileFor]);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const onStartNowPress = () => {
     const formattedOption = selectedOption
@@ -298,6 +314,7 @@ const CreatingProfileScreen = () => {
             value={description}
             onChangeText={setDescription}
             placeholder="Write description..."
+            placeholderTextColor={'gray'}
             multiline
             numberOfLines={5}
             textAlignVertical="top" // 🔥 very important for Android
@@ -316,21 +333,25 @@ const CreatingProfileScreen = () => {
           />
         </View>
       </View>
-      <View style={{position: 'absolute', bottom: 17, width: '100%'}}>
-        <View style={{marginHorizontal: 17}}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={onStartNowPress}
-            style={style.startButton}
-            disabled={isUpdatingProfile}>
-            {isUpdatingProfile ? (
-              <ActivityIndicator size="large" color="#FFFFFF" />
-            ) : (
-              <Text style={style.startText}>Add More Info</Text>
-            )}
-          </TouchableOpacity>
+
+      {!isKeyboardVisible && (
+        <View style={{position: 'absolute', bottom: 17, width: '100%'}}>
+          <View style={{marginHorizontal: 17}}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={onStartNowPress}
+              style={style.startButton}
+              disabled={isUpdatingProfile}>
+              {isUpdatingProfile ? (
+                <ActivityIndicator size="large" color="#FFFFFF" />
+              ) : (
+                <Text style={style.startText}>Add More Info</Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
+
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
   );

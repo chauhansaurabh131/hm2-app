@@ -157,6 +157,7 @@ const style = StyleSheet.create({
     // marginLeft: wp(30),
     flexDirection: 'row',
     marginTop: hp(34),
+    marginHorizontal: 17,
     // backgroundColor: 'red',
   },
   premiumTextStyle: {
