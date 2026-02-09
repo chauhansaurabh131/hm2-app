@@ -184,7 +184,9 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
 
   const onLogOutPress = () => {
     closeBottomSheet();
-    setConfirmationVisible(true);
+    setTimeout(() => {
+      setConfirmationVisible(true);
+    }, 100); // Reduced delay to 100ms for snappier response while avoiding iOS conflicts
   };
 
   const onPrivacyScreenHandle = () => {
@@ -220,13 +222,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
+    <>
       <RBSheet
         ref={bottomSheetRef}
         height={hp(610)}
@@ -505,6 +501,10 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
         transparent={true}
         animationIn="fadeIn"
         animationOut="fadeOut"
+        animationInTiming={0}
+        animationOutTiming={0}
+        backdropTransitionInTiming={0}
+        backdropTransitionOutTiming={0}
         isVisible={isConfirmationVisible}
         onBackdropPress={onStayButtonPress} // Dismiss on backdrop press if desired
         backdropOpacity={0.7} // Semi-transparent background
@@ -537,7 +537,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </>
   );
 };
 

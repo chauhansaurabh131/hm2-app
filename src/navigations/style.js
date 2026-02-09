@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-import {fontSize, hp, isIOS} from '../utils/helpers';
+import { StyleSheet } from 'react-native';
+import { fontSize, hp, isIOS } from '../utils/helpers';
 
 export const style = StyleSheet.create({
   CustomTabBarButtonStyle: {
@@ -21,7 +21,6 @@ export const style = StyleSheet.create({
     justifyContent: 'center',
   },
   bottomTabNavigationContainer: {
-    height: isIOS ? hp(100) : hp(80),
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },

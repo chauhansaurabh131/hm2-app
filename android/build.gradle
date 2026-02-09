@@ -2,10 +2,10 @@ buildscript {
     ext {
         buildToolsVersion = "35.0.0"
         minSdkVersion = 23
-        compileSdkVersion = 34
+        compileSdkVersion = 35
         targetSdkVersion = 35
-        ndkVersion = "25.1.8937393"
-        kotlinVersion = "1.9.23"
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.24"
 
     }
     repositories {
@@ -16,10 +16,39 @@ buildscript {
     }
     dependencies {
 //        classpath("com.android.tools.build:gradle")
-        classpath("com.android.tools.build:gradle:8.0.2")
+        classpath("com.android.tools.build:gradle:8.6.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath 'com.google.gms:google-services:4.4.1'
+    }
+}
+subprojects {
+    def configureProject = { p ->
+        if (p.hasProperty('android')) {
+            p.android {
+                if (p.getProperties().containsKey('externalNativeBuild')) {
+                    if (p.android.externalNativeBuild.getProperties().containsKey('cmake')) {
+                        p.android.externalNativeBuild.cmake {
+                            cppFlags "-Wl,-z,common-page-size=16384 -Wl,-z,max-page-size=16384"
+                            cFlags "-Wl,-z,common-page-size=16384 -Wl,-z,max-page-size=16384"
+                        }
+                    }
+                    if (p.android.externalNativeBuild.getProperties().containsKey('ndkBuild')) {
+                        p.android.externalNativeBuild.ndkBuild {
+                            cppFlags "-Wl,-z,common-page-size=16384 -Wl,-z,max-page-size=16384"
+                            cFlags "-Wl,-z,common-page-size=16384 -Wl,-z,max-page-size=16384"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (project.state.executed) {
+        configureProject(project)
+    } else {
+        project.afterEvaluate {
+            configureProject(it)
+        }
     }
 }
 

@@ -76,6 +76,7 @@ import SearchUserDataScreen from '../screen/searchUserDataScreen';
 import NewUserDetailsScreen from '../screen/newUserDetailsScreen';
 import RemainingDataUiScreen from '../screen/editRemainingFillUpData/remainingDataUiScreen';
 import EditGeneralScreen from '../screen/editRemainingFillUpData/editGeneralScreen';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import EditLocationScreen from '../screen/editRemainingFillUpData/editLocationScreen';
 import EditContactScreen from '../screen/editRemainingFillUpData/editContactScreen';
 import EditEducationScreen from '../screen/editRemainingFillUpData/editEducationScreen';
@@ -234,7 +235,6 @@ const MainNavigator = () => {
           justifyContent: 'center',
           alignItems: 'center',
           marginHorizontal: 5,
-          marginBottom: 10,
           height: hp(65),
           width: hp(60),
           marginTop: 5,
@@ -560,13 +560,26 @@ const MainNavigator = () => {
       };
     };
 
+    const insets = useSafeAreaInsets();
     return (
       <Tab.Navigator
         tabBarOptions={{
           keyboardHidesTabBar: true,
         }}
         screenOptions={{
-          tabBarStyle: style.bottomTabNavigationContainer,
+          tabBarStyle: [
+            style.bottomTabNavigationContainer,
+            {
+              height:
+                (isIOS ? hp(100) : hp(80)) +
+                (isIOS
+                  ? insets.bottom
+                  : insets.bottom > 0
+                  ? insets.bottom
+                  : hp(10)),
+              paddingBottom: insets.bottom > 0 ? insets.bottom : hp(5),
+            },
+          ],
         }}>
         <Tab.Screen
           name="Home"

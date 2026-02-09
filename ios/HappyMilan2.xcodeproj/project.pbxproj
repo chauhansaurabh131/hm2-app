@@ -7,25 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DA5059872A9AA025111954B0 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CE3EE849A69E35ECD8F96E /* Poppins-Bold.ttf */; };
-		F515CFB12E1FD72AC04677CE /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BDB972349FB6E690159089C /* Poppins-Medium.ttf */; };
-		D18DACFE92CC648CD1FE7603 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A40307657417CF05063139F7 /* Poppins-Regular.ttf */; };
-		5285334F3FD65778ABF4D415 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9228E50B0A0F4C097E5EA69B /* Poppins-SemiBold.ttf */; };
-		22BA8A5BCAD6E680C1EF3354 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CE3EE849A69E35ECD8F96E /* Poppins-Bold.ttf */; };
-		952D4B4A37B31E7455F4AEB5 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BDB972349FB6E690159089C /* Poppins-Medium.ttf */; };
-		48F2896FEB95FAE143064CBA /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A40307657417CF05063139F7 /* Poppins-Regular.ttf */; };
-		ACAEAA0EF27BC6B1CEC34791 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9228E50B0A0F4C097E5EA69B /* Poppins-SemiBold.ttf */; };
-
-
-
 		00E356F31AD99517003FC87E /* HappyMilan2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* HappyMilan2Tests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		22BA8A5BCAD6E680C1EF3354 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CE3EE849A69E35ECD8F96E /* Poppins-Bold.ttf */; };
 		3B562E9CA4BFB5389D8EE308 /* Pods_HappyMilan2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E40D676759A59CCFF090CB47 /* Pods_HappyMilan2.framework */; };
+		48F2896FEB95FAE143064CBA /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A40307657417CF05063139F7 /* Poppins-Regular.ttf */; };
+		5285334F3FD65778ABF4D415 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9228E50B0A0F4C097E5EA69B /* Poppins-SemiBold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8B8D390C03E90BB75E320696 /* Pods_HappyMilan2_HappyMilan2Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E113FDB0F2EE5A364F8D82C3 /* Pods_HappyMilan2_HappyMilan2Tests.framework */; };
+		952D4B4A37B31E7455F4AEB5 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BDB972349FB6E690159089C /* Poppins-Medium.ttf */; };
+		ACAEAA0EF27BC6B1CEC34791 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9228E50B0A0F4C097E5EA69B /* Poppins-SemiBold.ttf */; };
 		BD6D1FEC2C37E3C000DF15D2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BD6D1FEB2C37E3C000DF15D2 /* GoogleService-Info.plist */; };
+		D18DACFE92CC648CD1FE7603 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A40307657417CF05063139F7 /* Poppins-Regular.ttf */; };
+		DA5059872A9AA025111954B0 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CE3EE849A69E35ECD8F96E /* Poppins-Bold.ttf */; };
+		F515CFB12E1FD72AC04677CE /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BDB972349FB6E690159089C /* Poppins-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,14 +36,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		26CE3EE849A69E35ECD8F96E /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Bold.ttf"; path = "Fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
-		9BDB972349FB6E690159089C /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Medium.ttf"; path = "Fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
-		A40307657417CF05063139F7 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Regular.ttf"; path = "Fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
-		9228E50B0A0F4C097E5EA69B /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-SemiBold.ttf"; path = "Fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
-
-
-
-
 		00E356EE1AD99517003FC87E /* HappyMilan2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HappyMilan2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* HappyMilan2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HappyMilan2Tests.m; sourceTree = "<group>"; };
@@ -56,10 +45,14 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = HappyMilan2/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = HappyMilan2/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = HappyMilan2/main.m; sourceTree = "<group>"; };
+		26CE3EE849A69E35ECD8F96E /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Bold.ttf"; path = "Fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		5946B4A2DEB5FE70D7FA0E55 /* Pods-HappyMilan2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HappyMilan2.release.xcconfig"; path = "Target Support Files/Pods-HappyMilan2/Pods-HappyMilan2.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = HappyMilan2/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8BA7BCE9434C6BB22C2D5086 /* Pods-HappyMilan2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HappyMilan2.debug.xcconfig"; path = "Target Support Files/Pods-HappyMilan2/Pods-HappyMilan2.debug.xcconfig"; sourceTree = "<group>"; };
-		BD6D1FEB2C37E3C000DF15D2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9228E50B0A0F4C097E5EA69B /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-SemiBold.ttf"; path = "Fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		9BDB972349FB6E690159089C /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Medium.ttf"; path = "Fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		A40307657417CF05063139F7 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Regular.ttf"; path = "Fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		BD6D1FEB2C37E3C000DF15D2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "HappyMilan2/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BDBDEBD65A9CC94273A45F04 /* Pods-HappyMilan2-HappyMilan2Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HappyMilan2-HappyMilan2Tests.release.xcconfig"; path = "Target Support Files/Pods-HappyMilan2-HappyMilan2Tests/Pods-HappyMilan2-HappyMilan2Tests.release.xcconfig"; sourceTree = "<group>"; };
 		BDE9DC662BF749B2000E4EC3 /* HappyMilan2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = HappyMilan2.entitlements; path = HappyMilan2/HappyMilan2.entitlements; sourceTree = "<group>"; };
 		E113FDB0F2EE5A364F8D82C3 /* Pods_HappyMilan2_HappyMilan2Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HappyMilan2_HappyMilan2Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };

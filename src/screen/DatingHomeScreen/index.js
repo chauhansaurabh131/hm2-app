@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   FlatList,
   Image,
@@ -32,6 +33,7 @@ import ProfileAvatar from '../../components/letterProfileComponent';
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBaqU_1hOFIhVLm8su_caJheEChJCNBTyY';
 
 const DatingHomeScreen = () => {
+  const insets = useSafeAreaInsets();
   const [showModal, setShowModal] = useState(true);
   const [activeLine, setActiveLine] = useState(1);
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -276,6 +278,7 @@ const DatingHomeScreen = () => {
 
   return (
     <SafeAreaView style={style.container}>
+      {/*<SafeAreaView style={[style.container, {paddingTop: insets.top}]}>*/}
       <View style={style.headerContainer}>
         <View style={style.headerBody}>
           <Image

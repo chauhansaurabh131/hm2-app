@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   SafeAreaView,
   Text,
@@ -41,6 +42,7 @@ import Abc from '../abc';
 import HomeCardProfileComponent from '../../components/homeCardProfileComponent';
 
 const HomeScreen = ({route}) => {
+  const insets = useSafeAreaInsets();
   const [showMeAllStories, setShowMeAllStories] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [topModalVisible, setTopModalVisible] = useState(false);
@@ -341,6 +343,7 @@ const HomeScreen = ({route}) => {
 
   return (
     <SafeAreaView style={style.container}>
+      {/*<SafeAreaView style={[style.container, {paddingTop: insets.top}]}>*/}
       {showAlert && (
         <View
           style={{
