@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Image,
   Linking,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
@@ -179,7 +179,7 @@ const StepForAuthenticationOnScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
         <View style={style.headerContainerStyle}>
           <Image

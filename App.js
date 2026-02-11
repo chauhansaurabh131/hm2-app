@@ -745,6 +745,7 @@ import {
   StyleSheet,
   AppState,
   Linking,
+  StatusBar,
 } from 'react-native';
 import {Provider, useDispatch, useSelector} from 'react-redux'; // Keep this import
 import {persistor, store} from './src/reducer/store';
@@ -1035,6 +1036,11 @@ const MainApp = () => {
 const App = () => {
   return (
     <SafeAreaProvider>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <MainApp />

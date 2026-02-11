@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Alert,
   Image,
   Keyboard,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -67,7 +67,7 @@ const NewSetPasswordScreen = () => {
           <Image
             source={images.happyMilanColorLogo}
             style={{
-              marginTop: hp(29),
+              marginTop: hp(15),
               marginLeft: wp(33),
               resizeMode: 'contain',
               width: hp(96),
@@ -105,7 +105,7 @@ const NewSetPasswordScreen = () => {
             Set Password
           </Text>
 
-          <View style={{marginTop: hp(70)}}>
+          <View style={{marginTop: hp(50)}}>
             <NewTextInputComponent
               value={password}
               onChangeText={setPassword}

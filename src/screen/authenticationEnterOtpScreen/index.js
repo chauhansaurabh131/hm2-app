@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
   Keyboard,
-  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -198,7 +198,7 @@ const AuthenticationEnterOtpScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={style.container}>
+      <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
         <View style={style.headerContainerView}>
           <View style={style.headerContainerStyle}>
             <Image

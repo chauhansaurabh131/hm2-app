@@ -1,5 +1,6 @@
 import React, {useRef, useState} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import style from './style';
 import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
@@ -57,7 +58,7 @@ const EmailSmsAlertScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
         <View style={style.headerContainerStyle}>
           <Image

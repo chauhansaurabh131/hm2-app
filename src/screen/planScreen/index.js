@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Alert,
   Image,
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -241,7 +241,7 @@ const PlanScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       {/* Header */}
       <View style={style.headerContainerView}>
         <View style={style.headerContainerStyle}>

@@ -1,12 +1,11 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   Image,
   Keyboard,
   Modal,
-  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -19,8 +18,6 @@ import {icons, images} from '../../../assets';
 import NewProfileBottomSheet from '../../../components/newProfileBottomSheet';
 import style from './style';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import CustomProgressBar from '../../../components/customProgressBar';
-import GradientButton from '../../../components/GradientButton';
 import Swiper from 'react-native-deck-swiper';
 import axios from 'axios';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -691,7 +688,7 @@ const MeetNewFriendsScreen = ({route}) => {
             bottom: 5,
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginHorizontal: 17,
+            marginHorizontal: wp(17),
             flex: 1,
           }}>
           <View
@@ -705,7 +702,7 @@ const MeetNewFriendsScreen = ({route}) => {
                 navigation.navigate('Upgrader');
               }}
               style={{
-                width: hp(70),
+                width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
                 borderRadius: 30,
@@ -723,7 +720,7 @@ const MeetNewFriendsScreen = ({route}) => {
                 onSwipePress(card);
               }}
               style={{
-                width: hp(70),
+                width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
                 borderRadius: 30,
@@ -740,7 +737,7 @@ const MeetNewFriendsScreen = ({route}) => {
               <TouchableOpacity
                 onPress={() => OnLikePress(card)}
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: '#9E28D7',
                   borderRadius: 30,
@@ -756,7 +753,7 @@ const MeetNewFriendsScreen = ({route}) => {
               <TouchableOpacity
                 onPress={() => OnLikePress(card)}
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
                   borderRadius: 30,
@@ -773,7 +770,7 @@ const MeetNewFriendsScreen = ({route}) => {
             {card?.friendsDetails[0]?.status === 'requested' ? (
               <TouchableOpacity
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: '#7045EB',
                   borderRadius: 30,
@@ -790,7 +787,7 @@ const MeetNewFriendsScreen = ({route}) => {
             ) : (
               <TouchableOpacity
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
                   borderRadius: 30,

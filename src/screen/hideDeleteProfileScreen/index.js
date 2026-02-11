@@ -1,10 +1,10 @@
 import React, {useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Alert,
   Image,
   Modal,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
@@ -17,8 +17,6 @@ import {icons, images} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
-
-import DropDownTextInputComponent from '../../components/DropDownTextInputComponent';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -337,7 +335,7 @@ const HideDeleteProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
         <View style={style.headerContainerStyle}>
           <Image

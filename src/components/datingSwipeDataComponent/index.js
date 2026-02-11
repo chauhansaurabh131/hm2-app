@@ -520,14 +520,16 @@ const DatingSwipeDataComponent = () => {
             </Text>
           </View>
         </TouchableOpacity>
+
         <View
           style={{
             position: 'absolute',
             bottom: 5,
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginHorizontal: 17,
-            flex: 1,
+            marginHorizontal: wp(17),
+            // flex: 1,
+            // backgroundColor: 'red',
           }}>
           <View
             style={{
@@ -540,10 +542,10 @@ const DatingSwipeDataComponent = () => {
                 navigation.navigate('Upgrader');
               }}
               style={{
-                width: hp(70),
+                width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
-                borderRadius: 30,
+                borderRadius: wp(30),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -558,10 +560,10 @@ const DatingSwipeDataComponent = () => {
                 onSwipePress();
               }}
               style={{
-                width: hp(70),
+                width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
-                borderRadius: 30,
+                borderRadius: wp(30),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -575,10 +577,10 @@ const DatingSwipeDataComponent = () => {
               <TouchableOpacity
                 onPress={() => OnLikePress(card)}
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: '#9E28D7',
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -591,10 +593,10 @@ const DatingSwipeDataComponent = () => {
               <TouchableOpacity
                 onPress={() => OnLikePress(card)}
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -608,10 +610,10 @@ const DatingSwipeDataComponent = () => {
             {card?.friendsDetails[0]?.status === 'requested' ? (
               <TouchableOpacity
                 style={{
-                  width: hp(70),
+                  width: hp(69),
                   height: hp(40),
                   backgroundColor: '#7045EB',
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
@@ -625,10 +627,10 @@ const DatingSwipeDataComponent = () => {
             ) : (
               <TouchableOpacity
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
@@ -754,7 +756,7 @@ const DatingSwipeDataComponent = () => {
           </Text>
         </View>
       ) : (
-        <View style={{marginTop: -40}}>
+        <View style={{top: hp(-20)}}>
           <Swiper
             ref={swiperRef}
             cards={cards}

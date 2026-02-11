@@ -571,12 +571,12 @@ const MainNavigator = () => {
             style.bottomTabNavigationContainer,
             {
               height:
-                (isIOS ? hp(100) : hp(80)) +
+                (isIOS ? hp(70) : hp(80)) +
                 (isIOS
                   ? insets.bottom
                   : insets.bottom > 0
                   ? insets.bottom
-                  : hp(10)),
+                  : hp(0)),
               paddingBottom: insets.bottom > 0 ? insets.bottom : hp(5),
             },
           ],

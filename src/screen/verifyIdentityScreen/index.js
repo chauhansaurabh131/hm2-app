@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -17,12 +17,19 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import RNBlobUtil from 'react-native-blob-util';
+import style from '../HomeScreen/style';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const VerifyIdentityScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
   const userImage = user?.user?.profilePic;
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
+
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
 
   // console.log(' === var ===> ', userId, accessToken);
 
@@ -197,16 +204,25 @@ const VerifyIdentityScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerBodyContainer}>
           <Image source={images.happyMilanColorLogo} style={styles.appLogo} />
 
           <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={styles.profileImageStyle}
-            />
+            {hasValidImage ? (
+              <Image
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                style={styles.profileImageStyle}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={styles.profileImageStyle}
+                profileTexts={{fontSize: fontSize(10)}}
+              />
+            )}
           </TouchableOpacity>
         </View>
 

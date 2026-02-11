@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
-  SafeAreaView,
   Text,
   Image,
   View,
@@ -11,9 +11,7 @@ import {
   Modal,
   TextInput,
   Alert,
-  ImageBackground,
   ActivityIndicator,
-  Linking,
   Platform,
 } from 'react-native';
 import {
@@ -349,8 +347,9 @@ const NewUserDetailsScreen = () => {
             marginHorizontal: 17,
             position: 'absolute',
             top: 20,
-            width: '90%',
+            width: '95%',
             flex: 1,
+            // marginTop: hp(22),
           }}>
           <View
             style={{

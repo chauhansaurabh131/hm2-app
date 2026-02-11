@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  SafeAreaView,
   Text,
   FlatList,
   Image,
@@ -1497,7 +1497,7 @@ const SearchUserDataScreen = ({route}) => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={{zIndex: 99}}>
         <Toast config={toastConfigs} />
       </View>

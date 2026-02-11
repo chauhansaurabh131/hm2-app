@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../utils/colors';
-import style from '../privacyScreen/style';
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,7 +29,9 @@ const ConnectToWebScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      style={{flex: 1, backgroundColor: colors.white}}>
       <View style={{marginHorizontal: wp(17), marginTop: hp(14)}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Image

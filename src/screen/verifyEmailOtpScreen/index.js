@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  SafeAreaView,
   TextInput,
   View,
   StyleSheet,
@@ -199,7 +199,7 @@ const VerifyEmailOtpScreen = ({route}) => {
           <Image
             source={images.happyMilanColorLogo}
             style={{
-              marginTop: hp(29),
+              marginTop: hp(15),
               marginLeft: wp(33),
               resizeMode: 'contain',
               width: hp(96),

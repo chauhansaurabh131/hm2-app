@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   FlatList,
   Image,
   Modal,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -15,14 +15,7 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  accepted_Decline_Request,
-  getAllRequest,
-  userDatas,
-} from '../../actions/homeActions';
-import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
-import {getAllDeclineFriend, getAllFriends} from '../../actions/chatActions';
-import MatchesInNewScreen from '../matchesAllScreen/matchesInNewScreen';
+
 import MatchesInAcceptedScreen from '../matchesAllScreen/matchesInAcceptedScreen';
 import MatchesInBlockedScreen from '../matchesAllScreen/matchesInBlockedScreen';
 import MatchesInSavedScreen from '../matchesAllScreen/matchesInSavedScreen';
@@ -32,6 +25,7 @@ import MatchesInReceivedScreen from '../matchesAllScreen/matchesInReceivedScreen
 import MatchesInDeclinedScreen from '../matchesAllScreen/MatchesInDeclinedScreen';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import MatchesInRecentlyViewedScreen from '../matchesAllScreen/matchesInRecentlyViewedScreen';
+import MatchesInNewScreen from '../matchesAllScreen/matchesInNewScreen';
 
 const MatchesScreen = ({navigation, route}) => {
   const initialTab = route?.params?.initialTab || 'new'; // 👈 get from params
@@ -323,7 +317,7 @@ const MatchesScreen = ({navigation, route}) => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainer}>
         {/*<View style={style.headerContainerTittleStyle}>*/}
         {/*  <Image*/}

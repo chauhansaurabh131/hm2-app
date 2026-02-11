@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   Alert,
   Clipboard,
   Image,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
@@ -246,7 +246,7 @@ const MyProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View
         style={{
           zIndex: 99,

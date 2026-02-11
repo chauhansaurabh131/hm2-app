@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
@@ -311,7 +311,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
     user?.user?.profilePic.trim() !== '';
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.container}>
       <View style={styles.header}>
         <Image source={images.happyMilanColorLogo} style={styles.logo} />
         <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
@@ -510,7 +510,7 @@ const SuccessStoryEditInformationScreen = ({route}) => {
             </TouchableOpacity>
           </View>
 
-          <View style={{height: 30}} />
+          <View style={{height: hp(70)}} />
         </View>
 
         <HomeTopSheetComponent
@@ -639,7 +639,7 @@ const styles = StyleSheet.create({
     marginTop: 35,
   },
   notNowButton: {
-    width: hp(140),
+    width: wp(150),
     height: 50,
     backgroundColor: '#F8F8F8',
     justifyContent: 'center',
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.poppins400,
   },
   publishButton: {
-    width: hp(180),
+    width: wp(190),
     height: 50,
     borderRadius: 100,
     justifyContent: 'center',

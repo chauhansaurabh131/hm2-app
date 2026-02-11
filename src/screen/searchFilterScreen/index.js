@@ -1,15 +1,16 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Alert,
   FlatList,
   Image,
   Modal,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  // SafeAreaView,
 } from 'react-native';
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
@@ -587,7 +588,9 @@ const SearchFilterScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      style={{flex: 1, backgroundColor: colors.white}}>
       <Image
         source={images.gradient_header_background_img}
         style={{height: hp(128), width: '100%', resizeMode: 'cover'}}
@@ -597,7 +600,7 @@ const SearchFilterScreen = () => {
         style={{
           position: 'absolute',
           width: '100%',
-          marginTop: isIOS ? hp(60) : hp(12),
+          marginTop: isIOS ? hp(60) : hp(45),
         }}>
         <View
           style={{

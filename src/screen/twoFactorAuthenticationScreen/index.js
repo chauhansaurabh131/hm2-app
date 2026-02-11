@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Animated,
-  Button,
   Image,
   Modal,
-  SafeAreaView,
   Text,
   TouchableHighlight,
   TouchableOpacity,
@@ -127,6 +126,7 @@ const TwoFactorAuthenticationScreen = () => {
   if (isLoading) {
     return (
       <SafeAreaView
+        edges={['top', 'left', 'right']}
         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         {/*<Text>Loading...</Text>*/}
         <ActivityIndicator size="large" color={colors.blue} />

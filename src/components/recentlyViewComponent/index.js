@@ -428,7 +428,7 @@ const RecentlyViewComponent = () => {
           <View
             style={{
               width: '100%',
-              height: 8,
+              height: hp(4),
               backgroundColor: '#F8F8F8',
               // marginTop: hp(10),
               // marginBottom: 20,

@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
-import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import { StyleSheet } from 'react-native';
+import { colors } from '../../utils/colors';
+import { fontFamily, fontSize, hp, wp } from '../../utils/helpers';
 
 const style = StyleSheet.create({
   container: {
@@ -60,7 +60,7 @@ const style = StyleSheet.create({
     fontWeight: '700',
     color: colors.blue,
   },
-  modalSubTittleContainer: {marginTop: hp(50), alignItems: 'center'},
+  modalSubTittleContainer: { marginTop: hp(50), alignItems: 'center' },
   modalSubTitleTextStyle: {
     color: colors.black,
     fontSize: fontSize(14),

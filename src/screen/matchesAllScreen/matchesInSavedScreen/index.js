@@ -1,6 +1,5 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  SafeAreaView,
   Text,
   FlatList,
   View,
@@ -14,16 +13,16 @@ import {
   Clipboard,
   ActivityIndicator,
 } from 'react-native';
-import {colors} from '../../../utils/colors';
-import {useDispatch, useSelector} from 'react-redux';
-import {icons, images} from '../../../assets';
+import { colors } from '../../../utils/colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { icons, images } from '../../../assets';
 import LinearGradient from 'react-native-linear-gradient';
-import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import { fontFamily, fontSize, hp, isIOS, wp } from '../../../utils/helpers';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {accepted_Decline_Request} from '../../../actions/homeActions';
+import { accepted_Decline_Request } from '../../../actions/homeActions';
 import style from '../../matchesScreen/style';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 
@@ -57,7 +56,7 @@ const MatchesInSavedScreen = () => {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {user} = useSelector(state => state.auth);
+  const { user } = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
   const unFriendBottomSheet = useRef(null);
@@ -568,12 +567,12 @@ const MatchesInSavedScreen = () => {
           prevData.map(dataItem =>
             dataItem.friendsDetails?._id === selectUserUnfriendId
               ? {
-                  ...dataItem,
-                  friendsDetails: {
-                    ...dataItem.friendsDetails,
-                    status: 'removed',
-                  },
-                }
+                ...dataItem,
+                friendsDetails: {
+                  ...dataItem.friendsDetails,
+                  status: 'removed',
+                },
+              }
               : dataItem,
           ),
         );
@@ -601,10 +600,10 @@ const MatchesInSavedScreen = () => {
       userData: items,
     };
     // console.log(' === var ===> ', matchesUserData);
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('NewUserDetailsScreen', { matchesUserData });
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     const hasValidImage =
       item?.friendList?.profilePic &&
       item?.friendList?.profilePic !== 'null' &&
@@ -617,19 +616,19 @@ const MatchesInSavedScreen = () => {
     const profilePrivacy =
       (item?.friendList?.privacySettingCustom?.profilePhotoPrivacy === true ||
         item?.friendList?.privacySettingCustom?.showPhotoToFriendsOnly ===
-          true) &&
+        true) &&
       item?.friendsDetails?.status !== 'accepted';
 
     const planName = item?.friendList?.subscriptionDetails?.selectedPlan
       ? item?.friendList?.subscriptionDetails?.selectedPlan
-          .charAt(0)
-          .toUpperCase() +
-        item?.friendList?.subscriptionDetails?.selectedPlan
-          .slice(1)
-          .toLowerCase()
+        .charAt(0)
+        .toUpperCase() +
+      item?.friendList?.subscriptionDetails?.selectedPlan
+        .slice(1)
+        .toLowerCase()
       : '';
 
-    const {selectedPlan, status} = item?.friendList?.subscriptionDetails || {};
+    const { selectedPlan, status } = item?.friendList?.subscriptionDetails || {};
 
     // Determine if the selected plan is 'gold' (for the crown icon)
     const isGoldPlan = selectedPlan === 'gold';
@@ -662,17 +661,17 @@ const MatchesInSavedScreen = () => {
 
     const firstName = item?.friendList?.firstName
       ? item?.friendList?.firstName.charAt(0).toUpperCase() +
-        item?.friendList?.firstName.slice(1).toLowerCase()
+      item?.friendList?.firstName.slice(1).toLowerCase()
       : '';
 
     const lastName = item?.friendList?.lastName
       ? item?.friendList?.lastName.charAt(0).toUpperCase() +
-        item?.friendList?.lastName.slice(1).toLowerCase()
+      item?.friendList?.lastName.slice(1).toLowerCase()
       : '';
 
     const name = item?.friendList?.name
       ? item?.friendList?.name.charAt(0).toUpperCase() +
-        item?.friendList?.name.slice(1).toLowerCase()
+      item?.friendList?.name.slice(1).toLowerCase()
       : '';
 
     const calculateAge = dob => {
@@ -691,17 +690,17 @@ const MatchesInSavedScreen = () => {
 
     const jobTittle = item?.friendList?.userProfessional?.jobTitle
       ? item?.friendList?.userProfessional?.jobTitle.charAt(0).toUpperCase() +
-        item?.friendList?.userProfessional?.jobTitle.slice(1).toLowerCase()
+      item?.friendList?.userProfessional?.jobTitle.slice(1).toLowerCase()
       : '';
 
     const currentCity = item?.friendList?.address?.currentCity
       ? item?.friendList?.address?.currentCity.charAt(0).toUpperCase() +
-        item?.friendList?.address?.currentCity.slice(1).toLowerCase()
+      item?.friendList?.address?.currentCity.slice(1).toLowerCase()
       : '';
 
     const currentCountry = item?.friendList?.address?.currentCountry
       ? item?.friendList?.address?.currentCountry.charAt(0).toUpperCase() +
-        item?.friendList?.address?.currentCountry.slice(1).toLowerCase()
+      item?.friendList?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
     const imageCount = Array.isArray(item?.friendList?.userProfilePic)
@@ -723,7 +722,7 @@ const MatchesInSavedScreen = () => {
         userAllImage,
       };
       // console.log(' === userAllImage ===> ', userAllImage);
-      navigation.navigate('UserUploadImageFullScreen', {allImages});
+      navigation.navigate('UserUploadImageFullScreen', { allImages });
     };
 
     const onThreeDotPress = item => {
@@ -761,7 +760,7 @@ const MatchesInSavedScreen = () => {
             {hasValidImage ? (
               <>
                 <Image
-                  source={{uri: item?.friendList?.profilePic}}
+                  source={{ uri: item?.friendList?.profilePic }}
                   style={style.userImageStyle}
                 />
                 {profilePrivacy && (
@@ -787,7 +786,7 @@ const MatchesInSavedScreen = () => {
                   }
                   lastName={item?.friendList?.lastName}
                   textStyle={style.userImageStyle}
-                  profileTexts={{fontSize: fontSize(60), marginTop: -80}}
+                  profileTexts={{ fontSize: fontSize(60), marginTop: -80 }}
                 />
               </>
             )}
@@ -809,7 +808,7 @@ const MatchesInSavedScreen = () => {
                   onPress={() => {
                     handlePress(item);
                   }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={styles.nameText}>
                       {firstName || name} {lastName}
                     </Text>
@@ -914,7 +913,7 @@ const MatchesInSavedScreen = () => {
                         style={styles.cameraIcon}
                       />
 
-                      <Text style={{color: colors.white}}>{imageCount}</Text>
+                      <Text style={{ color: colors.white }}>{imageCount}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -945,13 +944,13 @@ const MatchesInSavedScreen = () => {
   };
 
   const toastConfigs = {
-    RemoveShortlisted: ({text1}) => (
+    RemoveShortlisted: ({ text1 }) => (
       <View style={styles.ToastMessageBodyContainer}>
         <Text style={styles.ToastMessageBodyContainerText}>{text1}</Text>
       </View>
     ),
 
-    Copied: ({text1}) => (
+    Copied: ({ text1 }) => (
       <View style={styles.ToastMessageBodyContainer}>
         <Text style={styles.ToastMessageBodyContainerText}>{text1}</Text>
       </View>
@@ -959,7 +958,7 @@ const MatchesInSavedScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{backgroundColor: colors.white}}>
+    <View style={{ flex: 1, backgroundColor: colors.white }}>
       <View style={styles.toastMessageDisplayContainer}>
         <Toast config={toastConfigs} />
       </View>
@@ -998,8 +997,8 @@ const MatchesInSavedScreen = () => {
           contentContainerStyle={styles.flatListContentContainer}
           ListFooterComponent={
             isFetchingMore ? (
-              <View style={{alignItems: 'center', marginVertical: 10}}>
-                <Text style={{color: 'black'}}>Loading Data..</Text>
+              <View style={{ alignItems: 'center', marginVertical: 10 }}>
+                <Text style={{ color: 'black' }}>Loading Data..</Text>
               </View>
             ) : null
           }
@@ -1019,8 +1018,8 @@ const MatchesInSavedScreen = () => {
           },
         }}>
         {/* Content inside the bottom sheet */}
-        <View style={{flex: 1}}>
-          <View style={{marginHorizontal: 30, marginTop: 20}}>
+        <View style={{ flex: 1 }}>
+          <View style={{ marginHorizontal: 30, marginTop: 20 }}>
             <TouchableOpacity
               onPress={handleShare}
               style={{
@@ -1227,8 +1226,8 @@ const MatchesInSavedScreen = () => {
                 onPress={handleConfirmBlock}>
                 <LinearGradient
                   colors={['#7045EB', '#4819CB']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1}}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
                   style={{
                     width: hp(122),
                     height: hp(50),
@@ -1304,7 +1303,7 @@ const MatchesInSavedScreen = () => {
           },
         }}>
         {/* Content inside the bottom sheet */}
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           {/* Back button, only visible when a reason is selected or when in "About" section */}
 
           <View
@@ -1318,11 +1317,11 @@ const MatchesInSavedScreen = () => {
             {(reportReasons.length > 0 || isAboutClicked) && (
               <TouchableOpacity
                 onPress={handleBackArrow}
-                style={{position: 'absolute', left: 0}}>
+                style={{ position: 'absolute', left: 0 }}>
                 {/*<Text style={styles.backButtonText}>Back</Text>*/}
                 <Image
                   source={icons.back_arrow_icon}
-                  style={{width: hp(18), height: hp(18)}}
+                  style={{ width: hp(18), height: hp(18) }}
                 />
               </TouchableOpacity>
             )}
@@ -1389,7 +1388,7 @@ const MatchesInSavedScreen = () => {
           {/* Show the list of reasons if there are any */}
           {isAboutClicked ? (
             // If "About" is clicked, show the TextInput and Submit button
-            <View style={{marginTop: hp(28), marginHorizontal: 17}}>
+            <View style={{ marginTop: hp(28), marginHorizontal: 17 }}>
               <TextInput
                 style={{
                   borderWidth: 1,
@@ -1408,12 +1407,12 @@ const MatchesInSavedScreen = () => {
 
               <TouchableOpacity
                 activeOpacity={0.7}
-                style={{marginTop: hp(9)}}
+                style={{ marginTop: hp(9) }}
                 onPress={handleSubmit}>
                 <LinearGradient
                   colors={['#0D4EB3', '#9413D0']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1.5}}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1.5 }}
                   style={{
                     width: '100%',
                     height: hp(50),
@@ -1457,7 +1456,7 @@ const MatchesInSavedScreen = () => {
               </TouchableOpacity>
             ))
           ) : (
-            <View style={{marginTop: hp(26), marginHorizontal: 17}}>
+            <View style={{ marginTop: hp(26), marginHorizontal: 17 }}>
               <TouchableOpacity onPress={handleInappropriateContent}>
                 <Text
                   style={{
@@ -1471,7 +1470,7 @@ const MatchesInSavedScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{marginTop: hp(28)}}
+                style={{ marginTop: hp(28) }}
                 onPress={handleHarassmentOrBullying}>
                 <Text
                   style={{
@@ -1485,7 +1484,7 @@ const MatchesInSavedScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{marginTop: hp(28)}}
+                style={{ marginTop: hp(28) }}
                 onPress={handleFakeMisleadingProfile}>
                 <Text
                   style={{
@@ -1499,7 +1498,7 @@ const MatchesInSavedScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{marginTop: hp(28)}}
+                style={{ marginTop: hp(28) }}
                 onPress={handleSpamPromotionalContent}>
                 <Text
                   style={{
@@ -1513,7 +1512,7 @@ const MatchesInSavedScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{marginTop: hp(28)}}
+                style={{ marginTop: hp(28) }}
                 onPress={handleScamsFraudulentActivity}>
                 <Text
                   style={{
@@ -1527,7 +1526,7 @@ const MatchesInSavedScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{marginTop: hp(28)}}
+                style={{ marginTop: hp(28) }}
                 onPress={() => setIsAboutClicked(true)} // Handle About click
               >
                 <Text
@@ -1578,7 +1577,7 @@ const MatchesInSavedScreen = () => {
               Thank you for your report.
             </Text>
 
-            <View style={{marginTop: hp(38), alignItems: 'center'}}>
+            <View style={{ marginTop: hp(38), alignItems: 'center' }}>
               <Text
                 style={{
                   fontSize: fontSize(14),
@@ -1607,12 +1606,12 @@ const MatchesInSavedScreen = () => {
 
             <TouchableOpacity
               activeOpacity={0.7}
-              style={{marginTop: hp(38), marginBottom: hp(43)}}
+              style={{ marginTop: hp(38), marginBottom: hp(43) }}
               onPress={handleCloseModal}>
               <LinearGradient
                 colors={['#7045EB', '#4819CB']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1.5}}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1.5 }}
                 style={{
                   width: hp(131),
                   height: hp(50),
@@ -1648,8 +1647,8 @@ const MatchesInSavedScreen = () => {
           },
         }}>
         {/* Content inside the bottom sheet */}
-        <View style={{flex: 1}}>
-          <View style={{marginHorizontal: 30, marginTop: 20}}>
+        <View style={{ flex: 1 }}>
+          <View style={{ marginHorizontal: 30, marginTop: 20 }}>
             <TouchableOpacity
               onPress={handleShare}
               style={{
@@ -1936,8 +1935,8 @@ const MatchesInSavedScreen = () => {
                   onPress={handleConfirmUnFriend}>
                   <LinearGradient
                     colors={['#2D46B9', '#8D1D8D']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 1}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={{
                       width: hp(122),
                       height: hp(50),
@@ -2076,7 +2075,7 @@ const MatchesInSavedScreen = () => {
                 alignSelf: 'center',
               }}>
               <Image
-                source={{uri: user?.user?.profilePic}}
+                source={{ uri: user?.user?.profilePic }}
                 style={{
                   width: hp(64),
                   height: hp(64),
@@ -2087,8 +2086,8 @@ const MatchesInSavedScreen = () => {
               />
 
               <Image
-                source={{uri: percentageMatchData?.profilePic}}
-                style={{width: hp(64), height: hp(64), borderRadius: 50}}
+                source={{ uri: percentageMatchData?.profilePic }}
+                style={{ width: hp(64), height: hp(64), borderRadius: 50 }}
               />
             </View>
 
@@ -2146,7 +2145,7 @@ const MatchesInSavedScreen = () => {
               Based on Your Partner Preference
             </Text>
 
-            <View style={{marginHorizontal: 20, marginTop: hp(13)}}>
+            <View style={{ marginHorizontal: 20, marginTop: hp(13) }}>
               {step === 1 && (
                 <>
                   <Text
@@ -2158,8 +2157,8 @@ const MatchesInSavedScreen = () => {
                     }}>
                     {percentageMatchData?.matchedFields?.[0]?.field
                       ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[0].field,
-                        )
+                        percentageMatchData.matchedFields[0].field,
+                      )
                       : 'N/A'}
                   </Text>
 
@@ -2197,7 +2196,7 @@ const MatchesInSavedScreen = () => {
                     />
                   </View>
 
-                  <View style={{marginTop: hp(10)}}>
+                  <View style={{ marginTop: hp(10) }}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -2207,8 +2206,8 @@ const MatchesInSavedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[1]?.field
                         ? capitalizeFirstLetter(
-                            percentageMatchData.matchedFields[1].field,
-                          )
+                          percentageMatchData.matchedFields[1].field,
+                        )
                         : 'N/A'}
                     </Text>
 
@@ -2247,7 +2246,7 @@ const MatchesInSavedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{marginTop: hp(10)}}>
+                  <View style={{ marginTop: hp(10) }}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -2257,8 +2256,8 @@ const MatchesInSavedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[2]?.field
                         ? capitalizeFirstLetter(
-                            percentageMatchData.matchedFields[2].field,
-                          )
+                          percentageMatchData.matchedFields[2].field,
+                        )
                         : 'N/A'}
                     </Text>
 
@@ -2298,7 +2297,7 @@ const MatchesInSavedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{marginTop: hp(10)}}>
+                  <View style={{ marginTop: hp(10) }}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -2308,8 +2307,8 @@ const MatchesInSavedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[3]?.field
                         ? capitalizeFirstLetter(
-                            percentageMatchData.matchedFields[3].field,
-                          )
+                          percentageMatchData.matchedFields[3].field,
+                        )
                         : 'N/A'}
                     </Text>
 
@@ -2359,8 +2358,8 @@ const MatchesInSavedScreen = () => {
                     }}>
                     {percentageMatchData?.matchedFields?.[4]?.field
                       ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[4].field,
-                        )
+                        percentageMatchData.matchedFields[4].field,
+                      )
                       : 'N/A'}
                   </Text>
 
@@ -2396,7 +2395,7 @@ const MatchesInSavedScreen = () => {
                     />
                   </View>
 
-                  <View style={{marginTop: hp(10)}}>
+                  <View style={{ marginTop: hp(10) }}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -2406,8 +2405,8 @@ const MatchesInSavedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[5]?.field
                         ? capitalizeFirstLetter(
-                            percentageMatchData.matchedFields[5].field,
-                          )
+                          percentageMatchData.matchedFields[5].field,
+                        )
                         : 'N/A'}
                     </Text>
 
@@ -2444,7 +2443,7 @@ const MatchesInSavedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{marginTop: hp(10)}}>
+                  <View style={{ marginTop: hp(10) }}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -2454,8 +2453,8 @@ const MatchesInSavedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[6]?.field
                         ? capitalizeFirstLetter(
-                            percentageMatchData.matchedFields[6].field,
-                          )
+                          percentageMatchData.matchedFields[6].field,
+                        )
                         : 'N/A'}
                     </Text>
 
@@ -2492,7 +2491,7 @@ const MatchesInSavedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{marginTop: hp(10)}}>
+                  <View style={{ marginTop: hp(10) }}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -2502,8 +2501,8 @@ const MatchesInSavedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[7]?.field
                         ? capitalizeFirstLetter(
-                            percentageMatchData.matchedFields[7].field,
-                          )
+                          percentageMatchData.matchedFields[7].field,
+                        )
                         : 'N/A'}
                     </Text>
 
@@ -2557,7 +2556,7 @@ const MatchesInSavedScreen = () => {
                 activeOpacity={0.7}
                 onPress={handleBackArrow}
                 disabled={step === 1}
-                style={{width: wp(30), alignItems: 'center'}}>
+                style={{ width: wp(30), alignItems: 'center' }}>
                 <Image
                   source={icons.rightSideIcon}
                   style={[
@@ -2565,9 +2564,9 @@ const MatchesInSavedScreen = () => {
                       width: hp(12),
                       height: hp(24),
                       resizeMode: 'contain',
-                      transform: [{rotate: '180deg'}],
+                      transform: [{ rotate: '180deg' }],
                     },
-                    {tintColor: step === 1 ? '#E4E4E4' : 'black'},
+                    { tintColor: step === 1 ? '#E4E4E4' : 'black' },
                   ]}
                 />
               </TouchableOpacity>
@@ -2589,7 +2588,7 @@ const MatchesInSavedScreen = () => {
                         borderRadius: 50,
                         marginHorizontal: 10,
                       },
-                      {backgroundColor: step === item ? '#0F52BA' : '#ECECEC'},
+                      { backgroundColor: step === item ? '#0F52BA' : '#ECECEC' },
                     ]}
                   />
                 ))}
@@ -2598,12 +2597,12 @@ const MatchesInSavedScreen = () => {
               <TouchableOpacity
                 onPress={handleNext}
                 disabled={step === 2}
-                style={{width: wp(30), alignItems: 'center'}}>
+                style={{ width: wp(30), alignItems: 'center' }}>
                 <Image
                   source={icons.rightSideIcon}
                   style={[
-                    {width: hp(12), height: hp(24), resizeMode: 'contain'},
-                    {tintColor: step === 2 ? '#E4E4E4' : 'black'},
+                    { width: hp(12), height: hp(24), resizeMode: 'contain' },
+                    { tintColor: step === 2 ? '#E4E4E4' : 'black' },
                   ]}
                 />
               </TouchableOpacity>
@@ -2612,7 +2611,7 @@ const MatchesInSavedScreen = () => {
         </View>
         {/*</TouchableWithoutFeedback>*/}
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Alert,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -1144,7 +1144,7 @@ const CredentialsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
         <View style={style.headerContainerStyle}>
           <Image

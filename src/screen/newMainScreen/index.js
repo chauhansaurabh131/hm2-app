@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   FlatList,
   Image,
-  SafeAreaView,
   Text,
   View,
   Dimensions,
@@ -137,7 +137,7 @@ const NewMainScreen = () => {
       <Image
         source={images.happyMilanColorLogo}
         style={{
-          marginTop: hp(29),
+          marginTop: hp(15),
           marginLeft: wp(33),
           resizeMode: 'contain',
           width: hp(100),
@@ -146,7 +146,7 @@ const NewMainScreen = () => {
         }}
       />
 
-      <View style={{marginTop: hp(30)}}>
+      <View style={{marginTop: hp(15)}}>
         <FlatList
           ref={flatListRef}
           data={imageData}

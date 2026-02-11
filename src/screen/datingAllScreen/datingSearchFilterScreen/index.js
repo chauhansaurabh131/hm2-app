@@ -1,12 +1,11 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
   Image,
   Keyboard,
   Modal,
-  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -822,7 +821,7 @@ const DatingSearchFilterScreen = ({route}) => {
             bottom: 5,
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginHorizontal: 17,
+            marginHorizontal: wp(17),
             flex: 1,
           }}>
           <View
@@ -836,7 +835,7 @@ const DatingSearchFilterScreen = ({route}) => {
                 navigation.navigate('Upgrader');
               }}
               style={{
-                width: hp(70),
+                width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
                 borderRadius: 30,
@@ -854,7 +853,7 @@ const DatingSearchFilterScreen = ({route}) => {
                 onSwipePress(card);
               }}
               style={{
-                width: hp(70),
+                width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
                 borderRadius: 30,
@@ -871,7 +870,7 @@ const DatingSearchFilterScreen = ({route}) => {
               <TouchableOpacity
                 onPress={() => OnLikePress(card)}
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: '#9E28D7',
                   borderRadius: 30,
@@ -887,7 +886,7 @@ const DatingSearchFilterScreen = ({route}) => {
               <TouchableOpacity
                 onPress={() => OnLikePress(card)}
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
                   borderRadius: 30,
@@ -904,7 +903,7 @@ const DatingSearchFilterScreen = ({route}) => {
             {card?.friendsDetails?.[0]?.status === 'requested' ? (
               <TouchableOpacity
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: '#7045EB',
                   borderRadius: 30,
@@ -920,7 +919,7 @@ const DatingSearchFilterScreen = ({route}) => {
             ) : (
               <TouchableOpacity
                 style={{
-                  width: hp(70),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
                   borderRadius: 30,

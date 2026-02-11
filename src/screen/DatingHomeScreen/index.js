@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   FlatList,
   Image,
   Keyboard,
   Modal,
-  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -15,17 +14,12 @@ import {
 import {icons, images} from '../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import CustomProgressBar from '../../components/customProgressBar';
-import GradientButton from '../../components/GradientButton';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import Swiper from 'react-native-deck-swiper';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch, useSelector} from 'react-redux';
 import DatingSwipeDataComponent from '../../components/datingSwipeDataComponent';
 import {style} from './style';
 import {colors} from '../../utils/colors';
-import axios from 'axios';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import AgeRangeSlider from '../../components/ageRangeSlider';
 import ProfileAvatar from '../../components/letterProfileComponent';
@@ -57,7 +51,7 @@ const DatingHomeScreen = () => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user ===> ', user?.user);
+  console.log(' === user***** ===> ', user?.user?.profilePic);
 
   const bottomSheetRef = useRef(null);
 
@@ -267,18 +261,17 @@ const DatingHomeScreen = () => {
     }, []),
   );
 
+  const userImage = user?.user?.profilePic;
+
   const hasValidImage =
     user?.user?.profilePic &&
     user?.user?.profilePic !== 'null' &&
     user?.user?.profilePic.trim() !== '';
 
-  const userImage = user?.user?.profilePic;
-
   // console.log(' === hasValidImage ===> ', user?.user?.profilePic);
 
   return (
-    <SafeAreaView style={style.container}>
-      {/*<SafeAreaView style={[style.container, {paddingTop: insets.top}]}>*/}
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainer}>
         <View style={style.headerBody}>
           <Image
@@ -288,18 +281,8 @@ const DatingHomeScreen = () => {
 
           <TouchableOpacity
             activeOpacity={0.7}
-            // onPress={openTopSheetModal}
             onPress={openBottomSheet}
             style={{alignSelf: 'center'}}>
-            {/*{userImage ? (*/}
-            {/*  <Image source={{uri: userImage}} style={style.dropDownTopImage} />*/}
-            {/*) : (*/}
-            {/*  <Image*/}
-            {/*    source={images.empty_male_Image}*/}
-            {/*    style={style.dropDownTopImage}*/}
-            {/*  />*/}
-            {/*)}*/}
-
             {hasValidImage ? (
               <Image
                 source={userImage ? {uri: userImage} : images.empty_male_Image}
@@ -317,13 +300,6 @@ const DatingHomeScreen = () => {
         </View>
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
-
-        {/*TOP SHEET*/}
-        {/*<HomeTopSheetComponent*/}
-        {/*  isVisible={topModalVisible}*/}
-        {/*  onBackdropPress={toggleModal}*/}
-        {/*  onBackButtonPress={toggleModal}*/}
-        {/*/>*/}
       </View>
 
       <View style={style.bodyContainer}>
@@ -790,7 +766,7 @@ const DatingHomeScreen = () => {
         </View>
       </Modal>
 
-      <View style={{backgroundColor: 'white', flex: 1}}>
+      <View style={{backgroundColor: 'silver', flex: 1}}>
         <DatingSwipeDataComponent />
       </View>
     </SafeAreaView>

@@ -1,13 +1,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Clipboard,
   FlatList,
   Image,
   Modal,
-  SafeAreaView,
   Share,
-  StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,

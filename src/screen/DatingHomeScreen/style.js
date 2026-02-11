@@ -9,6 +9,7 @@ export const style = StyleSheet.create({
   },
   headerContainer: {
     marginHorizontal: wp(17),
+    backgroundColor: 'red',
   },
   headerBody: {
     flexDirection: 'row',
@@ -33,6 +34,7 @@ export const style = StyleSheet.create({
   bodyContainer: {
     marginTop: hp(22),
     marginHorizontal: wp(17),
+    backgroundColor: 'orange',
   },
   bodyContainerStyle: {
     flexDirection: 'row',

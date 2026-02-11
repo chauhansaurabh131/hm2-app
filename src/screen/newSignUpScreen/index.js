@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
   Keyboard,
   Linking,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -268,7 +268,7 @@ const NewSignUpScreen = () => {
         <Image
           source={images.happyMilanColorLogo}
           style={{
-            marginTop: hp(29),
+            marginTop: hp(15),
             marginLeft: wp(33),
             resizeMode: 'contain',
             width: hp(96),
@@ -284,7 +284,7 @@ const NewSignUpScreen = () => {
               lineHeight: hp(36),
               fontFamily: fontFamily.poppins500,
               alignSelf: 'center',
-              marginTop: hp(80),
+              marginTop: hp(70),
             }}>
             Sign Up
           </Text>

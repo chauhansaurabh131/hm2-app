@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
   Keyboard,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -62,7 +62,7 @@ const ResetPasswordScreen = () => {
         <Image
           source={images.happyMilanColorLogo}
           style={{
-            marginTop: hp(29),
+            marginTop: hp(15),
             marginLeft: wp(33),
             resizeMode: 'contain',
             width: hp(96),
@@ -121,7 +121,42 @@ const ResetPasswordScreen = () => {
               }}
             />
 
-            <View
+            {/*<View*/}
+            {/*  style={{*/}
+            {/*    flexDirection: 'row',*/}
+            {/*    alignSelf: 'center',*/}
+            {/*    marginBottom: isIOS ? hp(10) : hp(30),*/}
+            {/*    marginTop: hp(58),*/}
+
+            {/*    alignItems: 'center',*/}
+            {/*  }}>*/}
+            {/*  <Text*/}
+            {/*    style={{*/}
+            {/*      color: colors.black,*/}
+            {/*      fontSize: fontSize(14),*/}
+            {/*      lineHeight: hp(21),*/}
+            {/*      fontFamily: fontFamily.poppins400,*/}
+            {/*    }}>*/}
+            {/*    New Member?{' '}*/}
+            {/*  </Text>*/}
+            {/*  <TouchableOpacity*/}
+            {/*    activeOpacity={0.5}*/}
+            {/*    onPress={() => {*/}
+            {/*      navigation.navigate('NewSignUpScreen');*/}
+            {/*    }}>*/}
+            {/*    <Text*/}
+            {/*      style={{*/}
+            {/*        color: colors.blue,*/}
+            {/*        fontSize: fontSize(14),*/}
+            {/*        lineHeight: hp(21),*/}
+            {/*        fontFamily: fontFamily.poppins400,*/}
+            {/*      }}>*/}
+            {/*      Sign Up*/}
+            {/*    </Text>*/}
+            {/*  </TouchableOpacity>*/}
+            {/*</View>*/}
+
+            <TouchableOpacity
               style={{
                 flexDirection: 'row',
                 alignSelf: 'center',
@@ -129,32 +164,32 @@ const ResetPasswordScreen = () => {
                 marginTop: hp(58),
 
                 alignItems: 'center',
+              }}
+              onPress={() => {
+                navigation.navigate('NewLogInScreen');
               }}>
               <Text
                 style={{
                   color: colors.black,
-                  fontSize: fontSize(14),
-                  lineHeight: hp(21),
+                  fontSize: fontSize(16),
+                  lineHeight: hp(24),
                   fontFamily: fontFamily.poppins400,
                 }}>
-                New Member?{' '}
+                Member Login
               </Text>
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => {
-                  navigation.navigate('NewSignUpScreen');
-                }}>
-                <Text
+              <View>
+                <Image
+                  source={images.profileVectorLogo}
                   style={{
-                    color: colors.blue,
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    fontFamily: fontFamily.poppins400,
-                  }}>
-                  Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
+                    width: hp(16),
+                    height: hp(16),
+                    marginLeft: wp(10),
+                    // top: 3,
+                    tintColor: colors.black,
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>

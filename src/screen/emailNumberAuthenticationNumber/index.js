@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
-  SafeAreaView,
   Text,
   TouchableHighlight,
   TouchableOpacity,
@@ -13,10 +13,9 @@ import {icons, images} from '../../assets';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import axios from 'axios'; // For API call
-import Abc from '../abc';
 import ProfileAvatar from '../../components/letterProfileComponent';
 
 const EmailNumberAuthenticationNumber = () => {
@@ -102,7 +101,7 @@ const EmailNumberAuthenticationNumber = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
         <View style={style.headerContainerStyle}>
           <Image

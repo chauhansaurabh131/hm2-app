@@ -623,7 +623,7 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
                     isLiked ? icons.new_user_like_icon : icons.new_like_icon
                   }
                   style={{
-                    width: hp(41),
+                    width: wp(41),
                     height: hp(24),
                     resizeMode: 'stretch',
                     marginRight: 8,
@@ -644,7 +644,7 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
                 <Image
                   source={starIconSource}
                   style={{
-                    width: hp(41),
+                    width: wp(41),
                     height: hp(24),
                     resizeMode: 'stretch',
                     marginRight: 8,
@@ -667,7 +667,7 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
                 <Image
                   source={friendIconSource}
                   style={{
-                    width: hp(41),
+                    width: wp(41),
                     height: hp(24),
                     resizeMode: 'stretch',
                   }}

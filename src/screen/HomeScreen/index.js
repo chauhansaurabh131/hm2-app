@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
-  SafeAreaView,
   Text,
   Modal,
   View,
@@ -16,8 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {gif, icons, images} from '../../assets';
 
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import PremiumMatchesFlatlistComponent from '../../components/premiumMatchesFlatlistComponent';
-import {NEW_MATCHES} from '../../utils/data';
+
 import SuccessStoryFlatListComponent from '../../components/SuccessStoryFlatListComponent';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import FastImage from 'react-native-fast-image';
@@ -26,7 +24,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getSuccessStories, userDatas} from '../../actions/homeActions';
 import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
-import Toast from 'react-native-toast-message';
+
 import {colors} from '../../utils/colors';
 import io from 'socket.io-client';
 
@@ -342,7 +340,7 @@ const HomeScreen = ({route}) => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       {/*<SafeAreaView style={[style.container, {paddingTop: insets.top}]}>*/}
       {showAlert && (
         <View
@@ -399,7 +397,6 @@ const HomeScreen = ({route}) => {
           {/*TOP PROFILE BUTTON TOGGLE*/}
           <TouchableOpacity
             activeOpacity={0.7}
-            // onPress={openTopSheetModal}
             onPress={openBottomSheet}
             style={style.headerTopSheetImageContainer}>
             {hasValidImage ? (
@@ -605,7 +602,7 @@ const HomeScreen = ({route}) => {
 
         <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
 
-        <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
+        {/*<View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />*/}
 
         {/* Start Recently view code*/}
         <View>
@@ -652,46 +649,6 @@ const HomeScreen = ({route}) => {
           </>
         )}
 
-        {/*<View*/}
-        {/*  style={{*/}
-        {/*    // marginTop: hp(22),*/}
-        {/*    // marginBottom: hp(20),*/}
-        {/*    marginHorizontal: 17,*/}
-        {/*  }}>*/}
-        {/*  <View>*/}
-        {/*    <Image*/}
-        {/*      source={images.add_Stories_img}*/}
-        {/*      style={{width: '100%', height: hp(160), borderRadius: 10}}*/}
-        {/*    />*/}
-        {/*    <TouchableOpacity*/}
-        {/*      onPress={() => {*/}
-        {/*        navigation.navigate('SuccessStoryEditInformationScreen');*/}
-        {/*      }}*/}
-        {/*      activeOpacity={0.7}*/}
-        {/*      style={{*/}
-        {/*        position: 'absolute',*/}
-        {/*        width: hp(134),*/}
-        {/*        height: hp(40),*/}
-        {/*        borderRadius: 20,*/}
-        {/*        backgroundColor: colors.white,*/}
-        {/*        right: wp(42),*/}
-        {/*        bottom: hp(30),*/}
-        {/*        alignItems: 'center',*/}
-        {/*        justifyContent: 'center',*/}
-        {/*      }}>*/}
-        {/*      <Text*/}
-        {/*        style={{*/}
-        {/*          color: colors.black,*/}
-        {/*          fontSize: fontSize(14),*/}
-        {/*          lineHeight: hp(18),*/}
-        {/*          fontFamily: fontFamily.poppins500,*/}
-        {/*        }}>*/}
-        {/*        Add Your Story*/}
-        {/*      </Text>*/}
-        {/*    </TouchableOpacity>*/}
-        {/*  </View>*/}
-        {/*</View>*/}
-
         <TouchableOpacity
           activeOpacity={0.8}
           style={{marginHorizontal: 17}}
@@ -705,15 +662,6 @@ const HomeScreen = ({route}) => {
             resizeMode="contain"
           />
         </TouchableOpacity>
-
-        {/*<View style={{marginTop: 50, marginHorizontal: 17}}>*/}
-        {/*  <ImageBackground*/}
-        {/*    source={images.new_add_story_img}*/}
-        {/*    style={{height: hp(159), width: '100%'}}*/}
-        {/*    imageStyle={{borderRadius: 12}} // ✅ iOS friendly*/}
-        {/*    resizeMode="contain"*/}
-        {/*  />*/}
-        {/*</View>*/}
 
         {/*VERIFICATION MODAL OPEN */}
         <View style={style.verificationModalContainer}>

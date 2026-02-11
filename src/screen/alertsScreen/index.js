@@ -1,20 +1,20 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, { useCallback, useRef, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   FlatList,
   Image,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
-import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
-import {icons} from '../../assets';
-import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import { icons } from '../../assets';
+import { colors } from '../../utils/colors';
+import { fontFamily, fontSize, hp, wp } from '../../utils/helpers';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import style from './style';
@@ -22,7 +22,7 @@ import style from './style';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const AlertsScreen = () => {
-  const {user} = useSelector(state => state.auth);
+  const { user } = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
 
   const navigation = useNavigation();
@@ -122,7 +122,7 @@ const AlertsScreen = () => {
 
       const data = await response.json();
 
-      setRequestResponses(prev => ({...prev, [notificationId]: status}));
+      setRequestResponses(prev => ({ ...prev, [notificationId]: status }));
     } catch (error) {
       console.error('Friend request response error:', error.message);
     }
@@ -240,7 +240,7 @@ const AlertsScreen = () => {
       firstName: item?.otherUserId?.name,
       id: item?.otherUserId?.id,
     };
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData: userData});
+    navigation.navigate('NewUserDetailsScreen', { matchesUserData: userData });
   };
 
   const getSubtitleText = (item, requestState) => {
@@ -271,25 +271,25 @@ const AlertsScreen = () => {
     return item.title || '';
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     const requestState = requestResponses[item.id];
 
     // console.log(' === requestState ===> ', requestState);
 
     const name = item?.otherUserId?.name
       ? item?.otherUserId?.name.charAt(0).toUpperCase() +
-        item?.otherUserId?.name.slice(1).toLowerCase()
+      item?.otherUserId?.name.slice(1).toLowerCase()
       : 'N/A';
 
     // const name = item?.otherUserId?.name || 'User';
     const notificationId = item.id;
 
     return (
-      <View style={{flexDirection: 'row', padding: 10}}>
+      <View style={{ flexDirection: 'row', padding: 10 }}>
         {item.otherUserId?.profilePic ? (
           <Image
-            source={{uri: item.otherUserId.profilePic}}
-            style={{width: 50, height: 50, borderRadius: 25, marginRight: 10}}
+            source={{ uri: item.otherUserId.profilePic }}
+            style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }}
           />
         ) : (
           <ProfileAvatar
@@ -300,11 +300,11 @@ const AlertsScreen = () => {
               borderRadius: 25,
               marginRight: 10,
             }}
-            profileTexts={{fontSize: fontSize(20)}}
+            profileTexts={{ fontSize: fontSize(20) }}
           />
         )}
 
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <TouchableOpacity onPress={() => handlePress(item)}>
             <Text
               style={{
@@ -328,7 +328,7 @@ const AlertsScreen = () => {
           </TouchableOpacity>
 
           {item.title === 'Sent you a request' && !requestState && (
-            <View style={{flexDirection: 'row', marginTop: 6}}>
+            <View style={{ flexDirection: 'row', marginTop: 6 }}>
               <TouchableOpacity
                 onPress={() =>
                   handleFriendRequestResponse(
@@ -369,8 +369,8 @@ const AlertsScreen = () => {
                 }>
                 <LinearGradient
                   colors={['#7045EB', '#4819CB']}
-                  start={{x: 1, y: 0}}
-                  end={{x: 0, y: 0}}
+                  start={{ x: 1, y: 0 }}
+                  end={{ x: 0, y: 0 }}
                   style={{
                     borderRadius: 20,
                     justifyContent: 'center',
@@ -393,7 +393,7 @@ const AlertsScreen = () => {
           )}
 
           {item.title === 'Mobile Number Request' && !requestState && (
-            <View style={{flexDirection: 'row', marginTop: 6}}>
+            <View style={{ flexDirection: 'row', marginTop: 6 }}>
               <TouchableOpacity
                 onPress={() => onDeclineNumberRequestedPress(item)}
                 style={{
@@ -420,8 +420,8 @@ const AlertsScreen = () => {
                 onPress={() => onAcceptedNumberRequestedPress(item)}>
                 <LinearGradient
                   colors={['#7045EB', '#4819CB']}
-                  start={{x: 1, y: 0}}
-                  end={{x: 0, y: 0}}
+                  start={{ x: 1, y: 0 }}
+                  end={{ x: 0, y: 0 }}
                   style={{
                     borderRadius: 20,
                     justifyContent: 'center',
@@ -444,7 +444,7 @@ const AlertsScreen = () => {
           )}
         </View>
 
-        <Text style={{color: '#D1D1D1', fontSize: fontSize(12)}}>
+        <Text style={{ color: '#D1D1D1', fontSize: fontSize(12) }}>
           {getCompactTimeAgo(item.createdAt)}
         </Text>
       </View>
@@ -452,7 +452,7 @@ const AlertsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={style.container}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
       <View style={style.bodyContainer}>
         <View
@@ -496,7 +496,7 @@ const AlertsScreen = () => {
         </View>
       </View>
 
-      <View style={{marginHorizontal: 17, flex: 1}}>
+      <View style={{ marginHorizontal: 17, flex: 1 }}>
         <FlatList
           data={notifications}
           renderItem={renderItem}
