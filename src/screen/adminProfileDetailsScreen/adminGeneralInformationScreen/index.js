@@ -268,9 +268,12 @@ const AdminGeneralInformationScreen = (...params) => {
     }
   };
 
-  const capitalizeFirstLetter = string => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-    // return string;
+  const capitalizeFirstLetter = value => {
+    if (typeof value !== 'string' || value.length === 0) {
+      return '';
+    }
+
+    return value.charAt(0).toUpperCase() + value.slice(1);
   };
 
   return (
@@ -312,18 +315,22 @@ const AdminGeneralInformationScreen = (...params) => {
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Religion</Text>
               <Text style={style.subTittleText}>
-                {capitalizeFirstLetter(religion)}
+                {capitalizeFirstLetter(religion) || 'N/A'}
               </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Height</Text>
-              <Text style={style.subTittleText}>{height} ft</Text>
+              <Text style={style.subTittleText}>
+                {height ? `${height} ft` : 'N/A'}
+              </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Weight</Text>
-              <Text style={style.subTittleText}>{weight} Kg</Text>
+              <Text style={style.subTittleText}>
+                {weight ? `${weight} Kg` : 'N/A'}
+              </Text>
             </View>
 
             <View style={style.subTittleContainer}>
@@ -336,28 +343,28 @@ const AdminGeneralInformationScreen = (...params) => {
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Manglik Status</Text>
               <Text style={style.subTittleText}>
-                {capitalizeFirstLetter(manglik)}
+                {capitalizeFirstLetter(manglik) || 'N/A'}
               </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Gothra</Text>
               <Text style={style.subTittleText}>
-                {capitalizeFirstLetter(gothra)}
+                {capitalizeFirstLetter(gothra) || 'N/A'}
               </Text>
             </View>
 
             <View style={style.subTittleContainer}>
               <Text style={style.tittleText}>Zodiac Sign</Text>
               <Text style={style.subTittleText}>
-                {capitalizeFirstLetter(zodiac)}
+                {capitalizeFirstLetter(zodiac) || 'N/A'}
               </Text>
             </View>
 
             <View style={[style.subTittleContainer, {marginBottom: hp(25)}]}>
               <Text style={style.tittleText}>Mother Toungue</Text>
               <Text style={style.subTittleText}>
-                {capitalizeFirstLetter(motherTongue)}
+                {capitalizeFirstLetter(motherTongue) || 'N/A'}
               </Text>
             </View>
           </View>
@@ -1118,132 +1125,98 @@ const AdminGeneralInformationScreen = (...params) => {
                 <ScrollView>
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Agasthi (अगस्ती)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Agasthi (अगस्ती)
-                    </Text>
+                    onPress={() => handleSelectGothra('Agasthi')}>
+                    <Text style={style.bottomSheetOptionText}>Agasthi</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Atri (अत्री)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Atri (अत्री)
-                    </Text>
+                    onPress={() => handleSelectGothra('Atri')}>
+                    <Text style={style.bottomSheetOptionText}>Atri</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Angirasa (अंगिरासा)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Angirasa (अंगिरासा)
-                    </Text>
+                    onPress={() => handleSelectGothra('Angirasa')}>
+                    <Text style={style.bottomSheetOptionText}>Angirasa</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Bharadwaj (भारद्वाज)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Bharadwaj (भारद्वाज)
-                    </Text>
+                    onPress={() => handleSelectGothra('Bharadwaj')}>
+                    <Text style={style.bottomSheetOptionText}>Bharadwaj</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Gautam (गौतम)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Gautam (गौतम)
-                    </Text>
+                    onPress={() => handleSelectGothra('Gautam')}>
+                    <Text style={style.bottomSheetOptionText}>Gautam</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Jamadagni (जमदग्नि)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Jamadagni (जमदग्नि)
-                    </Text>
+                    onPress={() => handleSelectGothra('Jamadagni')}>
+                    <Text style={style.bottomSheetOptionText}>Jamadagni</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Kashyap (कश्यप)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Kashyap (कश्यप)
-                    </Text>
+                    onPress={() => handleSelectGothra('Kashyap')}>
+                    <Text style={style.bottomSheetOptionText}>Kashyap</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Vasishta (वशिष्ठ)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Vasishta (वशिष्ठ)
-                    </Text>
+                    onPress={() => handleSelectGothra('Vasishta ')}>
+                    <Text style={style.bottomSheetOptionText}>Vasishta</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() =>
-                      handleSelectGothra('Vishwamitra (विश्वामित्र)')
-                    }>
-                    <Text style={style.bottomSheetOptionText}>
-                      Vishwamitra (विश्वामित्र)
-                    </Text>
+                    onPress={() => handleSelectGothra('Vishwamitra ')}>
+                    <Text style={style.bottomSheetOptionText}>Vishwamitra</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Bhrigu (भृगु)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Bhrigu (भृगु)
-                    </Text>
+                    onPress={() => handleSelectGothra('Bhrigu')}>
+                    <Text style={style.bottomSheetOptionText}>Bhrigu</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Shandilya (शांडिल्य)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Shandilya (शांडिल्य)
-                    </Text>
+                    onPress={() => handleSelectGothra('Shandilya ')}>
+                    <Text style={style.bottomSheetOptionText}>Shandilya</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Kaushik (कौशिक)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Kaushik (कौशिक)
-                    </Text>
+                    onPress={() => handleSelectGothra('Kaushik')}>
+                    <Text style={style.bottomSheetOptionText}>Kaushik</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Parashar (पाराशर)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Parashar (पाराशर)
-                    </Text>
+                    onPress={() => handleSelectGothra('Parashar ')}>
+                    <Text style={style.bottomSheetOptionText}>Parashar</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Vatsa (वत्स)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Vatsa (वत्स)
-                    </Text>
+                    onPress={() => handleSelectGothra('Vatsa ')}>
+                    <Text style={style.bottomSheetOptionText}>Vatsa</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectGothra('Mudgal (मुदगल)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Mudgal (मुदगल)
-                    </Text>
+                    onPress={() => handleSelectGothra('Mudgal')}>
+                    <Text style={style.bottomSheetOptionText}>Mudgal</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15), marginBottom: hp(15)}}
-                    onPress={() => handleSelectGothra('Other (अन्य)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Other (अन्य)
-                    </Text>
+                    onPress={() => handleSelectGothra('Other ')}>
+                    <Text style={style.bottomSheetOptionText}>Other</Text>
                   </TouchableOpacity>
                 </ScrollView>
               </RBSheet>
@@ -1272,94 +1245,74 @@ const AdminGeneralInformationScreen = (...params) => {
                 <ScrollView>
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Aries (मेष)')}>
-                    <Text style={style.bottomSheetOptionText}>Aries (मेष)</Text>
+                    onPress={() => handleSelectZodiac('Aries')}>
+                    <Text style={style.bottomSheetOptionText}>Aries</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Taurus (वॄष)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Taurus (वॄष)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Taurus')}>
+                    <Text style={style.bottomSheetOptionText}>Taurus</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Gemini (मिथुन)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Gemini (मिथुन)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Gemini')}>
+                    <Text style={style.bottomSheetOptionText}>Gemini</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Cancer (कर्क)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Cancer (कर्क)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Cancer')}>
+                    <Text style={style.bottomSheetOptionText}>Cancer</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Leo (सिंह)')}>
-                    <Text style={style.bottomSheetOptionText}>Leo (सिंह)</Text>
+                    onPress={() => handleSelectZodiac('Leo')}>
+                    <Text style={style.bottomSheetOptionText}>Leo</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Virgo (कन्या)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Virgo (कन्या)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Virgo')}>
+                    <Text style={style.bottomSheetOptionText}>Virgo</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Libra (तुला)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Libra (तुला)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Libra')}>
+                    <Text style={style.bottomSheetOptionText}>Libra</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Scorpio (वृश्चिक)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Scorpio (वृश्चिक)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Scorpio')}>
+                    <Text style={style.bottomSheetOptionText}>Scorpio</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Sagittarius (धनु)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Sagittarius (धनु)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Sagittarius')}>
+                    <Text style={style.bottomSheetOptionText}>Sagittarius</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Capricorn (मकर)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Capricorn (मकर)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Capricorn ')}>
+                    <Text style={style.bottomSheetOptionText}>Capricorn</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15)}}
-                    onPress={() => handleSelectZodiac('Aquarius (कुंभ)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Aquarius (कुंभ)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Aquarius')}>
+                    <Text style={style.bottomSheetOptionText}>Aquarius</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={{marginTop: hp(15), marginBottom: hp(15)}}
-                    onPress={() => handleSelectZodiac('Pisces (मीन)')}>
-                    <Text style={style.bottomSheetOptionText}>
-                      Pisces (मीन)
-                    </Text>
+                    onPress={() => handleSelectZodiac('Pisces')}>
+                    <Text style={style.bottomSheetOptionText}>Pisces</Text>
                   </TouchableOpacity>
                 </ScrollView>
               </RBSheet>

@@ -308,7 +308,7 @@ const NewDropDownTextInput = ({
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <View style={{height: 10}} />
+          <View style={{height: hp(10)}} />
         </View>
       </RBSheet>
     </View>
@@ -349,15 +349,18 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
   },
   dropdownItem: {
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 10,
     marginHorizontal: 17,
+    justifyContent: 'center',
   },
   dropdownText: {
     color: 'black',
     fontSize: fontSize(16),
-    lineHeight: 24,
+    lineHeight: fontSize(22),
     fontFamily: fontFamily.poppins500,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 });
 

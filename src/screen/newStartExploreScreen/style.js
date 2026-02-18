@@ -30,13 +30,11 @@ export const style = StyleSheet.create({
     marginHorizontal: wp(30),
   },
   tittleTextStyle: {
-    color: colors.black,
-    fontSize: fontSize(24),
-    lineHeight: hp(36),
-    fontFamily: fontFamily.poppins500,
-    alignSelf: 'center',
-    marginTop: hp(50),
-    marginBottom: 70,
+    color: colors.pureBlack,
+    fontSize: fontSize(20),
+    fontFamily: fontFamily.poppins600,
+    textAlign: 'center',
+    marginTop: hp(100),
   },
   selectedBackGroundColorStyle: {
     width: '100%',

@@ -48,6 +48,8 @@ export const images = {
   photo_studio_background_img: require('./images/photo_studio_background.png'),
   photo_studio_img: require('./images/photo_studio_img.png'),
   new_add_story_img: require('./images/new_add_story_img.png'),
+  cartoon_couple_one: require('./images/cartoonCoupleOne.png'),
+  cartoon_couple_two: require('./images/cartoonCoupleTwo.png'),
 };
 
 export const icons = {

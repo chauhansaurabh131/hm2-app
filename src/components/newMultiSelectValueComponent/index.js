@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
 
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
 
   selectedContainer: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     paddingTop: 6,
   },
 
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#E5E5E5',
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
     marginTop: 8,
   },
 

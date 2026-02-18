@@ -92,11 +92,13 @@ export const style = StyleSheet.create({
   },
   textInputContainer: {
     height: hp(110),
-    marginTop: 10,
+    marginTop: hp(10),
     paddingHorizontal: hp(17),
     textAlignVertical: 'top',
     color: colors.black,
     backgroundColor: '#F5F5F5',
+    fontSize: fontSize(14),
+    fontFamily: fontFamily.poppins500,
   },
   flatListContainer: {
     marginHorizontal: wp(13),
@@ -219,13 +221,15 @@ export const style = StyleSheet.create({
     width: hp(15),
     height: hp(15),
     backgroundColor: 'black',
-    borderRadius: 50,
+    borderRadius: hp(50),
+    justifyContent: 'center',
   },
   purposeCancelXIcon: {
     color: 'silver',
     fontSize: 10,
     textAlign: 'center',
     fontWeight: 'bold',
+    justifyContent: 'center',
   },
   noPurposeText: {
     color: 'grey',
@@ -286,10 +290,10 @@ export const style = StyleSheet.create({
   dateModalCloseButtonContainer: {
     position: 'absolute',
     top: 10,
-    right: 10,
+    right: 15,
   },
   dateModalCancelText: {
-    fontSize: 24,
+    fontSize: fontSize(16),
     color: 'black',
   },
   dateModalPicker: {

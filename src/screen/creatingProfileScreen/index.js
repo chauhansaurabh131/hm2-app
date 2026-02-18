@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -60,7 +60,8 @@ const CreatingProfileScreen = () => {
             nameParts.slice(1).join(' ').slice(1).toLowerCase()
           : '';
       setFirstName(formattedFirstName); // Update first name
-      setLastName(formattedLastName); // Update last name
+      // setLastName(formattedLastName); // Update last name
+      setLastName(user?.user?.lastName); // Update last name
     }
 
     // Set birthTime if available and format it into 'hh:mm A' format (AM/PM)
@@ -81,12 +82,20 @@ const CreatingProfileScreen = () => {
       );
       setDateOfBirth(formattedDateOfBirth); // Set formatted date
     }
+
+    if (user?.user?.writeBoutYourSelf) {
+      setDescription(user?.user?.writeBoutYourSelf);
+    }
   }, [user]); // Run this effect whenever `user` changes
 
   useEffect(() => {
     console.log('User creatingProfileFor:', user?.user?.creatingProfileFor); // Check user data
     if (user?.user?.creatingProfileFor) {
-      setSelectedOption(user.user.creatingProfileFor); // Set the value for dropdown
+      const rawValue = user.user.creatingProfileFor;
+      const formattedValue = rawValue
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .replace(/^./, str => str.toUpperCase()); // Capitalize first letter
+      setSelectedOption(formattedValue); // Set the value for dropdown
     }
   }, [user?.user?.creatingProfileFor]);
 
@@ -239,7 +248,7 @@ const CreatingProfileScreen = () => {
             dropdownData={dropdownData}
             onValueChange={setSelectedOption}
             value={selectedOption} // This will bind the selected value to the dropdown
-            bottomSheetHeight={hp(400)}
+            bottomSheetHeight={hp(380)}
           />
         </View>
 

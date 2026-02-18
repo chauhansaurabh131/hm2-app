@@ -23,6 +23,7 @@ const NewEnterSelectValueComponent = ({
   keyboardTypes = 'default',
   emptyText = 'Add',
   EnterModalPlaceholderTittle = 'Enter Height',
+  showDivider = true,
 }) => {
   const [visible, setVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -65,7 +66,7 @@ const NewEnterSelectValueComponent = ({
         </View>
       </TouchableOpacity>
 
-      <View style={styles.divider} />
+      {showDivider && <View style={styles.divider} />}
 
       {/* CENTER MODAL */}
       <Modal
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
 
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#E5E5E5',
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
   },
 
   /* ===== MODAL ===== */

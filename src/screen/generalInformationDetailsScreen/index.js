@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, Text, View} from 'react-native';
 import {style} from './style';
 import NewDropDownTextInput from '../../components/newDropdownTextinput';
@@ -6,6 +6,7 @@ import FloatingLabelInput from '../../components/FloatingLabelInput';
 import {hp, wp} from '../../utils/helpers';
 import NewSelectValueComponent from '../../components/newSelectValueComponent';
 import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
+import {useSelector} from 'react-redux';
 
 const GeneralInformationDetailsScreen = ({
   genderSetSelectedOption,
@@ -139,7 +140,9 @@ const GeneralInformationDetailsScreen = ({
 
   return (
     <SafeAreaView style={style.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{marginHorizontal: 15}}>
         <NewSelectValueComponent
           title="Gender"
           value={selectedGenderStatus}

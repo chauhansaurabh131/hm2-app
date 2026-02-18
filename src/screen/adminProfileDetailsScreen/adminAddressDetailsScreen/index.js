@@ -266,7 +266,7 @@ const AdminAddressDetailsScreen = (...params) => {
               ref={currentCountryBottomSheetRef}
               closeOnDragDown={true} // Allows drag to close
               closeOnPressMask={true} // Allows closing when clicking outside the sheet
-              height={hp(430)} // Adjust height of Bottom Sheet
+              height={hp(150)} // Adjust height of Bottom Sheet
               customStyles={{
                 draggableIcon: {
                   backgroundColor: colors.gray,
@@ -284,42 +284,6 @@ const AdminAddressDetailsScreen = (...params) => {
                 style={{marginTop: hp(15)}}
                 onPress={() => handleSelectCuntry('india')}>
                 <Text style={style.bottomSheetOptionText}>India</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('canada')}>
-                <Text style={style.bottomSheetOptionText}>Canada</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('us')}>
-                <Text style={style.bottomSheetOptionText}>US</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('china')}>
-                <Text style={style.bottomSheetOptionText}>China</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('myanmar')}>
-                <Text style={style.bottomSheetOptionText}>Myanmar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('nepal')}>
-                <Text style={style.bottomSheetOptionText}>Nepal</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{marginTop: hp(15)}}
-                onPress={() => handleSelectCuntry('sri-lanka')}>
-                <Text style={style.bottomSheetOptionText}>Sri-lanka</Text>
               </TouchableOpacity>
             </RBSheet>
 

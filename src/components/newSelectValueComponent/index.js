@@ -42,6 +42,7 @@ const NewSelectValueComponent = ({
   showSearch = false,
   showDivider = true,
   useGoogleSearch = false, // ✅ optional
+  componentMainStyle,
 }) => {
   const refRBSheet = useRef(null);
   const [searchText, setSearchText] = useState('');
@@ -85,7 +86,7 @@ const NewSelectValueComponent = ({
     <>
       {/* MAIN ROW */}
       <TouchableOpacity
-        style={styles.row}
+        style={[styles.row, {componentMainStyle}]}
         activeOpacity={0.7}
         onPress={() => refRBSheet.current.open()}>
         <Text style={styles.leftText}>{title}</Text>
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
 
@@ -200,11 +201,11 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#E5E5E5',
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
   },
 
   searchContainer: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     marginBottom: 10,
   },
 

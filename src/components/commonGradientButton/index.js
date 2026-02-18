@@ -34,7 +34,7 @@ const CommonGradientButton = ({
               width: wp(320),
               // width: '100%',
               height: hp(50),
-              borderRadius: 25,
+              borderRadius: hp(25),
               alignItems: 'center',
               alignSelf: 'center',
               justifyContent: 'center',

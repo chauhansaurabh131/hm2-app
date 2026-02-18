@@ -31,7 +31,7 @@ const MyProfileScreen = () => {
   const {user} = useSelector(state => state.auth);
   const userData = user.user;
 
-  // console.log(' === userData ===> ', userData?.userUniqueId);
+  console.log(' === userData---- ===> ', userData);
 
   const [topModalVisible, setTopModalVisible] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -342,7 +342,7 @@ const MyProfileScreen = () => {
                 position: 'absolute',
                 bottom: -1,
                 width: '100%',
-                height: 130,
+                height: hp(120),
               }}>
               <View style={{marginLeft: wp(18.16)}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -395,7 +395,7 @@ const MyProfileScreen = () => {
                 <View
                   style={[
                     style.userDetailsDescriptionContainer,
-                    {marginTop: 5},
+                    {marginTop: hp(5)},
                   ]}>
                   <Text style={style.userDetailsTextStyle}>{age} yrs,</Text>
                   <Text style={style.userDetailsTextStyle}>{height}</Text>
@@ -422,7 +422,7 @@ const MyProfileScreen = () => {
                       width: hp(60),
                       height: hp(30),
                       backgroundColor: '#282727',
-                      borderRadius: 15,
+                      borderRadius: hp(15),
                       justifyContent: 'center',
                       alignSelf: 'center',
                       alignItems: 'center',

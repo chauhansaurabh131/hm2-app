@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {fontFamily, fontSize, hp} from '../../../utils/helpers';
 import NewMultiSelectValueComponent from '../../../components/newMultiSelectValueComponent';
 
@@ -43,16 +43,18 @@ const DatingHobbiesScreen = ({selectedItems, setSelectedItems}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <NewMultiSelectValueComponent
-        title="Add Hobbies"
-        value={multiHobbiesStatus} // 👈 ARRAY
-        dropdownData={options}
-        onValueChange={value => {
-          setMultiHobbiesStatus(value); // ✅ update UI
-          setSelectedItems?.(value); // ✅ optional: update parent
-        }}
-        bottomSheetHeight={hp(500)}
-      />
+      <View style={{marginHorizontal: 17}}>
+        <NewMultiSelectValueComponent
+          title="Add Hobbies"
+          value={multiHobbiesStatus} // 👈 ARRAY
+          dropdownData={options}
+          onValueChange={value => {
+            setMultiHobbiesStatus(value); // ✅ update UI
+            setSelectedItems?.(value); // ✅ optional: update parent
+          }}
+          bottomSheetHeight={hp(500)}
+        />
+      </View>
     </SafeAreaView>
   );
 };

@@ -1,11 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
-} from 'react-native';
+import {Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
@@ -105,7 +100,7 @@ const EditContactScreen = ({navigation}) => {
               style={{
                 width: wp(133),
                 height: hp(44),
-                borderRadius: 25,
+                borderRadius: hp(25),
                 borderWidth: 1,
                 borderColor: colors.black,
                 justifyContent: 'center',

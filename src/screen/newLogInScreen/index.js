@@ -76,7 +76,59 @@ const NewLogInScreen = () => {
     });
   }, []);
 
-  const successCallback = () => {
+  // const successCallback = () => {
+  //   console.log(' === successCallback ===> ');
+  //   // dispatch(changeStack());
+  // };
+
+  // const successCallback = appUsesType => {
+  //   console.log(' === successCallback ===> ', appUsesType);
+  //
+  //   if (!appUsesType) {
+  //     // 🔹 If undefined → First time user
+  //     navigation.replace('NewStartExploreScreen');
+  //   } else {
+  //     // 🔹 If already selected
+  //     // dispatch(changeStack());
+  //     console.log(' === changeStack ===> ');
+  //   }
+  // };
+
+  const successCallback = (
+    appUsesType,
+    userProfileCompleted,
+    userPartnerPreCompleted,
+  ) => {
+    const isDating = appUsesType === 'dating';
+    const isMarriage = appUsesType === 'marriage';
+
+    // 🔹 Case 1: First time user
+    if (!appUsesType) {
+      navigation.replace('NewStartExploreScreen');
+      return;
+    }
+
+    // 🔹 Case 2: Profile not completed
+    if (userProfileCompleted === false) {
+      if (isMarriage) {
+        navigation.replace('LongTermBasicDetailScreen');
+      } else if (isDating) {
+        navigation.replace('DatingBasicDetailScreen');
+      }
+      return;
+    }
+
+    // 🔹 Case 3: Partner preference not completed
+    if (userPartnerPreCompleted === false) {
+      if (isMarriage) {
+        navigation.replace('LongTermPartnerPreferenceScreen');
+      } else if (isDating) {
+        navigation.replace('DatingNewPartnerPreferenceScreen');
+      }
+      return;
+    }
+
+    // 🔹 Case 4: Everything completed
     dispatch(changeStack());
   };
 

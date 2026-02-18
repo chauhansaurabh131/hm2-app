@@ -732,7 +732,9 @@ const DatingSearchFilterScreen = ({route}) => {
           shadowOpacity: 0.2,
           shadowRadius: 1.41,
           elevation: 2,
-          height: hp(530),
+          height: hp(500),
+          marginHorizontal: wp(18),
+          marginBottom: hp(10),
         }}>
         {hasValidImage ? (
           <>
@@ -760,7 +762,7 @@ const DatingSearchFilterScreen = ({route}) => {
           <ProfileAvatar
             firstName={card.firstName || card.name}
             lastName={card.lastName}
-            textStyle={{width: '100%', height: hp(530), borderRadius: 20}}
+            textStyle={{width: '100%', height: hp(500), borderRadius: 20}}
             profileTexts={{fontSize: fontSize(60)}}
           />
         )}
@@ -1380,7 +1382,7 @@ const DatingSearchFilterScreen = ({route}) => {
             </Text>
           </View>
         ) : (
-          <View style={{marginTop: -40}}>
+          <View style={{flex: 1, marginTop: hp(15)}}>
             <Swiper
               ref={swiperRef} // Add ref to the Swiper
               key={resetKey}
@@ -1394,6 +1396,8 @@ const DatingSearchFilterScreen = ({route}) => {
               animateOverlayLabelsOpacity
               verticalSwipe={false}
               horizontalSwipe={true}
+              cardVerticalMargin={0}
+              cardHorizontalMargin={0}
             />
           </View>
         )}

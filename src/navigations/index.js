@@ -10,7 +10,6 @@ import SetPasswordScreen from '../screen/setPasswordScreen';
 import NumberRegistrationScreen from '../screen/numberRegistrationScreen';
 import AddPersonalInfo from '../screen/addPersonalInfo';
 import NumberRegistrationTextInput from '../components/numberRegistrationTextInput';
-import StartExploreScreen from '../screen/startExploreScreen';
 import HomeScreen from '../screen/HomeScreen';
 import MatchesScreen from '../screen/matchesScreen';
 import ChatScreen from '../screen/chatScreen';
@@ -98,6 +97,10 @@ import DatingUpgradeScreen from '../screen/datingUpgradeScreen';
 import ServiceHomeScreen from '../screen/serviceHomeScreen';
 import ServicesProfileScreen from '../screen/servicesProfileScreen';
 import ServicesSearchScreen from '../screen/servicesSearchScreen';
+import LongTermBasicDetailScreen from '../screen/longTermBasicDetailScreen';
+import LongTermPartnerPreferenceScreen from '../screen/longTermPartnerPreferenceScreen';
+import DatingBasicDetailScreen from '../screen/datingBasicDetailScreen';
+import DatingNewPartnerPreferenceScreen from '../screen/datingNewPartnerPreferenceScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -152,6 +155,8 @@ const MainNavigator = () => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="NewMainScreen">
+      {/*<Stack.Screen name="DemoCode" component={DemoCode} />*/}
+
       <Stack.Screen name="ServiceHomeScreen" component={ServiceHomeScreen} />
       <Stack.Screen
         name="ServicesSearchScreen"
@@ -162,7 +167,6 @@ const MainNavigator = () => {
         component={ServicesProfileScreen}
       />
 
-      <Stack.Screen name="DemoCode" component={DemoCode} />
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
       <Stack.Screen name="NewSignUpScreen" component={NewSignUpScreen} />
       <Stack.Screen name="NewLogInScreen" component={NewLogInScreen} />
@@ -184,6 +188,26 @@ const MainNavigator = () => {
       <Stack.Screen
         name="NewStartExploreScreen"
         component={NewStartExploreScreen}
+      />
+
+      <Stack.Screen
+        name="LongTermBasicDetailScreen"
+        component={LongTermBasicDetailScreen}
+      />
+
+      <Stack.Screen
+        name="LongTermPartnerPreferenceScreen"
+        component={LongTermPartnerPreferenceScreen}
+      />
+
+      <Stack.Screen
+        name="DatingBasicDetailScreen"
+        component={DatingBasicDetailScreen}
+      />
+
+      <Stack.Screen
+        name="DatingNewPartnerPreferenceScreen"
+        component={DatingNewPartnerPreferenceScreen}
       />
 
       <Stack.Screen
@@ -212,7 +236,6 @@ const MainNavigator = () => {
         name="NumberRegistrationTextInput"
         component={NumberRegistrationTextInput}
       />
-      <Stack.Screen name="StartExploreScreen" component={StartExploreScreen} />
     </Stack.Navigator>
   );
 

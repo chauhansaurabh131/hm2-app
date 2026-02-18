@@ -38,31 +38,33 @@ const ContactDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <NewEnterSelectValueComponent
-        title="Mobile Number"
-        value={mobileNumber}
-        emptyText="Add"
-        modalTitle="Mobile Number"
-        keyboardTypes="decimal-pad"
-        EnterModalPlaceholderTittle={'Enter Mobile Number'}
-        onValueChange={value => {
-          updateMobileNumber(value);
-          setMobileNumber?.(value);
-        }}
-      />
-
-      <View style={{marginTop: hp(10)}}>
+      <View style={{marginHorizontal: 17}}>
         <NewEnterSelectValueComponent
-          title="Email"
-          value={email}
+          title="Mobile Number"
+          value={mobileNumber}
           emptyText="Add"
-          modalTitle="Email Address"
-          EnterModalPlaceholderTittle={'Enter Email'}
+          modalTitle="Mobile Number"
+          keyboardTypes="decimal-pad"
+          EnterModalPlaceholderTittle={'Enter Mobile Number'}
           onValueChange={value => {
-            setLocalEmail(value);
-            setUserEmail?.(value);
+            updateMobileNumber(value);
+            setMobileNumber?.(value);
           }}
         />
+
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Email"
+            value={email}
+            emptyText="Add"
+            modalTitle="Email Address"
+            EnterModalPlaceholderTittle={'Enter Email'}
+            onValueChange={value => {
+              setLocalEmail(value);
+              setUserEmail?.(value);
+            }}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );

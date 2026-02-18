@@ -1,15 +1,8 @@
 import React, {useState} from 'react';
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
-import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
-import NewBottomSheetMultipleValueSelect from '../../../components/newBottomSheetMultipleValueSelect';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../../actions/homeActions';
 import NewMultiSelectValueComponent from '../../../components/newMultiSelectValueComponent';
@@ -191,7 +184,7 @@ const EditHobbiesScreen = ({navigation}) => {
               style={{
                 width: wp(133),
                 height: hp(44),
-                borderRadius: 25,
+                borderRadius: hp(25),
                 borderWidth: 1,
                 borderColor: colors.black,
                 justifyContent: 'center',

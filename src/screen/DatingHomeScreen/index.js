@@ -23,6 +23,7 @@ import {colors} from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import AgeRangeSlider from '../../components/ageRangeSlider';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {updateDetails, userDatas} from '../../actions/homeActions';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBaqU_1hOFIhVLm8su_caJheEChJCNBTyY';
 
@@ -51,7 +52,7 @@ const DatingHomeScreen = () => {
 
   const {user} = useSelector(state => state.auth);
 
-  console.log(' === user***** ===> ', user?.user?.profilePic);
+  // console.log(' === user***** ===> ', user?.user);
 
   const bottomSheetRef = useRef(null);
 
@@ -85,6 +86,14 @@ const DatingHomeScreen = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (user?.user?.isVisited === false) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
+    }
+  }, [user?.user?.isVisited]);
 
   const handleRangeSubmit = range => {
     setAgeRange(range); // Update the state with the selected age range
@@ -205,11 +214,31 @@ const DatingHomeScreen = () => {
   const userProfileCompleted = user?.user?.userProfileCompleted;
   const userPartnerFormPreCompleted = user?.user?.userPartnerPreCompleted;
 
-  const handleButtonClick = () => {
+  // const handleButtonClick = () => {
+  //   if (activeLine === 3) {
+  //     setShowModal(false);
+  //     setActiveLine(1); // Reset the active line
+  //     navigation.navigate('DatingCreatingProfile');
+  //   } else {
+  //     setActiveLine(prev => prev + 1);
+  //   }
+  // };
+
+  const handleButtonClick = async () => {
     if (activeLine === 3) {
-      setShowModal(false);
-      setActiveLine(1); // Reset the active line
-      navigation.navigate('DatingCreatingProfile');
+      try {
+        await dispatch(
+          updateDetails({
+            isVisited: true,
+          }),
+        );
+
+        dispatch(userDatas()); // refresh user
+        setShowModal(false);
+        setActiveLine(1);
+      } catch (error) {
+        console.log('Update failed', error);
+      }
     } else {
       setActiveLine(prev => prev + 1);
     }
@@ -220,23 +249,23 @@ const DatingHomeScreen = () => {
     navigation.navigate('DatingPartnerPreferenceScreen');
   };
 
-  useEffect(() => {
-    if (userProfileCompleted) {
-      setShowModal(false);
-    }
-  }, [userProfileCompleted]);
+  // useEffect(() => {
+  //   if (userProfileCompleted) {
+  //     setShowModal(false);
+  //   }
+  // }, [userProfileCompleted]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!userProfileCompleted) {
-        // If userProfileCompleted is false, show the modal
-        setShowModal(true);
-      } else if (userProfileCompleted && !userPartnerFormPreCompleted) {
-        // If userProfileCompleted is true and userPartnerFormPreCompleted is false, show the modal
-        setModalVisible(true);
-      }
-    }, [userProfileCompleted, userPartnerFormPreCompleted]),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (!userProfileCompleted) {
+  //       // If userProfileCompleted is false, show the modal
+  //       setShowModal(true);
+  //     } else if (userProfileCompleted && !userPartnerFormPreCompleted) {
+  //       // If userProfileCompleted is true and userPartnerFormPreCompleted is false, show the modal
+  //       setModalVisible(true);
+  //     }
+  //   }, [userProfileCompleted, userPartnerFormPreCompleted]),
+  // );
 
   const openTopSheetModal = () => {
     // Call toggleModal to show the top modal
@@ -271,7 +300,9 @@ const DatingHomeScreen = () => {
   // console.log(' === hasValidImage ===> ', user?.user?.profilePic);
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
+    <SafeAreaView
+      edges={['top', 'left', 'right', 'bottom']}
+      style={style.container}>
       <View style={style.headerContainer}>
         <View style={style.headerBody}>
           <Image
@@ -766,7 +797,7 @@ const DatingHomeScreen = () => {
         </View>
       </Modal>
 
-      <View style={{backgroundColor: 'silver', flex: 1}}>
+      <View style={{flex: 1, marginTop: hp(15)}}>
         <DatingSwipeDataComponent />
       </View>
     </SafeAreaView>

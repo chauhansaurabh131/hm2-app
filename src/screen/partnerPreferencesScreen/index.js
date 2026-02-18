@@ -1,35 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Keyboard,
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import AppColorLogo from '../../components/appColorLogo';
-import DropdownHeightAndAgeComponent from '../../components/DropdownHeightAndAgeComponent';
-import {COUNTRY_LIST, CurrentState, Fun} from '../../utils/data';
-import DropDownMutipleValueComponent from '../../components/DropDownMutipleValueComponent';
-import {useDispatch, useSelector} from 'react-redux';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 import {partnerReferences, updateDetails} from '../../actions/homeActions';
-
-import ReusableDropdown from '../../components/ReusableDropdown';
 import {useNavigation} from '@react-navigation/native';
 import style from './style';
-import AgeRangeSlider from '../../components/ageRangeSlider';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
-import HeightRangeSlider from '../../components/heightRangeSlider';
-import NewBottomSheetMultipleValueSelect from '../../components/newBottomSheetMultipleValueSelect';
-import NewBottomSheetSingleValueSelect from '../../components/newBottomSheetSingleValueSelect';
 import {colors} from '../../utils/colors';
-import MultipleValueSelectTextInput from '../../components/mutipleValueSelectTextInput';
 import Toast from 'react-native-toast-message';
 import NewSelectValueComponent from '../../components/newSelectValueComponent';
 import NewMultiSelectValueComponent from '../../components/newMultiSelectValueComponent';
-import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
 import NewEnterMultipleSelectValueComponent from '../../components/newEnterMultipleSelectValueComponent';
 
 const PartnerPreferencesScreen = () => {
@@ -158,6 +145,14 @@ const PartnerPreferencesScreen = () => {
   ];
 
   const onDashboardPress = () => {
+    if (!isFormValid()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please fill all fields',
+      });
+      return;
+    }
+
     const getAgeRange = range => {
       if (!range || range === 'Select') {
         return {};
@@ -283,6 +278,19 @@ const PartnerPreferencesScreen = () => {
 
   const handleHobbiesSelect = selectedValue => {
     setPreferHobbies(selectedValue);
+  };
+
+  const isFormValid = () => {
+    return (
+      ageRanges !== 'Select' &&
+      heightRanges !== 'Select' &&
+      annualIncomes !== 'Select' &&
+      country.length > 0 &&
+      preferStates.length > 0 &&
+      preferCity.length > 0 &&
+      preferDiets.length > 0 &&
+      hobbies.length > 0
+    );
   };
 
   return (
@@ -482,7 +490,11 @@ const PartnerPreferencesScreen = () => {
           <TouchableOpacity
             activeOpacity={0.6}
             onPress={onDashboardPress}
-            style={style.dashboardButton}>
+            disabled={!isFormValid()}
+            style={[
+              style.dashboardButton,
+              {opacity: isFormValid() ? 1 : 0.5}, // fade when disabled
+            ]}>
             {loading ? (
               <ActivityIndicator size="large" color={colors.white} />
             ) : (

@@ -46,29 +46,31 @@ const EducationDetailsScreen = ({setDegree, collage, setCollage}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <NewSelectValueComponent
-        title="Select Degree"
-        value={selectedDegreeStatus}
-        dropdownData={degreeDropdownData}
-        onValueChange={value => {
-          setSelectedDegreeStatus(value);
-          setDegree?.(value);
-        }}
-        bottomSheetHeight={hp(450)}
-      />
-
-      <View style={{marginTop: hp(10)}}>
-        <NewEnterSelectValueComponent
-          title="College / Uni."
-          value={selectedCollegeStatus}
-          emptyText="Add"
-          modalTitle="College / Uni."
-          EnterModalPlaceholderTittle={'Enter College / Uni.'}
+      <View style={{marginHorizontal: 17}}>
+        <NewSelectValueComponent
+          title="Select Degree"
+          value={selectedDegreeStatus}
+          dropdownData={degreeDropdownData}
           onValueChange={value => {
-            setSelectedCollegeStatus(value);
-            setCollage?.(value);
+            setSelectedDegreeStatus(value);
+            setDegree?.(value);
           }}
+          bottomSheetHeight={hp(450)}
         />
+
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="College / Uni."
+            value={selectedCollegeStatus}
+            emptyText="Add"
+            modalTitle="College / Uni."
+            EnterModalPlaceholderTittle={'Enter College / Uni.'}
+            onValueChange={value => {
+              setSelectedCollegeStatus(value);
+              setCollage?.(value);
+            }}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );

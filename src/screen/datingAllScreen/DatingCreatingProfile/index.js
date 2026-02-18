@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
   ActivityIndicator,
   TextInput,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -159,7 +159,7 @@ const DatingCreatingProfile = () => {
         <Text style={style.headingTextStyle}>Profile Info</Text>
       </View>
 
-      <View style={{marginTop: hp(10)}}>
+      <View style={{marginTop: hp(10), marginHorizontal: 17}}>
         <NewMultiSelectValueComponent
           title="I am looking for"
           value={datingSelectedOption} // 👈 ARRAY

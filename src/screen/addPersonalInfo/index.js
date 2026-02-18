@@ -4,12 +4,12 @@ import {
   FlatList,
   Image,
   Keyboard,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import style from './style';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import React, {useEffect, useReducer, useState} from 'react';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
@@ -454,7 +454,7 @@ const AddPersonalInfo = ({navigation}) => {
           {
             mobileNumber: mobileNumber,
             email: userEmail,
-            userProfileCompleted: true,
+            isUserprofileCompletedForReq: true,
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
@@ -802,7 +802,7 @@ const AddPersonalInfo = ({navigation}) => {
             style={{
               width: wp(133),
               height: hp(44),
-              borderRadius: 25,
+              borderRadius: wp(25),
               borderWidth: 1,
               borderColor: colors.black,
               justifyContent: 'center',

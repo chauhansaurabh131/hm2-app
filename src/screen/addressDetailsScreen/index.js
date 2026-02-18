@@ -50,43 +50,45 @@ const AddressDetailsScreen = ({
 
   return (
     <SafeAreaView style={style.container}>
-      <NewSelectValueComponent
-        title="Select Current Country"
-        value={selectedCountryStatus}
-        dropdownData={currentCountryDropDown}
-        onValueChange={value => {
-          setSelectedCountryStatus(value); // ✅ update UI
-          setCurrentCountry?.(value); // ✅ optional: update parent
-        }}
-        bottomSheetHeight={hp(100)}
-      />
-
-      <View style={{marginTop: hp(10)}}>
+      <View style={{marginHorizontal: 17}}>
         <NewSelectValueComponent
-          title="Select Current State"
-          value={selectedStateStatus}
-          dropdownData={currentStateDropdown}
+          title="Select Current Country"
+          value={selectedCountryStatus}
+          dropdownData={currentCountryDropDown}
           onValueChange={value => {
-            setSelectedStateStatus(value); // ✅ update UI
-            setCurrentState?.(value); // ✅ optional: update parent
+            setSelectedCountryStatus(value); // ✅ update UI
+            setCurrentCountry?.(value); // ✅ optional: update parent
           }}
-          bottomSheetHeight={hp(500)}
-          showSearch={true}
+          bottomSheetHeight={hp(100)}
         />
-      </View>
 
-      <View style={{marginTop: hp(10)}}>
-        <NewEnterSelectValueComponent
-          title="Select Current City"
-          value={selectedCityStatus}
-          emptyText="Add"
-          modalTitle="Current City"
-          EnterModalPlaceholderTittle={'Enter Current City'}
-          onValueChange={value => {
-            setSelectedCityStatus(value);
-            setSelectCurrentCity?.(value);
-          }}
-        />
+        <View style={{marginTop: hp(10)}}>
+          <NewSelectValueComponent
+            title="Select Current State"
+            value={selectedStateStatus}
+            dropdownData={currentStateDropdown}
+            onValueChange={value => {
+              setSelectedStateStatus(value); // ✅ update UI
+              setCurrentState?.(value); // ✅ optional: update parent
+            }}
+            bottomSheetHeight={hp(500)}
+            showSearch={true}
+          />
+        </View>
+
+        <View style={{marginTop: hp(10)}}>
+          <NewEnterSelectValueComponent
+            title="Select Current City"
+            value={selectedCityStatus}
+            emptyText="Add"
+            modalTitle="Current City"
+            EnterModalPlaceholderTittle={'Enter Current City'}
+            onValueChange={value => {
+              setSelectedCityStatus(value);
+              setSelectCurrentCity?.(value);
+            }}
+          />
+        </View>
       </View>
 
       <Toast ref={ref => Toast.setRef(ref)} />

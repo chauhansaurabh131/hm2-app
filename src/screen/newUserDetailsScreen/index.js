@@ -40,6 +40,7 @@ import ProfileAvatar from '../../components/letterProfileComponent';
 import DemoCode from '../demoCode';
 import axios from 'axios';
 import {navigationRef} from '../../navigations';
+import CompleteYourProfileModalComponent from '../../components/completeYourProfileModalComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const appPackageName = 'com.happymilan2'; // your Android package
@@ -66,6 +67,8 @@ const NewUserDetailsScreen = () => {
   const [percentageMatchData, setPercentageMatchData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [step, setStep] = useState(1);
+  const [profileCompleteModal, setProfileCompleteModal] = useState(false);
+  const [selectedUserForRequest, setSelectedUserForRequest] = useState(null);
 
   const route = useRoute();
   const {userIds} = route.params || {}; // 👈 get userId from deep link
@@ -79,6 +82,7 @@ const NewUserDetailsScreen = () => {
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
   const userImage = user?.user?.profilePic;
+  const isProfileCompletedForReq = user?.user?.isUserprofileCompletedForReq;
 
   console.log(' === userId++--+++ ===> ', userId);
   console.log(
@@ -726,6 +730,20 @@ const NewUserDetailsScreen = () => {
       alert('Error sending friend request');
       console.error(err);
     }
+  };
+
+  const onCompleteProfilePress = () => {
+    setProfileCompleteModal(false);
+    navigation.navigate('CreatingProfileScreen');
+  };
+
+  const onSendRequestPress = () => {
+    if (selectedUserForRequest) {
+      sendFriendRequest(selectedUserForRequest);
+    }
+
+    setProfileCompleteModal(false);
+    setSelectedUserForRequest(null);
   };
 
   const receivedFriendRequestedDecline = item => {
@@ -2088,11 +2106,25 @@ const NewUserDetailsScreen = () => {
                           <>
                             <TouchableOpacity
                               activeOpacity={0.5}
-                              onPress={
-                                friendStatus === 'requested'
-                                  ? removeFriendRequest
-                                  : sendFriendRequest
-                              }>
+                              // onPress={
+                              //   friendStatus === 'requested'
+                              //     ? removeFriendRequest
+                              //     : sendFriendRequest
+                              // }
+                              onPress={() => {
+                                if (friendStatus === 'requested') {
+                                  removeFriendRequest();
+                                } else {
+                                  if (!isProfileCompletedForReq) {
+                                    // ❌ Profile not completed → show modal
+                                    setSelectedUserForRequest(userDetails);
+                                    setProfileCompleteModal(true);
+                                  } else {
+                                    // ✅ Profile completed → send request directly
+                                    sendFriendRequest();
+                                  }
+                                }
+                              }}>
                               <Image
                                 source={friendIconSource}
                                 style={style.sendRequestIcon}
@@ -3014,6 +3046,13 @@ const NewUserDetailsScreen = () => {
         <View style={{marginTop: hp(10)}}>
           <UsersProfileDetailsScreen userData={userDetails} />
         </View>
+
+        <CompleteYourProfileModalComponent
+          visible={profileCompleteModal}
+          onClose={() => setProfileCompleteModal(false)}
+          onPrimaryPress={onCompleteProfilePress}
+          onSecondaryPress={onSendRequestPress}
+        />
         {/*<View style={{height: 50}} />*/}
         <View style={{paddingVertical: 30}} />
       </ScrollView>

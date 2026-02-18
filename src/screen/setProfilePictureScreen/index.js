@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {
-  SafeAreaView,
   Text,
   Image,
   FlatList,
@@ -10,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import style from '../addProfilePictureScreen/style';
@@ -166,9 +166,10 @@ const SetProfilePictureScreen = ({route}) => {
 
   const navigateNext = () => {
     if (appUsesType === 'dating') {
-      navigation.navigate('DatingPartnerPreferenceScreen');
+      // navigation.navigate('DatingPartnerPreferenceScreen');
+      navigation.navigate('HomeTabs');
     } else {
-      navigation.navigate('PartnerPreferencesScreen', {
+      navigation.navigate('HomeTabs', {
         userProfileCompleted: true,
       });
     }
@@ -352,7 +353,7 @@ const SetProfilePictureScreen = ({route}) => {
           {loading ? (
             <ActivityIndicator size="large" color={colors.white} />
           ) : (
-            <Text style={styles.addButtonText}>Add Preferences</Text>
+            <Text style={styles.addButtonText}>Save</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -449,7 +450,7 @@ const styles = StyleSheet.create({
   backButton: {
     width: wp(133),
     height: hp(44),
-    borderRadius: 25,
+    borderRadius: hp(25),
     borderWidth: 1,
     borderColor: colors.black,
     justifyContent: 'center',

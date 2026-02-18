@@ -1,42 +1,24 @@
-// import React from 'react';
-// import {SafeAreaView, Text} from 'react-native';
-//
-// const BottomSheetPrivacySettingScreen = () => {
-//   return (
-//     <SafeAreaView>
-//       <Text>lkncv</Text>
-//     </SafeAreaView>
-//   );
-// };
-//
-// export default BottomSheetPrivacySettingScreen;
-
 import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Image,
   Modal,
-  SafeAreaView,
-  ScrollView,
   Text,
-  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import style from '../../screen/privacyScreen/style';
 import {icons, images} from '../../assets';
-import {useNavigation} from '@react-navigation/native';
-
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../actions/homeActions';
 import {fontFamily, fontSize, hp} from '../../utils/helpers';
-
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
-import RBSheet from 'react-native-raw-bottom-sheet';
 import axios from 'axios';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {useNavigation} from '@react-navigation/native';
 
 const CustomCheckbox = ({isChecked, onPress}) => {
   return (
@@ -797,7 +779,15 @@ const BottomSheetPrivacySettingScreen = ({route}) => {
               {loading ? (
                 <ActivityIndicator size="large" color={colors.white} />
               ) : (
-                <Text style={{color: 'white'}}>Save Changes</Text>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: fontSize(14),
+                    lineHeight: hp(24),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Save Changes
+                </Text>
               )}
             </LinearGradient>
           </TouchableOpacity>

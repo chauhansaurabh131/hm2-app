@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -21,6 +21,7 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import ProfileAvatar from '../letterProfileComponent';
 import Toast from 'react-native-toast-message';
 import {style} from '../../screen/matchesAllScreen/matchesInAcceptedScreen/style';
+import CompleteYourProfileModalComponent from '../completeYourProfileModalComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -31,13 +32,19 @@ const customToastConfig = {
         backgroundColor: 'black',
         paddingVertical: 12,
         borderRadius: 25,
-        marginTop: 50,
+        marginTop: hp(50),
         alignSelf: 'center',
         width: wp(162),
         height: hp(45),
         alignItems: 'center',
+        justifyContent: 'center',
       }}>
-      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+      <Text
+        style={{
+          color: 'white',
+          fontSize: fontSize(15),
+          fontFamily: fontFamily.poppins400,
+        }}>
         {text1}
       </Text>
     </View>
@@ -48,13 +55,19 @@ const customToastConfig = {
         backgroundColor: 'black',
         paddingVertical: 12,
         borderRadius: 25,
-        marginTop: 50,
+        marginTop: hp(50),
         alignSelf: 'center',
         width: wp(162),
         height: hp(45),
         alignItems: 'center',
+        justifyContent: 'center',
       }}>
-      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+      <Text
+        style={{
+          color: 'white',
+          fontSize: fontSize(15),
+          fontFamily: fontFamily.poppins400,
+        }}>
         {text1}
       </Text>
     </View>
@@ -65,13 +78,19 @@ const customToastConfig = {
         backgroundColor: 'black',
         paddingVertical: 12,
         borderRadius: 25,
-        marginTop: 50,
+        marginTop: hp(50),
         alignSelf: 'center',
         width: wp(162),
         height: hp(45),
         alignItems: 'center',
+        justifyContent: 'center',
       }}>
-      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+      <Text
+        style={{
+          color: 'white',
+          fontSize: fontSize(15),
+          fontFamily: fontFamily.poppins400,
+        }}>
         {text1}
       </Text>
     </View>
@@ -82,13 +101,19 @@ const customToastConfig = {
         backgroundColor: 'black',
         paddingVertical: 12,
         borderRadius: 25,
-        marginTop: 50,
+        marginTop: hp(50),
         alignSelf: 'center',
         width: wp(162),
         height: hp(45),
         alignItems: 'center',
+        justifyContent: 'center',
       }}>
-      <Text style={{color: 'white', fontSize: 15, fontWeight: '600'}}>
+      <Text
+        style={{
+          color: 'white',
+          fontSize: fontSize(15),
+          fontFamily: fontFamily.poppins400,
+        }}>
         {text1}
       </Text>
     </View>
@@ -102,10 +127,14 @@ const DatingSwipeDataComponent = () => {
   const [resetKey, setResetKey] = useState(0); // Reset swiper key
   const [freeCreditModal, setFreeCreditModal] = useState(false);
   const [creditOverModal, setCreditOverModal] = useState(false);
+  const [profileCompleteModal, setProfileCompleteModal] = useState(false);
+  const [selectedUserForRequest, setSelectedUserForRequest] = useState(null);
 
   const {user} = useSelector(state => state.auth);
+  // console.log(' === Dating ===> ', user?.user?.isUserprofileCompletedForReq);
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
+  const isProfileCompletedForReq = user?.user?.isUserprofileCompletedForReq;
 
   const navigation = useNavigation();
   const swiperRef = useRef(null);
@@ -145,6 +174,39 @@ const DatingSwipeDataComponent = () => {
       fetchData(1); // Fetch first page
     }, []),
   );
+
+  const onCompleteProfilePress = () => {
+    setProfileCompleteModal(false);
+    navigation.navigate('DatingCreatingProfile');
+  };
+
+  const onSendRequestPress = () => {
+    if (selectedUserForRequest) {
+      handleSend(selectedUserForRequest);
+    }
+
+    setProfileCompleteModal(false);
+    setSelectedUserForRequest(null);
+  };
+
+  const handleSendPress = card => {
+    const isAlreadyRequested =
+      card?.friendsDetails?.[0]?.status === 'requested';
+
+    // ✅ If removing request → call API directly
+    if (isAlreadyRequested) {
+      handleSend(card);
+      return;
+    }
+
+    // ✅ If sending new request → check profile
+    if (!isProfileCompletedForReq) {
+      setSelectedUserForRequest(card);
+      setProfileCompleteModal(true);
+    } else {
+      handleSend(card);
+    }
+  };
 
   const handleSend = async card => {
     const requestedId = card?.friendsDetails[0]?._id; // Retrieve stored request ID
@@ -423,7 +485,9 @@ const DatingSwipeDataComponent = () => {
           shadowOpacity: 0.2,
           shadowRadius: 1.41,
           elevation: 2,
-          height: hp(530),
+          height: hp(500),
+          marginHorizontal: wp(18),
+          marginBottom: hp(10),
         }}>
         {hasValidImage ? (
           <>
@@ -451,7 +515,7 @@ const DatingSwipeDataComponent = () => {
           <ProfileAvatar
             firstName={card.firstName || card.name}
             lastName={card.lastName}
-            textStyle={{width: '100%', height: hp(530), borderRadius: 20}}
+            textStyle={{width: '100%', height: hp(500), borderRadius: 20}}
             profileTexts={{fontSize: fontSize(60)}}
           />
         )}
@@ -465,12 +529,12 @@ const DatingSwipeDataComponent = () => {
             right: 0,
             borderRadius: 10,
             width: '100%',
-            height: '40%',
-            marginBottom: hp(13),
+            height: '50%',
+            marginBottom: hp(5),
           }}
         />
         <TouchableOpacity
-          style={{position: 'absolute', bottom: 90, left: 20}}
+          style={{position: 'absolute', bottom: 60, left: 15, right: 15}}
           onPress={() => {
             console.log(' === card___ ===> ', card);
             navigation.navigate('DatingUserDetailsScreen', {userData: card});
@@ -478,18 +542,20 @@ const DatingSwipeDataComponent = () => {
           {card?.isUserActive && (
             <View
               style={{
-                width: wp(34.8),
-                height: hp(12),
+                width: wp(45),
+                height: hp(16),
                 borderRadius: 5,
-                backgroundColor: '#24FF00A8',
+                backgroundColor: '#24FF00',
                 justifyContent: 'center',
+                marginBottom: hp(5),
               }}>
               <Text
                 style={{
                   color: colors.black,
-                  fontSize: fontSize(9),
-                  lineHeight: hp(12),
+                  fontSize: fontSize(10),
+                  lineHeight: hp(16),
                   textAlign: 'center',
+                  fontFamily: fontFamily.poppins600,
                 }}>
                 Online
               </Text>
@@ -524,12 +590,12 @@ const DatingSwipeDataComponent = () => {
         <View
           style={{
             position: 'absolute',
-            bottom: 5,
+            bottom: 0,
+            left: 0,
+            right: 0,
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginHorizontal: wp(17),
-            // flex: 1,
-            // backgroundColor: 'red',
+            marginHorizontal: wp(18),
           }}>
           <View
             style={{
@@ -610,14 +676,32 @@ const DatingSwipeDataComponent = () => {
             {card?.friendsDetails[0]?.status === 'requested' ? (
               <TouchableOpacity
                 style={{
-                  width: hp(69),
+                  width: wp(69),
                   height: hp(40),
                   backgroundColor: '#7045EB',
                   borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={() => handleSend(card)}>
+                // onPress={() => handleSend(card)}
+                onPress={() => {
+                  const isAlreadyRequested =
+                    card?.friendsDetails?.[0]?.status === 'requested';
+
+                  // ✅ If removing request → call API directly (NO modal)
+                  if (isAlreadyRequested) {
+                    handleSend(card);
+                    return;
+                  }
+
+                  // ✅ If sending new request → check profile
+                  if (!isProfileCompletedForReq) {
+                    setSelectedUserForRequest(card);
+                    setProfileCompleteModal(true);
+                  } else {
+                    handleSend(card);
+                  }
+                }}>
                 <Image
                   // source={icons.date_send_icon}
                   source={icons.date_white_send_icon}
@@ -634,7 +718,8 @@ const DatingSwipeDataComponent = () => {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={() => handleSend(card)}>
+                // onPress={() => handleSend(card)}
+                onPress={() => handleSendPress(card)}>
                 <Image
                   // source={icons.date_send_icon}
                   source={icons.date_send_icon}
@@ -667,7 +752,7 @@ const DatingSwipeDataComponent = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <View style={{flex: 1}}>
       <View style={{zIndex: 99, top: -160}}>
         <Toast config={customToastConfig} />
       </View>
@@ -678,7 +763,7 @@ const DatingSwipeDataComponent = () => {
             <ShimmerPlaceholder
               style={{
                 width: '100%',
-                height: hp(530),
+                height: hp(500),
                 borderRadius: 20,
                 marginBottom: hp(13),
               }}
@@ -756,7 +841,7 @@ const DatingSwipeDataComponent = () => {
           </Text>
         </View>
       ) : (
-        <View style={{top: hp(-20)}}>
+        <View style={{flex: 1}}>
           <Swiper
             ref={swiperRef}
             cards={cards}
@@ -769,6 +854,8 @@ const DatingSwipeDataComponent = () => {
             animateOverlayLabelsOpacity
             verticalSwipe={false}
             horizontalSwipe={true}
+            cardVerticalMargin={0}
+            cardHorizontalMargin={0}
           />
         </View>
       )}
@@ -940,7 +1027,14 @@ const DatingSwipeDataComponent = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+
+      <CompleteYourProfileModalComponent
+        visible={profileCompleteModal}
+        onClose={() => setProfileCompleteModal(false)}
+        onPrimaryPress={onCompleteProfilePress}
+        onSecondaryPress={onSendRequestPress}
+      />
+    </View>
   );
 };
 

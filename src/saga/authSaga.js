@@ -82,6 +82,19 @@ function* login(action) {
   try {
     const response = yield call(auth.login, action.data.payload);
 
+    console.log(
+      ' === response----*** ===> ',
+      response?.data?.data?.user?.appUsesType,
+    );
+
+    const appUsesType = response?.data?.data?.user?.appUsesType;
+
+    const userProfileCompleted =
+      response?.data?.data?.user?.userProfileCompleted;
+
+    const userPartnerPreCompleted =
+      response?.data?.data?.user?.userPartnerPreCompleted;
+
     yield put(authAction.loginSuccess(response.data?.data));
 
     yield setAsyncStorageData(
@@ -95,7 +108,12 @@ function* login(action) {
     );
 
     // 🔹 Call success callback to proceed in app
-    action.data?.successCallback();
+    // action.data?.successCallback();
+    action.data?.successCallback(
+      appUsesType,
+      userProfileCompleted,
+      userPartnerPreCompleted,
+    );
   } catch (error) {
     const statusCode = error?.response?.status;
     const errorMessage = error?.response?.data?.message || 'An error occurred.';

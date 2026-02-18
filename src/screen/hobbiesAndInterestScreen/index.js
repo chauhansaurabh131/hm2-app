@@ -56,22 +56,24 @@ const HobbiesAndInterestScreen = ({setSelectedItems, setSelectedLanguage}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <NewMultiSelectValueComponent
-        title="Add Hobbies"
-        value={multiHobbiesStatus} // 👈 ARRAY
-        dropdownData={options}
-        onValueChange={setMultiHobbiesStatus} // 👈 ARRAY SETTER
-        bottomSheetHeight={hp(500)}
-      />
-
-      <View style={{marginTop: hp(40)}}>
+      <View style={{marginHorizontal: 17}}>
         <NewMultiSelectValueComponent
-          title="Add Language Known"
-          value={multiLanguageStatus} // 👈 ARRAY
-          dropdownData={language}
-          onValueChange={setMultiLanguageStatus} // 👈 ARRAY SETTER
-          bottomSheetHeight={hp(200)}
+          title="Add Hobbies"
+          value={multiHobbiesStatus} // 👈 ARRAY
+          dropdownData={options}
+          onValueChange={setMultiHobbiesStatus} // 👈 ARRAY SETTER
+          bottomSheetHeight={hp(500)}
         />
+
+        <View style={{marginTop: hp(40)}}>
+          <NewMultiSelectValueComponent
+            title="Add Language Known"
+            value={multiLanguageStatus} // 👈 ARRAY
+            dropdownData={language}
+            onValueChange={setMultiLanguageStatus} // 👈 ARRAY SETTER
+            bottomSheetHeight={hp(200)}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );

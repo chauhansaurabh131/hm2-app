@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
 
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
 
   valuesBelowContainer: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     paddingTop: 6,
   },
 

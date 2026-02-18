@@ -120,7 +120,9 @@ const DatingGeneralDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{marginHorizontal: 17}}>
         <View style={{marginTop: hp(10)}}>
           <NewSelectValueComponent
             title="Gender"

@@ -28,6 +28,7 @@ import AgeRangeSlider from '../../../components/ageRangeSlider';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import Toast from 'react-native-toast-message';
+import CompleteYourProfileModalComponent from '../../../components/completeYourProfileModalComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -121,6 +122,8 @@ const MeetNewFriendsScreen = ({route}) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [freeCreditModal, setFreeCreditModal] = useState(false);
   const [creditOverModal, setCreditOverModal] = useState(false);
+  const [profileCompleteModal, setProfileCompleteModal] = useState(false);
+  const [selectedUserForRequest, setSelectedUserForRequest] = useState(null);
 
   // console.log(' === cards___ ===> ', cards);
 
@@ -131,6 +134,7 @@ const MeetNewFriendsScreen = ({route}) => {
   const userImage = user?.user?.profilePic;
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
+  const isProfileCompletedForReq = user?.user?.isUserprofileCompletedForReq;
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -522,6 +526,39 @@ const MeetNewFriendsScreen = ({route}) => {
     }
   };
 
+  const onCompleteProfilePress = () => {
+    setProfileCompleteModal(false);
+    navigation.navigate('DatingCreatingProfile');
+  };
+
+  const onSendRequestPress = () => {
+    if (selectedUserForRequest) {
+      handleSend(selectedUserForRequest);
+    }
+
+    setProfileCompleteModal(false);
+    setSelectedUserForRequest(null);
+  };
+
+  const handleSendPress = card => {
+    const isAlreadyRequested =
+      card?.friendsDetails?.[0]?.status === 'requested';
+
+    // ✅ If removing request → call API directly
+    if (isAlreadyRequested) {
+      handleSend(card);
+      return;
+    }
+
+    // ✅ If sending new request → check profile
+    if (!isProfileCompletedForReq) {
+      setSelectedUserForRequest(card);
+      setProfileCompleteModal(true);
+    } else {
+      handleSend(card);
+    }
+  };
+
   const renderCard = card => {
     // console.log(' === card ===> ', card?.datingData[0]?.Ethnicity);
 
@@ -559,6 +596,18 @@ const MeetNewFriendsScreen = ({route}) => {
     return (
       <View
         style={{
+          // justifyContent: 'center',
+          // borderRadius: 20,
+          // // borderWidth: 2,
+          // // borderColor: '#E8E8E8',
+          // backgroundColor: '#FFF',
+          // shadowColor: '#000',
+          // shadowOffset: {width: 0, height: 1},
+          // shadowOpacity: 0.2,
+          // shadowRadius: 1.41,
+          // elevation: 2,
+          // height: hp(530),
+
           justifyContent: 'center',
           borderRadius: 20,
           // borderWidth: 2,
@@ -569,7 +618,9 @@ const MeetNewFriendsScreen = ({route}) => {
           shadowOpacity: 0.2,
           shadowRadius: 1.41,
           elevation: 2,
-          height: hp(530),
+          height: hp(500),
+          marginHorizontal: wp(18),
+          marginBottom: hp(10),
         }}>
         {hasValidImage ? (
           <>
@@ -597,7 +648,7 @@ const MeetNewFriendsScreen = ({route}) => {
           <ProfileAvatar
             firstName={card.firstName || card.name}
             lastName={card.lastName}
-            textStyle={{width: '100%', height: hp(530), borderRadius: 20}}
+            textStyle={{width: '100%', height: hp(500), borderRadius: 20}}
             profileTexts={{fontSize: fontSize(60)}}
           />
         )}
@@ -612,7 +663,7 @@ const MeetNewFriendsScreen = ({route}) => {
             borderRadius: 10,
             width: '100%',
             height: '40%',
-            marginBottom: hp(13),
+            // marginBottom: hp(5),
           }}
         />
 
@@ -622,26 +673,24 @@ const MeetNewFriendsScreen = ({route}) => {
             // navigation.navigate('Abc', {userData: card});
             navigation.navigate('DatingUserDetailsScreen', {userData: card});
           }}
-          style={{
-            position: 'absolute',
-            bottom: 90,
-            left: 20,
-          }}>
+          style={{position: 'absolute', bottom: 60, left: 15, right: 15}}>
           {card?.isUserActive && (
             <View
               style={{
-                width: wp(34.8),
-                height: hp(12),
+                width: wp(45),
+                height: hp(16),
                 borderRadius: 5,
-                backgroundColor: '#24FF00A8',
+                backgroundColor: '#24FF00',
                 justifyContent: 'center',
+                marginBottom: hp(5),
               }}>
               <Text
                 style={{
                   color: colors.black,
-                  fontSize: fontSize(9),
-                  lineHeight: hp(12),
+                  fontSize: fontSize(10),
+                  lineHeight: hp(16),
                   textAlign: 'center',
+                  fontFamily: fontFamily.poppins600,
                 }}>
                 Online
               </Text>
@@ -685,11 +734,12 @@ const MeetNewFriendsScreen = ({route}) => {
         <View
           style={{
             position: 'absolute',
-            bottom: 5,
+            bottom: 0,
+            left: 0,
+            right: 0,
             flexDirection: 'row',
             justifyContent: 'space-between',
-            marginHorizontal: wp(17),
-            flex: 1,
+            marginHorizontal: wp(18),
           }}>
           <View
             style={{
@@ -705,7 +755,7 @@ const MeetNewFriendsScreen = ({route}) => {
                 width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
-                borderRadius: 30,
+                borderRadius: wp(30),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -723,13 +773,13 @@ const MeetNewFriendsScreen = ({route}) => {
                 width: wp(69),
                 height: hp(40),
                 backgroundColor: colors.white,
-                borderRadius: 30,
+                borderRadius: wp(30),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               <Image
                 source={icons.date_cancel_icon}
-                style={{width: hp(19), height: hp(17)}}
+                style={{width: hp(19), height: hp(17), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
@@ -740,7 +790,7 @@ const MeetNewFriendsScreen = ({route}) => {
                   width: wp(69),
                   height: hp(40),
                   backgroundColor: '#9E28D7',
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -756,7 +806,7 @@ const MeetNewFriendsScreen = ({route}) => {
                   width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -773,11 +823,29 @@ const MeetNewFriendsScreen = ({route}) => {
                   width: wp(69),
                   height: hp(40),
                   backgroundColor: '#7045EB',
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={() => handleSend(card)}>
+                // onPress={() => handleSend(card)}
+                onPress={() => {
+                  const isAlreadyRequested =
+                    card?.friendsDetails?.[0]?.status === 'requested';
+
+                  // ✅ If removing request → call API directly (NO modal)
+                  if (isAlreadyRequested) {
+                    handleSend(card);
+                    return;
+                  }
+
+                  // ✅ If sending new request → check profile
+                  if (!isProfileCompletedForReq) {
+                    setSelectedUserForRequest(card);
+                    setProfileCompleteModal(true);
+                  } else {
+                    handleSend(card);
+                  }
+                }}>
                 <Image
                   // source={icons.date_send_icon}
                   source={icons.date_white_send_icon}
@@ -790,11 +858,12 @@ const MeetNewFriendsScreen = ({route}) => {
                   width: wp(69),
                   height: hp(40),
                   backgroundColor: colors.white,
-                  borderRadius: 30,
+                  borderRadius: wp(30),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={() => handleSend(card)}>
+                // onPress={() => handleSend(card)}
+                onPress={() => handleSendPress(card)}>
                 <Image
                   // source={icons.date_send_icon}
                   source={icons.date_send_icon}
@@ -826,6 +895,11 @@ const MeetNewFriendsScreen = ({route}) => {
     fetchData(1);
   };
 
+  const hasValidImage =
+    user?.user?.profilePic &&
+    user?.user?.profilePic !== 'null' &&
+    user?.user?.profilePic.trim() !== '';
+
   return (
     <SafeAreaView style={style.container}>
       <View style={{zIndex: 99, top: -70}}>
@@ -839,16 +913,35 @@ const MeetNewFriendsScreen = ({route}) => {
             style={style.appLogoStyle}
           />
 
+          {/*<TouchableOpacity*/}
+          {/*  activeOpacity={0.7}*/}
+          {/*  onPress={openBottomSheet}*/}
+          {/*  style={{alignSelf: 'center'}}>*/}
+          {/*  {userImage ? (*/}
+          {/*    <Image source={{uri: userImage}} style={style.dropDownTopImage} />*/}
+          {/*  ) : (*/}
+          {/*    <Image*/}
+          {/*      source={images.empty_male_Image}*/}
+          {/*      style={style.dropDownTopImage}*/}
+          {/*    />*/}
+          {/*  )}*/}
+          {/*</TouchableOpacity>*/}
+
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={openBottomSheet}
             style={{alignSelf: 'center'}}>
-            {userImage ? (
-              <Image source={{uri: userImage}} style={style.dropDownTopImage} />
-            ) : (
+            {hasValidImage ? (
               <Image
-                source={images.empty_male_Image}
+                source={userImage ? {uri: userImage} : images.empty_male_Image}
                 style={style.dropDownTopImage}
+              />
+            ) : (
+              <ProfileAvatar
+                firstName={user?.user?.firstName || user?.user?.name}
+                lastName={user?.user?.lastName}
+                textStyle={style.dropDownTopImage}
+                profileTexts={{fontSize: fontSize(10)}}
               />
             )}
           </TouchableOpacity>
@@ -1261,7 +1354,8 @@ const MeetNewFriendsScreen = ({route}) => {
             </Text>
           </View>
         ) : (
-          <View style={{marginTop: -40}}>
+          // <View style={{marginTop: -40}}>
+          <View style={{flex: 1, marginTop: hp(15)}}>
             <Swiper
               ref={swiperRef} // Add ref to the Swiper
               key={resetKey}
@@ -1275,6 +1369,8 @@ const MeetNewFriendsScreen = ({route}) => {
               animateOverlayLabelsOpacity
               verticalSwipe={false}
               horizontalSwipe={true}
+              cardVerticalMargin={0}
+              cardHorizontalMargin={0}
             />
           </View>
         )}
@@ -1447,6 +1543,13 @@ const MeetNewFriendsScreen = ({route}) => {
           </View>
         </View>
       </Modal>
+
+      <CompleteYourProfileModalComponent
+        visible={profileCompleteModal}
+        onClose={() => setProfileCompleteModal(false)}
+        onPrimaryPress={onCompleteProfilePress}
+        onSecondaryPress={onSendRequestPress}
+      />
     </SafeAreaView>
   );
 };

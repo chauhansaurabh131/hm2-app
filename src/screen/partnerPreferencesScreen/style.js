@@ -57,7 +57,7 @@ const style = StyleSheet.create({
   backButtonContainer: {
     width: wp(133),
     height: hp(44),
-    borderRadius: 25,
+    borderRadius: wp(25),
     borderWidth: 1,
     borderColor: colors.black,
     justifyContent: 'center',

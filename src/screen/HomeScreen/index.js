@@ -22,7 +22,11 @@ import FastImage from 'react-native-fast-image';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getSuccessStories, userDatas} from '../../actions/homeActions';
+import {
+  getSuccessStories,
+  updateDetails,
+  userDatas,
+} from '../../actions/homeActions';
 import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
 
 import {colors} from '../../utils/colors';
@@ -57,12 +61,25 @@ const HomeScreen = ({route}) => {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const apiDispatch = useDispatch();
 
   const {selectedBox} = route.params ?? {};
 
   const {user} = useSelector(state => state.auth);
 
   // console.log(' === user?.user---= ===> ', user?.user);
+
+  const userProfileCompleted = user?.user?.userProfileCompleted;
+
+  const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
+
+  useEffect(() => {
+    if (user?.user?.isVisited === false) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
+    }
+  }, [user?.user?.isVisited]);
 
   const {storiesData} = useSelector(state => state.home);
 
@@ -181,48 +198,64 @@ const HomeScreen = ({route}) => {
 
   const {userData} = useSelector(state => state.home);
 
-  const userProfileCompleted = user?.user?.userProfileCompleted;
+  // useEffect(() => {
+  //   if (userPartnerPreCompleted === false) {
+  //     setShowModal(true);
+  //   } else {
+  //     setShowModal(false);
+  //   }
+  // }, [userPartnerPreCompleted]);
 
-  const userPartnerPreCompleted = user?.user?.userPartnerPreCompleted;
+  // const handleButtonClick = () => {
+  //   if (activeLine === 3) {
+  //     setShowModal(false);
+  //     setActiveLine(1); // Reset the active line
+  //     // navigation.navigate('GeneralInformationScreen');
+  //     // navigation.navigate('CreatingProfileScreen');
+  //
+  //     if (!userProfileCompleted) {
+  //       // Navigate to CreatingProfileScreen if user profile is not completed
+  //       navigation.navigate('CreatingProfileScreen');
+  //     } else if (!userPartnerPreCompleted) {
+  //       // Navigate to Abc if partner pre-profile is not completed
+  //       navigation.navigate('PartnerPreferencesScreen');
+  //     } else {
+  //       // If both conditions are true, don't display modal and proceed with existing logic
+  //       setShowModal(false);
+  //     }
+  //   } else {
+  //     setActiveLine(prev => prev + 1);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (userPartnerPreCompleted === false) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-  }, [userPartnerPreCompleted]);
-
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (activeLine === 3) {
-      setShowModal(false);
-      setActiveLine(1); // Reset the active line
-      // navigation.navigate('GeneralInformationScreen');
-      // navigation.navigate('CreatingProfileScreen');
+      try {
+        await apiDispatch(
+          updateDetails({
+            isVisited: true,
+          }),
+        );
 
-      if (!userProfileCompleted) {
-        // Navigate to CreatingProfileScreen if user profile is not completed
-        navigation.navigate('CreatingProfileScreen');
-      } else if (!userPartnerPreCompleted) {
-        // Navigate to Abc if partner pre-profile is not completed
-        navigation.navigate('PartnerPreferencesScreen');
-      } else {
-        // If both conditions are true, don't display modal and proceed with existing logic
+        dispatch(userDatas()); // refresh user
         setShowModal(false);
+        setActiveLine(1);
+      } catch (error) {
+        console.log('Update failed', error);
       }
     } else {
       setActiveLine(prev => prev + 1);
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      // This will hide the modal when the screen is focused
-      if (!(userProfileCompleted && userPartnerPreCompleted)) {
-        setShowModal(true); // Show modal only if conditions are false
-      }
-    }, [userProfileCompleted, userPartnerPreCompleted]),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // This will hide the modal when the screen is focused
+  //     if (!(userProfileCompleted && userPartnerPreCompleted)) {
+  //       setShowModal(true); // Show modal only if conditions are false
+  //     }
+  //   }, [userProfileCompleted, userPartnerPreCompleted]),
+  // );
 
   const capitalizeFirstLetter = str => {
     if (!str || typeof str !== 'string') {
@@ -540,7 +573,7 @@ const HomeScreen = ({route}) => {
                   marginTop: hp(50),
                   width: wp(176),
                   height: hp(50),
-                  borderRadius: 25,
+                  borderRadius: hp(25),
                   justifyContent: 'center',
                 }}>
                 <Text

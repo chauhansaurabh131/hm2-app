@@ -1,56 +1,47 @@
-import PremiumMatchesComponent from '../../components/PremiumMatchesComponent';
-import {SafeAreaView, ScrollView, Text, View} from 'react-native';
-import {fontFamily, hp} from '../../utils/helpers';
-import {colors} from '../../utils/colors';
-import {useState} from 'react';
+import React, {useState} from 'react';
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  Modal,
+  View,
+  StyleSheet,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {fontSize, hp, wp} from '../../utils/helpers';
+import CompleteYourProfileModalComponent from '../../components/completeYourProfileModalComponent';
 
 const DemoCode = () => {
-  const [alertMessage, setAlertMessage] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
-
-  const showCustomAlert = message => {
-    setAlertMessage(message);
-    setShowAlert(true);
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 1500);
-  };
+  const [profileCompleteModal, setProfileCompleteModal] = useState(false);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      {/* 🔔 Custom Alert */}
-      {showAlert && (
-        <View
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      <TouchableOpacity
+        style={{marginTop: hp(50)}}
+        onPress={() => setProfileCompleteModal(true)}>
+        <Text
           style={{
-            position: 'absolute',
-            top: hp(40),
-            alignSelf: 'center',
-            backgroundColor: '#333',
-            paddingHorizontal: 20,
-            paddingVertical: 12,
-            borderRadius: 30,
-            zIndex: 1000,
+            color: 'black',
+            fontSize: fontSize(26),
+            textAlign: 'center',
           }}>
-          <Text
-            style={{
-              color: '#fff',
-              fontFamily: fontFamily.poppins400,
-            }}>
-            {alertMessage}
-          </Text>
-        </View>
-      )}
+          Open
+        </Text>
+      </TouchableOpacity>
 
-      <ScrollView>
-        <View>
-          <View style={{marginTop: hp(10), flex: 1}}>
-            <PremiumMatchesComponent
-              onShowAlert={showCustomAlert} // 👈 PASS CALLBACK
-            />
-          </View>
-        </View>
-      </ScrollView>
+      <CompleteYourProfileModalComponent
+        visible={profileCompleteModal}
+        onClose={() => setProfileCompleteModal(false)}
+        onPrimaryPress={() => {
+          setProfileCompleteModal(false);
+          // navigation.navigate('CreatingProfileScreen');
+          console.log(' === onPrimaryPress ===> ');
+        }}
+        onSecondaryPress={() => {
+          setProfileCompleteModal(false);
+          console.log('Send Request Clicked');
+        }}
+      />
     </SafeAreaView>
   );
 };

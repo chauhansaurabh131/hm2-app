@@ -26,6 +26,7 @@ import Toast from 'react-native-toast-message';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import ProfileAvatar from '../letterProfileComponent';
+import CompleteYourProfileModalComponent from '../completeYourProfileModalComponent';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
@@ -33,39 +34,17 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
   const navigation = useNavigation();
 
   const {user} = useSelector(state => state.auth);
+
+  // console.log(
+  //   ' === PremiumMatchesComponent***** ===> ',
+  //   user?.user?.isUserprofileCompletedForReq,
+  // );
+  const isProfileCompletedForReq = user?.user?.isUserprofileCompletedForReq;
   const accessToken = user?.tokens?.access?.token;
   const [users, setUsers] = useState([]); // State to store the user data
   const [loading, setLoading] = useState(false); // Loading state
-
-  const ShowToast = () => {
-    Toast.show({
-      type: 'AddShortlisted',
-      text1: 'Profile has been shortlisted',
-      visibilityTime: 1000,
-    });
-  };
-
-  const RemoveShortlisted = () => {
-    Toast.show({
-      type: 'RemoveShortlisted',
-      text1: 'Shortlisted has been removed',
-      visibilityTime: 1000,
-    });
-  };
-  const ProfileLike = () => {
-    Toast.show({
-      type: 'ProfileLike',
-      text1: 'Profile Like',
-      visibilityTime: 1000,
-    });
-  };
-  const ProfileDisLike = () => {
-    Toast.show({
-      type: 'ProfileDisLike',
-      text1: 'Profile Disliked',
-      visibilityTime: 1000,
-    });
-  };
+  const [profileCompleteModal, setProfileCompleteModal] = useState(false);
+  const [selectedUserForRequest, setSelectedUserForRequest] = useState(null);
 
   useEffect(() => {
     if (accessToken) {
@@ -101,6 +80,20 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
       fetchData();
     }, []),
   );
+
+  const onCompleteProfilePress = () => {
+    setProfileCompleteModal(false);
+    navigation.navigate('CreatingProfileScreen');
+  };
+
+  const onSendRequestPress = () => {
+    if (selectedUserForRequest) {
+      OnsendRequestedSend(selectedUserForRequest);
+    }
+
+    setProfileCompleteModal(false);
+    setSelectedUserForRequest(null);
+  };
 
   const createLike = async likedUserId => {
     try {
@@ -652,16 +645,33 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
                 />
               </TouchableOpacity>
 
+              {/*<TouchableOpacity*/}
+              {/*  onPress={() => {*/}
+              {/*    const status = item?.friendsDetails?.status;*/}
+
+              {/*    if (status === 'requested') {*/}
+              {/*      // If already requested, allow removing the request*/}
+              {/*      handleRequestAction(item, item?.friendsDetails?._id);*/}
+              {/*    } else {*/}
+              {/*      // Otherwise, send a new friend request*/}
+              {/*      OnsendRequestedSend(item);*/}
+              {/*    }*/}
+              {/*  }}>*/}
               <TouchableOpacity
                 onPress={() => {
                   const status = item?.friendsDetails?.status;
 
                   if (status === 'requested') {
-                    // If already requested, allow removing the request
                     handleRequestAction(item, item?.friendsDetails?._id);
                   } else {
-                    // Otherwise, send a new friend request
-                    OnsendRequestedSend(item);
+                    if (!isProfileCompletedForReq) {
+                      // ❌ Profile NOT completed → Show modal
+                      setSelectedUserForRequest(item);
+                      setProfileCompleteModal(true);
+                    } else {
+                      // ✅ Profile completed → Directly send request
+                      OnsendRequestedSend(item);
+                    }
                   }
                 }}>
                 <Image
@@ -679,29 +689,6 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
       </TouchableOpacity>
     );
   };
-
-  // const toastConfigs = {
-  //   AddShortlisted: ({text1}) => (
-  //     <View style={styles.toastContainer}>
-  //       <Text style={styles.toastText}>{text1}</Text>
-  //     </View>
-  //   ),
-  //   RemoveShortlisted: ({text1}) => (
-  //     <View style={styles.toastContainer}>
-  //       <Text style={styles.toastText}>{text1}</Text>
-  //     </View>
-  //   ),
-  //   ProfileLike: ({text1}) => (
-  //     <View style={styles.toastContainer}>
-  //       <Text style={styles.toastText}>{text1}</Text>
-  //     </View>
-  //   ),
-  //   ProfileDisLike: ({text1}) => (
-  //     <View style={styles.toastContainer}>
-  //       <Text style={styles.toastText}>{text1}</Text>
-  //     </View>
-  //   ),
-  // };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -792,6 +779,13 @@ const PremiumMatchesComponent = ({toastConfigs, onShowAlert}) => {
           No Premium Matches Found
         </Text>
       )}
+
+      <CompleteYourProfileModalComponent
+        visible={profileCompleteModal}
+        onClose={() => setProfileCompleteModal(false)}
+        onPrimaryPress={onCompleteProfilePress}
+        onSecondaryPress={onSendRequestPress}
+      />
 
       <Toast config={toastConfigs} />
     </SafeAreaView>

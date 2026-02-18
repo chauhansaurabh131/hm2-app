@@ -6,12 +6,12 @@ import {
   FlatList,
   Image,
   Modal,
-  SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import RNBlobUtil from 'react-native-blob-util';
 import {addProfilePicture, updateDetails} from '../../../actions/homeActions';
 import {useDispatch, useSelector} from 'react-redux';
@@ -23,10 +23,8 @@ import {icons, images} from '../../../assets';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 
 import ImageCropPicker from 'react-native-image-crop-picker';
-import DateEditImageProfile from '../../../components/dateEditImageProfile';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import DatePicker from 'react-native-date-picker';
-import {colors} from '../../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import NewProfileBottomSheet from '../../../components/newProfileBottomSheet';
@@ -34,11 +32,6 @@ import axios from 'axios';
 
 const DatingEditProfileScreen = () => {
   const {user, isUpdatingProfile} = useSelector(state => state.auth);
-
-  // console.log(' === var ===> ', user?.user?.id);
-
-  // console.log(' === isUpdatingProfile ===> ', isUpdatingProfile);
-  // console.log(' === DatingEditProfileScreen ===> ', user?.user);
 
   const [aboutText, setAboutText] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -239,11 +232,6 @@ const DatingEditProfileScreen = () => {
     }
   };
 
-  // Function to remove a selected purpose
-  // const handleHobbiesRemovePurpose = purpose => {
-  //   setSelectedHobbies(selectedHobbies.filter(item => item !== purpose));
-  // };
-
   const handleHobbiesRemovePurpose = hobbyToRemove => {
     const updatedHobbies = hobbiesArray.filter(
       hobby => hobby !== hobbyToRemove,
@@ -414,54 +402,6 @@ const DatingEditProfileScreen = () => {
 
   const userImage = user?.user?.profilePic;
   const dataWithAddBox = [...selectedImages, {addImageBox: true}];
-
-  // Function to remove an image from the list
-  // const removeImage = (indexToRemove, indexToRemoveItem) => {
-  //   console.log(
-  //     ' === indexToRemove___ ===> ',
-  //     indexToRemove,
-  //     indexToRemoveItem,
-  //   );
-  //   // setSelectedImages(
-  //   //   selectedImages.filter((_, index) => index !== indexToRemove),
-  //   // );
-  // };
-
-  // const removeImage = async (indexToRemove, imageItem) => {
-  //   console.log(' === indexToRemove___ ===> ', indexToRemove, imageItem);
-  //   console.log(' === user{{{ ===> ', user?.user?.profilePic);
-  //   // console.log(' === imageItem+++ ===> ', imageItem?.url);
-  //
-  //   // If image has an _id (i.e. saved on the server), call delete API
-  //   if ((imageItem?._id, imageItem?.name, imageItem?.url)) {
-  //     try {
-  //       const response = await axios.post(
-  //         `https://stag.mntech.website/api/v1/user/user/delete-profile-image/${user?.user?.id}`,
-  //         {
-  //           profileImageUrl: imageItem?.url, // As per your curl example
-  //           name: imageItem?.name,
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${user?.tokens?.access?.token}`, // make sure accessToken is available in scope
-  //             'Content-Type': 'application/json',
-  //           },
-  //         },
-  //       );
-  //       console.log('Image deleted successfully from server:', response.data);
-  //       apiDispatch(updateDetails());
-  //     } catch (error) {
-  //       console.error('Error deleting image from server:', error);
-  //       Alert.alert('Delete Failed', 'Could not delete image from server.');
-  //       return; // Stop further action if API fails
-  //     }
-  //   }
-  //
-  //   // Now remove from local list
-  //   setSelectedImages(prev =>
-  //     prev.filter((_, index) => index !== indexToRemove),
-  //   );
-  // };
 
   const removeImage = async (indexToRemove, imageItem) => {
     console.log(' === indexToRemove___ ===> ', indexToRemove, imageItem);
@@ -817,56 +757,6 @@ const DatingEditProfileScreen = () => {
     }
   };
 
-  // const renderItem = ({item, index}) => {
-  //   if (item.addImageBox) {
-  //     // Render "Add Image" box
-  //     return (
-  //       <TouchableOpacity onPress={openGallery}>
-  //         <View style={style.imageRenderImageAddContainer}>
-  //           <Text style={style.imageRenderAddPlus}>+</Text>
-  //         </View>
-  //       </TouchableOpacity>
-  //     );
-  //   }
-  //
-  //   // Render profile picture with "X" button to remove the image
-  //   return (
-  //     <SafeAreaView style={style.renderCancelIconContainer}>
-  //       <TouchableOpacity onPress={() => handleImagePress(index)}>
-  //         <View style={style.renderImageContainer}>
-  //           <Image
-  //             source={{uri: item.url}}
-  //             style={[
-  //               style.renderImageStyle,
-  //               selectedIndex === index
-  //                 ? {borderColor: '#007bff', borderWidth: 3}
-  //                 : null,
-  //             ]}
-  //             resizeMode="cover"
-  //           />
-  //
-  //           {/* Checkmark overlay if image is selected */}
-  //           {selectedIndex === index && (
-  //             <View style={style.selectedImageWaterMarkContainer}>
-  //               <Image
-  //                 source={icons.check_gradient_icon}
-  //                 style={style.selectedImageAddContainer}
-  //               />
-  //             </View>
-  //           )}
-  //
-  //           {/* Remove Button (X) */}
-  //           <TouchableOpacity
-  //             onPress={() => removeImage(index, item)}
-  //             style={style.imageRemoveButtonContainer}>
-  //             <Image source={icons.delete_icon} style={style.removeIconStyle} />
-  //           </TouchableOpacity>
-  //         </View>
-  //       </TouchableOpacity>
-  //     </SafeAreaView>
-  //   );
-  // };
-
   const hasValidImage =
     user?.user?.profilePic &&
     user?.user?.profilePic !== 'null' &&
@@ -953,6 +843,7 @@ const DatingEditProfileScreen = () => {
           style={style.textInputContainer}
           multiline
           placeholder="Write about yourself..."
+          placeholderTextColor={'gray'}
           value={aboutText}
           onChangeText={text => setAboutText(text)} // Update state on text change
         />
@@ -1323,7 +1214,17 @@ const DatingEditProfileScreen = () => {
                 <TouchableOpacity
                   style={style.dateModalCloseButtonContainer}
                   onPress={() => setOpen(false)}>
-                  <Text style={style.dateModalCancelText}>X</Text>
+                  {/*<Text style={style.dateModalCancelText}>X</Text>*/}
+                  <Image
+                    source={icons.x_cancel_icon}
+                    style={{
+                      width: hp(10),
+                      height: hp(10),
+                      resizeMode: 'contain',
+                      tintColor: 'black',
+                      top: 10,
+                    }}
+                  />
                 </TouchableOpacity>
 
                 {/* DatePicker Component */}

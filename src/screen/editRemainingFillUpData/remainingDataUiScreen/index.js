@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {
-  SafeAreaView,
   Text,
   View,
   FlatList,
@@ -8,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import {colors} from '../../../utils/colors';
@@ -94,20 +94,37 @@ const RemainingDataUiScreen = () => {
     );
   }
 
+  // const handleAddPress = item => {
+  //   console.log(' === handleAddPress ===> ', item);
+  //   if (item.category === 'basicDetails') {
+  //     navigation.navigate('EditGeneralScreen');
+  //   } else if (item.category === 'contactDetails') {
+  //     navigation.navigate('EditContactScreen');
+  //   } else if (item.category === 'hobbiesAndInterest') {
+  //     navigation.navigate('EditHobbiesScreen');
+  //   } else if (item.category === 'locationDetails') {
+  //     navigation.navigate('EditLocationScreen');
+  //   } else if (item.category === 'educationDetails') {
+  //     navigation.navigate('EditEducationScreen');
+  //   } else if (item.category === 'professional') {
+  //     navigation.navigate('EditProfessionalScreen');
+  //   }
+  // };
+
   const handleAddPress = item => {
     console.log(' === handleAddPress ===> ', item);
     if (item.category === 'basicDetails') {
       navigation.navigate('EditGeneralScreen');
     } else if (item.category === 'contactDetails') {
       navigation.navigate('EditContactScreen');
-    } else if (item.category === 'hobbiesAndInterest') {
-      navigation.navigate('EditHobbiesScreen');
     } else if (item.category === 'locationDetails') {
       navigation.navigate('EditLocationScreen');
-    } else if (item.category === 'educationDetails') {
-      navigation.navigate('EditEducationScreen');
+    } else if (item.category === 'locationDetails') {
+      navigation.navigate('EditLocationScreen');
     } else if (item.category === 'professional') {
       navigation.navigate('EditProfessionalScreen');
+    } else if (item.category === 'hobbiesAndInterest') {
+      navigation.navigate('EditHobbiesScreen');
     }
   };
 

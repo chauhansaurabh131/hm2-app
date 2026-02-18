@@ -1,7 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {
   Image,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
@@ -9,6 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';

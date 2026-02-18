@@ -4,12 +4,11 @@ import {
   FlatList,
   Image,
   Keyboard,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {images} from '../../../assets';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import {colors} from '../../../utils/colors';
 import Toast from 'react-native-toast-message';
@@ -53,6 +52,8 @@ const AddDatingPersonalInfo = ({navigation}) => {
   const apiDispatch = useDispatch();
 
   const {user} = useSelector(state => state.auth);
+
+  console.log(' === var ===> ', user?.user);
 
   // console.log(' === AddDatingPersonalInfo ===> ', user?.user);
 
@@ -276,7 +277,7 @@ const AddDatingPersonalInfo = ({navigation}) => {
             datingData: [updatedDatingData],
             // writeBoutYourSelf: bio,
             annualIncome: numericSalary,
-            userProfileCompleted: true,
+            isUserprofileCompletedForReq: true,
           },
           () => dispatch({type: NEXT_SCREEN}, setLoading(false)),
         ),
@@ -507,7 +508,7 @@ const AddDatingPersonalInfo = ({navigation}) => {
             style={{
               width: wp(133),
               height: hp(44),
-              borderRadius: 25,
+              borderRadius: hp(25),
               borderWidth: 1,
               borderColor: colors.black,
               justifyContent: 'center',

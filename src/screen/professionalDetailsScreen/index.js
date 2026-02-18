@@ -27,7 +27,9 @@ const ProfessionalsDetailsScreen = ({
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{marginHorizontal: 17}}>
         <NewEnterSelectValueComponent
           title="Current Designation"
           value={selectedDesignationStatus}

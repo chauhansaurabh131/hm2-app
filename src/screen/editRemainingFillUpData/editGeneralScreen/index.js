@@ -1,13 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
@@ -397,7 +397,7 @@ const EditGeneralScreen = ({navigation}) => {
               style={{
                 width: wp(133),
                 height: hp(44),
-                borderRadius: 25,
+                borderRadius: hp(25),
                 borderWidth: 1,
                 borderColor: colors.black,
                 justifyContent: 'center',
