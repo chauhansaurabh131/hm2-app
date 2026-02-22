@@ -87,14 +87,16 @@ android {
         applicationId "com.happymilan2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 31
-        versionName "3.5.0"
+        versionCode 35
+        versionName "3.5.4"
         multiDexEnabled= true
         externalNativeBuild {
             cmake {
                 cppFlags "-Wl,-z,common-page-size=16384 -Wl,-z,max-page-size=16384"
+                cFlags "-Wl,-z,common-page-size=16384 -Wl,-z,max-page-size=16384"
             }
         }
+
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
         }

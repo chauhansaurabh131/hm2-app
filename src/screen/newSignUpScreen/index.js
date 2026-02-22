@@ -75,6 +75,8 @@ const NewSignUpScreen = () => {
     GoogleSignin.configure({
       webClientId:
         '562359368016-goaj8oi4f8tgeo001als2rib72da5dqs.apps.googleusercontent.com',
+      iosClientId:
+        '562359368016-4de4ter7ddbrqmlo2idthm45re3p5ta3.apps.googleusercontent.com',
     });
   }, []);
 

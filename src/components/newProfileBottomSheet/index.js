@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,28 +10,29 @@ import {
   Alert,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {useDispatch, useSelector} from 'react-redux';
-import {icons, images} from '../../assets';
-import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
-import {colors} from '../../utils/colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { icons, images } from '../../assets';
+import { fontFamily, fontSize, hp, isIOS, wp } from '../../utils/helpers';
+import { colors } from '../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import Modal from 'react-native-modal';
-import {changeStack, logout} from '../../actions/authActions';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { changeStack, logout } from '../../actions/authActions';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import ProfileAvatar from '../letterProfileComponent';
-import {style} from '../homeCardProfileComponent/style';
+import { style } from '../homeCardProfileComponent/style';
 
-const NewProfileBottomSheet = ({bottomSheetRef}) => {
+const NewProfileBottomSheet = ({ bottomSheetRef }) => {
   const navigation = useNavigation();
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const shouldShowLogoutModalRef = useRef(false);
   const [planData, setPlanData] = useState(null);
   const [planDetails, setPlanDetails] = useState(null);
   const [planDurationDetails, setPlanDurationDetails] = useState(null);
   const [creditData, setCreditData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [socket, setSocket] = useState(null);
-  const {user} = useSelector(state => state.auth);
+  const { user } = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
 
@@ -183,10 +184,8 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
   };
 
   const onLogOutPress = () => {
+    shouldShowLogoutModalRef.current = true;
     closeBottomSheet();
-    setTimeout(() => {
-      setConfirmationVisible(true);
-    }, 100); // Reduced delay to 100ms for snappier response while avoiding iOS conflicts
   };
 
   const onPrivacyScreenHandle = () => {
@@ -227,6 +226,14 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
         ref={bottomSheetRef}
         height={hp(610)}
         openDuration={250}
+        onClose={() => {
+          if (shouldShowLogoutModalRef.current) {
+            shouldShowLogoutModalRef.current = false;
+            setTimeout(() => {
+              setConfirmationVisible(true);
+            }, 100);
+          }
+        }}
         customStyles={{
           container: {
             justifyContent: 'center',
@@ -234,16 +241,16 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
             borderTopRightRadius: 20,
           },
         }}>
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           {/* Touchable Text to close the bottom sheet */}
           {/*<TouchableOpacity onPress={closeBottomSheet}>*/}
           {/*  <Text>Profile Details</Text>*/}
           {/*</TouchableOpacity>*/}
 
-          <View style={{marginHorizontal: 27}}>
+          <View style={{ marginHorizontal: 27 }}>
             {hasValidImage ? (
               <Image
-                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                source={userImage ? { uri: userImage } : images.empty_male_Image}
                 style={styles.modalHeaderProfileStyle}
               />
             ) : (
@@ -283,8 +290,8 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           {/*{creditData?.credit?.creditBalance > 0 ? (*/}
           {planDetails?.planId?.planName ? (
             // When API gives planName
-            <View style={{marginHorizontal: 27}}>
-              <View style={{flexDirection: 'row'}}>
+            <View style={{ marginHorizontal: 27 }}>
+              <View style={{ flexDirection: 'row' }}>
                 <Text
                   style={{
                     marginTop: hp(5),
@@ -318,8 +325,8 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
                   {/*{capitalizeFirstLetter(planDetails?.planId?.planName)} -{' '}*/}
                   {appType === 'marriage' && planDetails?.planId?.planName
                     ? `${capitalizeFirstLetter(
-                        planDetails?.planId?.planName,
-                      )} - `
+                      planDetails?.planId?.planName,
+                    )} - `
                     : ''}
                   {formatPlanDuration(
                     planDurationDetails?.planId?.planDuration || ' ',
@@ -340,12 +347,12 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
             </View>
           ) : (
             // When no API plan data, fallback to Free Plan
-            <View style={{marginHorizontal: 27}}>
+            <View style={{ marginHorizontal: 27 }}>
               <View style={styles.userDescriptionContainer}>
                 <Text
                   style={[
                     styles.userNumberTextStyle,
-                    {textTransform: 'uppercase'},
+                    { textTransform: 'uppercase' },
                   ]}>
                   {UserUniqueId}
                 </Text>
@@ -355,15 +362,15 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
 
               <TouchableOpacity
                 activeOpacity={0.7}
-                style={{marginTop: hp(12)}}
+                style={{ marginTop: hp(12) }}
                 onPress={() => {
                   navigation.navigate('Upgrader');
                   closeBottomSheet();
                 }}>
                 <LinearGradient
                   colors={['#7045EB', '#4819CB']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1.5}}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1.5 }}
                   style={styles.upgradeContainer}>
                   <Text style={styles.upgradeText}>Upgrade</Text>
                   <Image
@@ -378,7 +385,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
           <View style={styles.horizontalLine} />
 
           <View style={styles.bodyContainer}>
-            <View style={{marginHorizontal: 27}}>
+            <View style={{ marginHorizontal: 27 }}>
               <TouchableOpacity
                 style={styles.labelContainer}
                 onPress={() => {
@@ -459,13 +466,13 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
             </View>
 
             <View
-              style={[styles.horizontalLine, {marginTop: 5, height: 1.3}]}
+              style={[styles.horizontalLine, { marginTop: 5, height: 1.3 }]}
             />
 
             <TouchableOpacity
               style={[
                 styles.labelContainer,
-                {marginHorizontal: 27, marginTop: 10, marginBottom: 10},
+                { marginHorizontal: 27, marginTop: 10, marginBottom: 10 },
               ]}
               onPress={() => {
                 navigation.navigate('ConnectToWebScreen');
@@ -483,10 +490,10 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
             </TouchableOpacity>
 
             <View
-              style={[styles.horizontalLine, {marginTop: 5, height: 1.3}]}
+              style={[styles.horizontalLine, { marginTop: 5, height: 1.3 }]}
             />
 
-            <View style={{marginHorizontal: 27, marginTop: hp(10)}}>
+            <View style={{ marginHorizontal: 27, marginTop: hp(10) }}>
               <TouchableOpacity
                 onPress={onLogOutPress}
                 style={styles.logOutContainer}>
@@ -518,8 +525,8 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
             <TouchableOpacity activeOpacity={0.7} onPress={onStayButtonPress}>
               <LinearGradient
                 colors={['#7045EB', '#4819CB']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0.5}}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.5 }}
                 style={styles.stayButtonContainer}>
                 <Text style={styles.stayTextStyle}>Stay</Text>
               </LinearGradient>

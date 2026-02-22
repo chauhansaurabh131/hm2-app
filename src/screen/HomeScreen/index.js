@@ -67,7 +67,7 @@ const HomeScreen = ({route}) => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user?.user---= ===> ', user?.user);
+  console.log(' === user?.user---= ===> ', user?.user);
 
   const userProfileCompleted = user?.user?.userProfileCompleted;
 

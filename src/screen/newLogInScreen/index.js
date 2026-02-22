@@ -9,6 +9,7 @@ import {
   View,
   Alert,
 } from 'react-native';
+import auth from '@react-native-firebase/auth';
 
 import {colors} from '../../utils/colors';
 import {icons, images} from '../../assets';
@@ -73,6 +74,9 @@ const NewLogInScreen = () => {
     GoogleSignin.configure({
       webClientId:
         '562359368016-goaj8oi4f8tgeo001als2rib72da5dqs.apps.googleusercontent.com',
+      iosClientId:
+        '562359368016-4de4ter7ddbrqmlo2idthm45re3p5ta3.apps.googleusercontent.com',
+      offlineAccess: true,
     });
   }, []);
 
@@ -326,6 +330,64 @@ const NewLogInScreen = () => {
   //   setPassword('');
   // };
 
+  // const onIosGoggleLoginPress = async () => {
+  //   try {
+  //     console.log('=== iOS Google Login Pressed ===');
+  //
+  //     await GoogleSignin.hasPlayServices();
+  //
+  //     const userInfo = await GoogleSignin.signIn();
+  //
+  //     console.log('User Info:', userInfo);
+  //
+  //     const {idToken} = userInfo;
+  //
+  //     if (!idToken) {
+  //       console.log('No idToken received');
+  //       return;
+  //     }
+  //
+  //     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  //
+  //     const userCredential = await auth().signInWithCredential(
+  //       googleCredential,
+  //     );
+  //
+  //     console.log('Firebase Login Success:', userCredential);
+  //   } catch (error) {
+  //     console.log('iOS Google Login Error:', error);
+  //   }
+  // };
+
+  const onIosGoggleLoginPress = async () => {
+    try {
+      console.log('=== iOS Google Login Pressed ===');
+
+      await GoogleSignin.hasPlayServices();
+
+      const userInfo = await GoogleSignin.signIn();
+
+      const idToken = userInfo?.idToken || userInfo?.data?.idToken;
+
+      if (!idToken) {
+        console.log('No idToken received');
+        return;
+      }
+
+      console.log('ID TOKEN FOUND ✅');
+
+      dispatch(
+        googleLogin(
+          {access_token: idToken},
+          () => dispatch(changeStack()),
+          () => navigation.navigate('NewStartExploreScreen'),
+        ),
+      );
+    } catch (error) {
+      console.log('iOS Google Login Error:', error);
+    }
+  };
+
   const signIn = async () => {
     console.log(' === signIn Press ===> ');
     try {
@@ -514,6 +576,10 @@ const NewLogInScreen = () => {
                   }}
                 />
               </TouchableOpacity>
+
+              {/*<TouchableOpacity onPress={signIn}>*/}
+              {/*  <Text style={{color: 'black'}}>IOS LOgin</Text>*/}
+              {/*</TouchableOpacity>*/}
 
               {/*<TouchableOpacity*/}
               {/*  style={{*/}
