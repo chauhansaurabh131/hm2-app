@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, {useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   FlatList,
   Image,
@@ -9,23 +9,23 @@ import {
   Text,
 } from 'react-native';
 import style from './style';
-import { fontFamily, fontSize, hp, wp } from '../../utils/helpers';
-import { icons, images } from '../../assets';
-import { colors } from '../../utils/colors';
-import { useDispatch, useSelector } from 'react-redux';
-import { getAllFriends } from '../../actions/chatActions';
-import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {icons, images} from '../../assets';
+import {colors} from '../../utils/colors';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAllFriends} from '../../actions/chatActions';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import io from 'socket.io-client';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
-const ChatScreen = ({ navigation }) => {
-  const { user } = useSelector(state => state.auth);
+const ChatScreen = ({navigation}) => {
+  const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
 
@@ -170,7 +170,7 @@ const ChatScreen = ({ navigation }) => {
 
       const socketIo = io('https://stag.mntech.website', {
         path: '/api/socket.io',
-        query: { token: accessToken },
+        query: {token: accessToken},
       });
 
       console.log('📡 Trying to connect socket...');
@@ -203,7 +203,7 @@ const ChatScreen = ({ navigation }) => {
       socketIo.on('message', messageData => {
         console.log('📩 Incoming message data:', messageData);
 
-        const { data, from } = messageData;
+        const {data, from} = messageData;
         const messages = data?.sendMessage?.results;
 
         if (!Array.isArray(messages) || messages.length === 0) {
@@ -277,7 +277,7 @@ const ChatScreen = ({ navigation }) => {
     return fullName.includes(userInput.toLowerCase());
   });
 
-  const FilterData = ({ item }) => {
+  const FilterData = ({item}) => {
     // console.log(' === item___ ===> ', item);
 
     const hasValidImage =
@@ -293,17 +293,17 @@ const ChatScreen = ({ navigation }) => {
 
     const firstName = item?.friendList?.firstName
       ? item?.friendList?.firstName.charAt(0).toUpperCase() +
-      item?.friendList?.firstName.slice(1).toLowerCase()
+        item?.friendList?.firstName.slice(1).toLowerCase()
       : '';
 
     const lastName = item?.friendList?.lastName
       ? item?.friendList?.lastName.charAt(0).toUpperCase() +
-      item?.friendList?.lastName.slice(1).toLowerCase()
+        item?.friendList?.lastName.slice(1).toLowerCase()
       : '';
 
     const name = item?.friendList?.name
       ? item?.friendList?.name.charAt(0).toUpperCase() +
-      item?.friendList?.name.slice(1).toLowerCase()
+        item?.friendList?.name.slice(1).toLowerCase()
       : '';
 
     // console.log(' === firstname ===> ', firstname);
@@ -340,7 +340,7 @@ const ChatScreen = ({ navigation }) => {
         }}>
         {hasValidImage ? (
           <Image
-            source={{ uri: item?.friendList?.profilePic }}
+            source={{uri: item?.friendList?.profilePic}}
             style={{
               width: 47,
               height: 47,
@@ -363,8 +363,8 @@ const ChatScreen = ({ navigation }) => {
           />
         )}
 
-        <View style={{ flexDirection: 'column', flex: 1 }}>
-          <View style={{ flexDirection: 'row' }}>
+        <View style={{flexDirection: 'column', flex: 1}}>
+          <View style={{flexDirection: 'row'}}>
             <Text
               style={{
                 fontSize: fontSize(14),
@@ -419,15 +419,15 @@ const ChatScreen = ({ navigation }) => {
                 ? `${item.lastMessage.message.slice(0, 40)}...`
                 : item.lastMessage.message
               : item?.lastMessage?.fileUrl
-                ? 'Image'
-                : 'No message yet !'}
+              ? 'Image'
+              : 'No message yet !'}
           </Text>
 
           {item?.unreadCount > 0 && (
             <LinearGradient
               colors={['#0D4EB3', '#9413D0']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
               style={{
                 position: 'absolute',
                 right: 5,
@@ -456,7 +456,7 @@ const ChatScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
-      <View style={{ marginHorizontal: wp(17) }}>
+      <View style={{marginHorizontal: wp(17)}}>
         {/*{user?.user?.appUsesType !== 'dating' && (*/}
         {/*  <View style={style.headerContainerTittleStyle}>*/}
         {/*    <Image*/}
@@ -485,7 +485,7 @@ const ChatScreen = ({ navigation }) => {
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View
             style={{
               position: 'relative',
@@ -521,7 +521,7 @@ const ChatScreen = ({ navigation }) => {
               <TouchableOpacity>
                 <Image
                   source={icons.search_icon}
-                  style={{ width: 16, height: 16, tintColor: colors.black }}
+                  style={{width: 16, height: 16, tintColor: colors.black}}
                 />
               </TouchableOpacity>
             </View>
@@ -535,12 +535,12 @@ const ChatScreen = ({ navigation }) => {
         onBackButtonPress={toggleModal}
       />
 
-      <View style={{ marginHorizontal: wp(26) }}>
+      <View style={{marginHorizontal: wp(26)}}>
         {isConnecting ? (
           // SHIMMER LOADER DATA
           <FlatList
             data={[1, 1, 1, 1, 1, 1, 1, 1]}
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               return (
                 <View
                   style={{
@@ -557,12 +557,12 @@ const ChatScreen = ({ navigation }) => {
                       marginRight: wp(19),
                     }}
                   />
-                  <View style={{ marginLeft: 3 }}>
+                  <View style={{marginLeft: 3}}>
                     <ShimmerPlaceholder
-                      style={{ width: 100, height: 15, marginRight: wp(10) }}
+                      style={{width: 100, height: 15, marginRight: wp(10)}}
                     />
                     <ShimmerPlaceholder
-                      style={{ width: '100%', height: 10, marginTop: 5 }}
+                      style={{width: '100%', height: 10, marginTop: 5}}
                     />
                   </View>
                 </View>
@@ -577,7 +577,7 @@ const ChatScreen = ({ navigation }) => {
             }}>
             <Image
               source={icons.no_Profile_Found_img}
-              style={{ width: hp(44), height: hp(44), resizeMode: 'contain' }}
+              style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
             />
             <Text
               style={{
@@ -591,10 +591,10 @@ const ChatScreen = ({ navigation }) => {
             </Text>
           </View>
         ) : filteredFriends.length === 0 && !userInput ? (
-          <View style={{ alignItems: 'center', marginTop: hp(130) }}>
+          <View style={{alignItems: 'center', marginTop: hp(130)}}>
             <Image
               source={icons.empty_state_icon}
-              style={{ width: hp(212), height: hp(170), resizeMode: 'contain' }}
+              style={{width: hp(212), height: hp(170), resizeMode: 'contain'}}
             />
             <Text
               style={{
@@ -635,7 +635,7 @@ const ChatScreen = ({ navigation }) => {
               item.friendList?._id || item.id || Math.random().toString()
             }
             showsVerticalScrollIndicator={false}
-            ListFooterComponent={<View style={{ height: hp(120) }} />}
+            ListFooterComponent={<View style={{height: hp(120)}} />}
           />
         )}
 

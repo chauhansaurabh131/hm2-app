@@ -195,7 +195,7 @@ const RemainingDataUiScreen = () => {
     }
 
     return (
-      <SafeAreaView>
+      <View>
         {/*<View style={{width: hp(190), marginHorizontal: 10}}>*/}
         <TouchableOpacity
           style={{width: '100%'}}
@@ -217,14 +217,6 @@ const RemainingDataUiScreen = () => {
               </Text>
 
               <TouchableOpacity onPress={() => handleAddPress(item)}>
-                {/*<LinearGradient*/}
-                {/*  colors={['#0D4EB3', '#9413D0']}*/}
-                {/*  style={styles.addButtonContainer}>*/}
-                {/*  <View style={[styles.addButtonBody, {backgroundColor}]}>*/}
-                {/*    <Text style={styles.addButtonText}>Add Details</Text>*/}
-                {/*  </View>*/}
-                {/*</LinearGradient>*/}
-
                 <Image
                   source={icons.plus_icon}
                   style={{
@@ -239,17 +231,7 @@ const RemainingDataUiScreen = () => {
             </View>
           </View>
         </TouchableOpacity>
-
-        <View
-          style={{
-            width: '100%',
-            height: 8,
-            backgroundColor: '#F8F8F8',
-            marginTop: hp(25),
-            marginBottom: 20,
-          }}
-        />
-      </SafeAreaView>
+      </View>
     );
   };
 
@@ -258,7 +240,7 @@ const RemainingDataUiScreen = () => {
   );
 
   return (
-    <SafeAreaView style={{flex: 1, marginTop: hp(22)}}>
+    <View style={{backgroundColor: 'white'}}>
       {validData?.length > 0 && (
         <Text
           style={{
@@ -268,6 +250,7 @@ const RemainingDataUiScreen = () => {
             fontFamily: fontFamily.poppins500,
             marginBottom: hp(22),
             marginHorizontal: 17,
+            marginTop: hp(20),
           }}>
           Add Details for Better Matches
         </Text>
@@ -282,16 +265,18 @@ const RemainingDataUiScreen = () => {
         contentContainerStyle={{paddingHorizontal: 17, marginBottom: hp(5)}}
       />
 
-      {/*<View*/}
-      {/*  style={{*/}
-      {/*    width: '100%',*/}
-      {/*    height: 8,*/}
-      {/*    backgroundColor: '#F8F8F8',*/}
-      {/*    marginTop: hp(25),*/}
-      {/*    marginBottom: 20,*/}
-      {/*  }}*/}
-      {/*/>*/}
-    </SafeAreaView>
+      {validData?.length > 0 && (
+        <View
+          style={{
+            width: '100%',
+            height: hp(4),
+            backgroundColor: '#F8F8F8',
+            marginTop: hp(25),
+            marginBottom: 20,
+          }}
+        />
+      )}
+    </View>
   );
 };
 
@@ -305,7 +290,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   categoryContainer: {
-    borderRadius: 10,
+    borderRadius: hp(10),
     alignItems: 'center',
     // justifyContent: 'center',
     width: hp(156), // You can adjust the width

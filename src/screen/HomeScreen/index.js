@@ -684,7 +684,7 @@ const HomeScreen = ({route}) => {
 
         <TouchableOpacity
           activeOpacity={0.8}
-          style={{marginHorizontal: 17}}
+          style={{marginHorizontal: 17, marginTop: hp(10)}}
           onPress={() => {
             navigation.navigate('SuccessStoryEditInformationScreen');
           }}>

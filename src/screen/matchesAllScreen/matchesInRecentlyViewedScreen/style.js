@@ -485,8 +485,8 @@ export const style = StyleSheet.create({
   },
   noFriendDataContaier: {
     alignItems: 'center',
-    marginTop: hp(200),
-    justifyContent: 'center',
+    marginTop: hp(250),
+    // justifyContent: 'center',
   },
   noImage: {
     width: hp(44),

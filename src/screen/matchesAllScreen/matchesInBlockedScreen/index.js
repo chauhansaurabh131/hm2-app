@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Text,
   FlatList,
@@ -13,17 +13,17 @@ import {
   TextInput,
   Clipboard,
 } from 'react-native';
-import { icons, images } from '../../../assets';
-import { fontFamily, fontSize, hp, isIOS, wp } from '../../../utils/helpers';
+import {icons, images} from '../../../assets';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
 import LinearGradient from 'react-native-linear-gradient';
-import { colors } from '../../../utils/colors';
-import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
-import { useSelector } from 'react-redux';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {colors} from '../../../utils/colors';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import {useSelector} from 'react-redux';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { non_friend_Blocked } from '../../../actions/homeActions';
+import {non_friend_Blocked} from '../../../actions/homeActions';
 import Toast from 'react-native-toast-message';
-import { style } from './style';
+import {style} from './style';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -56,7 +56,7 @@ const MatchesInBlockedScreen = () => {
   const sheetRef = useRef(null);
   const ReportBottomSheetRef = useRef();
 
-  const { user } = useSelector(state => state.auth);
+  const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
 
   const closeModal = () => {
@@ -500,16 +500,16 @@ const MatchesInBlockedScreen = () => {
       id: items?.friend?._id,
       userData: items,
     };
-    navigation.navigate('NewUserDetailsScreen', { matchesUserData });
+    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
     // Alert.alert('Error', 'User Are Blocked.');
   };
 
-  const renderBlockedUser = ({ item }) => {
+  const renderBlockedUser = ({item}) => {
     const planName = item?.friend?.subscriptionDetails?.selectedPlan
       ? item?.friend?.subscriptionDetails?.selectedPlan
-        .charAt(0)
-        .toUpperCase() +
-      item?.friend?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
+          .charAt(0)
+          .toUpperCase() +
+        item?.friend?.subscriptionDetails?.selectedPlan.slice(1).toLowerCase()
       : '';
 
     const hasValidImage =
@@ -521,7 +521,7 @@ const MatchesInBlockedScreen = () => {
       item?.friend?.privacySettingCustom?.profilePhotoPrivacy === true ||
       item?.friend?.privacySettingCustom?.showPhotoToFriendsOnly === true;
 
-    const { selectedPlan, status } = item?.friend?.subscriptionDetails || {};
+    const {selectedPlan, status} = item?.friend?.subscriptionDetails || {};
 
     // Determine if the selected plan is 'gold' (for the crown icon)
     const isGoldPlan = selectedPlan === 'gold';
@@ -562,11 +562,11 @@ const MatchesInBlockedScreen = () => {
     const jobTitle = item?.friend?.userProfessional?.jobTitle;
     const currentCity = item?.friend?.address?.currentCity
       ? item?.friend?.address?.currentCity.charAt(0).toUpperCase() +
-      item?.friend?.address?.currentCity.slice(1).toLowerCase()
+        item?.friend?.address?.currentCity.slice(1).toLowerCase()
       : '';
     const currentCountry = item?.friend?.address?.currentCountry
       ? item?.friend?.address?.currentCountry.charAt(0).toUpperCase() +
-      item?.friend?.address?.currentCountry.slice(1).toLowerCase()
+        item?.friend?.address?.currentCountry.slice(1).toLowerCase()
       : '';
 
     const imageCount = Array.isArray(item?.friend?.userProfilePic)
@@ -582,7 +582,7 @@ const MatchesInBlockedScreen = () => {
         userAllImage,
       };
       // console.log(' === userAllImage ===> ', userAllImage);
-      navigation.navigate('UserUploadImageFullScreen', { allImages });
+      navigation.navigate('UserUploadImageFullScreen', {allImages});
     };
 
     const matchPercentage = item?.friend?.matchPercentage;
@@ -616,7 +616,7 @@ const MatchesInBlockedScreen = () => {
               {hasValidImage ? (
                 <>
                   <Image
-                    source={{ uri: item?.friend?.profilePic }}
+                    source={{uri: item?.friend?.profilePic}}
                     style={style.userImageStyle}
                   />
                   {profilePrivacy && (
@@ -640,7 +640,7 @@ const MatchesInBlockedScreen = () => {
                     firstName={item?.friend?.firstName || item?.friend?.name}
                     lastName={item?.friend?.lastName}
                     textStyle={style.userImageStyle}
-                    profileTexts={{ fontSize: fontSize(60), marginTop: -80 }}
+                    profileTexts={{fontSize: fontSize(60), marginTop: -80}}
                   />
                 </>
               )}
@@ -660,7 +660,7 @@ const MatchesInBlockedScreen = () => {
                   onPress={() => {
                     handlePress(item);
                   }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={style.userNameTextStyle}>
                       {firstName || name} {lastName}
                     </Text>
@@ -687,7 +687,7 @@ const MatchesInBlockedScreen = () => {
                   <View
                     style={[
                       style.userDetailsDescriptionContainer,
-                      { marginTop: 3 },
+                      {marginTop: 3},
                     ]}>
                     <Text style={style.userDetailsTextStyle}>
                       {age || 'N/A'} yrs,
@@ -711,7 +711,7 @@ const MatchesInBlockedScreen = () => {
                     </Text>
                   </View>
 
-                  <View style={{ position: 'absolute', bottom: 0, right: 35 }}>
+                  <View style={{position: 'absolute', bottom: 0, right: 35}}>
                     <TouchableOpacity
                       onPress={onThreeDotPress}
                       style={style.threeDotContainer}>
@@ -797,7 +797,7 @@ const MatchesInBlockedScreen = () => {
   };
 
   const toastConfigs = {
-    Copied: ({ text1 }) => (
+    Copied: ({text1}) => (
       <View style={style.toastsBody}>
         <Text style={style.toastsText}>{text1}</Text>
       </View>
@@ -810,7 +810,7 @@ const MatchesInBlockedScreen = () => {
         <Toast config={toastConfigs} />
       </View>
       {loading ? (
-        <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <View style={style.shimmerContainer}>
             <ShimmerPlaceholder style={style.shimmerBox} />
             <View style={style.shimmerBoxBody}>
@@ -837,11 +837,11 @@ const MatchesInBlockedScreen = () => {
           onEndReached={loadMoreData}
           onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: hp(130) }}
+          contentContainerStyle={{paddingBottom: hp(130)}}
           ListFooterComponent={
             isFetchingMore ? (
-              <View style={{ alignItems: 'center', marginVertical: 10 }}>
-                <Text style={{ color: 'black' }}>Loading Data...</Text>
+              <View style={{alignItems: 'center', marginVertical: 10}}>
+                <Text style={{color: 'black'}}>Loading Data...</Text>
               </View>
             ) : null
           }
@@ -931,7 +931,7 @@ const MatchesInBlockedScreen = () => {
               style={style.TDBBodySecondContainer}>
               <Image
                 source={icons.new_report_icon}
-                style={[style.TDBImages, { top: -8 }]}
+                style={[style.TDBImages, {top: -8}]}
               />
 
               <View>
@@ -956,7 +956,7 @@ const MatchesInBlockedScreen = () => {
               style={style.TDBBodySecondContainer}>
               <Image
                 source={icons.block_icon}
-                style={[style.TDBImages, { top: -8 }]}
+                style={[style.TDBImages, {top: -8}]}
               />
 
               <View>
@@ -998,8 +998,8 @@ const MatchesInBlockedScreen = () => {
                 onPress={handleConfirmBlock}>
                 <LinearGradient
                   colors={['#7045EB', '#4819CB']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
                   style={style.blockModalYesButtonContainer}>
                   <Text style={style.blockModalYesButtonText}>Yes</Text>
                 </LinearGradient>
@@ -1077,12 +1077,12 @@ const MatchesInBlockedScreen = () => {
 
               <TouchableOpacity
                 activeOpacity={0.7}
-                style={{ marginTop: hp(9) }}
+                style={{marginTop: hp(9)}}
                 onPress={handleSubmit}>
                 <LinearGradient
                   colors={['#0D4EB3', '#9413D0']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1.5 }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1.5}}
                   style={style.reportSubmitButtonContainer}>
                   <Text style={style.reportSubmitButtonText}>
                     Submit Report
@@ -1179,8 +1179,8 @@ const MatchesInBlockedScreen = () => {
               onPress={handleCloseModal}>
               <LinearGradient
                 colors={['#7045EB', '#4819CB']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1.5 }}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1.5}}
                 style={style.reportModalButtonBody}>
                 <Text style={style.reportModalButtonText}>Okay</Text>
               </LinearGradient>
@@ -1266,7 +1266,7 @@ const MatchesInBlockedScreen = () => {
                 alignSelf: 'center',
               }}>
               <Image
-                source={{ uri: user?.user?.profilePic }}
+                source={{uri: user?.user?.profilePic}}
                 style={{
                   width: hp(64),
                   height: hp(64),
@@ -1277,8 +1277,8 @@ const MatchesInBlockedScreen = () => {
               />
 
               <Image
-                source={{ uri: percentageMatchData?.profilePic }}
-                style={{ width: hp(64), height: hp(64), borderRadius: 50 }}
+                source={{uri: percentageMatchData?.profilePic}}
+                style={{width: hp(64), height: hp(64), borderRadius: 50}}
               />
             </View>
 
@@ -1336,7 +1336,7 @@ const MatchesInBlockedScreen = () => {
               Based on Your Partner Preference
             </Text>
 
-            <View style={{ marginHorizontal: 20, marginTop: hp(13) }}>
+            <View style={{marginHorizontal: 20, marginTop: hp(13)}}>
               {step === 1 && (
                 <>
                   <Text
@@ -1348,8 +1348,8 @@ const MatchesInBlockedScreen = () => {
                     }}>
                     {percentageMatchData?.matchedFields?.[0]?.field
                       ? capitalizeFirstLetter(
-                        percentageMatchData.matchedFields[0].field,
-                      )
+                          percentageMatchData.matchedFields[0].field,
+                        )
                       : 'N/A'}
                   </Text>
 
@@ -1387,7 +1387,7 @@ const MatchesInBlockedScreen = () => {
                     />
                   </View>
 
-                  <View style={{ marginTop: hp(10) }}>
+                  <View style={{marginTop: hp(10)}}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -1397,8 +1397,8 @@ const MatchesInBlockedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[1]?.field
                         ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[1].field,
-                        )
+                            percentageMatchData.matchedFields[1].field,
+                          )
                         : 'N/A'}
                     </Text>
 
@@ -1437,7 +1437,7 @@ const MatchesInBlockedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{ marginTop: hp(10) }}>
+                  <View style={{marginTop: hp(10)}}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -1447,8 +1447,8 @@ const MatchesInBlockedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[2]?.field
                         ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[2].field,
-                        )
+                            percentageMatchData.matchedFields[2].field,
+                          )
                         : 'N/A'}
                     </Text>
 
@@ -1488,7 +1488,7 @@ const MatchesInBlockedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{ marginTop: hp(10) }}>
+                  <View style={{marginTop: hp(10)}}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -1498,8 +1498,8 @@ const MatchesInBlockedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[3]?.field
                         ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[3].field,
-                        )
+                            percentageMatchData.matchedFields[3].field,
+                          )
                         : 'N/A'}
                     </Text>
 
@@ -1549,8 +1549,8 @@ const MatchesInBlockedScreen = () => {
                     }}>
                     {percentageMatchData?.matchedFields?.[4]?.field
                       ? capitalizeFirstLetter(
-                        percentageMatchData.matchedFields[4].field,
-                      )
+                          percentageMatchData.matchedFields[4].field,
+                        )
                       : 'N/A'}
                   </Text>
 
@@ -1586,7 +1586,7 @@ const MatchesInBlockedScreen = () => {
                     />
                   </View>
 
-                  <View style={{ marginTop: hp(10) }}>
+                  <View style={{marginTop: hp(10)}}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -1596,8 +1596,8 @@ const MatchesInBlockedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[5]?.field
                         ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[5].field,
-                        )
+                            percentageMatchData.matchedFields[5].field,
+                          )
                         : 'N/A'}
                     </Text>
 
@@ -1634,7 +1634,7 @@ const MatchesInBlockedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{ marginTop: hp(10) }}>
+                  <View style={{marginTop: hp(10)}}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -1644,8 +1644,8 @@ const MatchesInBlockedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[6]?.field
                         ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[6].field,
-                        )
+                            percentageMatchData.matchedFields[6].field,
+                          )
                         : 'N/A'}
                     </Text>
 
@@ -1682,7 +1682,7 @@ const MatchesInBlockedScreen = () => {
                     </View>
                   </View>
 
-                  <View style={{ marginTop: hp(10) }}>
+                  <View style={{marginTop: hp(10)}}>
                     <Text
                       style={{
                         fontSize: fontSize(12),
@@ -1692,8 +1692,8 @@ const MatchesInBlockedScreen = () => {
                       }}>
                       {percentageMatchData?.matchedFields?.[7]?.field
                         ? capitalizeFirstLetter(
-                          percentageMatchData.matchedFields[7].field,
-                        )
+                            percentageMatchData.matchedFields[7].field,
+                          )
                         : 'N/A'}
                     </Text>
 
@@ -1747,7 +1747,7 @@ const MatchesInBlockedScreen = () => {
                 activeOpacity={0.7}
                 onPress={handleBackArrow}
                 disabled={step === 1}
-                style={{ width: wp(30), alignItems: 'center' }}>
+                style={{width: wp(30), alignItems: 'center'}}>
                 <Image
                   source={icons.rightSideIcon}
                   style={[
@@ -1755,9 +1755,9 @@ const MatchesInBlockedScreen = () => {
                       width: hp(12),
                       height: hp(24),
                       resizeMode: 'contain',
-                      transform: [{ rotate: '180deg' }],
+                      transform: [{rotate: '180deg'}],
                     },
-                    { tintColor: step === 1 ? '#E4E4E4' : 'black' },
+                    {tintColor: step === 1 ? '#E4E4E4' : 'black'},
                   ]}
                 />
               </TouchableOpacity>
@@ -1779,7 +1779,7 @@ const MatchesInBlockedScreen = () => {
                         borderRadius: 50,
                         marginHorizontal: 10,
                       },
-                      { backgroundColor: step === item ? '#0F52BA' : '#ECECEC' },
+                      {backgroundColor: step === item ? '#0F52BA' : '#ECECEC'},
                     ]}
                   />
                 ))}
@@ -1788,12 +1788,12 @@ const MatchesInBlockedScreen = () => {
               <TouchableOpacity
                 onPress={handleNext}
                 disabled={step === 2}
-                style={{ width: wp(30), alignItems: 'center' }}>
+                style={{width: wp(30), alignItems: 'center'}}>
                 <Image
                   source={icons.rightSideIcon}
                   style={[
-                    { width: hp(12), height: hp(24), resizeMode: 'contain' },
-                    { tintColor: step === 2 ? '#E4E4E4' : 'black' },
+                    {width: hp(12), height: hp(24), resizeMode: 'contain'},
+                    {tintColor: step === 2 ? '#E4E4E4' : 'black'},
                   ]}
                 />
               </TouchableOpacity>
