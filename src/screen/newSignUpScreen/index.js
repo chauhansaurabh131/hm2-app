@@ -4,6 +4,7 @@ import {
   Image,
   Keyboard,
   Linking,
+  Platform,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -24,6 +25,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import messaging from '@react-native-firebase/messaging';
+import appleAuth from '@invertase/react-native-apple-authentication';
 
 const BLOCKED_EMAIL_DOMAINS = [
   'yopmail.com',
@@ -178,7 +180,7 @@ const NewSignUpScreen = () => {
 
       dispatch(
         register(
-          {name, email, countryCodeId: '68df8125ae450858978682ec'},
+          {name, email, countryCodeId: '690ab965be71921b32ea02a5'},
           () => {
             navigation.navigate('VerifyEmailOtpScreen', {
               name,
@@ -196,7 +198,7 @@ const NewSignUpScreen = () => {
           {
             name,
             mobileNumber: email,
-            countryCodeId: '68709f07e33fd998c7105ad5',
+            countryCodeId: '690ab965be71921b32ea02a5',
           },
           () => {
             navigation.navigate('VerifyEmailOtpScreen', {name, email});
@@ -263,6 +265,83 @@ const NewSignUpScreen = () => {
       }
     }
   };
+
+  // const handleAppleSignIn = async () => {
+  //   try {
+  //     const appleAuthRequestResponse = await appleAuth.performRequest({
+  //       requestedOperation: appleAuth.Operation.LOGIN,
+  //       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+  //     });
+  //
+  //     console.log('APPLE RESPONSE:', appleAuthRequestResponse);
+  //
+  //     const {identityToken} = appleAuthRequestResponse;
+  //
+  //     if (!identityToken) {
+  //       console.log('No identityToken');
+  //       return;
+  //     }
+  //
+  //     console.log('IDENTITY TOKEN:', identityToken);
+  //
+  //     alert('Apple login success, token received!');
+  //   } catch (error) {
+  //     console.log('Apple Error:', error);
+  //   }
+  // };
+
+  // const handleAppleSignIn = async () => {
+  //   try {
+  //     // 🔹 Step 1: Perform Apple Login Request
+  //     const appleAuthRequestResponse = await appleAuth.performRequest({
+  //       requestedOperation: appleAuth.Operation.LOGIN,
+  //       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+  //     });
+  //
+  //     console.log('🍎 Apple Full Response:', appleAuthRequestResponse);
+  //
+  //     const {identityToken, fullName, email, user} = appleAuthRequestResponse;
+  //
+  //     // 🔹 Step 2: Validate Token
+  //     if (!identityToken) {
+  //       console.log('❌ No identityToken returned');
+  //       return;
+  //     }
+  //
+  //     console.log('✅ Apple identityToken received');
+  //
+  //     // 🔹 Step 3: Send to Backend
+  //     dispatch(
+  //       googleLogin(
+  //         {
+  //           access_token: identityToken,
+  //           provider: 'apple',
+  //           appleUserId: user,
+  //           name: fullName?.givenName || '',
+  //           email: email || '',
+  //         },
+  //         // 🔹 Success Callback
+  //         () => {
+  //           console.log('✅ Apple login success');
+  //           dispatch(changeStack());
+  //         },
+  //         // 🔹 Failure Callback
+  //         () => {
+  //           console.log('❌ Apple login failed');
+  //           navigation.navigate('NewStartExploreScreen');
+  //         },
+  //       ),
+  //     );
+  //   } catch (error) {
+  //     console.log('❌ Apple Sign-In Error:', error);
+  //
+  //     if (error.code === appleAuth.Error.CANCELED) {
+  //       console.log('User canceled Apple Sign-In');
+  //     } else {
+  //       console.log('Other Apple Sign-In error');
+  //     }
+  //   }
+  // };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -440,6 +519,7 @@ const NewSignUpScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={signIn}
+                // onPress={isIOS ? handleAppleSignIn : signIn}
                 style={{
                   width: hp(44),
                   height: hp(44),
@@ -452,6 +532,7 @@ const NewSignUpScreen = () => {
                 }}>
                 <Image
                   source={icons.googleLogo}
+                  // source={isIOS ? icons.apple_icon : icons.googleLogo}
                   style={{
                     height: hp(17.6),
                     width: hp(17.6),

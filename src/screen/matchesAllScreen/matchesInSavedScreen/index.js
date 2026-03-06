@@ -12,6 +12,7 @@ import {
   TextInput,
   Clipboard,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {colors} from '../../../utils/colors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -141,7 +142,14 @@ const MatchesInSavedScreen = () => {
   const openBottomSheet = () => {
     unFriendBottomSheet.current.close();
     friendBottomSheet.current.close();
-    ReportBottomSheetRef.current.open();
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   const RemoveShortlisted = () => {
@@ -285,8 +293,14 @@ const MatchesInSavedScreen = () => {
   const onUnfriendBottomSheetBlockPress = blockedFriendIds => {
     unFriendBottomSheet.current.close();
     friendBottomSheet.current.close();
-    setIsBlockModalVisible(true);
-    console.log(' === onUnfriendBottomSheetBlockPress ===> ', blockedFriendIds);
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = async () => {
@@ -950,7 +964,7 @@ const MatchesInSavedScreen = () => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: colors.white}}>
+    <View style={{backgroundColor: colors.white}}>
       <View style={styles.toastMessageDisplayContainer}>
         <Toast config={toastConfigs} />
       </View>

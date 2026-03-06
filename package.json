@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.6.4",
+    "@invertase/react-native-apple-authentication": "^2.5.1",
     "@notifee/react-native": "^7.9.0",
     "@openspacelabs/react-native-zoomable-view": "^2.1.5",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
@@ -54,6 +55,7 @@
     "react-native-config": "^1.5.5",
     "react-native-date-picker": "^4.4.2",
     "react-native-deck-swiper": "^2.0.17",
+    "react-native-device-info": "^15.0.2",
     "react-native-document-picker": "^9.3.0",
     "react-native-dropdown-autocomplete-textinput": "^1.0.1",
     "react-native-element-dropdown": "^2.10.1",

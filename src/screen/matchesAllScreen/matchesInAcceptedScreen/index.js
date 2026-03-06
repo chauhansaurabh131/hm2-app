@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
@@ -136,7 +137,13 @@ const MatchesInAcceptedScreen = () => {
 
   const openBottomSheet = () => {
     sheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   // Function to fetch data from the API
@@ -322,7 +329,14 @@ const MatchesInAcceptedScreen = () => {
   // BLOCKED USER FUNCTION
   const handleBlockProfilePress = () => {
     sheetRef.current.close();
-    setIsBlockModalVisible(true);
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = () => {
@@ -337,16 +351,31 @@ const MatchesInAcceptedScreen = () => {
   const onSendMessagePress = userData => {
     console.log(' === onSendMessagePress ===> ', userData);
 
-    // sheetRef.current.close();
+    sheetRef.current.close();
 
-    // navigation.navigate('ChatUserScreen', {
-    //   userData,
-    // });
+    if (Platform.OS) {
+      setTimeout(() => {
+        navigation.navigate('ChatUserScreen', {
+          userData,
+        });
+      }, 200);
+    } else {
+      navigation.navigate('ChatUserScreen', {
+        userData,
+      });
+    }
   };
 
   const handleUnFriendPress = () => {
     sheetRef.current.close();
-    setIsUnFriendModalVisible(true);
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsUnFriendModalVisible(true);
+      }, 200);
+    } else {
+      setIsUnFriendModalVisible(true);
+    }
   };
 
   // UN-FRIEND FUNCTION

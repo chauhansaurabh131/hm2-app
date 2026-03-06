@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Platform,
   Share,
   Text,
   TextInput,
@@ -224,9 +225,23 @@ const MatchesInDeclinedScreen = () => {
     }
   };
 
+  // const handleBlockProfilePress = () => {
+  //   sheetRef.current.close();
+  //   setIsBlockModalVisible(true);
+  // };
+
   const handleBlockProfilePress = () => {
     sheetRef.current.close();
-    setIsBlockModalVisible(true);
+
+    if (isIOS) {
+      // iOS needs delay because of animation conflict
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      // Android works instantly
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = async () => {
@@ -263,9 +278,19 @@ const MatchesInDeclinedScreen = () => {
   };
 
   // Function to open the bottom sheet
+  // const openBottomSheet = () => {
+  //   sheetRef.current.close();
+  //   ReportBottomSheetRef.current.open();
+  // };
   const openBottomSheet = () => {
     sheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   // Handler when "Inappropriate content" is clicked
@@ -1102,7 +1127,7 @@ const MatchesInDeclinedScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View>
       <View
         style={{
           flex: 1,

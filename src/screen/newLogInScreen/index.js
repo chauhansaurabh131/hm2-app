@@ -235,7 +235,7 @@ const NewLogInScreen = () => {
         return;
       }
 
-      loginPayload.countryCodeId = '68df8125ae450858978682ec';
+      loginPayload.countryCodeId = '690ab965be71921b32ea02a5';
       loginPayload.mobileNumber = mobileNumber;
     }
 

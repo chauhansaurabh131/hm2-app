@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   LayoutAnimation,
   Text,
@@ -68,6 +69,11 @@ const NewStartExploreScreen = () => {
     const selectedType = typeMap[selectedOption];
 
     setLoading(true);
+
+    Alert.alert(
+      'Selected Option',
+      `Selected Option: ${selectedOption}\nPassing Type: ${selectedType}`,
+    );
 
     apiDispatch(
       updateDetails(

@@ -12,6 +12,7 @@ import {
   Modal,
   TextInput,
   Clipboard,
+  Platform,
 } from 'react-native';
 import {icons, images} from '../../../assets';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
@@ -190,9 +191,20 @@ const MatchesInBlockedScreen = () => {
     }
   };
 
+  // const openBottomSheet = () => {
+  //   sheetRef.current.close();
+  //   ReportBottomSheetRef.current.open();
+  // };
+
   const openBottomSheet = () => {
     sheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   const handleShare = async () => {
@@ -220,9 +232,19 @@ const MatchesInBlockedScreen = () => {
     }
   };
 
+  // const handleBlockProfilePress = () => {
+  //   sheetRef.current.close();
+  //   setIsBlockModalVisible(true);
+  // };
   const handleBlockProfilePress = () => {
     sheetRef.current.close();
-    setIsBlockModalVisible(true);
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = async () => {

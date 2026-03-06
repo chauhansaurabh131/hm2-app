@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Platform,
   Share,
   Text,
   TextInput,
@@ -331,7 +332,13 @@ const MatchesInReceivedScreen = () => {
 
   const handleBlockProfilePress = () => {
     sheetRef.current.close();
-    setIsBlockModalVisible(true);
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = async () => {
@@ -370,7 +377,13 @@ const MatchesInReceivedScreen = () => {
   // Function to open the bottom sheet
   const openBottomSheet = () => {
     sheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   // Handler when "Inappropriate content" is clicked
@@ -1194,7 +1207,7 @@ const MatchesInReceivedScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View>
       <View
         style={{
           flex: 1,

@@ -1744,13 +1744,25 @@ const ChatUserScreen = ({route}) => {
                       </View>
                     )}
                     <TextInput
-                      style={{flex: 1, height: 50, color: 'black', padding: 10}}
+                      style={{
+                        flex: 1,
+                        minHeight: 40,
+                        maxHeight: 120,
+                        color: 'black',
+                        paddingHorizontal: 12,
+                        paddingVertical: 10,
+                        textAlignVertical: 'top', // important for multiline
+                      }}
                       placeholder="Message"
-                      placeholderTextColor={'black'}
-                      multiline={true}
-                      numberOfLines={4}
+                      placeholderTextColor="gray"
+                      multiline={
+                        Platform.OS === 'ios'
+                          ? message.length > 0 // ✅ Only multiline when typing (iOS)
+                          : true // ✅ Always multiline on Android
+                      }
+                      scrollEnabled={false}
                       value={message || recordingDuration}
-                      editable={!recordingDuration} // Disable editing when recording
+                      editable={!recordingDuration}
                       onChangeText={text => {
                         setMessage(text);
                         handleTyping(text);

@@ -12,6 +12,7 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {icons, images} from '../../../assets';
@@ -409,7 +410,14 @@ const MatchesInSentScreen = () => {
 
   const handleBlockProfilePress = () => {
     sheetRef.current.close();
-    setIsBlockModalVisible(true);
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = async () => {
@@ -450,7 +458,14 @@ const MatchesInSentScreen = () => {
   // Function to open the bottom sheet
   const openBottomSheet = () => {
     sheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   // Handler when "Inappropriate content" is clicked
@@ -1211,7 +1226,7 @@ const MatchesInSentScreen = () => {
   };
 
   return (
-    <View style={[styles.container, {flex: 1}]}>
+    <View style={styles.container}>
       <View
         style={{
           flex: 1,

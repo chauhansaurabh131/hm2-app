@@ -181,7 +181,14 @@ const NewUserDetailsScreen = () => {
 
   const openBottomSheet = () => {
     friendBottomSheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   const toggleDescription = () => {
@@ -962,7 +969,14 @@ const NewUserDetailsScreen = () => {
   // BLOCKED USER FUNCTION
   const handleBlockProfilePress = () => {
     friendBottomSheetRef.current.close();
-    setIsBlockModalVisible(true);
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = () => {
@@ -1022,7 +1036,14 @@ const NewUserDetailsScreen = () => {
 
   const handleUnFriendPress = () => {
     friendBottomSheetRef.current.close();
-    setIsUnFriendModalVisible(true);
+
+    if (Platform.OS) {
+      setTimeout(() => {
+        setIsUnFriendModalVisible(true);
+      }, 200);
+    } else {
+      setIsUnFriendModalVisible(true);
+    }
   };
 
   // UN-FRIEND FUNCTION
@@ -1228,9 +1249,17 @@ const NewUserDetailsScreen = () => {
       userList: user?.user,
     };
 
-    navigation.navigate('ChatUserScreen', {
-      userData,
-    });
+    if (Platform.OS) {
+      setTimeout(() => {
+        navigation.navigate('ChatUserScreen', {
+          userData,
+        });
+      }, 200);
+    } else {
+      navigation.navigate('ChatUserScreen', {
+        userData,
+      });
+    }
   };
 
   const blockedUnfriendFunction = () => {

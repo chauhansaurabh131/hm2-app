@@ -228,6 +228,7 @@ export const icons = {
   start_like_icon: require('./icons/start_like.png'),
   start_unLike_icon: require('./icons/start_unLike.png'),
   left_arrow_icon: require('./icons/left_arrow_icon.png'),
+  apple_icon: require('./icons/apple_icon.png'),
 };
 
 export const gif = {

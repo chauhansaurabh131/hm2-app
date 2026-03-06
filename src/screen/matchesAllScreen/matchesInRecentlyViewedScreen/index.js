@@ -12,6 +12,7 @@ import {
   Clipboard,
   TextInput,
   Modal,
+  Platform,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {fontFamily, fontSize, hp, isIOS, wp} from '../../../utils/helpers';
@@ -333,7 +334,14 @@ const MatchesInRecentlyViewedScreen = () => {
 
   const openBottomSheet = () => {
     sheetRef.current.close();
-    ReportBottomSheetRef.current.open();
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        ReportBottomSheetRef.current.open();
+      }, 200);
+    } else {
+      ReportBottomSheetRef.current.open();
+    }
   };
 
   // Handler when "Inappropriate content" is clicked
@@ -515,7 +523,14 @@ const MatchesInRecentlyViewedScreen = () => {
   // BLOCKED USER FUNCTION
   const handleBlockProfilePress = () => {
     sheetRef.current.close();
-    setIsBlockModalVisible(true);
+
+    if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        setIsBlockModalVisible(true);
+      }, 200);
+    } else {
+      setIsBlockModalVisible(true);
+    }
   };
 
   const handleConfirmBlock = async () => {
