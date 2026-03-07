@@ -485,62 +485,72 @@ const NewSignUpScreen = () => {
               marginTop: hp(40),
               alignSelf: 'center',
             }}>
+            {Platform.OS !== 'ios' && (
+              <View
+                style={{
+                  width: wp(267),
+                  borderWidth: 0.5,
+                  borderColor: '#E1E1E1',
+                  alignSelf: 'center',
+                  marginBottom: hp(5),
+                }}
+              />
+            )}
+
             <View
               style={{
-                width: wp(267),
-                borderWidth: 0.5,
-                borderColor: '#E1E1E1',
-                alignSelf: 'center',
-                marginBottom: hp(5),
+                marginTop: Platform.OS === 'ios' ? hp(50) : 0,
               }}
             />
 
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(21),
-                width: wp(267),
-                justifyContent: 'center',
-              }}>
-              <Text
+            {Platform.OS !== 'ios' && (
+              <View
                 style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  textAlign: 'center',
-                  color: colors.black,
-                  fontFamily: fontFamily.poppins400,
-                  justifyContent: 'center',
+                  flexDirection: 'row',
                   alignItems: 'center',
-                }}>
-                or continue with
-              </Text>
-
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={signIn}
-                // onPress={isIOS ? handleAppleSignIn : signIn}
-                style={{
-                  width: hp(44),
-                  height: hp(44),
-                  borderRadius: hp(50),
-                  borderColor: colors.lightGrayCircle,
-                  borderWidth: 1,
+                  marginTop: hp(21),
+                  width: wp(267),
                   justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: wp(40),
                 }}>
-                <Image
-                  source={icons.googleLogo}
-                  // source={isIOS ? icons.apple_icon : icons.googleLogo}
+                <Text
                   style={{
-                    height: hp(17.6),
-                    width: hp(17.6),
-                    resizeMode: 'contain',
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    textAlign: 'center',
+                    color: colors.black,
+                    fontFamily: fontFamily.poppins400,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  or continue with
+                </Text>
+
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={signIn}
+                  // onPress={isIOS ? handleAppleSignIn : signIn}
+                  style={{
+                    width: hp(44),
+                    height: hp(44),
+                    borderRadius: hp(50),
+                    borderColor: colors.lightGrayCircle,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: wp(40),
+                  }}>
+                  <Image
+                    source={icons.googleLogo}
+                    // source={isIOS ? icons.apple_icon : icons.googleLogo}
+                    style={{
+                      height: hp(17.6),
+                      width: hp(17.6),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
 
             <View
               style={{

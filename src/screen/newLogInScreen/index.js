@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Alert,
+  Platform,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
@@ -523,86 +524,70 @@ const NewLogInScreen = () => {
               marginTop: hp(40),
               alignSelf: 'center',
             }}>
+            {Platform.OS !== 'ios' && (
+              <View
+                style={{
+                  width: wp(267),
+                  borderWidth: 0.5,
+                  borderColor: '#E1E1E1',
+                  alignSelf: 'center',
+                  marginBottom: hp(5),
+                }}
+              />
+            )}
+
+            {Platform.OS !== 'ios' && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: hp(21),
+                  width: wp(267),
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    lineHeight: hp(24),
+                    textAlign: 'center',
+                    color: colors.black,
+                    fontFamily: fontFamily.poppins400,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  or continue with
+                </Text>
+
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={signIn}
+                  style={{
+                    width: hp(44),
+                    height: hp(44),
+                    borderRadius: hp(50),
+                    borderColor: colors.lightGrayCircle,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: wp(40),
+                  }}>
+                  <Image
+                    source={icons.googleLogo}
+                    style={{
+                      height: hp(17.6),
+                      width: hp(17.6),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+
             <View
               style={{
-                width: wp(267),
-                borderWidth: 0.5,
-                borderColor: '#E1E1E1',
-                alignSelf: 'center',
-                marginBottom: hp(5),
+                marginTop: Platform.OS === 'ios' ? hp(50) : 0,
               }}
             />
-
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp(21),
-                width: wp(267),
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  textAlign: 'center',
-                  color: colors.black,
-                  fontFamily: fontFamily.poppins400,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                or continue with
-              </Text>
-
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={signIn}
-                style={{
-                  width: hp(44),
-                  height: hp(44),
-                  borderRadius: hp(50),
-                  borderColor: colors.lightGrayCircle,
-                  borderWidth: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: wp(40),
-                }}>
-                <Image
-                  source={icons.googleLogo}
-                  style={{
-                    height: hp(17.6),
-                    width: hp(17.6),
-                    resizeMode: 'contain',
-                  }}
-                />
-              </TouchableOpacity>
-
-              {/*<TouchableOpacity onPress={signIn}>*/}
-              {/*  <Text style={{color: 'black'}}>IOS LOgin</Text>*/}
-              {/*</TouchableOpacity>*/}
-
-              {/*<TouchableOpacity*/}
-              {/*  style={{*/}
-              {/*    width: hp(44),*/}
-              {/*    height: hp(44),*/}
-              {/*    borderRadius: hp(50),*/}
-              {/*    borderColor: '#D4D4D4',*/}
-              {/*    borderWidth: 1,*/}
-              {/*    marginRight: wp(20),*/}
-              {/*    justifyContent: 'center',*/}
-              {/*    alignItems: 'center',*/}
-              {/*    marginLeft: wp(24),*/}
-              {/*  }}>*/}
-              {/*  <Image*/}
-              {/*    source={icons.facebookLogo}*/}
-              {/*    style={{*/}
-              {/*      height: hp(17.6),*/}
-              {/*      width: hp(17.6),*/}
-              {/*      resizeMode: 'contain',*/}
-              {/*    }}*/}
-              {/*  />*/}
-              {/*</TouchableOpacity>*/}
-            </View>
 
             <View
               style={{
