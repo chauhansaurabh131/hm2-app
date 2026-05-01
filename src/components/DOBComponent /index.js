@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
     fontSize: fontSize(14),
+    fontFamily: fontFamily.poppins400,
   },
 });
 

@@ -1,183 +1,200 @@
 import React, {useState} from 'react';
 import {
   Text,
-  TextInput,
   View,
   StyleSheet,
   Image,
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
-import {fontFamily, fontSize} from '../../utils/helpers';
+import {fontFamily, fontSize, hp} from '../../utils/helpers';
+import {icons} from '../../assets';
 import {colors} from '../../utils/colors';
+import DatePicker from 'react-native-date-picker';
 
-const BirthOfTimeTextInput = ({
-  label,
-  value,
-  onChangeText,
-  showImage,
-  imageSource,
-  ...props
-}) => {
-  const [isFocused, setFocused] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
+const BirthOfTimeComponent = ({label, value, onChangeText}) => {
+  const [open, setOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date());
 
-  const handleFocus = () => setFocused(true);
-  const handleBlur = () => setFocused(false);
+  // 🔥 FORMAT TIME
+  const formatTime = date => {
+    return date
+      .toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        // ❌ remove second
+        hour12: true,
+      })
+      .toUpperCase(); // 🔥 AM/PM capital
+  };
 
-  // Confirm time
-  const handleConfirm = () => {
-    const formattedTime = moment(selectedTime).format('hh:mm A');
-    onChangeText(formattedTime);
-    setModalVisible(false);
+  const handleSetTime = () => {
+    const formatted = formatTime(selectedTime);
+    onChangeText(formatted);
+    setOpen(false);
   };
 
   return (
-    <View style={styles.inputContainer}>
-      {/* FLOATING LABEL */}
-      <Text
-        style={[
-          styles.label,
-          {
-            top: isFocused || value ? -15 : 10,
-            color: isFocused || value ? 'gray' : 'black',
-            fontSize: isFocused || value ? 14 : 18,
-          },
-        ]}>
-        {label}
-      </Text>
-
-      {/* 👇 TAP ANYWHERE TO OPEN MODAL */}
+    <>
+      {/* 🔥 SAME ROW UI LIKE DOB */}
       <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => setModalVisible(true)}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            value={value}
-            editable={false}
-            pointerEvents="none" // 👈 IMPORTANT
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            placeholder={isFocused ? 'HH:MM AM/PM' : ''}
-            placeholderTextColor={'gray'}
-            {...props}
-          />
+        activeOpacity={0.7}
+        style={styles.rowContainer}
+        onPress={() => setOpen(true)}>
+        {/* LEFT LABEL */}
+        <Text style={styles.label}>{label}</Text>
 
-          {showImage && (
-            <Image
-              source={imageSource}
-              style={styles.image}
-              resizeMode="contain"
-            />
-          )}
+        {/* RIGHT VALUE + ICON */}
+        <View style={styles.rightSection}>
+          <Text style={styles.valueText}>{value ? value : 'HH:MM AM'}</Text>
+
+          <Image source={icons.drooDownLogo} style={styles.arrowIcon} />
         </View>
       </TouchableOpacity>
 
-      {/* TIME PICKER MODAL */}
-      <Modal
-        animationType="none"
-        transparent
-        visible={isModalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
+      {/* 🔥 MODAL */}
+      <Modal visible={open} transparent animationType="fade">
+        <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Time</Text>
+            {/* CLOSE */}
+            <TouchableOpacity
+              onPress={() => setOpen(false)}
+              style={styles.closeBtn}>
+              <Image source={icons.x_cancel_icon} style={styles.closeIcon} />
+            </TouchableOpacity>
+
+            <Text style={styles.title}>Select Birth Time</Text>
+
+            {/*<DatePicker*/}
+            {/*  mode="time"*/}
+            {/*  date={selectedTime}*/}
+            {/*  onDateChange={setSelectedTime}*/}
+            {/*  is24hour={false}*/}
+            {/*  textColor="black"*/}
+            {/*  style={{*/}
+            {/*    height: 150,*/}
+            {/*    transform: [{scale: 1.2}], // 🔥 increase size*/}
+            {/*  }}*/}
+            {/*/>*/}
 
             <DatePicker
               mode="time"
               date={selectedTime}
-              is24hour={true}
               onDateChange={setSelectedTime}
-              minuteInterval={1}
-              textColor={'black'}
-              style={{height: 80, paddingVertical: 50}}
+              is24hour={false}
+              textColor="black"
+              style={{
+                height: 100, // 🔥 reduce height (important)
+                transform: [{scale: 1.2}], // optional for size
+                marginTop: hp(10),
+                marginBottom: hp(10),
+              }}
             />
 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleConfirm}>
-                <Text style={styles.buttonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={styles.button} onPress={handleSetTime}>
+              <Text style={styles.buttonText}>Set Time</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </View>
+    </>
   );
 };
 
+export default BirthOfTimeComponent;
+
 const styles = StyleSheet.create({
-  inputContainer: {
-    position: 'relative',
-  },
-  inputWrapper: {
+  rowContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    position: 'relative',
+    paddingVertical: hp(14),
+    backgroundColor: colors.white,
   },
-  input: {
-    flex: 1,
-    height: 50,
-    paddingLeft: 0,
-    paddingRight: 40,
-    color: 'black',
-    fontSize: fontSize(16),
-    borderBottomWidth: 1,
-    borderBottomColor: '#C0C0C0',
-    fontFamily: 'inter',
-    fontWeight: '800',
-  },
+
   label: {
-    position: 'absolute',
+    fontSize: fontSize(15),
+    color: '#8E8E8E',
+    fontFamily: 'inter',
   },
-  image: {
-    position: 'absolute',
-    right: 10,
-    height: 13,
-    width: 13,
-    // top: -8,
+
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  valueText: {
+    fontSize: fontSize(15),
+    color: colors.pureBlack,
+    marginRight: 6,
+    fontWeight: '800',
+    fontFamily: 'inter',
+    left: -20,
+  },
+
+  arrowIcon: {
+    height: 8,
+    width: 12,
+    tintColor: '#5F6368',
     transform: [{rotate: '-90deg'}],
-    tintColor: colors.pureBlack,
+    left: -15,
   },
-  modalContainer: {
+
+  modalBackground: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
+
   modalContent: {
-    width: 300,
+    backgroundColor: '#fff',
     padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: 'center',
+    width: '85%',
   },
-  modalTitle: {
-    fontSize: 18,
-    marginBottom: 10,
+
+  title: {
+    fontSize: fontSize(18),
+    marginBottom: hp(10),
+    color: colors.black,
+    marginTop: hp(10),
+    top: -10,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginTop: 10,
-  },
+
   button: {
-    width: 100,
-    height: 50,
+    marginTop: hp(20),
     backgroundColor: colors.black,
+    width: '90%',
+    height: hp(44),
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-    marginHorizontal: 5,
+    borderRadius: 50,
   },
+
   buttonText: {
-    color: colors.white,
+    color: '#FFF',
+    textAlign: 'center',
     fontSize: fontSize(14),
-    fontFamily: fontFamily.poppins500,
+    fontFamily: fontFamily.poppins400,
+  },
+
+  closeBtn: {
+    position: 'absolute',
+    // top: 5,
+    right: 0,
+    // backgroundColor: 'red',
+
+    width: hp(50),
+    height: hp(40),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  closeIcon: {
+    width: hp(15),
+    height: hp(15),
+    tintColor: 'black',
+    resizeMode: 'contain',
   },
 });
-
-export default BirthOfTimeTextInput;

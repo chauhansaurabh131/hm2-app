@@ -813,9 +813,6 @@ const NewUserDetailsScreen = () => {
   };
 
   const onSendMessagePress = allData => {
-    // const userData = allData?.userData;
-    // console.log(' === onSendMessagePress_____ ===> ', allData);
-
     const userData = {
       friendList: allData,
       userList: user?.user,
@@ -1850,142 +1847,6 @@ const NewUserDetailsScreen = () => {
         {matchesUserData?.userData?.status !== 'blocked' && (
           <View style={style.bodyMiddleContainer}>
             <View style={style.BodyContainer}>
-              {/*{matchesUserData?.screen === 'SendScreen' ? (*/}
-              {/*  <TouchableOpacity*/}
-              {/*    activeOpacity={0.5}*/}
-              {/*    onPress={*/}
-              {/*      friendStatus === 'requested'*/}
-              {/*        ? removeFriendRequest*/}
-              {/*        : sendFriendRequest*/}
-              {/*    }>*/}
-              {/*    <Image*/}
-              {/*      source={friendIconSource}*/}
-              {/*      style={style.sendRequestIcon}*/}
-              {/*    />*/}
-              {/*  </TouchableOpacity>*/}
-              {/*) : receivedScreeData === 'requested' ? (*/}
-              {/*  <View*/}
-              {/*    style={{*/}
-              {/*      alignItems: 'center',*/}
-              {/*      flexDirection: 'row',*/}
-              {/*      justifyContent: 'center',*/}
-              {/*      marginTop: 15,*/}
-              {/*    }}>*/}
-              {/*    {requestStatus === 'declined' ? (*/}
-              {/*      <View style={{flexDirection: 'row'}}>*/}
-              {/*        <Text*/}
-              {/*          style={{*/}
-              {/*            fontSize: fontSize(16),*/}
-              {/*            lineHeight: hp(24),*/}
-              {/*            fontFamily: fontFamily.poppins500,*/}
-              {/*            color: colors.black,*/}
-              {/*            marginRight: 15,*/}
-              {/*          }}>*/}
-              {/*          Declined Request*/}
-              {/*        </Text>*/}
-              {/*        <Image*/}
-              {/*          source={icons.matched_declined_icon}*/}
-              {/*          tintColor={'#BE6D6B'}*/}
-              {/*          style={{*/}
-              {/*            width: hp(22),*/}
-              {/*            height: hp(22),*/}
-              {/*            resizeMode: 'contain',*/}
-              {/*          }}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    ) : requestStatus === 'accepted' ? (*/}
-              {/*      <View style={{flexDirection: 'row'}}>*/}
-              {/*        <Text*/}
-              {/*          style={{*/}
-              {/*            fontSize: fontSize(16),*/}
-              {/*            lineHeight: hp(24),*/}
-              {/*            fontFamily: fontFamily.poppins500,*/}
-              {/*            color: colors.black,*/}
-              {/*            marginRight: 15,*/}
-              {/*          }}>*/}
-              {/*          Accepted Request*/}
-              {/*        </Text>*/}
-              {/*        <Image*/}
-              {/*          source={icons.matches_accp_icon}*/}
-              {/*          tintColor={'#17C270'}*/}
-              {/*          style={{*/}
-              {/*            width: hp(22),*/}
-              {/*            height: hp(22),*/}
-              {/*            resizeMode: 'contain',*/}
-              {/*          }}*/}
-              {/*        />*/}
-              {/*      </View>*/}
-              {/*    ) : (*/}
-              {/*      <>*/}
-              {/*        <Text*/}
-              {/*          style={{*/}
-              {/*            fontSize: fontSize(16),*/}
-              {/*            lineHeight: hp(24),*/}
-              {/*            fontFamily: fontFamily.poppins500,*/}
-              {/*            color: colors.black,*/}
-              {/*          }}>*/}
-              {/*          Want to accept?*/}
-              {/*        </Text>*/}
-
-              {/*        <TouchableOpacity*/}
-              {/*          onPress={() => {*/}
-              {/*            receivedFriendRequestedAccepted(userDetails);*/}
-              {/*          }}>*/}
-              {/*          <Image*/}
-              {/*            source={icons.received_accept_icon}*/}
-              {/*            style={{*/}
-              {/*              width: hp(63),*/}
-              {/*              height: hp(40),*/}
-              {/*              resizeMode: 'contain',*/}
-              {/*              marginRight: 15,*/}
-              {/*              marginLeft: 18,*/}
-              {/*            }}*/}
-              {/*          />*/}
-              {/*        </TouchableOpacity>*/}
-
-              {/*        <TouchableOpacity*/}
-              {/*          // onPress={() => handleDecline(item?.friend?._id, item?._id)}*/}
-              {/*          onPress={() => {*/}
-              {/*            receivedFriendRequestedDecline(userDetails);*/}
-              {/*          }}>*/}
-              {/*          <Image*/}
-              {/*            source={icons.received_declined_icon}*/}
-              {/*            style={{*/}
-              {/*              width: hp(63),*/}
-              {/*              height: hp(40),*/}
-              {/*              resizeMode: 'contain',*/}
-              {/*            }}*/}
-              {/*          />*/}
-              {/*        </TouchableOpacity>*/}
-              {/*      </>*/}
-              {/*    )}*/}
-              {/*  </View>*/}
-              {/*) : friendStatus === 'accepted' ? (*/}
-              {/*  <TouchableOpacity*/}
-              {/*    activeOpacity={0.5}*/}
-              {/*    onPress={() => {*/}
-              {/*      onSendMessagePress(matchesUserData);*/}
-              {/*    }}>*/}
-              {/*    <Image*/}
-              {/*      source={icons.new_send_message_icon}*/}
-              {/*      style={style.sendRequestIcon}*/}
-              {/*    />*/}
-              {/*  </TouchableOpacity>*/}
-              {/*) : (*/}
-              {/*  <TouchableOpacity*/}
-              {/*    activeOpacity={0.5}*/}
-              {/*    onPress={*/}
-              {/*      friendStatus === 'requested'*/}
-              {/*        ? removeFriendRequest*/}
-              {/*        : sendFriendRequest*/}
-              {/*    }>*/}
-              {/*    <Image*/}
-              {/*      source={friendIconSource}*/}
-              {/*      style={style.sendRequestIcon}*/}
-              {/*    />*/}
-              {/*  </TouchableOpacity>*/}
-              {/*)}*/}
-
               {matchesUserData?.userData?.status !== 'blocked' && (
                 <View style={style.bodyMiddleContainer}>
                   <View style={style.BodyContainer}>
@@ -2179,40 +2040,6 @@ const NewUserDetailsScreen = () => {
                   </View>
                 </View>
               )}
-
-              {/*//////////////*/}
-              {/*{(receivedScreeData !== 'requested' ||*/}
-              {/*  matchesUserData?.screen === 'SendScreen') && (*/}
-              {/*  <TouchableOpacity*/}
-              {/*    activeOpacity={0.5}*/}
-              {/*    onPress={handleLike}*/}
-              {/*    style={{marginTop: hp(19)}}>*/}
-              {/*    <Image*/}
-              {/*      source={*/}
-              {/*        userDetails?.userLikeDetails?.isLike*/}
-              {/*          ? icons.new_user_like_icon*/}
-              {/*          : icons.new_like_icon*/}
-              {/*      }*/}
-              {/*      style={style.likeIcon}*/}
-              {/*    />*/}
-              {/*  </TouchableOpacity>*/}
-              {/*)}*/}
-
-              {/*{userId !== userDetails?.friendsDetails?.friend && (*/}
-              {/*  <TouchableOpacity*/}
-              {/*    activeOpacity={0.5}*/}
-              {/*    onPress={handleLike}*/}
-              {/*    style={{marginTop: hp(19)}}>*/}
-              {/*    <Image*/}
-              {/*      source={*/}
-              {/*        userDetails?.userLikeDetails?.isLike*/}
-              {/*          ? icons.new_user_like_icon*/}
-              {/*          : icons.new_like_icon*/}
-              {/*      }*/}
-              {/*      style={style.likeIcon}*/}
-              {/*    />*/}
-              {/*  </TouchableOpacity>*/}
-              {/*)}*/}
             </View>
           </View>
         )}

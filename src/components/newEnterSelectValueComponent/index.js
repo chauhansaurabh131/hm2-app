@@ -24,6 +24,7 @@ const NewEnterSelectValueComponent = ({
   emptyText = 'Add',
   EnterModalPlaceholderTittle = 'Enter Height',
   showDivider = true,
+  maxLength, // ✅ NEW PROP
 }) => {
   const [visible, setVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -105,6 +106,7 @@ const NewEnterSelectValueComponent = ({
                 keyboardType={keyboardTypes}
                 style={styles.input}
                 autoFocus
+                maxLength={maxLength}
               />
             </View>
 

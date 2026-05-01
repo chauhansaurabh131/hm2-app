@@ -639,7 +639,8 @@ const MatchesInRecentlyViewedScreen = () => {
       userData: items,
     };
     // console.log(' === items____ ===> ', matchesUserData);
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
   };
 
   const renderItem = ({item}) => {

@@ -123,42 +123,37 @@ const UserProfileUploadImageFullScreen = () => {
   return (
     <SafeAreaView style={style.container}>
       {/* Header */}
-      <View style={style.headerBody}>
-        <View style={style.headerImageContainer}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customHeaderLogo}
-          />
-          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            {/*<Image*/}
-            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-            {/*  style={style.profileLogoStyle}*/}
-            {/*/>*/}
+      {/*<View style={style.headerBody}>*/}
+      {/*  <View style={style.headerImageContainer}>*/}
+      {/*    <Image*/}
+      {/*      source={images.happyMilanColorLogo}*/}
+      {/*      style={style.customHeaderLogo}*/}
+      {/*    />*/}
+      {/*    <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+      {/*      {userImage ? (*/}
+      {/*        <Image source={{uri: userImage}} style={style.profileLogoStyle} />*/}
+      {/*      ) : (*/}
+      {/*        <ProfileAvatar*/}
+      {/*          firstName={user?.user?.firstName || user?.user?.name}*/}
+      {/*          lastName={user?.user?.lastName}*/}
+      {/*          textStyle={style.profileLogoStyle}*/}
+      {/*          profileTexts={{fontSize: fontSize(10)}}*/}
+      {/*        />*/}
+      {/*      )}*/}
+      {/*    </TouchableOpacity>*/}
+      {/*  </View>*/}
+      {/*</View>*/}
 
-            {userImage ? (
-              <Image source={{uri: userImage}} style={style.profileLogoStyle} />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName || user?.user?.name}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileLogoStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View>
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
-      </View>
+      {/*<View>*/}
+      {/*  <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
+      {/*</View>*/}
 
       {/* TOP SHEET */}
-      <HomeTopSheetComponent
-        isVisible={topModalVisible}
-        onBackdropPress={toggleModal}
-        onBackButtonPress={toggleModal}
-      />
+      {/*<HomeTopSheetComponent*/}
+      {/*  isVisible={topModalVisible}*/}
+      {/*  onBackdropPress={toggleModal}*/}
+      {/*  onBackButtonPress={toggleModal}*/}
+      {/*/>*/}
 
       {/* Display Images */}
       {localImages.length > 0 ? (

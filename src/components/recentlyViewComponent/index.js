@@ -131,7 +131,8 @@ const RecentlyViewComponent = () => {
         id: items?.user?._id,
       };
 
-      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
     };
 
     return (
@@ -150,9 +151,10 @@ const RecentlyViewComponent = () => {
           style={{
             width: wp(156),
             height: hp(251),
-            borderRadius: 10,
+            // height: 'auto',
+            borderRadius: hp(20),
             backgroundColor: '#FFFFFF',
-            borderWidth: 1,
+            borderWidth: hp(1),
             borderColor: '#EFEFEF',
           }}>
           {/*<Image*/}
@@ -166,11 +168,11 @@ const RecentlyViewComponent = () => {
                 source={{uri: item?.user?.profilePic}}
                 style={{
                   width: '100%',
-                  height: hp(198),
+                  height: hp(184),
                   justifyContent: 'center',
-                  borderRadius: 10,
                   overflow: 'hidden',
-                  marginBottom: 10,
+                  borderTopRightRadius: hp(20),
+                  borderTopLeftRadius: hp(20),
                 }}
               />
               {profilePrivacy && (
@@ -180,10 +182,10 @@ const RecentlyViewComponent = () => {
                     position: 'absolute',
                     tintColor: '#fff',
                     resizeMode: 'contain',
-                    width: 12,
-                    height: 16,
+                    width: hp(20),
+                    height: hp(20),
                     alignSelf: 'center',
-                    top: 65,
+                    top: hp(85),
                   }}
                 />
               )}
@@ -208,7 +210,14 @@ const RecentlyViewComponent = () => {
               <ProfileAvatar
                 firstName={item?.user?.firstName || item?.user?.name}
                 lastName={item?.user?.lastName}
-                textStyle={{width: '100%', height: hp(198), marginBottom: 10}}
+                textStyle={{
+                  width: '100%',
+                  height: hp(184),
+                  borderTopRightRadius: hp(20),
+                  borderTopLeftRadius: hp(20),
+                  borderBottomRightRadius: hp(0),
+                  borderBottomLeftRadius: hp(0),
+                }}
               />
               {subPlan && (
                 <Image
@@ -228,7 +237,12 @@ const RecentlyViewComponent = () => {
             </>
           )}
 
-          <View style={{alignItems: 'center'}}>
+          <View
+            style={{
+              alignItems: 'center',
+              marginTop: hp(11),
+              marginBottom: hp(15),
+            }}>
             <Text
               style={{
                 fontSize: fontSize(12),
@@ -239,48 +253,29 @@ const RecentlyViewComponent = () => {
               {firstName || name} {lastName}
             </Text>
 
-            <View style={{flexDirection: 'row', top: 5}}>
+            <View style={{flexDirection: 'row', marginTop: hp(8)}}>
               <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
                 style={{
                   fontSize: fontSize(9),
                   lineHeight: hp(12),
-                  color: colors.black,
+                  color: '#9C9C9C',
                   fontFamily: fontFamily.poppins400,
-                  // top: 5,
                 }}>
-                {item?.user?.age} yr, {item?.user?.height}
+                {item?.user?.age} yr, {item?.user?.height},{' '}
+                {currentCity || 'N/A'}, {currentCountry || 'N/A'}
               </Text>
+
               {/*<Text*/}
               {/*  style={{*/}
               {/*    fontSize: fontSize(9),*/}
               {/*    lineHeight: hp(12),*/}
               {/*    color: colors.black,*/}
               {/*    fontFamily: fontFamily.poppins400,*/}
-              {/*    top: 5,*/}
               {/*  }}>*/}
-              {/*  {' '}*/}
-              {/*  {item?.user?.height}*/}
+              {/*  {currentCity || 'N/A'}, {currentCountry || 'N/A'}*/}
               {/*</Text>*/}
-
-              <View
-                style={{
-                  width: wp(1),
-                  height: hp(12),
-                  backgroundColor: '#D4D4D4',
-                  marginLeft: wp(5),
-                  marginRight: wp(5),
-                }}
-              />
-
-              <Text
-                style={{
-                  fontSize: fontSize(9),
-                  lineHeight: hp(12),
-                  color: colors.black,
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                {currentCity || 'N/A'}, {currentCountry || 'N/A'}
-              </Text>
             </View>
 
             {/*<Text*/}
@@ -303,7 +298,7 @@ const RecentlyViewComponent = () => {
     <SafeAreaView style={{flex: 1}}>
       {(loading || profileData.length > 0) && (
         <>
-          <View style={{marginTop: hp(20)}}>
+          <View style={{marginTop: hp(56)}}>
             <Text
               style={{
                 color: colors.black,
@@ -311,77 +306,53 @@ const RecentlyViewComponent = () => {
                 lineHeight: hp(21),
                 fontFamily: fontFamily.poppins600,
                 marginRight: hp(3),
-                marginBottom: 10,
-                paddingLeft: 17, // ✅ CONTROL LEFT SPACE HERE
+                marginBottom: hp(10),
+                paddingLeft: wp(17), // ✅ CONTROL LEFT SPACE HERE
               }}>
               Recently Viewed
             </Text>
 
             {loading ? (
               <FlatList
-                data={[1, 1, 1, 1]}
+                data={[1, 2, 3, 4]}
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{paddingLeft: wp(17)}}
                 renderItem={() => (
-                  <View
-                    style={{
-                      width: 115,
-                      height: 200,
-                      borderRadius: 10,
-                      marginRight: 5,
-                      marginTop: 15,
-                      paddingLeft: 17, // ✅ CONTROL LEFT SPACE HERE
-                    }}>
+                  <View style={{marginRight: 10}}>
                     <View
                       style={{
-                        width: 100,
-                        height: 170,
-                        backgroundColor: '#9e9e9e',
-                        opacity: 0.4,
-                        alignItems: 'center',
-                        borderRadius: 10,
+                        width: wp(156),
+                        height: hp(230),
+                        borderRadius: hp(20),
+                        backgroundColor: '#E0E0E0',
+                        padding: hp(10),
                       }}>
                       <ShimmerPlaceholder
                         style={{
-                          width: '80%',
-                          height: 80,
-                          backgroundColor: 'black',
-                          marginTop: 10,
-                          borderRadius: 10,
+                          width: '100%',
+                          height: hp(150),
+                          borderRadius: hp(10),
                         }}
                       />
+
                       <ShimmerPlaceholder
                         style={{
                           width: '60%',
-                          height: 10,
-                          backgroundColor: 'black',
-                          marginTop: 30,
+                          height: hp(10),
+                          marginTop: hp(10),
+                          borderRadius: hp(5),
                         }}
                       />
-                      <View
+
+                      <ShimmerPlaceholder
                         style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          marginTop: 12,
-                        }}>
-                        <ShimmerPlaceholder
-                          style={{
-                            width: 30,
-                            height: 15,
-                            backgroundColor: 'black',
-                            borderRadius: 25,
-                          }}
-                        />
-                        <ShimmerPlaceholder
-                          style={{
-                            width: 30,
-                            height: 15,
-                            backgroundColor: 'black',
-                            borderRadius: 25,
-                            marginLeft: 15,
-                          }}
-                        />
-                      </View>
+                          width: '40%',
+                          height: hp(10),
+                          marginTop: hp(8),
+                          borderRadius: hp(5),
+                        }}
+                      />
                     </View>
                   </View>
                 )}
@@ -393,47 +364,50 @@ const RecentlyViewComponent = () => {
                 renderItem={renderItem}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{paddingRight: 10, paddingLeft: 17}}
+                contentContainerStyle={{
+                  paddingRight: hp(10),
+                  paddingLeft: wp(17),
+                }}
               />
             )}
           </View>
 
-          <TouchableHighlight
-            activeOpacity={0.6}
-            underlayColor="#F9FBFF"
-            onPress={() => {
-              navigation.navigate('Matches', {initialTab: 'viewed'}); // 👈 passing "viewed"
-            }}
-            // onPress={() => {
-            //   navigation.navigate('Matches');
-            // }}
-            style={{
-              // backgroundColor: 'red',
-              height: 45,
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                color: colors.black,
-                textAlign: 'center',
-                fontSize: fontSize(14),
-                lineHeight: hp(16),
-                fontFamily: fontFamily.poppins500,
-                justifyContent: 'center',
-              }}>
-              Show Me All
-            </Text>
-          </TouchableHighlight>
+          {/*<TouchableHighlight*/}
+          {/*  activeOpacity={0.6}*/}
+          {/*  underlayColor="#F9FBFF"*/}
+          {/*  onPress={() => {*/}
+          {/*    navigation.navigate('Matches', {initialTab: 'viewed'}); // 👈 passing "viewed"*/}
+          {/*  }}*/}
+          {/*  // onPress={() => {*/}
+          {/*  //   navigation.navigate('Matches');*/}
+          {/*  // }}*/}
+          {/*  style={{*/}
+          {/*    // backgroundColor: 'red',*/}
+          {/*    height: 45,*/}
+          {/*    justifyContent: 'center',*/}
+          {/*  }}>*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      color: colors.black,*/}
+          {/*      textAlign: 'center',*/}
+          {/*      fontSize: fontSize(14),*/}
+          {/*      lineHeight: hp(16),*/}
+          {/*      fontFamily: fontFamily.poppins500,*/}
+          {/*      justifyContent: 'center',*/}
+          {/*    }}>*/}
+          {/*    Show Me All*/}
+          {/*  </Text>*/}
+          {/*</TouchableHighlight>*/}
 
-          <View
-            style={{
-              width: '100%',
-              height: hp(4),
-              backgroundColor: '#F8F8F8',
-              // marginTop: hp(10),
-              // marginBottom: 20,
-            }}
-          />
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    width: '100%',*/}
+          {/*    height: hp(4),*/}
+          {/*    backgroundColor: '#F8F8F8',*/}
+          {/*    // marginTop: hp(10),*/}
+          {/*    // marginBottom: 20,*/}
+          {/*  }}*/}
+          {/*/>*/}
         </>
       )}
     </SafeAreaView>

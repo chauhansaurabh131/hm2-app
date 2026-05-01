@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
-  SafeAreaView,
   Text,
   Image,
   View,
@@ -38,6 +37,7 @@ import EmojiSelector from 'react-native-emoji-selector';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import Toast from 'react-native-toast-message';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -763,7 +763,8 @@ const ChatUserScreen = ({route}) => {
         userData: userData?.friendList,
       });
     } else {
-      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
     }
   };
 

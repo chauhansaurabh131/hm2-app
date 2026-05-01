@@ -229,6 +229,19 @@ export const icons = {
   start_unLike_icon: require('./icons/start_unLike.png'),
   left_arrow_icon: require('./icons/left_arrow_icon.png'),
   apple_icon: require('./icons/apple_icon.png'),
+  add_New_Story_Icon: require('./icons/add_New_Story_Icon.png'),
+  upgrade_Star_Icon: require('./icons/upgrade_Star_Icon.png'),
+  new_Sent_Req_Icon: require('./icons/new_Sent_Req_Icon.png'),
+  new_Req_Sent_Icon: require('./icons/new_req_sent_Icon.png'),
+  new_Heart_Like_Icon: require('./icons/new_Heart_Like_Icon.png'),
+  new_Heart_Unlike_Icon: require('./icons/new_Heart_Unlike_Icon.png'),
+  color_Image_Icon: require('./icons/color_Image_Icon.png'),
+  fill_Edit_Icon: require('./icons/fill_Edit_Icon.png'),
+  new_Short_List_Icon: require('./icons/new_Short_List_Icon.png'),
+  new_UnShort_List_Icon: require('./icons/new_Unshort_List_Icon.png'),
+  new_circle_Cancel_Icon: require('./icons/new_Circle_Cancel_Icon.png'),
+  new_Circle_Check_Icon: require('./icons/new_Circle_Check_Icon.png'),
+  thum_Icon: require('./icons/thum_Icon.png'),
 };
 
 export const gif = {

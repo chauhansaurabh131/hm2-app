@@ -212,6 +212,7 @@ export const style = StyleSheet.create({
     height: hp(17),
     resizeMode: 'contain',
     marginRight: hp(22),
+    tintColor: 'black',
   },
   threeDotBottomSheetTittleText: {
     fontSize: fontSize(16),
@@ -419,6 +420,9 @@ export const style = StyleSheet.create({
     borderRadius: 10,
     height: hp(120),
     textAlignVertical: 'top',
+    color: colors.black,
+    fontSize: fontSize(14),
+    fontFamily: fontFamily.poppins400,
   },
   RBSSubmitButtonContainer: {
     width: '100%',

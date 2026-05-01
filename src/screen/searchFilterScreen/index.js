@@ -600,7 +600,7 @@ const SearchFilterScreen = () => {
         style={{
           position: 'absolute',
           width: '100%',
-          marginTop: isIOS ? hp(60) : hp(45),
+          marginTop: isIOS ? hp(60) : hp(30),
         }}>
         <View
           style={{
@@ -982,8 +982,8 @@ const SearchFilterScreen = () => {
             isLoading={isLoading}
             containerStyle={{
               width: '100%',
-              borderRadius: 25,
-              height: 50,
+              borderRadius: hp(25),
+              height: hp(50),
               marginTop: hp(30),
             }}
           />

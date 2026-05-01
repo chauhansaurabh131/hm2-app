@@ -161,22 +161,6 @@ const CredentialsScreen = () => {
     setNewEmail(text);
   };
 
-  // const onChangeEmailPress = () => {
-  //   const enteredOtp = otp.join('');
-  //   console.log(' === enteredOtp ===> ', enteredOtp);
-  // };
-
-  // const handleSubmit = () => {
-  //   console.log(' === newEmail ===> ', newEmail);
-  //
-  //   bottomSheetEmailChangeRef.current.open();
-  //
-  //   // apiDispatch(updateDetails({email: newEmail}));
-  //
-  //   bottomSheetRef.current.close();
-  //   passwordBottomSheetRef.current.close();
-  // };
-
   const onChangeEmailPress = () => {
     const enteredOtp = otp.join('');
     console.log('=== enteredOtp ===> ', enteredOtp);
@@ -431,13 +415,6 @@ const CredentialsScreen = () => {
     : 'N/A';
 
   const onMobileChangePress = async () => {
-    // apiDispatch(updateDetails({mobileNumber: newMobile}));
-
-    // bottomSheetMobileNumberChangeRef.current.open();
-    //
-    // bottomSheetRef.current.close();
-    // passwordBottomSheetRef.current.close();
-
     console.log(' === var ===> ', currentMobile, newMobile);
 
     setLoader(true);

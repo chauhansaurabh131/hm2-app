@@ -42,6 +42,7 @@ import RecentlyViewComponent from '../../components/recentlyViewComponent';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import Abc from '../abc';
 import HomeCardProfileComponent from '../../components/homeCardProfileComponent';
+import HomeRemainingDataComponent from '../../components/homeRemainingDataComponent';
 
 const HomeScreen = ({route}) => {
   const insets = useSafeAreaInsets();
@@ -450,23 +451,10 @@ const HomeScreen = ({route}) => {
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
-        <View style={{marginTop: hp(15)}}>
+        <View style={{marginTop: hp(15), marginBottom: hp(15)}}>
           <NewAddStoryScreen />
         </View>
       </View>
-
-      {/*<LinearGradient*/}
-      {/*  colors={['white', 'transparent']}*/}
-      {/*  style={{*/}
-      {/*    height: 15,*/}
-      {/*    width: '100%',*/}
-      {/*    position: 'absolute',*/}
-      {/*    top: 100, // 👈 exactly below header*/}
-      {/*    left: 0,*/}
-      {/*    right: 0,*/}
-      {/*    zIndex: 1,*/}
-      {/*  }}*/}
-      {/*/>*/}
 
       <Modal
         animationType="none"
@@ -604,36 +592,48 @@ const HomeScreen = ({route}) => {
           onBackButtonPress={toggleModal}
         />
 
-        <View>
-          <View style={style.premiumTextContainer}>
-            <Text style={style.premiumTextStyle}>New Matches</Text>
-          </View>
+        {/*<View>*/}
+        {/*  <View style={style.premiumTextContainer}>*/}
+        {/*    <Text style={style.premiumTextStyle}>New Matches</Text>*/}
+        {/*  </View>*/}
 
-          {/*PREMIUM MATCHES COMPONENT*/}
-          <View style={style.PremiumMatchesTextContainer}>
-            <PremiumMatchesComponent
-              onShowAlert={showCustomAlert} // 👈 PASS CALLBACK
-            />
-          </View>
+        {/*  /!*PREMIUM MATCHES COMPONENT*!/*/}
+        {/*  <View style={style.PremiumMatchesTextContainer}>*/}
+        {/*    <PremiumMatchesComponent*/}
+        {/*      onShowAlert={showCustomAlert} // 👈 PASS CALLBACK*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*</View>*/}
+
+        {/*<TouchableHighlight*/}
+        {/*    activeOpacity={0.3}*/}
+        {/*    style={{*/}
+        {/*      justifyContent: 'center',*/}
+        {/*      height: hp(45),*/}
+        {/*    }}*/}
+        {/*    underlayColor="#F9FBFF"*/}
+        {/*    // onPress={() => {*/}
+        {/*    //   navigation.navigate('Matches');*/}
+        {/*    // }}*/}
+        {/*    onPress={() => {*/}
+        {/*      navigation.navigate('Matches', {initialTab: 'new'}); // 👈 passing "viewed"*/}
+        {/*    }}>*/}
+        {/*  <Text style={style.showMeAllTextStyle}>Show Me All</Text>*/}
+        {/*</TouchableHighlight>*/}
+
+        {/*<TouchableOpacity*/}
+        {/*    style={{marginTop: hp(50), marginLeft: wp(17)}}*/}
+        {/*    onPress={() => {*/}
+        {/*      navigation.navigate('DemoCode');*/}
+        {/*    }}>*/}
+        {/*  <Text style={{color: 'black'}}>Demo</Text>*/}
+        {/*</TouchableOpacity>*/}
+
+        <View style={{marginTop: hp(38)}}>
+          <DemoCode onShowAlert={showCustomAlert} />
         </View>
 
-        <TouchableHighlight
-          activeOpacity={0.3}
-          style={{
-            justifyContent: 'center',
-            height: hp(45),
-          }}
-          underlayColor="#F9FBFF"
-          // onPress={() => {
-          //   navigation.navigate('Matches');
-          // }}
-          onPress={() => {
-            navigation.navigate('Matches', {initialTab: 'new'}); // 👈 passing "viewed"
-          }}>
-          <Text style={style.showMeAllTextStyle}>Show Me All</Text>
-        </TouchableHighlight>
-
-        <View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />
+        {/*<View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />*/}
 
         {/*<View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />*/}
 
@@ -641,6 +641,10 @@ const HomeScreen = ({route}) => {
         <View>
           <RecentlyViewComponent />
         </View>
+
+        {/*<View>*/}
+        {/*  <HomeRemainingDataComponent />*/}
+        {/*</View>*/}
 
         <View>
           <RemainingDataUiScreen />

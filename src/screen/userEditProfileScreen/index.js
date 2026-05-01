@@ -295,7 +295,8 @@ const UserEditProfileScreen = () => {
       if (appType === 'dating') {
         navigation.navigate('DatingProfileScreen');
       } else if (appType === 'marriage') {
-        navigation.navigate('MyProfileScreen');
+        // navigation.navigate('MyProfileScreen');
+        navigation.navigate('MyNewProfileScreen');
       } else {
         console.warn('Unknown app type:', appType);
       }
@@ -425,60 +426,82 @@ const UserEditProfileScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: wp(17)}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: hp(14),
-            marginBottom: hp(20),
-          }}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={{width: wp(96), height: hp(24), resizeMode: 'contain'}}
-          />
+      {/*<View style={{marginHorizontal: wp(17)}}>*/}
+      {/*  <View*/}
+      {/*    style={{*/}
+      {/*      flexDirection: 'row',*/}
+      {/*      justifyContent: 'space-between',*/}
+      {/*      marginTop: hp(14),*/}
+      {/*      marginBottom: hp(20),*/}
+      {/*    }}>*/}
+      {/*    <Image*/}
+      {/*      source={images.happyMilanColorLogo}*/}
+      {/*      style={{width: wp(96), height: hp(24), resizeMode: 'contain'}}*/}
+      {/*    />*/}
 
-          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={{
-                  width: hp(24),
-                  height: hp(24),
-                  borderRadius: 50,
-                  marginRight: wp(3),
-                  resizeMode: 'stretch',
-                }}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName || user?.user?.name}
-                lastName={user?.user?.lastName}
-                textStyle={{
-                  width: hp(24),
-                  height: hp(24),
-                  borderRadius: 50,
-                  marginRight: wp(3),
-                  resizeMode: 'stretch',
-                }}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
+      {/*    <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+      {/*      {userImage ? (*/}
+      {/*        <Image*/}
+      {/*          source={{uri: userImage}}*/}
+      {/*          style={{*/}
+      {/*            width: hp(24),*/}
+      {/*            height: hp(24),*/}
+      {/*            borderRadius: 50,*/}
+      {/*            marginRight: wp(3),*/}
+      {/*            resizeMode: 'stretch',*/}
+      {/*          }}*/}
+      {/*        />*/}
+      {/*      ) : (*/}
+      {/*        <ProfileAvatar*/}
+      {/*          firstName={user?.user?.firstName || user?.user?.name}*/}
+      {/*          lastName={user?.user?.lastName}*/}
+      {/*          textStyle={{*/}
+      {/*            width: hp(24),*/}
+      {/*            height: hp(24),*/}
+      {/*            borderRadius: 50,*/}
+      {/*            marginRight: wp(3),*/}
+      {/*            resizeMode: 'stretch',*/}
+      {/*          }}*/}
+      {/*          profileTexts={{fontSize: fontSize(10)}}*/}
+      {/*        />*/}
+      {/*      )}*/}
+      {/*    </TouchableOpacity>*/}
+      {/*  </View>*/}
+      {/*</View>*/}
 
-      <View>
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
-      </View>
+      {/*<View>*/}
+      {/*  <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
+      {/*</View>*/}
 
       <View
         style={{
-          marginHorizontal: 17,
-          flexDirection: 'row',
+          height: hp(50),
+          justifyContent: 'center',
           alignItems: 'center',
-          justifyContent: 'space-between',
         }}>
+        {/* 🔙 BACK BUTTON */}
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.goBack()}
+          style={{
+            position: 'absolute',
+            left: 0, // 👈 always left
+            height: hp(50),
+            justifyContent: 'center',
+            width: wp(60),
+            alignItems: 'center',
+          }}>
+          <Image
+            source={icons.back_arrow_icon}
+            style={{
+              width: hp(14),
+              height: hp(14),
+              resizeMode: 'contain',
+            }}
+          />
+        </TouchableOpacity>
+
+        {/* 🔥 CENTER TEXT */}
         <Text
           style={{
             fontSize: fontSize(18),
@@ -488,22 +511,6 @@ const UserEditProfileScreen = () => {
           }}>
           Add Photos
         </Text>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => {
-            navigation.goBack();
-          }}
-          style={{
-            width: hp(24),
-            height: hp(24),
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Image
-            source={icons.back_arrow_icon}
-            style={{width: hp(14), height: hp(14), resizeMode: 'contain'}}
-          />
-        </TouchableOpacity>
       </View>
 
       <View

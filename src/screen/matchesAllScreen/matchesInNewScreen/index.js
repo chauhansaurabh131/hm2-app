@@ -632,7 +632,8 @@ const MatchesInNewScreen = () => {
         firstName: items.name,
         id: items?._id,
       };
-      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
     };
 
     const userAllImageShare = () => {

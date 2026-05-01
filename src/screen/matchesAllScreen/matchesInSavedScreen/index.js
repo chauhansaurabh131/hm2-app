@@ -614,7 +614,8 @@ const MatchesInSavedScreen = () => {
       userData: items,
     };
     // console.log(' === var ===> ', matchesUserData);
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
   };
 
   const renderItem = ({item}) => {

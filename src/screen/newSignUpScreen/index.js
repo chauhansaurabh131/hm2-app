@@ -158,19 +158,19 @@ const NewSignUpScreen = () => {
     //   return;
     // }
 
-    if (!isNameValid || !emailOrMobileValid) {
-      return;
-    }
-
-    // 🚫 BLOCK FAKE EMAIL DOMAINS
-    if (emailOrMobileValid === 'email' && isBlockedEmailDomain(email)) {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid Email Address',
-        text2: 'Temporary or disposable email addresses are not allowed',
-      });
-      return;
-    }
+    // if (!isNameValid || !emailOrMobileValid) {
+    //   return;
+    // }
+    //
+    // // 🚫 BLOCK FAKE EMAIL DOMAINS
+    // if (emailOrMobileValid === 'email' && isBlockedEmailDomain(email)) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Invalid Email Address',
+    //     text2: 'Temporary or disposable email addresses are not allowed',
+    //   });
+    //   return;
+    // }
 
     console.log(' === onPressLogin ===> ', name, email);
 

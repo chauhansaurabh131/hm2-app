@@ -10,7 +10,7 @@ import {
   Text,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import {fontSize, hp} from '../../utils/helpers';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useNavigation} from '@react-navigation/native';
@@ -120,6 +120,8 @@ const NewAddStoryScreen = () => {
   );
 
   const renderItem = ({item, index}) => {
+    // console.log(' === var ===> ', item?.userId?.name);
+
     return (
       <TouchableOpacity
         style={styles.statusContainer}
@@ -134,6 +136,16 @@ const NewAddStoryScreen = () => {
           source={{uri: item.content}} // Use the content URL from the statuses
           style={styles.statusImage}
         />
+
+        <Text
+          style={{
+            color: '#5E5B5B',
+            marginTop: hp(2),
+            fontSize: fontSize(10),
+            fontFamily: fontFamily.poppins400,
+          }}>
+          {item?.userId?.name}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -143,24 +155,6 @@ const NewAddStoryScreen = () => {
       <View style={styles.container}>
         <TouchableOpacity onPress={handleImageClick}>
           <View style={styles.imageContainer}>
-            {/* Update the onPress logic here */}
-            {/*<TouchableOpacity activeOpacity={0.7} onPress={handleImageClick}>*/}
-            {/*  <Image*/}
-            {/*    source={*/}
-            {/*      userStatus?.content*/}
-            {/*        ? {uri: userStatus.content} // If status image exists, use it*/}
-            {/*        : userImage*/}
-            {/*        ? {uri: userImage}*/}
-            {/*        : images.empty_male_Image // Fallback to profile image or default image*/}
-            {/*    }*/}
-            {/*    // Apply conditional styling for the blue border*/}
-            {/*    style={[*/}
-            {/*      styles.profileImage,*/}
-            {/*      userStatus?.content && styles.blueBorder, // Add blue border if userStatus.content exists*/}
-            {/*    ]}*/}
-            {/*  />*/}
-            {/*</TouchableOpacity>*/}
-
             <TouchableOpacity activeOpacity={0.7} onPress={handleImageClick}>
               {userStatus?.content || userImage ? (
                 <Image
@@ -192,11 +186,22 @@ const NewAddStoryScreen = () => {
                 source={
                   userStatus?.content
                     ? icons.check_gradient_box_icon
-                    : icons.add_story_icon
+                    : icons.add_New_Story_Icon
                 }
                 style={styles.addStoryIcon}
               />
             </View>
+
+            <Text
+              style={{
+                color: '#989898',
+                fontSize: fontSize(9),
+                fontFamily: fontFamily.poppins400,
+                marginTop: hp(3),
+                marginLeft: wp(2),
+              }}>
+              My Story
+            </Text>
           </View>
         </TouchableOpacity>
 
@@ -222,11 +227,10 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
-    // marginLeft: 12,
     width: hp(40),
     height: hp(40),
-    // marginTop: 10,
     marginBottom: 10,
+    marginRight: wp(5),
   },
   profileImage: {
     width: hp(40),
@@ -261,8 +265,8 @@ const styles = StyleSheet.create({
     width: hp(40),
     height: hp(40),
     borderRadius: hp(50),
-    borderWidth: 2,
-    borderColor: '#0F52BA',
+    borderWidth: hp(2),
+    borderColor: '#7045EB',
   },
 });
 

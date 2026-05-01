@@ -137,6 +137,8 @@ const HomeCardProfileComponent = () => {
 
   // console.log(' === UserUniqueId ===> ', UserUniqueId);
 
+  const size = wp(93);
+
   return (
     <SafeAreaView style={style.container}>
       <View style={style.cardContainer}>
@@ -147,24 +149,38 @@ const HomeCardProfileComponent = () => {
           style={style.cardBodyStyle}>
           <View style={style.cardViewStyle}>
             {profilePicUrl ? (
-              <Image source={{uri: profilePicUrl}} style={style.imageStyle} />
+              <Image
+                source={{uri: profilePicUrl}}
+                style={{
+                  width: size,
+                  height: size,
+                  marginLeft: wp(23),
+                  borderRadius: size / 2,
+                  resizeMode: 'cover',
+                  alignSelf: 'center',
+                  overflow: 'hidden',
+                }}
+              />
             ) : (
               <ProfileAvatar
                 firstName={user?.user?.firstName}
                 lastName={user?.user?.lastName}
-                textStyle={style.imageStyle}
+                textStyle={{
+                  width: size,
+                  height: size,
+                  marginLeft: wp(23),
+                  borderRadius: size / 2,
+                  resizeMode: 'cover',
+                  alignSelf: 'center',
+                  overflow: 'hidden',
+                }}
               />
             )}
-            <View style={style.cardTextContainer}>
-              {/*<Text style={style.cardUserTextStyle}>Riya Shah</Text>*/}
-              <Text style={style.cardUserTextStyle}>
-                {/*{firstName} {lastName}*/}
-                {name}
-              </Text>
 
-              {planDetails?.planId?.planName ? (
-                // When API gives planName
-                <View>
+            <View style={style.cardTextContainer}>
+              <Text style={style.cardUserTextStyle}>{name}</Text>
+              {planDetails?.planId ? (
+                <>
                   <Text
                     style={[
                       style.cardSubTittleTextStyle,
@@ -172,40 +188,37 @@ const HomeCardProfileComponent = () => {
                     ]}>
                     {UserUniqueId}
                   </Text>
-                  {/*<View style={style.cardCenterLineStyle} />*/}
-                  <Text
-                    style={[style.cardSubTittleTextStyle, {marginTop: hp(5)}]}>
-                    {capitalizeFirstLetter(planDetails?.planId?.planName)} -{' '}
-                    {formatPlanDuration(
-                      planDurationDetails?.planId?.planDuration,
-                    )}
-                  </Text>
 
                   <View
                     style={{
-                      width: '100%',
-                      height: 0.5,
-                      backgroundColor: 'white',
-                      marginTop: hp(13),
-                    }}
-                  />
-
-                  <Text
-                    style={{
-                      color: colors.white,
-                      fontSize: fontSize(13),
-                      // lineHeight: hp(20),
-                      fontFamily: fontFamily.poppins500,
-                      marginTop: hp(14),
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: hp(10),
                     }}>
-                    Available Credits : {creditData?.credit?.creditBalance}
-                  </Text>
-                </View>
+                    <Image
+                      source={icons.green_check_icon}
+                      tintColor={'white'}
+                      style={{
+                        width: hp(10),
+                        height: hp(10),
+                        resizeMode: 'contain',
+                        marginRight: wp(7),
+                        top: -2,
+                      }}
+                    />
+
+                    <Text style={style.cardSubTittleTextStyle}>
+                      {formatPlanDuration(
+                        planDurationDetails?.planId?.planDuration,
+                      )}{' '}
+                      - {capitalizeFirstLetter(planDetails?.planId?.planName)}{' '}
+                      Plan
+                    </Text>
+                  </View>
+                </>
               ) : (
-                // When no API plan data, fallback to Free Plan
                 <>
-                  <View
-                    style={[style.cardSubTittleContainer, {marginTop: hp(7)}]}>
+                  <View style={style.cardSubTittleContainer}>
                     <Text
                       style={[
                         style.cardSubTittleTextStyle,
@@ -213,65 +226,51 @@ const HomeCardProfileComponent = () => {
                       ]}>
                       {UserUniqueId}
                     </Text>
+
                     <View style={style.cardCenterLineStyle} />
-                    <Text style={[style.cardSubTittleTextStyle, {top: 1}]}>
+
+                    <Text
+                      style={[
+                        style.cardSubTittleTextStyle,
+                        {top: 1, color: '#BDA6FF'},
+                      ]}>
                       Free Plan
                     </Text>
                   </View>
 
-                  <View
-                    style={{
-                      width: '100%',
-                      height: 1.1,
-                      backgroundColor: '#DED3FF36',
-                      marginTop: hp(29),
-                    }}
-                  />
-
                   <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      navigation.navigate('Upgrader');
-                    }}
+                    onPress={() => navigation.navigate('Upgrader')}
+                    activeOpacity={0.6}
                     style={{
-                      flexDirection: 'row',
+                      width: wp(87),
+                      height: hp(31),
+                      backgroundColor: colors.white,
+                      borderRadius: hp(10),
                       alignItems: 'center',
-                      justifyContent: 'space-between',
-                      // marginTop: hp(15),
-                      // backgroundColor: 'red',
-                      height: hp(50),
+                      justifyContent: 'center',
+                      marginTop: hp(10),
                     }}>
-                    <Text
-                      style={{
-                        color: colors.white,
-                        fontSize: fontSize(12),
-                        lineHeight: hp(18),
-                        fontFamily: fontFamily.poppins500,
-                      }}>
-                      Upgrade
-                    </Text>
-                    <Image
-                      source={icons.left_arrow_icon}
-                      style={{width: wp(5), height: hp(8)}}
-                    />
-                  </TouchableOpacity>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          color: '#8665F1',
+                          fontSize: fontSize(10),
+                          fontFamily: fontFamily.poppins600,
+                        }}>
+                        Upgrade
+                      </Text>
 
-                  {/*<TouchableOpacity*/}
-                  {/*  activeOpacity={0.7}*/}
-                  {/*  onPress={() => {*/}
-                  {/*    navigation.navigate('Upgrader');*/}
-                  {/*  }}*/}
-                  {/*  style={style.cardButtonContainer}>*/}
-                  {/*  <View style={style.cardButtonBodyStyle}>*/}
-                  {/*    <View style={style.cardButtonTextContainer}>*/}
-                  {/*      <Text style={style.cardButtonTextStyle}>Upgrade</Text>*/}
-                  {/*      <Image*/}
-                  {/*        source={icons.crownIcon}*/}
-                  {/*        style={style.cardButtonImageStyle}*/}
-                  {/*      />*/}
-                  {/*    </View>*/}
-                  {/*  </View>*/}
-                  {/*</TouchableOpacity>*/}
+                      <Image
+                        source={icons.upgrade_Star_Icon}
+                        style={{
+                          width: hp(12),
+                          height: hp(12),
+                          resizeMode: 'contain',
+                          marginLeft: wp(7),
+                        }}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 </>
               )}
             </View>

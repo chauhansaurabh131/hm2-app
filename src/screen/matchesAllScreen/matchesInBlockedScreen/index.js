@@ -522,7 +522,8 @@ const MatchesInBlockedScreen = () => {
       id: items?.friend?._id,
       userData: items,
     };
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
     // Alert.alert('Error', 'User Are Blocked.');
   };
 

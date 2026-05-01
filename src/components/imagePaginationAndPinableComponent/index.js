@@ -74,7 +74,7 @@ const ImagePaginationAndPinableComponent = ({images, onPageChange}) => {
 const styles = StyleSheet.create({
   paginationContainer: {
     position: 'absolute',
-    top: 10, // Place near the top
+    top: 20, // Place near the top
     width: '90%', // Almost full screen width
     flexDirection: 'row',
     justifyContent: 'space-between', // Spread lines evenly

@@ -637,7 +637,8 @@ const MatchesInDeclinedScreen = () => {
       id: items?.user?._id,
       userData: items,
     };
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
   };
 
   const renderAcceptedUserItem = ({item}) => {

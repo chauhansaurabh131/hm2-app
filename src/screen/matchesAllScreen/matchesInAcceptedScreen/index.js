@@ -704,8 +704,8 @@ const MatchesInAcceptedScreen = () => {
         userData: item,
       };
       // console.log(' === items____ ===> ', matchesUserData);
-      navigation.navigate('NewUserDetailsScreen', {matchesUserData});
-      // navigation.navigate('Abc', {matchesUserData});
+      // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+      navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
     };
 
     const starIconSource = item?.friendList?.userShortListDetails?.id

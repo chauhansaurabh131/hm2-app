@@ -780,7 +780,8 @@ const SearchUserDataScreen = ({route}) => {
     };
 
     // console.log(' === handlePress ===> ', matchesUserData);
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
   };
 
   const renderItem = ({item}) => {

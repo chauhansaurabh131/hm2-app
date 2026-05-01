@@ -70,10 +70,10 @@ const NewStartExploreScreen = () => {
 
     setLoading(true);
 
-    Alert.alert(
-      'Selected Option',
-      `Selected Option: ${selectedOption}\nPassing Type: ${selectedType}`,
-    );
+    // Alert.alert(
+    //   'Selected Option',
+    //   `Selected Option: ${selectedOption}\nPassing Type: ${selectedType}`,
+    // );
 
     apiDispatch(
       updateDetails(

@@ -52,6 +52,9 @@ const MyProfileScreen = () => {
 
   const profileImage = user?.user?.profilePic;
 
+  const hasImages =
+    Array.isArray(images) && images.length > 0 && images.some(img => img?.url);
+
   const dispatch = useDispatch();
 
   const openBottomSheet = () => {

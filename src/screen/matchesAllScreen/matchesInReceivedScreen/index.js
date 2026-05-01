@@ -646,7 +646,8 @@ const MatchesInReceivedScreen = () => {
     };
 
     // console.log(' === var ===> ', matchesUserData);
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    // navigation.navigate('NewUserDetailsScreen', {matchesUserData});
+    navigation.navigate('UserProfileDetailsScreen', {matchesUserData});
     // navigation.navigate('Abc', {matchesUserData});
   };
 

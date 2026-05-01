@@ -101,6 +101,16 @@ import LongTermBasicDetailScreen from '../screen/longTermBasicDetailScreen';
 import LongTermPartnerPreferenceScreen from '../screen/longTermPartnerPreferenceScreen';
 import DatingBasicDetailScreen from '../screen/datingBasicDetailScreen';
 import DatingNewPartnerPreferenceScreen from '../screen/datingNewPartnerPreferenceScreen';
+import MyNewProfileScreen from '../screen/myNewProfileScreen';
+import AboutEditScreen from '../screen/myProfileEditFormAll/aboutEditScreen';
+import ModifyBasicInfoScreen from '../screen/myProfileEditFormAll/modifyBasicInfoScreen';
+import ModifyLocationScreen from '../screen/myProfileEditFormAll/ModifyLocationScreen';
+import ModifyContactScreen from '../screen/myProfileEditFormAll/modifyContactScreen';
+import ModifyEducationScreen from '../screen/myProfileEditFormAll/modifyEducationScreen';
+import ModifyOccupationScreen from '../screen/myProfileEditFormAll/modifyOccupationScreen';
+import ModifyHobbiesAndInterestScreen from '../screen/myProfileEditFormAll/modifyHobbiesAndInterestScreen';
+import ModifyPartnerPreferenceScreen from '../screen/myProfileEditFormAll/modifyPartnerPreferenceScreen';
+import UserProfileDetailsScreen from '../screen/userProfileDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -368,7 +378,14 @@ const MainNavigator = () => {
     return (
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName={'HomeTabs'}>
+        initialRouteName={'HomeTabs'}
+        // initialRouteName={'MyNewProfileScreen'}
+      >
+        {/*<Stack.Screen*/}
+        {/*  name="MyNewProfileScreen"*/}
+        {/*  component={MyNewProfileScreen}*/}
+        {/*/>*/}
+
         <Stack.Screen name="DemoCode" component={DemoCode} />
 
         <Stack.Screen name="Abc" component={Abc} />
@@ -523,6 +540,37 @@ const MainNavigator = () => {
           component={ChangeNameRequestScreen}
         />
 
+        {/*myProfileEditForm*/}
+        <Stack.Screen name="AboutEditScreen" component={AboutEditScreen} />
+        <Stack.Screen
+          name="ModifyBasicInfoScreen"
+          component={ModifyBasicInfoScreen}
+        />
+        <Stack.Screen
+          name="ModifyLocationScreen"
+          component={ModifyLocationScreen}
+        />
+        <Stack.Screen
+          name="ModifyContactScreen"
+          component={ModifyContactScreen}
+        />
+        <Stack.Screen
+          name="ModifyEducationScreen"
+          component={ModifyEducationScreen}
+        />
+        <Stack.Screen
+          name="ModifyOccupationScreen"
+          component={ModifyOccupationScreen}
+        />
+        <Stack.Screen
+          name="ModifyHobbiesAndInterestScreen"
+          component={ModifyHobbiesAndInterestScreen}
+        />
+        <Stack.Screen
+          name="ModifyPartnerPreferenceScreen"
+          component={ModifyPartnerPreferenceScreen}
+        />
+
         {/*<Stack.Screen*/}
         {/*  name={'ServiceHomeScreen'}*/}
         {/*  component={ServiceHomeScreen}*/}
@@ -550,6 +598,7 @@ const MainNavigator = () => {
         height: hp(20),
         tintColor: isFocused ? '#4819CB' : '#5F6368', // 👈 red if focused, green if not
         resizeMode: 'contain',
+        // top: -5,
       };
     };
 
@@ -568,6 +617,7 @@ const MainNavigator = () => {
         height: hp(20),
         tintColor: isFocused ? '#4819CB' : '#5F6368', // 👈 same here
         resizeMode: 'contain',
+        top: -20,
       };
     };
 
@@ -580,6 +630,7 @@ const MainNavigator = () => {
     const getLabelStyle = isFocused => {
       return {
         color: isFocused ? '#4819CB' : '#5F6368', // 👈 red if focused, green if not
+        top: -10,
       };
     };
 
@@ -594,7 +645,7 @@ const MainNavigator = () => {
             style.bottomTabNavigationContainer,
             {
               height:
-                (isIOS ? hp(70) : hp(80)) +
+                (isIOS ? hp(70) : hp(70)) +
                 (isIOS
                   ? insets.bottom
                   : insets.bottom > 0
@@ -732,6 +783,12 @@ const MainNavigator = () => {
         />
 
         <Tab.Screen
+          name="MyNewProfileScreen"
+          component={MyNewProfileScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
           name="DatingProfileScreen"
           component={DatingProfileScreen}
           options={{tabBarButton: () => null, headerShown: false}}
@@ -776,6 +833,12 @@ const MainNavigator = () => {
         <Tab.Screen
           name="NewUserDetailsScreen"
           component={NewUserDetailsScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="UserProfileDetailsScreen"
+          component={UserProfileDetailsScreen}
           options={{tabBarButton: () => null, headerShown: false}}
         />
 
