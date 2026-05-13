@@ -96,7 +96,7 @@ import PlanCancelScreen from '../screen/planCancelScreen';
 import DatingUpgradeScreen from '../screen/datingUpgradeScreen';
 import ServiceHomeScreen from '../screen/serviceHomeScreen';
 import ServicesProfileScreen from '../screen/servicesProfileScreen';
-import ServicesSearchScreen from '../screen/servicesSearchScreen';
+
 import LongTermBasicDetailScreen from '../screen/longTermBasicDetailScreen';
 import LongTermPartnerPreferenceScreen from '../screen/longTermPartnerPreferenceScreen';
 import DatingBasicDetailScreen from '../screen/datingBasicDetailScreen';
@@ -111,10 +111,16 @@ import ModifyOccupationScreen from '../screen/myProfileEditFormAll/modifyOccupat
 import ModifyHobbiesAndInterestScreen from '../screen/myProfileEditFormAll/modifyHobbiesAndInterestScreen';
 import ModifyPartnerPreferenceScreen from '../screen/myProfileEditFormAll/modifyPartnerPreferenceScreen';
 import UserProfileDetailsScreen from '../screen/userProfileDetailsScreen';
+import TestDemoScreen from '../screen/testDemoScreen';
+import VendorSignUpScreen from '../screen/vendorSignUpScreen';
+import {colors} from '../utils/colors';
+import VendorSearchFilterScreen from '../screen/vendorSearchFilterScreen';
+import VendorSavedScreen from '../screen/vendorSavedScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const ExtraStack = createStackNavigator();
+const ServiceStack = createNativeStackNavigator();
 
 export const navigationRef = React.createRef();
 
@@ -164,22 +170,24 @@ const MainNavigator = () => {
   const AuthStack = () => (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="NewMainScreen">
+      initialRouteName="TestDemoScreen">
       {/*<Stack.Screen name="DemoCode" component={DemoCode} />*/}
 
-      <Stack.Screen name="ServiceHomeScreen" component={ServiceHomeScreen} />
-      <Stack.Screen
-        name="ServicesSearchScreen"
-        component={ServicesSearchScreen}
-      />
-      <Stack.Screen
-        name="ServicesProfileScreen"
-        component={ServicesProfileScreen}
-      />
+      <Stack.Screen name="TestDemoScreen" component={TestDemoScreen} />
+      {/*<Stack.Screen name="ServiceHomeScreen" component={ServiceHomeScreen} />*/}
+
+      {/*<Stack.Screen name="ServiceTabs" component={ServiceTabs} />*/}
+      <Stack.Screen name="ServiceTabs" component={ServiceStackScreen} />
+
+      {/*<Stack.Screen*/}
+      {/*  name="ServicesProfileScreen"*/}
+      {/*  component={ServicesProfileScreen}*/}
+      {/*/>*/}
 
       <Stack.Screen name="NewMainScreen" component={NewMainScreen} />
       <Stack.Screen name="NewSignUpScreen" component={NewSignUpScreen} />
       <Stack.Screen name="NewLogInScreen" component={NewLogInScreen} />
+      <Stack.Screen name="VendorSignUpScreen" component={VendorSignUpScreen} />
 
       <Stack.Screen
         name="VerifyEmailOtpScreen"
@@ -248,6 +256,210 @@ const MainNavigator = () => {
       />
     </Stack.Navigator>
   );
+
+  const ServiceStackScreen = () => {
+    return (
+      <ServiceStack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
+        {/* TABS */}
+        <ServiceStack.Screen name="ServiceTabsMain" component={ServiceTabs} />
+
+        {/* FILTER */}
+        <ServiceStack.Screen
+          name="VendorSearchFilterScreen"
+          component={VendorSearchFilterScreen}
+        />
+
+        {/* PROFILE */}
+        <ServiceStack.Screen
+          name="ServicesProfileScreen"
+          component={ServicesProfileScreen}
+        />
+      </ServiceStack.Navigator>
+    );
+  };
+
+  const ServiceTabs = () => {
+    const getIconStyle = (focused, width, height, top = 0, left = 0) => {
+      return {
+        width,
+        height,
+        tintColor: focused ? '#7148E4' : '#8E8E8E',
+        resizeMode: 'contain',
+        top,
+        left,
+      };
+    };
+
+    const getLabelStyle = focused => {
+      return {
+        color: focused ? '#7148E4' : '#8E8E8E',
+        fontSize: fontSize(10),
+        top: -3,
+      };
+    };
+
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+
+          tabBarStyle: {
+            height: hp(70),
+            paddingTop: hp(10),
+            paddingBottom: hp(10),
+            backgroundColor: colors.white,
+
+            borderTopWidth: 0,
+            elevation: 10,
+
+            shadowColor: '#000',
+            shadowOpacity: 0.08,
+            shadowRadius: 10,
+            shadowOffset: {
+              width: 0,
+              height: -2,
+            },
+          },
+
+          tabBarActiveTintColor: '#7148E4',
+          tabBarInactiveTintColor: '#8E8E8E',
+        }}>
+        {/* DISCOVER */}
+        <Tab.Screen
+          name="Discover"
+          component={ServiceHomeScreen}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <Image
+                source={icons.search_icon}
+                style={getIconStyle(
+                  focused,
+                  hp(18), // width
+                  hp(18), // height
+                  -2, // top
+                  0, // left
+                )}
+              />
+            ),
+
+            tabBarLabel: ({focused}) => (
+              <Text style={getLabelStyle(focused)}>Discover</Text>
+            ),
+          }}
+        />
+
+        {/* SAVED */}
+        <Tab.Screen
+          name="VendorSavedScreen"
+          component={VendorSavedScreen}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <Image
+                source={icons.heart_like_icon}
+                style={getIconStyle(focused, hp(21), hp(19), -1, 0)}
+              />
+            ),
+
+            tabBarLabel: ({focused}) => (
+              <Text style={getLabelStyle(focused)}>Saved</Text>
+            ),
+          }}
+        />
+
+        {/* ALERTS */}
+        <Tab.Screen
+          name="Alerts"
+          component={AlertsScreen}
+          options={{
+            tabBarIcon: ({focused}) => (
+              <Image
+                source={icons.alertsIcon}
+                style={getIconStyle(focused, hp(15), hp(19), -2, 0)}
+              />
+            ),
+
+            tabBarLabel: ({focused}) => (
+              <Text style={getLabelStyle(focused)}>Alerts</Text>
+            ),
+          }}
+        />
+
+        {/* PROFILE */}
+        <Tab.Screen
+          name="Profile"
+          component={ServicesProfileScreen}
+          listeners={({navigation}) => ({
+            tabPress: e => {
+              e.preventDefault();
+
+              if (isLoggedIn) {
+                navigation.navigate('HomeTabs');
+              } else {
+                navigation.navigate('ServicesProfileScreen');
+              }
+            },
+          })}
+          options={{
+            tabBarIcon: ({focused}) => (
+              // <Image
+              //   source={icons.profileLogo}
+              //   style={getIconStyle(focused, hp(24), hp(24), -3, 0)}
+              // />
+              <Image
+                source={
+                  isLoggedIn
+                    ? icons.hm_Logo_Icon // after login
+                    : icons.view_profile_icon // before login
+                }
+                style={getIconStyle(focused, hp(18), hp(19), -3, 0)}
+              />
+            ),
+
+            tabBarLabel: ({focused}) => (
+              <Text style={getLabelStyle(focused)}>Profile</Text>
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="VendorSearchFilterScreen"
+          component={VendorSearchFilterScreen}
+          options={{
+            headerShown: false,
+
+            // HIDE TAB BUTTON
+            tabBarButton: () => null,
+
+            // NO LABEL
+            tabBarLabel: '',
+
+            // NO ICON
+            tabBarIcon: () => null,
+          }}
+        />
+
+        <Tab.Screen
+          name="ServicesProfileScreen"
+          component={ServicesProfileScreen}
+          options={{
+            headerShown: false,
+
+            // HIDE TAB BUTTON
+            tabBarButton: () => null,
+
+            // NO LABEL
+            tabBarLabel: '',
+
+            // NO ICON
+            tabBarIcon: () => null,
+          }}
+        />
+      </Tab.Navigator>
+    );
+  };
 
   const CustomTabBarButton = ({accessibilityState, children, onPress}) => {
     const focused = accessibilityState.selected;
@@ -387,6 +599,8 @@ const MainNavigator = () => {
         {/*/>*/}
 
         <Stack.Screen name="DemoCode" component={DemoCode} />
+
+        <Stack.Screen name="ServiceTabs" component={ServiceStackScreen} />
 
         <Stack.Screen name="Abc" component={Abc} />
         <Stack.Screen name="Message" component={Message} />

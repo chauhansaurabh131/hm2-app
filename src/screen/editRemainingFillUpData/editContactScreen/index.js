@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, View, ActivityIndicator} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
 import AppColorLogo from '../../../components/appColorLogo';
@@ -7,6 +13,8 @@ import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import FloatingLabelInput from '../../../components/FloatingLabelInput';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../../actions/homeActions';
+import NewEnterSelectValueComponent from '../../../components/newEnterSelectValueComponent';
+import {icons} from '../../../assets';
 
 const EditContactScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
@@ -26,7 +34,7 @@ const EditContactScreen = ({navigation}) => {
     }
   }, [user?.user?.mobileNumber, user?.user?.email]);
 
-  const isDisabled = !mobileNumber?.trim() || !userEmail?.trim();
+  // const isDisabled = !mobileNumber?.trim() || !userEmail?.trim();
 
   const onSubmitPress = () => {
     setLoading(true);
@@ -34,7 +42,6 @@ const EditContactScreen = ({navigation}) => {
       updateDetails(
         {
           mobileNumber: mobileNumber,
-          // homeMobileNumber: homeNumber,
           email: userEmail,
         },
         () => {
@@ -45,40 +52,74 @@ const EditContactScreen = ({navigation}) => {
     );
   };
 
-  const onBackPress = () => {
-    navigation.goBack();
-  };
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: 17, flex: 1}}>
-        <AppColorLogo />
-        <Text
+      <View style={{flex: 1}}>
+        <View
           style={{
-            color: colors.black,
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
-            fontFamily: fontFamily.poppins600,
-            textAlign: 'center',
-            marginTop: 10,
+            height: hp(50),
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          Contact Details
-        </Text>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{
+              position: 'absolute',
+              left: 0,
+              width: wp(50),
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.back_arrow_icon}
+              style={{
+                width: hp(14),
+                height: hp(14),
+                resizeMode: 'contain',
+              }}
+            />
+          </TouchableOpacity>
 
-        <View style={{marginTop: 30}}>
-          <FloatingLabelInput
-            label="Mobile Number"
-            value={mobileNumber.toString()}
-            onChangeText={setMobileNumber}
-            showUnit={true}
+          <Text
+            style={{
+              color: colors.pureBlack,
+              fontSize: fontSize(14),
+              fontFamily: fontFamily.poppins600,
+            }}>
+            Contact Info
+          </Text>
+        </View>
+
+        <View
+          style={{width: '100%', height: hp(1), backgroundColor: '#E3E3E3'}}
+        />
+
+        <View style={{marginTop: hp(30), marginHorizontal: wp(17)}}>
+          <NewEnterSelectValueComponent
+            title="Mobile Number"
+            value={mobileNumber}
+            emptyText="Add"
+            modalTitle="Mobile Number"
+            keyboardTypes="decimal-pad"
+            maxLength={10}
+            EnterModalPlaceholderTittle={'Enter Mobile Number'}
+            onValueChange={value => {
+              setMobileNumber?.(value);
+            }}
           />
         </View>
 
-        <View style={{marginTop: hp(37)}}>
-          <FloatingLabelInput
-            label="Email"
-            value={userEmail || 'N/A'}
-            // onChangeText={setUserEmail}
+        <View style={{marginTop: hp(37), marginHorizontal: wp(17)}}>
+          <NewEnterSelectValueComponent
+            title="Email"
+            value={userEmail}
+            emptyText="Add"
+            modalTitle="Email Address"
+            EnterModalPlaceholderTittle={'Enter Email'}
+            onValueChange={value => {
+              setUserEmail(value);
+            }}
           />
         </View>
 
@@ -93,39 +134,16 @@ const EditContactScreen = ({navigation}) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              paddingHorizontal: wp(17),
             }}>
-            <TouchableOpacity
-              onPress={onBackPress}
-              activeOpacity={0.7}
-              style={{
-                width: wp(133),
-                height: hp(44),
-                borderRadius: hp(25),
-                borderWidth: 1,
-                borderColor: colors.black,
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Back
-              </Text>
-            </TouchableOpacity>
-
             {/* Submit Button */}
             <TouchableOpacity
               onPress={onSubmitPress}
-              disabled={isDisabled || loading}
               style={{
-                width: wp(176),
-                height: hp(44),
-                borderRadius: 30,
-                backgroundColor: isDisabled ? colors.gray : colors.black,
+                width: '100%',
+                height: hp(50),
+                borderRadius: hp(25),
+                backgroundColor: colors.black,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>

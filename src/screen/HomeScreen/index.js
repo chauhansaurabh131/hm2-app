@@ -43,6 +43,7 @@ import ProfileAvatar from '../../components/letterProfileComponent';
 import Abc from '../abc';
 import HomeCardProfileComponent from '../../components/homeCardProfileComponent';
 import HomeRemainingDataComponent from '../../components/homeRemainingDataComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const HomeScreen = ({route}) => {
   const insets = useSafeAreaInsets();
@@ -113,7 +114,8 @@ const HomeScreen = ({route}) => {
 
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+          // 'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+          `${BASE_URL}/api/v1/user/user-plan/get-user-planbyId`,
           {
             method: 'GET',
             headers: {
@@ -642,13 +644,13 @@ const HomeScreen = ({route}) => {
           <RecentlyViewComponent />
         </View>
 
-        {/*<View>*/}
-        {/*  <HomeRemainingDataComponent />*/}
-        {/*</View>*/}
-
         <View>
-          <RemainingDataUiScreen />
+          <HomeRemainingDataComponent />
         </View>
+
+        {/*<View>*/}
+        {/*  <RemainingDataUiScreen />*/}
+        {/*</View>*/}
 
         {/*<View*/}
         {/*  style={{*/}
@@ -699,6 +701,30 @@ const HomeScreen = ({route}) => {
             resizeMode="contain"
           />
         </TouchableOpacity>
+
+        <View style={{marginTop: hp(39), marginHorizontal: 17}}>
+          <Text
+            style={{
+              color: colors.pureBlack,
+              fontSize: fontSize(18),
+              fontFamily: fontFamily.poppins500,
+            }}>
+            Find Nearby Vendors
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{marginTop: hp(10)}}
+            onPress={() => {
+              navigation.navigate('ServiceTabs');
+            }}>
+            <ImageBackground
+              source={images.vendor_Poster_Img}
+              style={{height: hp(159), width: '100%'}}
+              imageStyle={{borderRadius: 12}} // ✅ iOS friendly
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
 
         {/*VERIFICATION MODAL OPEN */}
         <View style={style.verificationModalContainer}>

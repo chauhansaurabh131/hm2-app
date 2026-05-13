@@ -1,11 +1,18 @@
 import React, {useState} from 'react';
-import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateDetails} from '../../../actions/homeActions';
 import NewMultiSelectValueComponent from '../../../components/newMultiSelectValueComponent';
+import {icons} from '../../../assets';
 
 const EditHobbiesScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
@@ -109,68 +116,74 @@ const EditHobbiesScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <Text
+      {/* Header */}
+      <View
         style={{
-          color: colors.black,
-          fontSize: fontSize(16),
-          lineHeight: hp(30),
-          fontFamily: fontFamily.poppins600,
-          textAlign: 'center',
-          marginTop: hp(12),
-          marginBottom: hp(12),
+          height: hp(50),
+          justifyContent: 'center',
+          alignItems: 'center',
         }}>
-        Hobbies and Interest
-      </Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{
+            position: 'absolute',
+            left: 0,
+            width: wp(50),
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Image
+            source={icons.back_arrow_icon}
+            style={{
+              width: hp(14),
+              height: hp(14),
+              resizeMode: 'contain',
+            }}
+          />
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            color: colors.pureBlack,
+            fontSize: fontSize(14),
+            fontFamily: fontFamily.poppins600,
+          }}>
+          Hobbies Info
+        </Text>
+      </View>
 
       <View
-        style={{width: '100%', height: hp(4), backgroundColor: '#F9F7FF'}}
+        style={{width: '100%', height: hp(1), backgroundColor: '#E3E3E3'}}
       />
 
-      <NewMultiSelectValueComponent
-        title="Add Hobbies"
-        value={selectedItems} // 👈 ARRAY
-        dropdownData={options}
-        onValueChange={setSelectedItems} // 👈 ARRAY SETTER
-        bottomSheetHeight={hp(500)}
-        maxSelection={5}
-      />
-
-      <View style={{marginTop: hp(40)}}>
+      <View style={{marginHorizontal: wp(17), marginTop: hp(20)}}>
         <NewMultiSelectValueComponent
-          title="Add Language Known"
-          value={selectedLang} // 👈 ARRAY
-          dropdownData={LanguageOptions}
-          onValueChange={setSelectedLang} // 👈 ARRAY SETTER
-          bottomSheetHeight={hp(200)}
+          title="Add Hobbies"
+          value={selectedItems} // 👈 ARRAY
+          dropdownData={options}
+          onValueChange={setSelectedItems} // 👈 ARRAY SETTER
+          bottomSheetHeight={hp(500)}
+          maxSelection={5}
         />
+
+        <View style={{marginTop: hp(40)}}>
+          <NewMultiSelectValueComponent
+            title="Add Language Known"
+            value={selectedLang} // 👈 ARRAY
+            dropdownData={LanguageOptions}
+            onValueChange={setSelectedLang} // 👈 ARRAY SETTER
+            bottomSheetHeight={hp(200)}
+          />
+        </View>
       </View>
 
       <View style={{marginHorizontal: 17, flex: 1}}>
-        {/*<AppColorLogo />*/}
-
-        {/*<View style={{marginTop: hp(37)}}>*/}
-        {/*  <NewBottomSheetMultipleValueSelect*/}
-        {/*    label="Select Hobbies"*/}
-        {/*    options={options}*/}
-        {/*    onSelect={handleSelect} // Pass the onSelect handler to capture selected values*/}
-        {/*    bottomSheetHeight={hp(500)}*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        {/*<View style={{marginTop: hp(37)}}>*/}
-        {/*  <NewBottomSheetMultipleValueSelect*/}
-        {/*    label="Language Known"*/}
-        {/*    options={LanguageOptions}*/}
-        {/*    onSelect={handleSelectLanguage} // Pass the onSelect handler to capture selected values*/}
-        {/*    bottomSheetHeight={hp(200)}*/}
-        {/*  />*/}
-        {/*</View>*/}
-
         <View
           style={{
             flex: 1,
             position: 'absolute',
-            bottom: 15,
+            bottom: 20,
             width: '100%',
           }}>
           <View
@@ -179,36 +192,13 @@ const EditHobbiesScreen = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             <TouchableOpacity
-              onPress={onBackPress}
-              activeOpacity={0.7}
-              style={{
-                width: wp(133),
-                height: hp(44),
-                borderRadius: hp(25),
-                borderWidth: 1,
-                borderColor: colors.black,
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Back
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               activeOpacity={0.6}
               onPress={onSubmitPress}
               disabled={selectedItems.length === 0 || selectedLang.length === 0} // ✅ Disable if nothing selected
               style={{
-                width: wp(176),
-                height: hp(44),
-                borderRadius: 30,
+                width: '100%',
+                height: hp(50),
+                borderRadius: hp(25),
                 backgroundColor:
                   selectedItems.length === 0 || selectedLang.length === 0
                     ? colors.gray // disabled state color

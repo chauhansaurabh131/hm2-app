@@ -1,57 +1,64 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
-import AppColorLogo from '../../../components/appColorLogo';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
-import NewDropDownTextInput from '../../../components/newDropdownTextinput';
 import {useDispatch, useSelector} from 'react-redux';
 import {addressDetails} from '../../../actions/homeActions';
+import {icons} from '../../../assets';
+import NewSelectValueComponent from '../../../components/newSelectValueComponent';
+import NewEnterSelectValueComponent from '../../../components/newEnterSelectValueComponent';
 
 const EditLocationScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === var ===> ', user?.user?.address?.currentCity);
-
   const apiDispatch = useDispatch();
 
-  // const [currentAddress, setCurrentAddress] = useState('');
   const [currentCountry, setCurrentCountry] = useState('');
   const [currentState, setCurrentState] = useState('');
   const [selectCurrentCity, setSelectCurrentCity] = useState('');
   const [loading, setLoading] = useState(false); // Loader state
 
-  const currentCountryDropDown = [
-    'India',
-    'Canada',
-    'Us',
-    'China',
-    'Myanmar',
-    'Nepal',
-    'Sri-lanka',
-  ];
+  const currentCountryDropDown = ['India'];
 
   const currentStateDropdown = [
-    'Maharashtra',
-    'Delhi',
-    'Rajasthan',
-    'Haryana',
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
     'Gujarat',
-  ];
-
-  const currentCityNameDropdown = [
-    'Ahmedabad',
-    'Surat',
-    'Gandhinagar',
-    'Patan',
-    'Mehsana',
-    'Himmatnagar',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya-Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
   ];
 
   useEffect(() => {
-    // if (user?.user?.address?.currentResidenceAddress) {
-    //   setCurrentAddress(user?.user?.address?.currentResidenceAddress);
-    // }
     if (user?.user?.address?.currentCountry) {
       setCurrentCountry(user?.user?.address?.currentCountry);
     }
@@ -68,15 +75,29 @@ const EditLocationScreen = ({navigation}) => {
     user?.user?.address?.currentCity,
   ]);
 
+  const isFormValid =
+    currentCountry?.trim() && currentState?.trim() && selectCurrentCity?.trim();
+
   const onSubmitPress = () => {
     setLoading(true);
+
+    const formattedCountry =
+      currentCountry.charAt(0).toLowerCase() + currentCountry.slice(1);
+
+    const formatState = state => {
+      if (!state) {
+        return '';
+      }
+      return currentState.toLowerCase().replace(/\s+/g, '-');
+    };
+
     apiDispatch(
       addressDetails(
         {
           // currentResidenceAddress: residingAddress,
-          currentCountry: currentCountry,
-          currentState: currentState,
-          currentCity: selectCurrentCity,
+          currentCountry: formattedCountry,
+          currentState: formatState(currentState),
+          currentCity: selectCurrentCity.toLowerCase(),
         },
         () => {
           setLoading(false);
@@ -86,66 +107,88 @@ const EditLocationScreen = ({navigation}) => {
     );
   };
 
-  const onBackPress = () => {
-    navigation.goBack();
-  };
-
-  const capitalizeFirstLetter = text => {
-    if (!text) {
-      return text;
-    }
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  };
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <View style={{marginHorizontal: 17, flex: 1}}>
-        <AppColorLogo />
-        <Text
+      <View style={{flex: 1}}>
+        {/* Header */}
+        <View
           style={{
-            color: colors.black,
-            fontSize: fontSize(20),
-            lineHeight: hp(30),
-            fontFamily: fontFamily.poppins600,
-            textAlign: 'center',
-            marginTop: 10,
+            height: hp(50),
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          Location Details
-        </Text>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{
+              position: 'absolute',
+              left: 0,
+              width: wp(50),
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.back_arrow_icon}
+              style={{
+                width: hp(14),
+                height: hp(14),
+                resizeMode: 'contain',
+              }}
+            />
+          </TouchableOpacity>
 
-        {/*<View style={{marginTop: 30}}>*/}
-        {/*  <FloatingLabelInput*/}
-        {/*    label="Current Address"*/}
-        {/*    value={currentAddress}*/}
-        {/*    onChangeText={setCurrentAddress}*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        <View style={{marginTop: hp(30)}}>
-          <NewDropDownTextInput
-            placeholder="Country"
-            dropdownData={currentCountryDropDown}
-            onValueChange={setCurrentCountry}
-            value={capitalizeFirstLetter(currentCountry)}
-          />
+          <Text
+            style={{
+              color: colors.pureBlack,
+              fontSize: fontSize(14),
+              fontFamily: fontFamily.poppins600,
+            }}>
+            Location Info
+          </Text>
         </View>
 
-        <View style={{marginTop: hp(37)}}>
-          <NewDropDownTextInput
-            placeholder="State"
-            dropdownData={currentStateDropdown}
-            onValueChange={setCurrentState}
-            value={capitalizeFirstLetter(currentState)}
-          />
-        </View>
+        <View
+          style={{width: '100%', height: hp(1), backgroundColor: '#E3E3E3'}}
+        />
 
-        <View style={{marginTop: hp(37)}}>
-          <NewDropDownTextInput
-            placeholder="City"
-            dropdownData={currentCityNameDropdown}
-            onValueChange={setSelectCurrentCity}
-            value={capitalizeFirstLetter(selectCurrentCity)}
-          />
+        <View style={{marginHorizontal: wp(17)}}>
+          <View style={{marginTop: hp(30)}}>
+            <NewSelectValueComponent
+              title="Select Current Country"
+              value={currentCountry}
+              dropdownData={currentCountryDropDown}
+              onValueChange={value => {
+                setCurrentCountry(value);
+              }}
+              bottomSheetHeight={hp(100)}
+            />
+          </View>
+
+          <View style={{marginTop: hp(37)}}>
+            <NewSelectValueComponent
+              title="Select Current State"
+              value={currentState}
+              dropdownData={currentStateDropdown}
+              onValueChange={value => {
+                setCurrentState(value); // ✅ update UI
+              }}
+              bottomSheetHeight={hp(500)}
+              showSearch={true}
+            />
+          </View>
+
+          <View style={{marginTop: hp(37)}}>
+            <NewEnterSelectValueComponent
+              title="Select Current City"
+              value={selectCurrentCity}
+              emptyText="Add"
+              modalTitle="Current City"
+              EnterModalPlaceholderTittle={'Enter Current City'}
+              onValueChange={value => {
+                setSelectCurrentCity(value);
+              }}
+            />
+          </View>
         </View>
 
         <View
@@ -159,39 +202,20 @@ const EditLocationScreen = ({navigation}) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              paddingHorizontal: wp(17),
             }}>
             <TouchableOpacity
-              onPress={onBackPress}
-              activeOpacity={0.7}
-              style={{
-                width: wp(133),
-                height: hp(44),
-                borderRadius: hp(25),
-                borderWidth: 1,
-                borderColor: colors.black,
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Back
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               onPress={onSubmitPress}
+              activeOpacity={isFormValid ? 0.7 : 1}
+              disabled={!isFormValid || loading} // ✅ disable when empty
               style={{
-                width: wp(176),
-                height: hp(44),
-                borderRadius: 30,
-                backgroundColor: colors.black,
+                width: '100%',
+                height: hp(50),
+                borderRadius: hp(25),
+                backgroundColor: colors.pureBlack,
                 justifyContent: 'center',
                 alignItems: 'center',
+                opacity: isFormValid ? 1 : 0.5,
               }}>
               {loading ? (
                 // Show loader if loading is true

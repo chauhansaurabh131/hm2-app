@@ -13,6 +13,7 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CompleteYourProfileModalComponent from '../../completeYourProfileModalComponent';
+import {BASE_URL} from '../../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -87,7 +88,7 @@ const NewDataComponent = ({toastConfigs, onShowAlert}) => {
       setLoading(true); // 🔥 START LOADING
 
       const response = await axios.get(
-        'https://stag.mntech.website/api/v1/user/user/getUserByGender',
+        `${BASE_URL}/api/v1/user/user/getUserByGender`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -151,7 +152,7 @@ const NewDataComponent = ({toastConfigs, onShowAlert}) => {
     if (item?.friendsDetails?.status === 'requested') {
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
           {
             user: item?._id,
             request: requestId, // ✅ now correct
@@ -193,7 +194,7 @@ const NewDataComponent = ({toastConfigs, onShowAlert}) => {
       // console.log(' === Sending Friend Request ===> ', item);
 
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/friend/create-friend',
+        `${BASE_URL}/api/v1/user/friend/create-friend`,
         {
           friend: item?._id,
           user: user?.user?.id,
@@ -249,7 +250,7 @@ const NewDataComponent = ({toastConfigs, onShowAlert}) => {
   const createLike = async likedUserId => {
     try {
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/like/create-like',
+        `${BASE_URL}/api/v1/user/like/create-like`,
         {
           likedUserId: likedUserId,
           isLike: true,
@@ -300,7 +301,7 @@ const NewDataComponent = ({toastConfigs, onShowAlert}) => {
     try {
       // Sending the request to update the like status to false (unlike)
       const response = await axios.put(
-        `https://stag.mntech.website/api/v1/user/like/update-like/${likeId}`,
+        `${BASE_URL}/api/v1/user/like/update-like/${likeId}`,
         {
           likedUserId: userId,
           isLike: false, // Dislike the user

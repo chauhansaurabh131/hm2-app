@@ -38,6 +38,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CompleteYourProfileModalComponent from '../../components/completeYourProfileModalComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -104,7 +105,7 @@ const UserProfileDetailsScreen = () => {
       setError(null);
 
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/${matchesUserData.id}`,
+        `${BASE_URL}/api/v1/user/user/${matchesUserData.id}`,
         {
           method: 'GET',
           headers: {
@@ -131,6 +132,37 @@ const UserProfileDetailsScreen = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createProfileViewer = async () => {
+    if (!userId || !accessToken) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/v1/user/profile-viewer/create-profile-viewer`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            viewerId: matchesUserData?.id,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to create profile viewer');
+      }
+
+      const result = await response.json();
+      console.log('Profile viewer created:', result);
+    } catch (error) {
+      console.error('Error creating profile viewer:', error.message);
     }
   };
 
@@ -171,7 +203,7 @@ const UserProfileDetailsScreen = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/subscription/get-user-subscription',
+        `${BASE_URL}/api/v1/user/subscription/get-user-subscription`,
         {
           method: 'GET',
           headers: {
@@ -202,7 +234,7 @@ const UserProfileDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/mobile-number-request/accessible-ById/${userDetails?._id}`,
+        `${BASE_URL}/api/v1/user/mobile-number-request/accessible-ById/${userDetails?._id}`,
         {
           method: 'GET',
           headers: {
@@ -235,7 +267,7 @@ const UserProfileDetailsScreen = () => {
       setLoading(true); // 👉 start loader
 
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/mobile-number-request/create',
+        `${BASE_URL}/api/v1/user/mobile-number-request/create`,
         {
           method: 'POST',
           headers: {
@@ -277,7 +309,7 @@ const UserProfileDetailsScreen = () => {
 
       // Call the API to get match details
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?._id}`,
+        `${BASE_URL}/api/v1/user/user/get-match-user/${item?._id}`,
         {
           method: 'GET',
           headers: {
@@ -316,6 +348,7 @@ const UserProfileDetailsScreen = () => {
       fetchUserDetails();
       fetchSubscription();
       fetchAccessibleById();
+      createProfileViewer();
       // createProfileViewer();
     }, [matchesUserData?.id, accessToken, userDetails?._id]),
   );
@@ -502,7 +535,7 @@ const UserProfileDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {
@@ -538,7 +571,7 @@ const UserProfileDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/create-friend',
+        `${BASE_URL}/api/v1/user/friend/create-friend`,
         {
           method: 'POST',
           headers: {
@@ -598,7 +631,7 @@ const UserProfileDetailsScreen = () => {
 
       try {
         const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentIsLikeId}`,
+          `${BASE_URL}/api/v1/user/like/update-like/${currentIsLikeId}`,
           {
             method: 'PUT',
             headers: {
@@ -633,7 +666,7 @@ const UserProfileDetailsScreen = () => {
       // If not liked, add the like
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/like/create-like',
+          `${BASE_URL}/api/v1/user/like/create-like`,
           {
             method: 'POST',
             headers: {
@@ -680,7 +713,7 @@ const UserProfileDetailsScreen = () => {
       // If the user is already in the shortlist, delete them
       try {
         const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${currentShortlistId}`,
+          `${BASE_URL}/api/v1/user/shortlist/delete-short-list/${currentShortlistId}`,
           {
             method: 'DELETE',
             headers: {
@@ -713,7 +746,7 @@ const UserProfileDetailsScreen = () => {
 
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+          `${BASE_URL}/api/v1/user/shortlist/create-shortlist`,
           {
             method: 'POST',
             headers: {
@@ -1155,7 +1188,7 @@ const UserProfileDetailsScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -1205,7 +1238,7 @@ const UserProfileDetailsScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -1329,7 +1362,7 @@ const UserProfileDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {

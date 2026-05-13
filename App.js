@@ -891,8 +891,37 @@ const MainApp = () => {
     }).start(() => setShowMessage(false));
   };
 
+  const requestLocationPermission = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message:
+              'This app needs access to your location to show nearby vendors and services.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('✅ Location permission granted');
+        } else {
+          console.log('❌ Location permission denied');
+        }
+      }
+    } catch (error) {
+      console.log('LOCATION PERMISSION ERROR ===>', error);
+    }
+  };
+
   useEffect(() => {
     requestPermissionsAndroid();
+
+    requestLocationPermission();
+
     NoificationListner();
     ForegroundMessages();
     RequestUserPermission();

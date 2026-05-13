@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
@@ -7,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {professionalDetail} from '../../../actions/homeActions';
 import NewEnterSelectValueComponent from '../../../components/newEnterSelectValueComponent';
 import NewSelectValueComponent from '../../../components/newSelectValueComponent';
+import {icons} from '../../../assets';
 
 const EditProfessionalScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
@@ -130,100 +137,131 @@ const EditProfessionalScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <Text
+      {/* Header */}
+      <View
         style={{
-          color: colors.black,
-          fontSize: fontSize(16),
-          lineHeight: hp(30),
-          fontFamily: fontFamily.poppins600,
-          textAlign: 'center',
-          marginTop: hp(12),
-          marginBottom: hp(12),
+          height: hp(50),
+          justifyContent: 'center',
+          alignItems: 'center',
         }}>
-        Occupation Details
-      </Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{
+            position: 'absolute',
+            left: 0,
+            width: wp(50),
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Image
+            source={icons.back_arrow_icon}
+            style={{
+              width: hp(14),
+              height: hp(14),
+              resizeMode: 'contain',
+            }}
+          />
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            color: colors.pureBlack,
+            fontSize: fontSize(14),
+            fontFamily: fontFamily.poppins600,
+          }}>
+          Occupation Info
+        </Text>
+      </View>
 
       <View
-        style={{width: '100%', height: hp(4), backgroundColor: '#F9F7FF'}}
-      />
-
-      <NewEnterSelectValueComponent
-        title="Current Designation"
-        value={capitalizeFirstLetter(jobTitle)}
-        emptyText="Add"
-        modalTitle="Current Designation"
-        EnterModalPlaceholderTittle={'Enter Current Designation'}
-        onValueChange={value => {
-          // setSelectedDesignationStatus(value);
-          setJobTitle?.(value);
+        style={{
+          width: '100%',
+          height: hp(1),
+          backgroundColor: '#E3E3E3',
+          marginBottom: hp(20),
         }}
       />
 
-      <View style={{marginTop: hp(10)}}>
-        <NewSelectValueComponent
-          title="Job Type"
-          value={jobType}
-          dropdownData={jobTypeDropdownData}
-          onValueChange={value => {
-            // setSelectedJobStatus(value);
-            setJobType?.(value);
-          }}
-          bottomSheetHeight={hp(250)}
-        />
-      </View>
-
-      <View style={{marginTop: hp(10)}}>
+      <View style={{marginHorizontal: wp(17)}}>
         <NewEnterSelectValueComponent
-          title="Company"
-          value={companyName}
+          title="Current Designation"
+          value={capitalizeFirstLetter(jobTitle)}
           emptyText="Add"
-          modalTitle="Company"
-          EnterModalPlaceholderTittle={'Enter Company Name'}
+          modalTitle="Current Designation"
+          EnterModalPlaceholderTittle={'Enter Current Designation'}
           onValueChange={value => {
-            // setSelectedCompanyStatus(value);
-            setCompanyName?.(value);
+            // setSelectedDesignationStatus(value);
+            setJobTitle?.(value);
           }}
         />
-      </View>
 
-      <View style={{marginTop: hp(10)}}>
-        <NewSelectValueComponent
-          title="Annual Salary"
-          value={salary}
-          dropdownData={anuallSalary}
-          onValueChange={value => {
-            // setSelectedSalaryStatus(value);
-            setSalary?.(value);
-          }}
-          bottomSheetHeight={hp(300)}
-        />
-      </View>
+        <View style={{marginTop: hp(20)}}>
+          <NewSelectValueComponent
+            title="Job Type"
+            value={jobType}
+            dropdownData={jobTypeDropdownData}
+            onValueChange={value => {
+              // setSelectedJobStatus(value);
+              setJobType?.(value);
+            }}
+            bottomSheetHeight={hp(250)}
+          />
+        </View>
 
-      <View style={{marginTop: hp(10)}}>
-        <NewEnterSelectValueComponent
-          title="Work City"
-          value={workInCity}
-          emptyText="Add"
-          modalTitle="Work City"
-          EnterModalPlaceholderTittle={'Enter Work City'}
-          onValueChange={value => {
-            // setSelectedCityStatus(value);
-            setWorkInCity?.(value);
-          }}
-        />
-      </View>
+        <View style={{marginTop: hp(20)}}>
+          <NewEnterSelectValueComponent
+            title="Company"
+            value={companyName}
+            emptyText="Add"
+            modalTitle="Company"
+            EnterModalPlaceholderTittle={'Enter Company Name'}
+            onValueChange={value => {
+              // setSelectedCompanyStatus(value);
+              setCompanyName?.(value);
+            }}
+          />
+        </View>
 
-      <View style={{marginTop: hp(10)}}>
-        <NewSelectValueComponent
-          title="Work Country"
-          value={workInCountry}
-          dropdownData={jobWorkContryDropdownData}
-          onValueChange={value => {
-            // setSelectedCountryStatus(value);
-            setWorkInCountry?.(value);
-          }}
-          bottomSheetHeight={hp(100)}
-        />
+        <View style={{marginTop: hp(20)}}>
+          <NewSelectValueComponent
+            title="Annual Salary"
+            value={salary}
+            dropdownData={anuallSalary}
+            onValueChange={value => {
+              // setSelectedSalaryStatus(value);
+              setSalary?.(value);
+            }}
+            bottomSheetHeight={hp(300)}
+          />
+        </View>
+
+        <View style={{marginTop: hp(20)}}>
+          <NewEnterSelectValueComponent
+            title="Work City"
+            value={workInCity}
+            emptyText="Add"
+            modalTitle="Work City"
+            EnterModalPlaceholderTittle={'Enter Work City'}
+            onValueChange={value => {
+              // setSelectedCityStatus(value);
+              setWorkInCity?.(value);
+            }}
+          />
+        </View>
+
+        <View style={{marginTop: hp(20)}}>
+          <NewSelectValueComponent
+            title="Work Country"
+            value={workInCountry}
+            dropdownData={jobWorkContryDropdownData}
+            onValueChange={value => {
+              // setSelectedCountryStatus(value);
+              setWorkInCountry?.(value);
+            }}
+            bottomSheetHeight={hp(100)}
+          />
+        </View>
       </View>
 
       <View style={{marginHorizontal: 17, flex: 1}}>
@@ -304,29 +342,6 @@ const EditProfessionalScreen = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             <TouchableOpacity
-              onPress={onBackPress}
-              activeOpacity={0.7}
-              style={{
-                width: wp(133),
-                height: hp(44),
-                borderRadius: hp(25),
-                borderWidth: 1,
-                borderColor: colors.black,
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Back
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               onPress={onSubmitPress}
               activeOpacity={0.6}
               disabled={
@@ -338,9 +353,9 @@ const EditProfessionalScreen = ({navigation}) => {
                 !workInCountry
               } // Disable if any field is empty
               style={{
-                width: wp(176),
-                height: hp(44),
-                borderRadius: 30,
+                width: '100%',
+                height: hp(50),
+                borderRadius: hp(25),
                 backgroundColor:
                   !jobTitle ||
                   !jobType ||

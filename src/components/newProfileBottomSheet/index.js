@@ -21,6 +21,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import ProfileAvatar from '../letterProfileComponent';
 import {style} from '../homeCardProfileComponent/style';
+import {BASE_URL} from '../../utils/constants';
 
 const NewProfileBottomSheet = ({bottomSheetRef}) => {
   const navigation = useNavigation();
@@ -61,7 +62,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
 
         try {
           const response = await fetch(
-            'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+            `${BASE_URL}/api/v1/user/user-plan/get-user-planbyId`,
             {
               method: 'GET',
               headers: {
@@ -94,7 +95,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
         try {
           setLoading(true);
           const response = await fetch(
-            `https://stag.mntech.website/api/v1/user/user/get-credit/${userId}`,
+            `${BASE_URL}/api/v1/user/user/get-credit/${userId}`,
             {
               method: 'GET',
               headers: {
@@ -131,7 +132,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
         const token = user?.tokens?.access?.token;
         if (token) {
           const response = await axios.get(
-            'https://stag.mntech.website/api/v1/user/user/checkPlan',
+            `${BASE_URL}/api/v1/user/user/checkPlan`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

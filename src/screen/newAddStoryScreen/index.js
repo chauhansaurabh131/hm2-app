@@ -17,6 +17,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
 import DemoCode from '../demoCode';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const NewAddStoryScreen = () => {
   const {user} = useSelector(state => state.auth);
@@ -33,7 +34,8 @@ const NewAddStoryScreen = () => {
   const fetchStatuses = useCallback(async () => {
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/status/get-all-status',
+        // 'https://stag.mntech.website/api/v1/user/status/get-all-status',
+        `${BASE_URL}/api/v1/user/status/get-all-status`,
         {
           method: 'GET',
           headers: {

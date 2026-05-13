@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../../utils/colors';
 import {fontFamily, fontSize, hp, wp} from '../../../utils/helpers';
@@ -7,6 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {educationDetails} from '../../../actions/homeActions';
 import NewSelectValueComponent from '../../../components/newSelectValueComponent';
 import NewEnterSelectValueComponent from '../../../components/newEnterSelectValueComponent';
+import {icons} from '../../../assets';
 
 const EditEducationScreen = ({navigation}) => {
   const {user} = useSelector(state => state.auth);
@@ -50,20 +57,7 @@ const EditEducationScreen = ({navigation}) => {
     'Ph.D',
     'IAS',
     'IPS',
-    'IRS',
-    'IES',
-    'IF',
   ];
-
-  // Dynamic height assignment based on dropdown type
-  const getDropdownHeight = dropdownType => {
-    switch (dropdownType) {
-      case 'Degree':
-        return hp(500); // Set height for gender dropdown
-      default:
-        return hp(300); // Default height
-    }
-  };
 
   useEffect(() => {
     if (user?.user?.userEducation?.degree) {
@@ -75,12 +69,17 @@ const EditEducationScreen = ({navigation}) => {
   }, [user?.user?.userEducation?.degree, user?.user?.userEducation?.collage]);
 
   const onSubmitPress = () => {
+    const convertFirstLetterToLowerCase = str => {
+      return str.charAt(0).toLowerCase() + str.slice(1);
+    };
+
     setLoading(true);
+
     apiDispatch(
       educationDetails(
         {
           degree: degree,
-          collage: collage,
+          collage: convertFirstLetterToLowerCase(collage),
         },
         () => {
           setLoading(false);
@@ -90,75 +89,75 @@ const EditEducationScreen = ({navigation}) => {
     );
   };
 
-  const onBackPress = () => {
-    navigation.goBack();
-  };
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <Text
+      {/* Header */}
+      <View
         style={{
-          color: colors.black,
-          fontSize: fontSize(16),
-          lineHeight: hp(30),
-          fontFamily: fontFamily.poppins600,
-          textAlign: 'center',
-          marginTop: hp(12),
-          marginBottom: hp(12),
+          height: hp(50),
+          justifyContent: 'center',
+          alignItems: 'center',
         }}>
-        Education Details
-      </Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{
+            position: 'absolute',
+            left: 0,
+            width: wp(50),
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Image
+            source={icons.back_arrow_icon}
+            style={{
+              width: hp(14),
+              height: hp(14),
+              resizeMode: 'contain',
+            }}
+          />
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            color: colors.pureBlack,
+            fontSize: fontSize(14),
+            fontFamily: fontFamily.poppins600,
+          }}>
+          Education Info
+        </Text>
+      </View>
 
       <View
-        style={{width: '100%', height: hp(4), backgroundColor: '#F9F7FF'}}
+        style={{width: '100%', height: hp(1), backgroundColor: '#E3E3E3'}}
       />
 
-      <NewSelectValueComponent
-        title="Select Degree"
-        value={degree}
-        dropdownData={degreeDropdownData}
-        onValueChange={value => {
-          // setSelectedDegreeStatus(value);
-          setDegree?.(value);
-        }}
-        bottomSheetHeight={hp(450)}
-      />
-
-      <View style={{marginTop: hp(10)}}>
-        <NewEnterSelectValueComponent
-          title="College / Uni."
-          value={collage}
-          emptyText="Add"
-          modalTitle="College / Uni."
-          EnterModalPlaceholderTittle={'Enter College / Uni.'}
+      <View style={{marginTop: hp(20), marginHorizontal: wp(17)}}>
+        <NewSelectValueComponent
+          title="Select Degree"
+          value={degree}
+          dropdownData={degreeDropdownData}
           onValueChange={value => {
-            // setSelectedCollegeStatus(value);
-            setCollage?.(value);
+            setDegree(value);
           }}
+          bottomSheetHeight={hp(450)}
         />
+
+        <View style={{marginTop: hp(20)}}>
+          <NewEnterSelectValueComponent
+            title="College / Uni."
+            value={collage}
+            emptyText="Add"
+            modalTitle="College / Uni."
+            EnterModalPlaceholderTittle={'Enter College / Uni.'}
+            onValueChange={value => {
+              setCollage(value);
+            }}
+          />
+        </View>
       </View>
 
       <View style={{marginHorizontal: 17, flex: 1}}>
-        {/*<AppColorLogo />*/}
-
-        {/*<View style={{marginTop: hp(30)}}>*/}
-        {/*  <NewDropDownTextInput*/}
-        {/*    placeholder="Degree"*/}
-        {/*    dropdownData={degreeDropdownData}*/}
-        {/*    onValueChange={setDegree}*/}
-        {/*    value={degree}*/}
-        {/*    bottomSheetHeight={getDropdownHeight('Degree')} // Dynamic height*/}
-        {/*  />*/}
-        {/*</View>*/}
-
-        {/*<View style={{marginTop: hp(50)}}>*/}
-        {/*  <FloatingLabelInput*/}
-        {/*    label="College/University"*/}
-        {/*    value={collage}*/}
-        {/*    onChangeText={setCollage}*/}
-        {/*  />*/}
-        {/*</View>*/}
-
         <View
           style={{
             flex: 1,
@@ -172,36 +171,13 @@ const EditEducationScreen = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             <TouchableOpacity
-              onPress={onBackPress}
-              activeOpacity={0.7}
-              style={{
-                width: wp(133),
-                height: hp(44),
-                borderRadius: hp(25),
-                borderWidth: 1,
-                borderColor: colors.black,
-                justifyContent: 'center',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: fontSize(16),
-                  lineHeight: hp(24),
-                  fontFamily: fontFamily.poppins400,
-                  color: colors.black,
-                }}>
-                Back
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               onPress={onSubmitPress}
               activeOpacity={0.6}
               disabled={!degree || !collage} // ✅ disable if either is empty
               style={{
-                width: wp(176),
-                height: hp(44),
-                borderRadius: 30,
+                width: '100%',
+                height: hp(50),
+                borderRadius: hp(25),
                 backgroundColor:
                   !degree || !collage ? colors.gray : colors.black, // ✅ grey when disabled
                 justifyContent: 'center',

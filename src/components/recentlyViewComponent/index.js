@@ -16,6 +16,7 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons} from '../../assets';
 import ProfileAvatar from '../letterProfileComponent';
 import {colors} from '../../utils/colors';
+import {BASE_URL} from '../../utils/constants';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const RecentlyViewComponent = () => {
@@ -36,7 +37,7 @@ const RecentlyViewComponent = () => {
 
     try {
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/profile-viewer/get-profile-viewerv2/${userId}`,
+        `${BASE_URL}/api/v1/user/profile-viewer/get-profile-viewerv2/${userId}`,
         {
           method: 'GET',
           headers: {

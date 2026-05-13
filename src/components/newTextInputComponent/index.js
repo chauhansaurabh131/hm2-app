@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderColor: '#D9D9D9',
     borderWidth: 1,
-    borderRadius: 25,
+    borderRadius: hp(25),
   },
   iconLeft: {
     marginLeft: 15,

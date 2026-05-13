@@ -4,12 +4,12 @@ import axios from 'axios/index';
 import Toast from 'react-native-toast-message';
 import RNFetchBlob from 'react-native-blob-util';
 
-import { BASE_URL, REFRESH_TOKEN } from '../utils/constants';
-import { TOKEN } from '../utils/constants';
-import { getAsyncStorageData } from '../utils/global';
-import { store } from '../reducer/store/index';
-import { logout } from '../actions/authActions';
-import { navigationRef } from '../navigations';
+import {BASE_URL, REFRESH_TOKEN} from '../utils/constants';
+import {TOKEN} from '../utils/constants';
+import {getAsyncStorageData} from '../utils/global';
+import {store} from '../reducer/store/index';
+import {logout} from '../actions/authActions';
+import {navigationRef} from '../navigations';
 
 const defaultHeaders = {
   'Content-Type': 'application/json',
@@ -20,11 +20,11 @@ const url = path => {
 };
 
 const getHeaders = async auth => {
-  let headers = { ...defaultHeaders };
+  let headers = {...defaultHeaders};
   if (auth) {
     const token = await getAuthToken();
     // console.log(' === var ===> ', token);
-    headers = { ...headers, authorization: token };
+    headers = {...headers, authorization: token};
   }
   return headers;
 };
@@ -55,7 +55,7 @@ export const put = async (path, params = {}, auth = true) => {
 
 export const deleteRequest = async (path, params = {}, auth = true) => {
   const headers = await getHeaders(auth);
-  return apiService.delete(url(path, params), { params, headers: headers });
+  return apiService.delete(url(path, params), {params, headers: headers});
 };
 
 export const upload = async (path, params = {}, auth = true, fileUri) => {
@@ -117,7 +117,7 @@ const handleResponseError = error => {
       store.dispatch(logout());
       navigationRef.current?.reset({
         index: 0,
-        routes: [{ name: 'NewLogInScreen', params: { sessionExpired: true } }],
+        routes: [{name: 'NewLogInScreen', params: {sessionExpired: true}}],
       });
     }
     return Promise.reject(error);

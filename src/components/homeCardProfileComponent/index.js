@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
+import {BASE_URL} from '../../utils/constants';
 
 const HomeCardProfileComponent = () => {
   const {user} = useSelector(state => state.auth);
@@ -40,7 +41,8 @@ const HomeCardProfileComponent = () => {
 
         try {
           const response = await fetch(
-            'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+            // 'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+            `${BASE_URL}/api/v1/user/user-plan/get-user-planbyId`,
             {
               method: 'GET',
               headers: {
@@ -73,7 +75,7 @@ const HomeCardProfileComponent = () => {
         try {
           setLoading(true);
           const response = await fetch(
-            `https://stag.mntech.website/api/v1/user/user/get-credit/${userId}`,
+            `${BASE_URL}/api/v1/user/user/get-credit/${userId}`,
             {
               method: 'GET',
               headers: {

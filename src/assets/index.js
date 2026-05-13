@@ -50,6 +50,7 @@ export const images = {
   new_add_story_img: require('./images/new_add_story_img.png'),
   cartoon_couple_one: require('./images/cartoonCoupleOne.png'),
   cartoon_couple_two: require('./images/cartoonCoupleTwo.png'),
+  vendor_Poster_Img: require('./images/vendor_Poster_img.png'),
 };
 
 export const icons = {
@@ -242,6 +243,10 @@ export const icons = {
   new_circle_Cancel_Icon: require('./icons/new_Circle_Cancel_Icon.png'),
   new_Circle_Check_Icon: require('./icons/new_Circle_Check_Icon.png'),
   thum_Icon: require('./icons/thum_Icon.png'),
+  hm_Logo_Icon: require('./icons/hm_Logo_Icon.png'),
+  location_Icon: require('./icons/location_Icon.png'),
+  right_Arrow_Color_Icon: require('./icons/right_Arrow_color_Icon.png'),
+  twitter_Icon: require('./icons/twitter_Icon.png'),
 };
 
 export const gif = {

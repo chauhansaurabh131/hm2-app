@@ -28,7 +28,12 @@ export const STANDARD_SCREEN_WIDTH = 390;
 export const TOKEN = 'TOKEN';
 export const REFRESH_TOKEN = 'REFRESH_TOKEN';
 // export const BASE_URL = 'https://happymilan.tech';
-export const BASE_URL = 'https://stag.mntech.website';
+
+// MAIN URL SERVER
+// export const BASE_URL = 'https://stag.mntech.website';
+
+// TESTING URL
+export const BASE_URL = 'https://test.mntech.website';
 
 // https://happymilan.tech/api/v1/user/auth/register
 

@@ -22,6 +22,7 @@ import professionalLogo from '../../../assets/icons/professional_logo.png';
 import LinearGradient from 'react-native-linear-gradient';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {icons} from '../../../assets';
+import {BASE_URL} from '../../../utils/constants';
 
 const RemainingDataUiScreen = () => {
   const {user} = useSelector(state => state.auth);
@@ -40,7 +41,7 @@ const RemainingDataUiScreen = () => {
         try {
           setLoading(true); // reset loading on re-fetch
           const response = await fetch(
-            'https://stag.mntech.website/api/v1/user/user/pending-fields-for-mobile',
+            `${BASE_URL}/api/v1/user/user/pending-fields-for-mobile`,
             {
               method: 'GET',
               headers: {

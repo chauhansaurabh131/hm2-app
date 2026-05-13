@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   Image,
-  SafeAreaView,
   ScrollView,
   Text,
   TextInput,
@@ -13,11 +12,21 @@ import ServicesFeaturedComponent from '../../components/servicesFeaturedComponen
 import ServicesRecentlyComponent from '../../components/servicesRecentlyComponent';
 import {useNavigation} from '@react-navigation/native';
 import style from './style';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import VendorSearchLocationComponent from '../../components/vendorSearchLocationComponent';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+import {colors} from '../../utils/colors';
+import {useSelector} from 'react-redux';
 
 const ServiceHomeScreen = () => {
   const [text, setText] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
 
   const navigation = useNavigation();
+
+  const {user} = useSelector(state => state.auth);
+
+  // console.log(' === user***** ===> ', user?.user?.profilePic);
 
   const items = [
     {icon: icons.wedding_Planner_icon, label: 'Wedding Planner'},
@@ -32,28 +41,89 @@ const ServiceHomeScreen = () => {
   ];
 
   const onPressItem = label => {
-    console.log('Pressed item:', label);
+    // CONVERT TO SLUG
+    const formattedLabel = label.toLowerCase().replace(/\s+/g, '-');
 
-    // 👉 You can navigate here if needed
-    // navigation.navigate('YourScreen', {label});
+    console.log('Pressed item:', formattedLabel);
 
-    navigation.navigate('ServicesSearchScreen');
+    navigation.navigate('VendorSearchFilterScreen', {
+      category: formattedLabel,
+      location: selectedLocation,
+    });
+
+    // navigation.navigate('ServicesSearchScreen');
   };
 
   return (
     <SafeAreaView style={style.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={style.headerContainer}>
-          <View style={style.searchContainer}>
-            <TextInput
-              style={style.searchTextInput}
-              placeholder="Enter Your City"
-              placeholderTextColor="#999"
-              value={text}
-              onChangeText={setText}
+      <View style={{height: hp(50), backgroundColor: colors.white}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+            activeOpacity={0.6}
+            style={{
+              width: wp(50),
+              height: hp(50),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.back_arrow_icon}
+              style={{width: hp(14), height: hp(14), resizeMode: 'contain'}}
             />
-          </View>
+          </TouchableOpacity>
+
+          <Text
+            style={{
+              color: colors.pureBlack,
+              fontSize: fontSize(14),
+              fontFamily: fontFamily.poppins500,
+            }}>
+            Search Nearby Vendors
+          </Text>
+
+          <TouchableOpacity
+            style={{
+              width: wp(50),
+              height: hp(50),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.view_profile_icon}
+              style={{
+                width: hp(18),
+                height: hp(18),
+                resizeMode: 'contain',
+                tintColor: '#7148E4',
+              }}
+            />
+          </TouchableOpacity>
         </View>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/*<View style={style.headerContainer}>*/}
+        {/*  <View style={style.searchContainer}>*/}
+        {/*    <TextInput*/}
+        {/*      style={style.searchTextInput}*/}
+        {/*      placeholder="Enter Your City"*/}
+        {/*      placeholderTextColor="#999"*/}
+        {/*      value={text}*/}
+        {/*      onChangeText={setText}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*</View>*/}
+
+        {/*<VendorSearchLocationComponent />*/}
+        <VendorSearchLocationComponent onLocationChange={setSelectedLocation} />
 
         <View style={style.discoverTextContainer}>
           <Text style={style.discoverTextStyle}>Discover Services</Text>
