@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import {
   ActivityIndicator,
+  Dimensions,
+  FlatList,
   Image,
   Linking,
   ScrollView,
@@ -31,6 +33,7 @@ import {icons, images} from '../../assets';
 import {BASE_URL} from '../../utils/constants';
 
 import ServicesRecentlyComponent from '../../components/servicesRecentlyComponent';
+import SignInOrLogInComponent from '../../components/signInOrLogInComponent';
 
 // =========================================
 // SHIMMER
@@ -93,7 +96,7 @@ const renderShimmer = () => {
 const ServicesProfileScreen = ({route}) => {
   const {vendorId, location, category, previousScreen} = route.params;
 
-  console.log(' === ServicesProfileScreen ===> ', previousScreen);
+  // console.log(' === ServicesProfileScreen ===> ', previousScreen);
 
   const navigation = useNavigation();
 
@@ -107,16 +110,45 @@ const ServicesProfileScreen = ({route}) => {
 
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const [loginModal, setLoginModal] = useState(false);
+
+  const screenWidth = Dimensions.get('window').width;
+
+  console.log(' === vendorData ===> ', vendorData?.userProfilePic);
+
+  const onScroll = event => {
+    const slideSize = wp(100);
+
+    const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+
+    setActiveIndex(index);
+  };
+
   // =========================================
   // FIRST API
   // =========================================
+
+  // useEffect(() => {
+  //   // CLEAR OLD DATA
+  //   setVendorData(null);
+  //
+  //   // CALL NEW API
+  //   getVendorDetails();
+  // }, [vendorId]);
 
   useEffect(() => {
     // CLEAR OLD DATA
     setVendorData(null);
 
-    // CALL NEW API
+    // GET DETAILS
     getVendorDetails();
+
+    // CREATE PROFILE VIEW
+    if (user && vendorId) {
+      createProfileViewer();
+    }
   }, [vendorId]);
   // =========================================
   // GET DETAILS
@@ -264,14 +296,61 @@ const ServicesProfileScreen = ({route}) => {
     }
   };
 
+  const createProfileViewer = async () => {
+    try {
+      // USER NOT LOGIN
+      if (!user) {
+        return;
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/api/v1/user/profile-viewer/create-profile-viewer?appUsesType=vendor`,
+        {
+          method: 'POST',
+
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+
+            'Content-Type': 'application/json',
+          },
+
+          body: JSON.stringify({
+            viewerId: vendorId,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      console.log('PROFILE VIEW RESPONSE ===>', result);
+    } catch (error) {
+      console.log('PROFILE VIEW ERROR ===>', error);
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         backgroundColor: colors.white,
       }}>
-      {/* HEADER */}
+      <SignInOrLogInComponent
+        visible={loginModal}
+        onClose={() => {
+          setLoginModal(false);
+        }}
+        onSignUp={() => {
+          setLoginModal(false);
 
+          navigation.replace('NewSignUpScreen');
+        }}
+        onLogin={() => {
+          setLoginModal(false);
+
+          navigation.replace('NewLogInScreen');
+        }}
+      />
+      {/* HEADER */}
       <View
         style={{
           width: '100%',
@@ -287,16 +366,11 @@ const ServicesProfileScreen = ({route}) => {
           {/* BACK */}
           <TouchableOpacity
             activeOpacity={0.6}
-            // onPress={() => {
-            //   navigation.navigate('VendorSearchFilterScreen', {
-            //     location: location,
-            //     category: category,
-            //   });
-            // }}
-
             onPress={() => {
               if (previousScreen === 'VendorSavedScreen') {
                 navigation.navigate('VendorSavedScreen');
+              } else if (previousScreen === 'ServiceHomeScreen') {
+                navigation.navigate('Discover');
               } else {
                 navigation.navigate('VendorSearchFilterScreen', {
                   location: location,
@@ -338,9 +412,7 @@ const ServicesProfileScreen = ({route}) => {
             <Text
               style={{
                 color: colors.pureBlack,
-
                 fontSize: fontSize(14),
-
                 fontFamily: fontFamily.poppins500,
               }}>
               {vendorData?.name || 'NA'}
@@ -354,7 +426,8 @@ const ServicesProfileScreen = ({route}) => {
             onPress={() => {
               // LOGIN CHECK
               if (!user) {
-                navigation.replace('NewSignUpScreen');
+                // navigation.replace('NewSignUpScreen');
+                setLoginModal(true);
 
                 return;
               }
@@ -394,11 +467,8 @@ const ServicesProfileScreen = ({route}) => {
                 }
                 style={{
                   width: hp(20),
-
                   height: hp(18),
-
                   resizeMode: 'contain',
-
                   tintColor: vendorData?.isShortlisted ? 'red' : '#000',
                 }}
               />
@@ -406,136 +476,157 @@ const ServicesProfileScreen = ({route}) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/*<View*/}
-      {/*  style={{*/}
-      {/*    width: '100%',*/}
-      {/*    height: hp(60),*/}
-      {/*    justifyContent: 'center',*/}
-      {/*  }}>*/}
-      {/*  <View*/}
-      {/*    style={{*/}
-      {/*      flexDirection: 'row',*/}
-
-      {/*      justifyContent: 'space-between',*/}
-
-      {/*      alignItems: 'center',*/}
-      {/*    }}>*/}
-      {/*    /!* BACK *!/*/}
-      {/*    <TouchableOpacity*/}
-      {/*      activeOpacity={0.6}*/}
-      {/*      onPress={() => {*/}
-      {/*        // navigation.goBack();*/}
-      {/*        navigation.navigate('VendorSearchFilterScreen', {*/}
-      {/*          location: location,*/}
-      {/*          category: category,*/}
-      {/*        });*/}
-      {/*      }}*/}
-      {/*      style={{*/}
-      {/*        width: hp(50),*/}
-      {/*        height: hp(60),*/}
-      {/*        justifyContent: 'center',*/}
-      {/*        alignItems: 'center',*/}
-      {/*      }}>*/}
-      {/*      <Image*/}
-      {/*        source={icons.back_arrow_icon}*/}
-      {/*        style={{*/}
-      {/*          width: hp(14),*/}
-      {/*          height: hp(14),*/}
-      {/*        }}*/}
-      {/*      />*/}
-      {/*    </TouchableOpacity>*/}
-
-      {/*    /!* TITLE *!/*/}
-      {/*    <Text*/}
-      {/*      style={{*/}
-      {/*        color: colors.pureBlack,*/}
-
-      {/*        fontSize: fontSize(14),*/}
-
-      {/*        fontFamily: fontFamily.poppins500,*/}
-      {/*      }}>*/}
-      {/*      {vendorData?.name || 'NA'}*/}
-      {/*    </Text>*/}
-
-      {/*    /!* HEART *!/*/}
-      {/*    <TouchableOpacity*/}
-      {/*      activeOpacity={0.6}*/}
-      {/*      disabled={wishlistLoading}*/}
-      {/*      onPress={() => {*/}
-      {/*        // LOGIN CHECK*/}
-      {/*        if (!user) {*/}
-      {/*          navigation.replace('NewSignUpScreen');*/}
-
-      {/*          return;*/}
-      {/*        }*/}
-
-      {/*        // TOGGLE*/}
-      {/*        if (vendorData?.isShortlisted) {*/}
-      {/*          deleteShortlist();*/}
-      {/*        } else {*/}
-      {/*          createShortlist();*/}
-      {/*        }*/}
-      {/*      }}*/}
-      {/*      style={{*/}
-      {/*        width: hp(50),*/}
-      {/*        height: hp(60),*/}
-      {/*        justifyContent: 'center',*/}
-      {/*        alignItems: 'center',*/}
-      {/*      }}>*/}
-      {/*      {wishlistLoading ? (*/}
-      {/*        <ActivityIndicator size="small" color="#7148E4" />*/}
-      {/*      ) : (*/}
-      {/*        <Image*/}
-      {/*          source={*/}
-      {/*            vendorData?.isShortlisted*/}
-      {/*              ? icons.dating_white_heart*/}
-      {/*              : icons.black_heart_icon*/}
-      {/*          }*/}
-      {/*          style={{*/}
-      {/*            width: hp(20),*/}
-
-      {/*            height: hp(18),*/}
-
-      {/*            resizeMode: 'contain',*/}
-
-      {/*            tintColor: vendorData?.isShortlisted ? 'red' : '#000',*/}
-      {/*          }}*/}
-      {/*        />*/}
-      {/*      )}*/}
-      {/*    </TouchableOpacity>*/}
-      {/*  </View>*/}
-      {/*</View>*/}
-
       {/* SHIMMER */}
       {loading ? (
         renderShimmer()
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* BANNER */}
-          <Image
-            source={images.photo_studio_background_img}
+
+          <View
             style={{
-              width: '100%',
+              width: screenWidth,
               height: hp(375),
-            }}
-          />
+            }}>
+            {vendorData?.userProfilePic?.length > 0 ? (
+              <>
+                <FlatList
+                  data={vendorData?.userProfilePic}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  onMomentumScrollEnd={event => {
+                    const index = Math.round(
+                      event.nativeEvent.contentOffset.x / screenWidth,
+                    );
+
+                    setActiveIndex(index);
+                  }}
+                  renderItem={({item}) => {
+                    return (
+                      <Image
+                        source={{
+                          uri: item?.url,
+                        }}
+                        style={{
+                          width: screenWidth,
+                          height: hp(375),
+                        }}
+                      />
+                    );
+                  }}
+                />
+
+                {/* PAGINATION */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: hp(10),
+                    width: '100%',
+                    flexDirection: 'row',
+                    paddingHorizontal: wp(15),
+                  }}>
+                  {vendorData?.userProfilePic?.map((_, index) => {
+                    const isActive = activeIndex === index;
+
+                    return (
+                      <View
+                        key={index}
+                        style={{
+                          flex: 1,
+                          height: hp(1),
+                          backgroundColor: isActive
+                            ? colors.white
+                            : 'rgba(255,255,255,0.4)',
+                          marginHorizontal: wp(2),
+                          borderRadius: hp(10),
+                        }}
+                      />
+                    );
+                  })}
+                </View>
+              </>
+            ) : (
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#FAF8FF',
+                }}>
+                <Image
+                  source={icons.box_image_Icon}
+                  style={{
+                    tintColor: '#7148E4',
+                    width: hp(24),
+                    height: hp(24),
+                    resizeMode: 'contain',
+                    marginBottom: hp(10),
+                  }}
+                />
+
+                <Text
+                  style={{
+                    color: '#7148E43D',
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins500,
+                  }}>
+                  No Image Found
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/*<Image*/}
+          {/*  source={images.photo_studio_background_img}*/}
+          {/*  style={{*/}
+          {/*    width: '100%',*/}
+          {/*    height: hp(375),*/}
+          {/*  }}*/}
+          {/*/>*/}
 
           {/* PROFILE */}
           <View
             style={{
               alignItems: 'center',
-
               top: -50,
             }}>
-            <Image
-              source={images.photo_studio_img}
-              style={{
-                width: hp(100),
-
-                height: hp(100),
-              }}
-            />
+            {vendorData?.profilePic ? (
+              <Image
+                source={{uri: vendorData?.profilePic}}
+                style={{
+                  width: hp(100),
+                  height: hp(100),
+                  borderRadius: hp(50),
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: hp(100),
+                  height: hp(100),
+                  borderRadius: hp(50),
+                  backgroundColor: '#7B2CBF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(26),
+                    fontFamily: fontFamily.poppins600,
+                    textTransform: 'uppercase',
+                  }}>
+                  {vendorData?.name
+                    ?.split(' ')
+                    ?.map(word => word[0])
+                    ?.join('')
+                    ?.slice(0, 2) || 'U'}
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* NAME */}
@@ -546,11 +637,8 @@ const ServicesProfileScreen = ({route}) => {
             <Text
               style={{
                 textAlign: 'center',
-
                 color: colors.pureBlack,
-
                 fontSize: fontSize(22),
-
                 fontFamily: fontFamily.poppins600,
               }}>
               {vendorData?.name || 'NA'}
@@ -663,15 +751,12 @@ const ServicesProfileScreen = ({route}) => {
           <View
             style={{
               marginTop: hp(35),
-
               marginHorizontal: hp(15),
             }}>
             <Text
               style={{
                 color: colors.pureBlack,
-
                 fontSize: fontSize(16),
-
                 fontFamily: fontFamily.poppins500,
               }}>
               Our Services
@@ -680,9 +765,7 @@ const ServicesProfileScreen = ({route}) => {
             <View
               style={{
                 flexDirection: 'row',
-
                 flexWrap: 'wrap',
-
                 marginTop: hp(23),
               }}>
               {vendorData?.vendorData?.[0]?.servicesProvided?.map(
@@ -696,34 +779,22 @@ const ServicesProfileScreen = ({route}) => {
                       key={index}
                       style={{
                         height: hp(33),
-
                         backgroundColor: '#F9F6FF',
-
                         borderRadius: hp(50),
-
                         justifyContent: 'center',
-
                         alignItems: 'center',
-
                         flexDirection: 'row',
-
                         paddingHorizontal: wp(14),
-
                         marginRight: wp(10),
-
                         marginBottom: hp(10),
                       }}>
                       <Image
                         source={icons.wedding_Studio_icon}
                         style={{
                           width: hp(18),
-
                           height: hp(18),
-
                           resizeMode: 'contain',
-
                           marginRight: wp(10),
-
                           tintColor: '#7148E4',
                         }}
                       />
@@ -731,9 +802,7 @@ const ServicesProfileScreen = ({route}) => {
                       <Text
                         style={{
                           color: colors.pureBlack,
-
                           fontSize: fontSize(12),
-
                           fontFamily: fontFamily.poppins500,
                         }}>
                         {formattedService}
@@ -746,18 +815,17 @@ const ServicesProfileScreen = ({route}) => {
           </View>
 
           {/* LINE */}
-          <View
-            style={{
-              width: '100%',
-              height: 4,
-              backgroundColor: '#F7F7F7',
-
-              marginTop: hp(31),
-            }}
-          />
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    width: '100%',*/}
+          {/*    height: 4,*/}
+          {/*    backgroundColor: '#F7F7F7',*/}
+          {/*    marginTop: hp(31),*/}
+          {/*  }}*/}
+          {/*/>*/}
 
           {/* SIMILAR */}
-          <ServicesRecentlyComponent labelHeading={'More Similars'} />
+          {/*<ServicesRecentlyComponent labelHeading={'More Similars'} />*/}
 
           <View
             style={{

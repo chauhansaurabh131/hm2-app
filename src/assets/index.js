@@ -247,6 +247,11 @@ export const icons = {
   location_Icon: require('./icons/location_Icon.png'),
   right_Arrow_Color_Icon: require('./icons/right_Arrow_color_Icon.png'),
   twitter_Icon: require('./icons/twitter_Icon.png'),
+  not_Notification_Icon: require('./icons/not_Notification_Icon.png'),
+  box_image_Icon: require('./icons/box_image_Icon.png'),
+  no_Vendor_Icon: require('./icons/no_Vendor_Icon.png'),
+  people_Icon: require('./icons/people_Icon.png'),
+  people_Message_Icon: require('./icons/people_Message_Icon.png'),
 };
 
 export const gif = {

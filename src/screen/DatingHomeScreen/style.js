@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
-import { colors } from '../../utils/colors';
-import { fontFamily, fontSize, hp, wp } from '../../utils/helpers';
+import {StyleSheet} from 'react-native';
+import {colors} from '../../utils/colors';
+import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 
 export const style = StyleSheet.create({
   container: {
@@ -14,6 +14,7 @@ export const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: hp(12),
+    alignItems: 'center',
   },
   appLogoStyle: {
     width: wp(96),

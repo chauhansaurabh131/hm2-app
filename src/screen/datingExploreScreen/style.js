@@ -42,7 +42,7 @@ export const style = StyleSheet.create({
     alignItems: 'center',
   },
   activeButton: {
-    borderRadius: 20,
+    borderRadius: hp(20),
     width: wp(107),
     height: hp(40),
     justifyContent: 'center',

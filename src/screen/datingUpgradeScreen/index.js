@@ -23,6 +23,7 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import RazorpayCheckout from 'react-native-razorpay';
 import Config from 'react-native-config';
 import GradientButton from '../../components/GradientButton';
+import {BASE_URL} from '../../utils/constants';
 
 const PlanItem = ({item, onPress, planDetails}) => {
   const [pressed, setPressed] = useState(false);
@@ -126,7 +127,7 @@ const DatingUpgradeScreen = () => {
   // console.log(' === planDetails ===> ', planDetails?.status);
   // console.log(' === planDetails___ ===> ', planDetails);
 
-  const API_URL = Config.API_URL || 'https://stag.mntech.website/api';
+  const API_URL = Config.API_URL || `${BASE_URL}/api`;
 
   const bottomSheetRef = useRef(null);
 
@@ -134,7 +135,7 @@ const DatingUpgradeScreen = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        'https://stag.mntech.website/api/v1/user/plan/get-plan-dating',
+        `${BASE_URL}/api/v1/user/plan/get-plan-dating`,
         {headers: {Authorization: `Bearer ${accessToken}`}},
       );
       setPlans(response.data?.data || []);
@@ -155,7 +156,7 @@ const DatingUpgradeScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
+        `${BASE_URL}/api/v1/user/user-plan/get-user-planbyId`,
         {
           method: 'GET',
           headers: {
@@ -188,7 +189,7 @@ const DatingUpgradeScreen = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-credit/${userId}`,
+        `${BASE_URL}/api/v1/user/user/get-credit/${userId}`,
         {
           method: 'GET',
           headers: {

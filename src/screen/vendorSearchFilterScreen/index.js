@@ -200,11 +200,12 @@ const VendorSearchFilterScreen = ({route}) => {
 
       const response = await fetch(
         `${BASE_URL}/api/v1/user/user/vendors-search?businessType=${category}&city=${location}&page=${currentPage}&limit=10`,
+        // `${BASE_URL}/api/v1/user/user/vendors?businessType=${category}&page=${currentPage}&limit=10`,
       );
 
       const result = await response.json();
 
-      console.log('API RESPONSE ===>', result);
+      // console.log('API RESPONSE ===>', result);
 
       const newData = result?.data || [];
 
@@ -275,7 +276,7 @@ const VendorSearchFilterScreen = ({route}) => {
 
       const city = location?.split(',')[0];
 
-      const selectedArea = selectedAreas[0];
+      const selectedArea = selectedAreas.join(',');
 
       const response = await fetch(
         `${BASE_URL}/api/v1/user/user/vendors-search?businessType=${category}&city=${city}&area=${selectedArea}&page=1&limit=5`,
@@ -353,9 +354,11 @@ const VendorSearchFilterScreen = ({route}) => {
   // =========================================
 
   const renderItem = ({item}) => {
+    // console.log(' === var ===> ', item?.profilePic);
+
     const services = item?.vendorData?.[0]?.servicesProvided || [];
 
-    console.log(' === var ===> ', item?._id);
+    // console.log(' === var ===> ', item?._id);
 
     // FORMAT TEXT
     const formattedServices = services.map(service =>
@@ -399,37 +402,105 @@ const VendorSearchFilterScreen = ({route}) => {
               width: '100%',
               borderWidth: 1,
               borderColor: '#EFEFEF',
-              borderRadius: 15,
+              borderRadius: hp(15),
             }}>
             {/* Background image */}
-            <Image
-              source={{
-                uri:
-                  item?.userProfilePic?.[0]?.url ||
-                  'https://via.placeholder.com/300',
-              }}
-              style={{
-                width: '100%',
-                height: hp(167),
-                borderRadius: 15,
-              }}
-            />
-
-            {/* Profile image */}
-            <View style={{top: -25}}>
+            {item?.userProfilePic?.[0]?.url ? (
               <Image
                 source={{
-                  uri: item?.profilePic || 'https://via.placeholder.com/150',
+                  uri: item?.userProfilePic?.[0]?.url,
                 }}
                 style={{
-                  width: hp(50),
-                  height: hp(50),
-                  marginLeft: wp(17),
-                  borderRadius: hp(50),
-                  backgroundColor: 'white',
+                  width: '100%',
+                  height: hp(167),
+                  borderRadius: hp(15),
                 }}
               />
+            ) : (
+              <View
+                style={{
+                  width: '100%',
+                  height: hp(167),
+                  borderRadius: hp(15),
+                  backgroundColor: '#FAF8FF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.box_image_Icon}
+                  style={{
+                    tintColor: '#7148E4',
+                    width: hp(20),
+                    height: hp(26),
+                    resizeMode: 'contain',
+                  }}
+                />
+
+                <Text
+                  style={{
+                    color: '#7148E43D',
+                    fontSize: fontSize(10),
+                    fontFamily: fontFamily.poppins600,
+                  }}>
+                  No Image Found
+                </Text>
+              </View>
+            )}
+
+            {/* Profile image */}
+            <View style={{top: -35, marginLeft: wp(17)}}>
+              {item?.profilePic ? (
+                <Image
+                  source={{
+                    uri: item?.profilePic,
+                  }}
+                  style={{
+                    width: hp(50),
+                    height: hp(50),
+                    borderRadius: hp(50),
+                    backgroundColor: 'white',
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: hp(50),
+                    height: hp(50),
+                    borderRadius: hp(50),
+                    backgroundColor: '#7B2CBF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.white,
+                      fontSize: fontSize(18),
+                      fontFamily: fontFamily.poppins600,
+                      textTransform: 'uppercase',
+                    }}>
+                    {item?.name
+                      ?.split(' ')
+                      ?.map(word => word[0])
+                      ?.join('')
+                      ?.slice(0, 2) || 'U'}
+                  </Text>
+                </View>
+              )}
             </View>
+            {/*<View style={{top: -25}}>*/}
+            {/*  <Image*/}
+            {/*    source={{*/}
+            {/*      uri: item?.profilePic || 'https://via.placeholder.com/150',*/}
+            {/*    }}*/}
+            {/*    style={{*/}
+            {/*      width: hp(50),*/}
+            {/*      height: hp(50),*/}
+            {/*      marginLeft: wp(17),*/}
+            {/*      borderRadius: hp(50),*/}
+            {/*      backgroundColor: 'white',*/}
+            {/*    }}*/}
+            {/*  />*/}
+            {/*</View>*/}
 
             {/* Studio info */}
             <View style={{marginHorizontal: wp(17)}}>
@@ -694,14 +765,27 @@ const VendorSearchFilterScreen = ({route}) => {
           ListFooterComponent={renderFooter}
           // EMPTY DATA
           ListEmptyComponent={() => (
-            <Text
+            <View
               style={{
-                textAlign: 'center',
-                marginTop: 40,
-                color: '#000',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: hp(250),
               }}>
-              No Vendors Found
-            </Text>
+              <Image
+                source={icons.no_Vendor_Icon}
+                style={{width: hp(82), height: hp(82), resizeMode: 'contain'}}
+              />
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: hp(20),
+                  color: '#959090',
+                  fontSize: fontSize(16),
+                  fontFamily: fontFamily.poppins400,
+                }}>
+                No Vendor Found
+              </Text>
+            </View>
           )}
         />
       )}
@@ -739,7 +823,7 @@ const VendorSearchFilterScreen = ({route}) => {
                 color: colors.pureBlack,
                 fontSize: fontSize(18),
                 fontFamily: fontFamily.poppins600,
-                marginTop: hp(10),
+                // marginTop: hp(10),
               }}>
               Filter by area
             </Text>
@@ -782,7 +866,7 @@ const VendorSearchFilterScreen = ({route}) => {
               width: '100%',
               height: hp(1),
               backgroundColor: '#E7E7E7',
-              marginTop: hp(16),
+              marginTop: hp(23),
             }}
           />
 
@@ -793,26 +877,24 @@ const VendorSearchFilterScreen = ({route}) => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: hp(20),
+
               paddingTop: hp(20),
             }}
             renderItem={({item}) => {
               const isSelected = selectedAreas.includes(item?.area);
 
-              // IF ONE SELECTED
-              const isDisabled = selectedAreas.length > 0 && !isSelected;
-
               return (
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  disabled={isDisabled}
                   onPress={() => {
                     toggleAreaSelection(item?.area);
                   }}
                   style={{
                     flexDirection: 'row',
+
                     alignItems: 'center',
+
                     paddingVertical: hp(10),
-                    opacity: isDisabled ? 0.8 : 1,
                   }}>
                   {/* CHECKBOX */}
                   <CheckBox
@@ -821,20 +903,26 @@ const VendorSearchFilterScreen = ({route}) => {
                       toggleAreaSelection(item?.area);
                     }}
                     checkedCheckBoxColor="#7148E4"
-                    uncheckedCheckBoxColor={isDisabled ? '#BDBDBD' : '#444'}
-                    checkBoxColor={isDisabled ? '#BDBDBD' : '#7148E4'}
-                    disabled={isDisabled}
+                    uncheckedCheckBoxColor="#444"
+                    checkBoxColor="#7148E4"
                     style={{
-                      transform: [{scale: 1.4}],
+                      transform: [
+                        {
+                          scale: 1.4,
+                        },
+                      ],
                     }}
                   />
 
                   {/* TEXT */}
                   <Text
                     style={{
-                      color: isDisabled ? '#BDBDBD' : colors.pureBlack,
+                      color: colors.pureBlack,
+
                       fontSize: fontSize(15),
+
                       fontFamily: fontFamily.poppins500,
+
                       marginLeft: wp(16),
                     }}>
                     {item?.area}
@@ -846,7 +934,9 @@ const VendorSearchFilterScreen = ({route}) => {
               <Text
                 style={{
                   textAlign: 'center',
+
                   marginTop: hp(30),
+
                   color: colors.pureBlack,
                 }}>
                 No Areas Found

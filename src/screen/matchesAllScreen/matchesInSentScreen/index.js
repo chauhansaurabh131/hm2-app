@@ -27,6 +27,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import style from '../../matchesScreen/style';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import axios from 'axios';
+import {BASE_URL} from '../../../utils/constants';
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const MatchesInSentScreen = () => {
@@ -104,7 +105,7 @@ const MatchesInSentScreen = () => {
 
       // Call the API to get match details
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?.friendList?._id}`,
+        `${BASE_URL}/api/v1/user/user/get-match-user/${item?.friendList?._id}`,
         {
           method: 'GET',
           headers: {
@@ -166,7 +167,7 @@ const MatchesInSentScreen = () => {
 
     try {
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/friend/get-request-sent?page=${pageNumber}`,
+        `${BASE_URL}/api/v1/user/friend/get-request-sent?page=${pageNumber}`,
         {
           method: 'GET',
           headers: {
@@ -307,7 +308,7 @@ const MatchesInSentScreen = () => {
   const addToShortlist = async shortlistId => {
     try {
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        `${BASE_URL}/api/v1/user/shortlist/create-shortlist`,
         {shortlistId},
         {
           headers: {
@@ -344,7 +345,7 @@ const MatchesInSentScreen = () => {
     try {
       // Call the remove from shortlist API
       const response = await axios.delete(
-        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        `${BASE_URL}/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -423,7 +424,7 @@ const MatchesInSentScreen = () => {
   const handleConfirmBlock = async () => {
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/block-user',
+        `${BASE_URL}/api/v1/user/friend/block-user`,
         {
           method: 'POST',
           headers: {
@@ -543,7 +544,7 @@ const MatchesInSentScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -601,7 +602,7 @@ const MatchesInSentScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -1255,27 +1256,38 @@ const MatchesInSentScreen = () => {
           </View>
         </View>
       ) : data?.length === 0 ? (
-        <View style={{flex: 1, marginTop: hp(250)}}>
-          <View style={{alignItems: 'center'}}>
-            <Image
-              source={icons.no_Profile_Found_img}
-              style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
-            />
+        <View style={{marginTop: hp(250)}}>
+          <View
+            style={{
+              alignItems: 'center',
+            }}>
             <View
               style={{
-                position: 'absolute',
-                marginTop: hp(50),
+                width: hp(82),
+                height: hp(82),
+                borderRadius: hp(50),
+                backgroundColor: '#F8F6FF',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-              <Text
+              <Image
+                source={icons.people_Icon}
                 style={{
-                  color: colors.black,
-                  fontSize: fontSize(18),
-                  lineHeight: hp(27),
-                  fontFamily: fontFamily.poppins400,
-                }}>
-                No Profile Found
-              </Text>
+                  width: hp(38),
+                  height: hp(32),
+                  resizeMode: 'contain',
+                }}
+              />
             </View>
+            <Text
+              style={{
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: '#959090',
+                marginTop: hp(21),
+              }}>
+              No Profiles Found
+            </Text>
           </View>
         </View>
       ) : (

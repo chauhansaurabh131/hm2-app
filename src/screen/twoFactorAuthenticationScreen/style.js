@@ -28,7 +28,7 @@ const style = StyleSheet.create({
   headingTittleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: hp(31),
+    marginTop: hp(10),
   },
   headingCredentialsText: {
     // marginLeft: wp(12.8),
@@ -56,15 +56,15 @@ const style = StyleSheet.create({
     backgroundColor: '#E7E7E7',
   },
   switchWrapper: {
-    borderRadius: 15,
+    borderRadius: hp(15),
     overflow: 'hidden',
-    borderWidth: 1.5,
+    borderWidth: hp(1),
     borderColor: '#D6D6D6',
   },
   switch: {
     width: hp(50),
     height: hp(25),
-    borderRadius: 15,
+    borderRadius: hp(15),
     justifyContent: 'center',
     position: 'relative',
   },
@@ -72,9 +72,9 @@ const style = StyleSheet.create({
     position: 'absolute',
   },
   circle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: hp(20),
+    height: hp(20),
+    borderRadius: hp(15),
   },
   bodyContainer: {
     flexDirection: 'row',

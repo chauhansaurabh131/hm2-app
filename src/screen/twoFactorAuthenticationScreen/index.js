@@ -149,34 +149,31 @@ const TwoFactorAuthenticationScreen = () => {
   return (
     <SafeAreaView style={style.container}>
       <View style={style.headerContainerView}>
-        <View style={style.headerContainerStyle}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customerHeaderImage}
-          />
-          {/*<TouchableOpacity onPress={openTopSheetModal}>*/}
-          <TouchableOpacity onPress={openBottomSheet}>
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={style.profileImageStyle}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileImageStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-            {/*<Image*/}
-            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-            {/*  style={style.profileImageStyle}*/}
-            {/*/>*/}
-          </TouchableOpacity>
-        </View>
+        {/*<View style={style.headerContainerStyle}>*/}
+        {/*  <Image*/}
+        {/*    source={images.happyMilanColorLogo}*/}
+        {/*    style={style.customerHeaderImage}*/}
+        {/*  />*/}
 
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+        {/*  <TouchableOpacity onPress={openBottomSheet}>*/}
+        {/*    {userImage ? (*/}
+        {/*      <Image*/}
+        {/*        source={{uri: userImage}}*/}
+        {/*        style={style.profileImageStyle}*/}
+        {/*      />*/}
+        {/*    ) : (*/}
+        {/*      <ProfileAvatar*/}
+        {/*        firstName={user?.user?.firstName}*/}
+        {/*        lastName={user?.user?.lastName}*/}
+        {/*        textStyle={style.profileImageStyle}*/}
+        {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*      />*/}
+        {/*    )}*/}
+
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
+
+        {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
 
         <View style={style.headingTittleContainer}>
           <Text style={style.headingCredentialsText}>Enable 2FA</Text>
@@ -261,143 +258,6 @@ const TwoFactorAuthenticationScreen = () => {
               </View>
             </LinearGradient>
           </TouchableOpacity>
-
-          {/* Modal component */}
-          {/*<Modal*/}
-          {/*  visible={isModalVisible}*/}
-          {/*  animationType="none" // You can choose 'fade' or 'slide' for the animation*/}
-          {/*  transparent={true} // Makes the background behind the modal dim*/}
-          {/*  onRequestClose={() => {*/}
-          {/*    onTurnOffPress;*/}
-          {/*  }} // Close the modal when the back button is pressed on Android*/}
-          {/*>*/}
-          {/*  <View*/}
-          {/*    style={{*/}
-          {/*      flex: 1,*/}
-          {/*      justifyContent: 'center',*/}
-          {/*      alignItems: 'center',*/}
-          {/*      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dimmed background*/}
-          {/*    }}>*/}
-          {/*    <View*/}
-          {/*      style={{*/}
-          {/*        width: '90%',*/}
-          {/*        backgroundColor: 'white',*/}
-          {/*        borderRadius: 10,*/}
-          {/*      }}>*/}
-          {/*      <View style={{marginTop: hp(54)}}>*/}
-          {/*        <Text*/}
-          {/*          style={{*/}
-          {/*            textAlign: 'center',*/}
-          {/*            color: colors.black,*/}
-          {/*            fontSize: fontSize(16),*/}
-          {/*            lineHeight: hp(24),*/}
-          {/*            fontFamily: fontFamily.poppins400,*/}
-          {/*          }}>*/}
-          {/*          Disabling 2-step verification will*/}
-          {/*        </Text>*/}
-          {/*        <Text*/}
-          {/*          style={{*/}
-          {/*            textAlign: 'center',*/}
-          {/*            color: colors.black,*/}
-          {/*            fontSize: fontSize(16),*/}
-          {/*            lineHeight: hp(24),*/}
-          {/*            fontFamily: fontFamily.poppins400,*/}
-          {/*          }}>*/}
-          {/*          eliminate the additional security for{' '}*/}
-          {/*        </Text>*/}
-          {/*        <Text*/}
-          {/*          style={{*/}
-          {/*            textAlign: 'center',*/}
-          {/*            color: colors.black,*/}
-          {/*            fontSize: fontSize(16),*/}
-          {/*            lineHeight: hp(24),*/}
-          {/*            fontFamily: fontFamily.poppins400,*/}
-          {/*          }}>*/}
-          {/*          your account.{' '}*/}
-          {/*        </Text>*/}
-          {/*      </View>*/}
-          {/*      /!*<Button title="Close" onPress={onTurnOffPress} />*!/*/}
-
-          {/*      <View*/}
-          {/*        style={{*/}
-          {/*          flexDirection: 'row',*/}
-          {/*          justifyContent: 'center',*/}
-          {/*          marginTop: hp(32),*/}
-          {/*          marginBottom: hp(52),*/}
-          {/*        }}>*/}
-          {/*        <TouchableOpacity*/}
-          {/*          activeOpacity={0.7}*/}
-          {/*          style={{marginRight: hp(17)}}*/}
-          {/*          onPress={() => {*/}
-          {/*            setIsModalVisible(false);*/}
-          {/*          }}>*/}
-          {/*          <LinearGradient*/}
-          {/*            colors={['#0D4EB3', '#9413D0']}*/}
-          {/*            style={{*/}
-          {/*              width: hp(120),*/}
-          {/*              height: hp(46),*/}
-          {/*              borderRadius: 50,*/}
-          {/*              borderWidth: 1,*/}
-          {/*              justifyContent: 'center',*/}
-          {/*              borderColor: 'transparent', // Set border color to transparent*/}
-          {/*            }}>*/}
-          {/*            <View*/}
-          {/*              style={{*/}
-          {/*                borderRadius: 50, // <-- Inner Border Radius*/}
-          {/*                flex: 1,*/}
-          {/*                backgroundColor: colors.white,*/}
-          {/*                justifyContent: 'center',*/}
-          {/*                margin: isIOS ? 0 : 1,*/}
-          {/*              }}>*/}
-          {/*              <Text*/}
-          {/*                style={{*/}
-          {/*                  textAlign: 'center',*/}
-          {/*                  backgroundColor: 'transparent',*/}
-          {/*                  color: colors.black,*/}
-          {/*                  margin: 10,*/}
-          {/*                  fontSize: fontSize(16),*/}
-          {/*                  lineHeight: hp(24),*/}
-          {/*                  fontFamily: fontFamily.poppins400,*/}
-          {/*                }}>*/}
-          {/*                Cancel*/}
-          {/*              </Text>*/}
-          {/*            </View>*/}
-          {/*          </LinearGradient>*/}
-          {/*        </TouchableOpacity>*/}
-
-          {/*        <TouchableOpacity*/}
-          {/*          activeOpacity={0.7}*/}
-          {/*          onPress={handleTurnOff2FA}>*/}
-          {/*          <LinearGradient*/}
-          {/*            colors={['#0F52BA', '#8225AF']}*/}
-          {/*            start={{x: 0, y: 0}}*/}
-          {/*            end={{x: 1, y: 1.2}}*/}
-          {/*            style={{*/}
-          {/*              width: hp(120),*/}
-          {/*              height: hp(44),*/}
-          {/*              borderRadius: 50,*/}
-          {/*              alignItems: 'center',*/}
-          {/*              justifyContent: 'center',*/}
-          {/*              alignSelf: 'center',*/}
-          {/*              // marginTop: hp(75),*/}
-          {/*            }}>*/}
-          {/*            <Text*/}
-          {/*              style={{*/}
-          {/*                color: 'white',*/}
-          {/*                fontSize: fontSize(16),*/}
-          {/*                lineHeight: hp(24),*/}
-          {/*                fontFamily: fontFamily.poppins400,*/}
-          {/*              }}>*/}
-          {/*              Turn off*/}
-          {/*            </Text>*/}
-          {/*          </LinearGradient>*/}
-          {/*        </TouchableOpacity>*/}
-
-          {/*        <View style={{marginBottom: 10}} />*/}
-          {/*      </View>*/}
-          {/*    </View>*/}
-          {/*  </View>*/}
-          {/*</Modal>*/}
         </View>
       ) : (
         <>

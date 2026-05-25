@@ -2235,6 +2235,7 @@ const UserProfileDetailsScreen = () => {
                                     borderRadius: hp(50),
                                     alignItems: 'center',
                                     justifyContent: 'center',
+                                    marginTop: hp(10),
                                   }}>
                                   <Text
                                     style={{
@@ -3396,7 +3397,7 @@ const UserProfileDetailsScreen = () => {
                           width: '100%',
                           height: hp(1),
                           backgroundColor: '#DDDDDD',
-                          marginTop: hp(34),
+                          marginTop: hp(18),
                           marginBottom: hp(21),
                         }}
                       />

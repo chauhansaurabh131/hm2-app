@@ -52,19 +52,12 @@ const DatingHomeScreen = () => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user***** ===> ', user?.user);
-
   const bottomSheetRef = useRef(null);
 
   const topModalBottomSheetRef = useRef(null);
   const openBottomSheet = () => {
     topModalBottomSheetRef.current.open();
   };
-
-  // // Calculate age dynamically based on progress
-  // const minAge = 18;
-  // const maxAge = 50; // Max possible age
-  // const currentAge = Math.round(minAge + (maxAge - minAge) * ageProgress);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -211,19 +204,6 @@ const DatingHomeScreen = () => {
     }
   };
 
-  const userProfileCompleted = user?.user?.userProfileCompleted;
-  const userPartnerFormPreCompleted = user?.user?.userPartnerPreCompleted;
-
-  // const handleButtonClick = () => {
-  //   if (activeLine === 3) {
-  //     setShowModal(false);
-  //     setActiveLine(1); // Reset the active line
-  //     navigation.navigate('DatingCreatingProfile');
-  //   } else {
-  //     setActiveLine(prev => prev + 1);
-  //   }
-  // };
-
   const handleButtonClick = async () => {
     if (activeLine === 3) {
       try {
@@ -248,24 +228,6 @@ const DatingHomeScreen = () => {
     setModalVisible(false);
     navigation.navigate('DatingPartnerPreferenceScreen');
   };
-
-  // useEffect(() => {
-  //   if (userProfileCompleted) {
-  //     setShowModal(false);
-  //   }
-  // }, [userProfileCompleted]);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (!userProfileCompleted) {
-  //       // If userProfileCompleted is false, show the modal
-  //       setShowModal(true);
-  //     } else if (userProfileCompleted && !userPartnerFormPreCompleted) {
-  //       // If userProfileCompleted is true and userPartnerFormPreCompleted is false, show the modal
-  //       setModalVisible(true);
-  //     }
-  //   }, [userProfileCompleted, userPartnerFormPreCompleted]),
-  // );
 
   const openTopSheetModal = () => {
     // Call toggleModal to show the top modal
@@ -309,6 +271,32 @@ const DatingHomeScreen = () => {
             source={images.happyMilanColorLogo}
             style={style.appLogoStyle}
           />
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('ServiceTabs');
+            }}
+            style={{
+              paddingVertical: hp(4),
+              paddingHorizontal: wp(10),
+              backgroundColor: '#F7F4FF',
+              borderRadius: hp(100),
+              flexDirection: 'row',
+              alignItems: 'center',
+              left: 25,
+            }}>
+            <Image
+              source={icons.search_icon}
+              style={{
+                width: hp(9),
+                height: hp(9),
+                tintColor: '#7148E4',
+                resizeMode: 'contain',
+                marginRight: wp(7),
+              }}
+            />
+            <Text style={{color: '#7148E4'}}>Find Nearby Vendors</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.7}

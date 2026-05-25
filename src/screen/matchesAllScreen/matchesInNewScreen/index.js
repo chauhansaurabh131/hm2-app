@@ -28,6 +28,7 @@ import Toast from 'react-native-toast-message';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import axios from 'axios';
 import CustomGradientLoader from '../../../components/CustomGradientLoader';
+import {BASE_URL} from '../../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -108,7 +109,7 @@ const MatchesInNewScreen = () => {
 
       // Call the API to get match details
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item._id}`,
+        `${BASE_URL}/api/v1/user/user/get-match-user/${item._id}`,
         {
           method: 'GET',
           headers: {
@@ -168,7 +169,7 @@ const MatchesInNewScreen = () => {
       console.log('Fetching data for page:', pageNumber);
 
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/getUserByGender?page=${pageNumber}`,
+        `${BASE_URL}/api/v1/user/user/getUserByGender?page=${pageNumber}`,
         {
           method: 'GET',
           headers: {
@@ -239,7 +240,7 @@ const MatchesInNewScreen = () => {
   const addToShortlist = async shortlistId => {
     try {
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        `${BASE_URL}/api/v1/user/shortlist/create-shortlist`,
         {shortlistId},
         {
           headers: {
@@ -276,7 +277,7 @@ const MatchesInNewScreen = () => {
     try {
       // Call the remove from shortlist API
       const response = await axios.delete(
-        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        `${BASE_URL}/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -433,7 +434,7 @@ const MatchesInNewScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -491,7 +492,7 @@ const MatchesInNewScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -913,20 +914,34 @@ const MatchesInNewScreen = () => {
                   marginTop: hp(250),
                   justifyContent: 'center',
                 }}>
-                <Image
-                  source={icons.no_Profile_Found_img}
-                  style={{width: hp(44), height: hp(44), resizeMode: 'contain'}}
-                />
-                <Text
+                <View
                   style={{
-                    color: colors.black,
-                    fontSize: fontSize(18),
-                    lineHeight: hp(27),
-                    fontFamily: fontFamily.poppins400,
-                    marginTop: hp(12),
+                    width: hp(82),
+                    height: hp(82),
+                    borderRadius: hp(50),
+                    backgroundColor: '#F8F6FF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  No Profiles Found
-                </Text>
+                  <Image
+                    source={icons.people_Icon}
+                    style={{
+                      width: hp(44),
+                      height: hp(44),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: colors.black,
+                      fontSize: fontSize(18),
+                      lineHeight: hp(27),
+                      fontFamily: fontFamily.poppins400,
+                      marginTop: hp(12),
+                    }}>
+                    No Profiles Found
+                  </Text>
+                </View>
               </View>
             </View>
           ) : null

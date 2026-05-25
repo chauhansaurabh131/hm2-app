@@ -137,36 +137,30 @@ const AccountsScreen = ({navigation}) => {
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
-        <View style={style.headerContainerStyle}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customerHeaderImage}
-          />
+        {/*<View style={style.headerContainerStyle}>*/}
+        {/*  <Image*/}
+        {/*    source={images.happyMilanColorLogo}*/}
+        {/*    style={style.customerHeaderImage}*/}
+        {/*  />*/}
 
-          {/*<TouchableOpacity activeOpacity={0.7} onPress={openTopSheetModal}>*/}
-          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={style.profileImageStyle}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileImageStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
+        {/*  <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+        {/*    {userImage ? (*/}
+        {/*      <Image*/}
+        {/*        source={{uri: userImage}}*/}
+        {/*        style={style.profileImageStyle}*/}
+        {/*      />*/}
+        {/*    ) : (*/}
+        {/*      <ProfileAvatar*/}
+        {/*        firstName={user?.user?.firstName}*/}
+        {/*        lastName={user?.user?.lastName}*/}
+        {/*        textStyle={style.profileImageStyle}*/}
+        {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*      />*/}
+        {/*    )}*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
 
-            {/*<Image*/}
-            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-            {/*  style={style.profileImageStyle}*/}
-            {/*/>*/}
-          </TouchableOpacity>
-        </View>
-
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+        {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
 
         <Text style={style.headerTittleStyle}>Account Setting</Text>
       </View>
@@ -428,46 +422,6 @@ const AccountsScreen = ({navigation}) => {
         </TouchableHighlight>
 
         <View style={style.descriptionBodyUnderlineStyle} />
-
-        {/*<TouchableHighlight*/}
-        {/*  activeOpacity={0.6}*/}
-        {/*  underlayColor="#F9FBFF"*/}
-        {/*  onPress={() => {*/}
-        {/*    navigation.navigate('EmailSmsAlertScreen');*/}
-        {/*  }}>*/}
-        {/*  <View style={{marginHorizontal: 17, marginBottom: 15}}>*/}
-        {/*    <View*/}
-        {/*      // activeOpacity={0.5}*/}
-        {/*      style={{marginTop: hp(16)}}*/}
-        {/*      // onPress={() => {*/}
-        {/*      //   navigation.navigate('EmailSmsAlertScreen');*/}
-        {/*      // }}*/}
-        {/*    >*/}
-        {/*      <View style={style.bodyDescription}>*/}
-        {/*        <View style={{width: 25}}>*/}
-        {/*          <Image*/}
-        {/*            source={icons.notification_icon}*/}
-        {/*            style={style.emailSmsIconStyle}*/}
-        {/*          />*/}
-        {/*        </View>*/}
-
-        {/*        <Image*/}
-        {/*          source={icons.rightSideIcon}*/}
-        {/*          style={style.sideArrowImageStyle}*/}
-        {/*        />*/}
-        {/*        <View style={style.credentialTittleContainer}>*/}
-        {/*          <Text style={style.credentialTittleText}>Notifications</Text>*/}
-        {/*          <Text style={style.credentialDescriptionTextStyle}>*/}
-        {/*            Manage how and when you receive alerts.{'\n'}Choose between*/}
-        {/*            email, SMS, or app notifications.*/}
-        {/*          </Text>*/}
-        {/*        </View>*/}
-        {/*      </View>*/}
-        {/*    </View>*/}
-        {/*  </View>*/}
-        {/*</TouchableHighlight>*/}
-
-        {/*<View style={style.descriptionBodyUnderlineStyle} />*/}
 
         {user?.user?.appUsesType === 'dating' && (
           <TouchableHighlight

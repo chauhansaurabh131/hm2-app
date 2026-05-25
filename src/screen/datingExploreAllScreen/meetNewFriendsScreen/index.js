@@ -29,6 +29,7 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import Toast from 'react-native-toast-message';
 import CompleteYourProfileModalComponent from '../../../components/completeYourProfileModalComponent';
+import {BASE_URL} from '../../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -243,7 +244,7 @@ const MeetNewFriendsScreen = ({route}) => {
       setLoading(true);
       try {
         const response = await axios.post(
-          `https://stag.mntech.website/api/v1/user/user/getUser-list-by-interest?page=${page}`,
+          `${BASE_URL}/api/v1/user/user/getUser-list-by-interest?page=${page}`,
           {
             // interestedIn: 'meet-new-friends',
             interestedIn: category,
@@ -288,7 +289,7 @@ const MeetNewFriendsScreen = ({route}) => {
       // Sending friend request
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/create-friend?appUsesType=dating`,
           {
             friend: card._id, // Friend's ID
             user: userId, // Logged-in user's ID
@@ -364,7 +365,7 @@ const MeetNewFriendsScreen = ({route}) => {
       // Removing friend request
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
           {
             user: card._id, // Friend's ID
             request: requestedId, // Use stored request ID
@@ -424,7 +425,7 @@ const MeetNewFriendsScreen = ({route}) => {
       if (currentLikeStatus) {
         // Unlike user
         const response = await axios.put(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentLikeStatusId}`,
+          `${BASE_URL}/api/v1/user/like/update-like/${currentLikeStatusId}`,
           {
             likedUserId: likedUserId,
             isLike: false,
@@ -469,7 +470,7 @@ const MeetNewFriendsScreen = ({route}) => {
       } else {
         // Like user
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/like/create-like?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/like/create-like?appUsesType=dating`,
           {
             likedUserId: likedUserId,
             isLike: true,
@@ -912,20 +913,6 @@ const MeetNewFriendsScreen = ({route}) => {
             source={images.happyMilanColorLogo}
             style={style.appLogoStyle}
           />
-
-          {/*<TouchableOpacity*/}
-          {/*  activeOpacity={0.7}*/}
-          {/*  onPress={openBottomSheet}*/}
-          {/*  style={{alignSelf: 'center'}}>*/}
-          {/*  {userImage ? (*/}
-          {/*    <Image source={{uri: userImage}} style={style.dropDownTopImage} />*/}
-          {/*  ) : (*/}
-          {/*    <Image*/}
-          {/*      source={images.empty_male_Image}*/}
-          {/*      style={style.dropDownTopImage}*/}
-          {/*    />*/}
-          {/*  )}*/}
-          {/*</TouchableOpacity>*/}
 
           <TouchableOpacity
             activeOpacity={0.7}

@@ -18,6 +18,7 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import style from './style';
+import {BASE_URL} from '../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -51,7 +52,7 @@ const AlertsScreen = () => {
       }
 
       const res = await fetch(
-        `https://stag.mntech.website/api/v1/user/notification/get-notification-byid?page=${pageNumber}`,
+        `${BASE_URL}/api/v1/user/notification/get-notification-byid?page=${pageNumber}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -105,7 +106,7 @@ const AlertsScreen = () => {
   ) => {
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {
@@ -132,7 +133,7 @@ const AlertsScreen = () => {
     try {
       setLoading(true);
       await fetch(
-        'https://stag.mntech.website/api/v1/user/notification/delete-notification-byid',
+        `${BASE_URL}/api/v1/user/notification/delete-notification-byid`,
         {
           method: 'DELETE',
           headers: {
@@ -154,7 +155,7 @@ const AlertsScreen = () => {
       console.log(' === onDeclineNumberRequestedPress ===> ', item?.reqId);
 
       const res = await fetch(
-        `https://stag.mntech.website/api/v1/user/mobile-number-request/reject/${item?.reqId}`,
+        `${BASE_URL}/api/v1/user/mobile-number-request/reject/${item?.reqId}`,
         {
           method: 'PUT',
           headers: {
@@ -186,7 +187,7 @@ const AlertsScreen = () => {
       console.log(' === onAcceptedNumberRequestedPress ===> ', item?.reqId);
 
       const res = await fetch(
-        `https://stag.mntech.website/api/v1/user/mobile-number-request/accept/${item?.reqId}`,
+        `${BASE_URL}/api/v1/user/mobile-number-request/accept/${item?.reqId}`,
         {
           method: 'PUT',
           headers: {
@@ -240,7 +241,9 @@ const AlertsScreen = () => {
       firstName: item?.otherUserId?.name,
       id: item?.otherUserId?.id,
     };
-    navigation.navigate('NewUserDetailsScreen', {matchesUserData: userData});
+    navigation.navigate('UserProfileDetailsScreen', {
+      matchesUserData: userData,
+    });
   };
 
   const getSubtitleText = (item, requestState) => {
@@ -517,37 +520,35 @@ const AlertsScreen = () => {
             !loading && (
               <View
                 style={{
-                  justifyContent: 'center',
-                  alignSelf: 'center',
                   alignItems: 'center',
-                  marginTop: hp(130),
+                  marginTop: hp(230),
                 }}>
-                <Image
-                  source={icons.no_notification_icon}
+                <View
                   style={{
-                    width: hp(250),
-                    height: hp(200),
-                    resizeMode: 'contain',
-                  }}
-                />
+                    width: hp(82),
+                    height: hp(82),
+                    borderRadius: hp(50),
+                    backgroundColor: '#F8F6FF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.not_Notification_Icon}
+                    style={{
+                      width: hp(38),
+                      height: hp(32),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </View>
                 <Text
                   style={{
-                    color: colors.black,
-                    fontSize: fontSize(20),
-                    lineHeight: hp(27),
-                    fontFamily: fontFamily.poppins700,
+                    fontSize: fontSize(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#959090',
+                    marginTop: hp(21),
                   }}>
-                  No Notifications
-                </Text>
-                <Text
-                  style={{
-                    fontSize: fontSize(14),
-                    lineHeight: hp(21),
-                    // fontFamily: fontFamily.poppins400,
-                    color: colors.gray,
-                    fontWeight: '400',
-                  }}>
-                  New notification will appear here.
+                  No Notifications yet
                 </Text>
               </View>
             )

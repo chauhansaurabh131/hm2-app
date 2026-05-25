@@ -21,6 +21,7 @@ import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import {useFocusEffect} from '@react-navigation/native';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -168,7 +169,8 @@ const ChatScreen = ({navigation}) => {
       }
       setIsConnecting(true);
 
-      const socketIo = io('https://stag.mntech.website', {
+      // const socketIo = io('https://stag.mntech.website', {
+      const socketIo = io(`${BASE_URL}`, {
         path: '/api/socket.io',
         query: {token: accessToken},
       });
@@ -539,7 +541,7 @@ const ChatScreen = ({navigation}) => {
         {isConnecting ? (
           // SHIMMER LOADER DATA
           <FlatList
-            data={[1, 1, 1, 1, 1, 1, 1, 1]}
+            data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
             renderItem={({item, index}) => {
               return (
                 <View
@@ -591,30 +593,37 @@ const ChatScreen = ({navigation}) => {
             </Text>
           </View>
         ) : filteredFriends.length === 0 && !userInput ? (
-          <View style={{alignItems: 'center', marginTop: hp(130)}}>
-            <Image
-              source={icons.empty_state_icon}
-              style={{width: hp(212), height: hp(170), resizeMode: 'contain'}}
-            />
+          <View
+            style={{
+              alignItems: 'center',
+              marginTop: hp(230),
+            }}>
+            <View
+              style={{
+                width: hp(82),
+                height: hp(82),
+                borderRadius: hp(50),
+                backgroundColor: '#F8F6FF',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Image
+                source={icons.empty_state_icon}
+                style={{
+                  width: hp(32),
+                  height: hp(32),
+                  resizeMode: 'contain',
+                }}
+              />
+            </View>
             <Text
               style={{
-                // marginTop: hp(5),
-                color: colors.black,
-                fontSize: fontSize(20),
-                lineHeight: hp(27),
-                fontFamily: fontFamily.poppins700,
+                fontSize: fontSize(16),
+                fontFamily: fontFamily.poppins400,
+                color: '#959090',
+                marginTop: hp(21),
               }}>
-              No messages
-            </Text>
-            <Text
-              style={{
-                fontSize: fontSize(14),
-                lineHeight: hp(21),
-                // fontFamily: fontFamily.poppins400,
-                color: colors.gray,
-                fontWeight: '400',
-              }}>
-              You have no active chats
+              No messages yet
             </Text>
           </View>
         ) : (

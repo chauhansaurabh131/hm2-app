@@ -73,150 +73,63 @@ const UserEditProfileScreen = () => {
 
     console.log(' === deleteImageUrl ===> ', deleteImageUrl);
     console.log(' === deleteImageName ===> ', deleteImageName);
-
-    //
-    // try {
-    //   // Dispatch the delete action and wait for it to complete
-    //   await dispatch(
-    //     deleteImage({
-    //       userId: userId,
-    //       profileImageUrl: deleteImageUrl,
-    //       name: deleteImageName,
-    //     }),
-    //   );
-    //
-    //   // After a successful API call, update imageList to remove the deleted image
-    //   const updatedImages = imageList.filter((_, i) => i !== index);
-    //   setImageList(updatedImages);
-    //
-    //   console.log('Image successfully deleted and removed from display');
-    // } catch (error) {
-    //   console.error('Failed to delete image:', error);
-    // }
   };
+
+  // const onAddImage = () => {
+  //   console.log(' === Sumbit ===> ');
+  //
+  //   launchImageLibrary({mediaType: 'photo'}, response => {
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.errorCode) {
+  //       console.log('Image Picker Error: ', response.errorMessage);
+  //     } else if (response.assets && response.assets.length > 0) {
+  //       const selectedImageUri = response.assets[0].uri;
+  //       setImageList(prevList => [
+  //         ...prevList.slice(0, -1),
+  //         selectedImageUri,
+  //         {isAddButton: true},
+  //       ]);
+  //     }
+  //   });
+  // };
 
   const onAddImage = () => {
-    launchImageLibrary({mediaType: 'photo'}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('Image Picker Error: ', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const selectedImageUri = response.assets[0].uri;
-        setImageList(prevList => [
-          ...prevList.slice(0, -1),
-          selectedImageUri,
-          {isAddButton: true},
-        ]);
-      }
-    });
-  };
+    console.log('=== OPEN GALLERY ===>');
 
-  // const onSave = () => {
-  //   console.log('Save button clicked');
-  //   setLoading(true);
-  //
-  //   if (selectedImageIndex !== null) {
-  //     setLoading(true);
-  //     const selectedImage = imageList[selectedImageIndex];
-  //     console.log(' === selectedImage ===> ', selectedImage);
-  //
-  //     const imageName = selectedImage.split('/').pop(); // Extracts the filename from the URI
-  //     console.log('Selected image name:', imageName);
-  //
-  //     const fileExtension = selectedImage.split('.').pop().toLowerCase();
-  //     console.log('File extension:', fileExtension);
-  //
-  //     const contentType = getContentType(fileExtension);
-  //     console.log(' === getContentType ===> ', contentType);
-  //
-  //     // Check if the selected image is an S3 bucket URL or a local file URI
-  //     if (selectedImage.startsWith('https://happymilan-user-images.s3')) {
-  //       // If the image is from S3 bucket, call updateDetails API
-  //       // apiDispatch(
-  //       //   updateDetails(
-  //       //     {
-  //       //       profilePic: selectedImage,
-  //       //     },
-  //       //     () => {
-  //       //       navigation.navigate('MyProfileScreen');
-  //       //     },
-  //       //   ),
-  //       // );
-  //
-  //       apiDispatch(
-  //         updateDetails(
-  //           {
-  //             profilePic: selectedImage,
-  //           },
-  //           () => {
-  //             if (appType === 'dating') {
-  //               navigation.navigate('DatingProfileScreen');
-  //             } else if (appType === 'merriage') {
-  //               navigation.navigate('MyProfileScreen');
-  //             } else {
-  //               console.warn('Unknown app type:', appType);
-  //             }
-  //           },
-  //         ),
-  //       );
-  //       setLoading(false);
-  //     } else if (selectedImage.startsWith('file://')) {
-  //       // If the image is a local file URI, call addProfilePicture API
-  //       setLoading(true);
-  //       const callBack = async response => {
-  //         try {
-  //           const presignedUrl = response.data?.data?.url;
-  //
-  //           console.log(' === presignedUrl ===> ', presignedUrl);
-  //
-  //           const data = await RNBlobUtil.fetch(
-  //             'PUT',
-  //             presignedUrl,
-  //             {
-  //               'Content-Type': contentType,
-  //               'x-amz-acl': 'public-read',
-  //             },
-  //             RNBlobUtil.wrap(selectedImage), // Use the selected image's URI
-  //           );
-  //
-  //           console.log('Image uploaded successfully:', data);
-  //           // Optionally navigate or perform other actions
-  //
-  //           // navigation.navigate('MyProfileScreen');
-  //
-  //           if (appType === 'dating') {
-  //             navigation.navigate('DatingProfileScreen');
-  //           } else if (appType === 'merriage') {
-  //             navigation.navigate('MyProfileScreen');
-  //           } else {
-  //             console.warn('Unknown app type:', appType);
-  //           }
-  //           setLoading(false);
-  //         } catch (err) {
-  //           console.log(' === err ===> ', err);
-  //           setLoading(false);
-  //         }
-  //       };
-  //
-  //       dispatch(
-  //         addProfilePicture(
-  //           {
-  //             key: imageName, // Use the extracted image name as key
-  //             contentType: contentType,
-  //             isProfilePic: true,
-  //             profileType: 'profileImage',
-  //           },
-  //           callBack,
-  //         ),
-  //       );
-  //     } else {
-  //       console.log('Unknown image URL format');
-  //     }
-  //   } else {
-  //     console.log('No image selected');
-  //   }
-  // };
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+
+        selectionLimit: 1,
+
+        quality: 1,
+      },
+      response => {
+        console.log('IMAGE RESPONSE ===>', response);
+
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('Image Picker Error:', response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const selectedImageUri = response.assets[0].uri;
+
+          console.log('SELECTED IMAGE ===>', selectedImageUri);
+
+          setImageList(prevList => [
+            ...prevList.slice(0, -1),
+
+            selectedImageUri,
+
+            {
+              isAddButton: true,
+            },
+          ]);
+        }
+      },
+    );
+  };
 
   const onSave = async () => {
     console.log('Save button clicked');
@@ -243,7 +156,11 @@ const UserEditProfileScreen = () => {
     const contentType = getContentType(fileExtension);
 
     try {
-      if (selectedImage.startsWith('https://happymilan-user-images.s3')) {
+      if (
+        selectedImage.startsWith(
+          'https://hapmeet-user-images-712789089772-ap-south-1-an.s3.ap-south-1.amazonaws.com',
+        )
+      ) {
         // S3 URL - update details only
         await new Promise((resolve, reject) => {
           apiDispatch(

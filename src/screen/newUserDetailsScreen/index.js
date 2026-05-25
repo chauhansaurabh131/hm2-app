@@ -41,6 +41,7 @@ import DemoCode from '../demoCode';
 import axios from 'axios';
 import {navigationRef} from '../../navigations';
 import CompleteYourProfileModalComponent from '../../components/completeYourProfileModalComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const appPackageName = 'com.happymilan2'; // your Android package
@@ -145,7 +146,7 @@ const NewUserDetailsScreen = () => {
 
       // Call the API to get match details
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?._id}`,
+        `${BASE_URL}/api/v1/user/user/get-match-user/${item?._id}`,
         {
           method: 'GET',
           headers: {
@@ -274,7 +275,7 @@ const NewUserDetailsScreen = () => {
       setError(null);
 
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/${matchesUserData.id}`,
+        `${BASE_URL}/api/v1/user/user/${matchesUserData.id}`,
         {
           method: 'GET',
           headers: {
@@ -311,7 +312,7 @@ const NewUserDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/profile-viewer/create-profile-viewer',
+        `${BASE_URL}/api/v1/user/profile-viewer/create-profile-viewer`,
         {
           method: 'POST',
           headers: {
@@ -462,7 +463,7 @@ const NewUserDetailsScreen = () => {
       // If the user is already in the shortlist, delete them
       try {
         const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${currentShortlistId}`,
+          `${BASE_URL}/api/v1/user/shortlist/delete-short-list/${currentShortlistId}`,
           {
             method: 'DELETE',
             headers: {
@@ -495,7 +496,7 @@ const NewUserDetailsScreen = () => {
 
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+          `${BASE_URL}/api/v1/user/shortlist/create-shortlist`,
           {
             method: 'POST',
             headers: {
@@ -558,7 +559,7 @@ const NewUserDetailsScreen = () => {
 
       try {
         const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentIsLikeId}`,
+          `${BASE_URL}/api/v1/user/like/update-like/${currentIsLikeId}`,
           {
             method: 'PUT',
             headers: {
@@ -593,7 +594,7 @@ const NewUserDetailsScreen = () => {
       // If not liked, add the like
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/like/create-like',
+          `${BASE_URL}/api/v1/user/like/create-like`,
           {
             method: 'POST',
             headers: {
@@ -634,7 +635,7 @@ const NewUserDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {
@@ -702,7 +703,7 @@ const NewUserDetailsScreen = () => {
   const sendFriendRequest = async () => {
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/create-friend',
+        `${BASE_URL}/api/v1/user/friend/create-friend`,
         {
           method: 'POST',
           headers: {
@@ -994,7 +995,7 @@ const NewUserDetailsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {
@@ -1136,7 +1137,7 @@ const NewUserDetailsScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -1194,7 +1195,7 @@ const NewUserDetailsScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {

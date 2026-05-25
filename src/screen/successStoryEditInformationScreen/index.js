@@ -312,26 +312,26 @@ const SuccessStoryEditInformationScreen = ({route}) => {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.container}>
-      <View style={styles.header}>
-        <Image source={images.happyMilanColorLogo} style={styles.logo} />
-        <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-          {hasValidImage ? (
-            <Image
-              source={userImage ? {uri: userImage} : images.empty_male_Image}
-              style={styles.profileImage}
-            />
-          ) : (
-            <ProfileAvatar
-              firstName={user?.user?.firstName || name}
-              lastName={user?.user?.lastName}
-              textStyle={style.headerTopSheetImageStyle}
-              profileTexts={{fontSize: fontSize(10)}}
-            />
-          )}
-        </TouchableOpacity>
-      </View>
+      {/*<View style={styles.header}>*/}
+      {/*  <Image source={images.happyMilanColorLogo} style={styles.logo} />*/}
+      {/*  <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+      {/*    {hasValidImage ? (*/}
+      {/*      <Image*/}
+      {/*        source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
+      {/*        style={styles.profileImage}*/}
+      {/*      />*/}
+      {/*    ) : (*/}
+      {/*      <ProfileAvatar*/}
+      {/*        firstName={user?.user?.firstName || name}*/}
+      {/*        lastName={user?.user?.lastName}*/}
+      {/*        textStyle={style.headerTopSheetImageStyle}*/}
+      {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+      {/*      />*/}
+      {/*    )}*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
 
-      <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+      {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
 
       <Text style={styles.introText}>Share Your Story</Text>
       <Text
@@ -408,13 +408,13 @@ const SuccessStoryEditInformationScreen = ({route}) => {
           <TouchableOpacity
             style={{
               width: '100%',
-              height: 50,
-              borderRadius: 100,
+              height: hp(50),
+              borderRadius: hp(100),
               borderColor: '#E6E6E6',
-              borderWidth: 1,
+              borderWidth: hp(1),
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: 27,
+              marginTop: hp(27),
             }}
             onPress={openGallery} // Open the gallery when the button is pressed
           >
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(16),
     lineHeight: hp(24),
     fontFamily: fontFamily.poppins500,
-    marginTop: hp(35),
+    marginTop: hp(25),
     // marginBottom: hp(20),
     marginHorizontal: 17,
   },
@@ -640,11 +640,11 @@ const styles = StyleSheet.create({
   },
   notNowButton: {
     width: wp(150),
-    height: 50,
+    height: hp(50),
     backgroundColor: '#F8F8F8',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 100,
+    borderRadius: hp(50),
   },
   notNowText: {
     color: colors.black,
@@ -654,8 +654,8 @@ const styles = StyleSheet.create({
   },
   publishButton: {
     width: wp(190),
-    height: 50,
-    borderRadius: 100,
+    height: hp(50),
+    borderRadius: hp(100),
     justifyContent: 'center',
   },
   publishButtonText: {

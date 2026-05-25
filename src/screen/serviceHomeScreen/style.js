@@ -49,9 +49,9 @@ const style = StyleSheet.create({
   discoverImageStyle: {
     width: '100%',
     aspectRatio: 1,
-    borderWidth: 1,
+    borderWidth: hp(1),
     borderColor: '#D6D6D6',
-    borderRadius: 10,
+    borderRadius: hp(10),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -63,9 +63,9 @@ const style = StyleSheet.create({
   },
   discoverIconLabel: {
     marginTop: hp(11),
-    fontSize: fontSize(10),
+    fontSize: fontSize(12),
     color: colors.pureBlack,
-    fontFamily: fontFamily.poppins400,
+    fontFamily: fontFamily.poppins500,
   },
   horizontalOne: {
     width: '100%',

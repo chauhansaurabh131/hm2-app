@@ -22,6 +22,7 @@ import ProfileAvatar from '../letterProfileComponent';
 import Toast from 'react-native-toast-message';
 import {style} from '../../screen/matchesAllScreen/matchesInAcceptedScreen/style';
 import CompleteYourProfileModalComponent from '../completeYourProfileModalComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -144,7 +145,7 @@ const DatingSwipeDataComponent = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://stag.mntech.website/api/v1/user/user/getUserByGenderDating?page=${page}`,
+          `${BASE_URL}/api/v1/user/user/getUserByGenderDating?page=${page}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -217,7 +218,7 @@ const DatingSwipeDataComponent = () => {
       // Sending friend request
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/create-friend?appUsesType=dating`,
           {
             friend: card._id, // Friend's ID
             user: userId, // Logged-in user's ID
@@ -310,7 +311,7 @@ const DatingSwipeDataComponent = () => {
       // Removing friend request
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
           {
             user: card._id, // Friend's ID
             request: requestedId, // Use stored request ID
@@ -370,7 +371,7 @@ const DatingSwipeDataComponent = () => {
       if (currentLikeStatus) {
         // Unlike user
         const response = await axios.put(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentLikeStatusId}`,
+          `${BASE_URL}/api/v1/user/like/update-like/${currentLikeStatusId}`,
           {likedUserId, isLike: false},
           {
             headers: {
@@ -404,7 +405,7 @@ const DatingSwipeDataComponent = () => {
       } else {
         // Like user
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/like/create-like?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/like/create-like?appUsesType=dating`,
           {likedUserId, isLike: true},
           {
             headers: {

@@ -29,6 +29,7 @@ import {
 import axios from 'axios';
 import {style} from './style';
 import ProfileAvatar from '../../../components/letterProfileComponent';
+import {BASE_URL} from '../../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -101,7 +102,7 @@ const MatchesInAcceptedScreen = () => {
 
       // Call the API to get match details
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?.friendList?._id}`,
+        `${BASE_URL}/api/v1/user/user/get-match-user/${item?.friendList?._id}`,
         {
           method: 'GET',
           headers: {
@@ -156,7 +157,7 @@ const MatchesInAcceptedScreen = () => {
       console.log('Fetching data for page:', pageNumber);
 
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/friend/get-frd-mobile?page=${pageNumber}`,
+        `${BASE_URL}/api/v1/user/friend/get-frd-mobile?page=${pageNumber}`,
         {
           method: 'GET',
           headers: {
@@ -204,7 +205,7 @@ const MatchesInAcceptedScreen = () => {
   const addToShortlist = async shortlistId => {
     try {
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/shortlist/create-shortlist',
+        `${BASE_URL}/api/v1/user/shortlist/create-shortlist`,
         {shortlistId},
         {
           headers: {
@@ -239,7 +240,7 @@ const MatchesInAcceptedScreen = () => {
   const removeFromShortlist = async shortlistId => {
     try {
       const response = await axios.delete(
-        `https://stag.mntech.website/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
+        `${BASE_URL}/api/v1/user/shortlist/delete-short-list/${shortlistId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -476,7 +477,7 @@ const MatchesInAcceptedScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -534,7 +535,7 @@ const MatchesInAcceptedScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -958,12 +959,51 @@ const MatchesInAcceptedScreen = () => {
         ListEmptyComponent={
           !loading && !isFetchingMore ? (
             <View style={style.emptyListContainer}>
-              <View style={style.emptyListBody}>
-                <Image
-                  source={icons.no_Profile_Found_img}
-                  style={style.noImage}
-                />
-                <Text style={style.noImageText}>No Profiles Found</Text>
+              {/*<View style={style.emptyListBody}>*/}
+              {/*  <View*/}
+              {/*      style={{*/}
+              {/*        width: hp(82),*/}
+              {/*        height: hp(82),*/}
+              {/*        borderRadius: hp(50),*/}
+              {/*        backgroundColor: '#F8F6FF',*/}
+              {/*        alignItems: 'center',*/}
+              {/*        justifyContent: 'center',*/}
+              {/*      }}>*/}
+              {/*  <Image source={icons.people_Icon} style={style.noImage} />*/}
+              {/*  <Text style={style.noImageText}>No Profiles Found</Text>*/}
+              {/*</View>*/}
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginTop: hp(200),
+                }}>
+                <View
+                  style={{
+                    width: hp(82),
+                    height: hp(82),
+                    borderRadius: hp(50),
+                    backgroundColor: '#F8F6FF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Image
+                    source={icons.people_Icon}
+                    style={{
+                      width: hp(38),
+                      height: hp(32),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </View>
+                <Text
+                  style={{
+                    fontSize: fontSize(16),
+                    fontFamily: fontFamily.poppins400,
+                    color: '#959090',
+                    marginTop: hp(21),
+                  }}>
+                  No Profiles Found
+                </Text>
               </View>
             </View>
           ) : null

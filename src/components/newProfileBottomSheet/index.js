@@ -534,14 +534,24 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.7} onPress={handleLogout}>
-              <LinearGradient
-                colors={['#0D4EB3', '#9413D0']}
-                style={styles.logOutContainers}>
-                <View style={styles.logOutViewContainer}>
-                  <Text style={styles.logoutText}>Log Out</Text>
-                </View>
-              </LinearGradient>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleLogout}
+              style={{
+                width: wp(122),
+                borderWidth: hp(1.2),
+                borderRadius: hp(50),
+                justifyContent: 'center',
+                borderColor: '#7045EB',
+              }}>
+              {/*<LinearGradient*/}
+              {/*  colors={['#0D4EB3', '#9413D0']}*/}
+              {/*  style={styles.logOutContainers}>*/}
+              {/*  <View style={styles.logOutViewContainer}>*/}
+              {/*    <Text style={styles.logoutText}>Log Out</Text>*/}
+              {/*  </View>*/}
+              {/*</LinearGradient>*/}
+              <Text style={styles.logoutText}>Log Out</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -673,7 +683,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 25,
+    borderRadius: hp(25),
     marginBottom: hp(24),
     borderColor: '#E5E5E5',
     marginTop: hp(17),
@@ -687,14 +697,14 @@ const styles = StyleSheet.create({
   modalBodyContainer: {
     backgroundColor: 'white',
     // padding: 10,
-    borderRadius: 10,
+    borderRadius: hp(15),
     alignItems: 'center',
   },
   modalTextStyle: {
     color: colors.black,
     fontSize: fontSize(16),
-    lineHeight: hp(24),
-    fontFamily: fontFamily.poppins400,
+    // lineHeight: hp(24),
+    fontFamily: fontFamily.poppins500,
     marginTop: hp(50),
   },
   buttonContainer: {
@@ -708,7 +718,7 @@ const styles = StyleSheet.create({
     // marginTop: hp(50),
     width: wp(122),
     height: hp(50),
-    borderRadius: 50,
+    borderRadius: hp(50),
     justifyContent: 'center',
   },
   stayTextStyle: {

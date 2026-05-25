@@ -244,33 +244,35 @@ const PlanScreen = () => {
     <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       {/* Header */}
       <View style={style.headerContainerView}>
-        <View style={style.headerContainerStyle}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customerHeaderImage}
-          />
-          <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={style.profileImageStyle}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileImageStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-          </TouchableOpacity>
-        </View>
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
-        <HomeTopSheetComponent
-          isVisible={topModalVisible}
-          onBackdropPress={toggleModal}
-          onBackButtonPress={toggleModal}
-        />
+        {/*<View style={style.headerContainerStyle}>*/}
+        {/*  <Image*/}
+        {/*    source={images.happyMilanColorLogo}*/}
+        {/*    style={style.customerHeaderImage}*/}
+        {/*  />*/}
+        {/*  <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+        {/*    {userImage ? (*/}
+        {/*      <Image*/}
+        {/*        source={{uri: userImage}}*/}
+        {/*        style={style.profileImageStyle}*/}
+        {/*      />*/}
+        {/*    ) : (*/}
+        {/*      <ProfileAvatar*/}
+        {/*        firstName={user?.user?.firstName}*/}
+        {/*        lastName={user?.user?.lastName}*/}
+        {/*        textStyle={style.profileImageStyle}*/}
+        {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*      />*/}
+        {/*    )}*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
+
+        {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
+        {/*<HomeTopSheetComponent*/}
+        {/*  isVisible={topModalVisible}*/}
+        {/*  onBackdropPress={toggleModal}*/}
+        {/*  onBackButtonPress={toggleModal}*/}
+        {/*/>*/}
+
         <View style={style.headingTittleContainer}>
           <Text style={style.headingCredentialsText}>Plan </Text>
           <TouchableOpacity

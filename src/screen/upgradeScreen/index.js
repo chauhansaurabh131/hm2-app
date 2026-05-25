@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Alert,
@@ -12,22 +12,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { colors } from '../../utils/colors';
+import {colors} from '../../utils/colors';
 import style from './style';
 import LinearGradient from 'react-native-linear-gradient';
-import { icons, images } from '../../assets';
-import { fontFamily, fontSize, hp, screenHeight, wp } from '../../utils/helpers';
+import {icons, images} from '../../assets';
+import {fontFamily, fontSize, hp, screenHeight, wp} from '../../utils/helpers';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { paymentDetails } from '../../actions/homeActions';
-import { useDispatch, useSelector } from 'react-redux';
+import {paymentDetails} from '../../actions/homeActions';
+import {useDispatch, useSelector} from 'react-redux';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import axios from 'axios';
 import RazorpayCheckout from 'react-native-razorpay';
 import Config from 'react-native-config';
 import GradientButton from '../../components/GradientButton';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const UpgradeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('silver');
@@ -56,7 +56,7 @@ const UpgradeScreen = () => {
 
   const dispatch = useDispatch();
 
-  const { user } = useSelector(state => state.auth);
+  const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userId = user?.user?.id;
 
@@ -128,7 +128,7 @@ const UpgradeScreen = () => {
           const json = await response.json();
 
           // Transform API data
-          const transformedPlans = { silver: [], gold: [] };
+          const transformedPlans = {silver: [], gold: []};
           const labelMap = {
             monthly: 'One',
             'two-month': 'Two',
@@ -291,7 +291,7 @@ const UpgradeScreen = () => {
       // 1. Create Razorpay Order
       const response = await axios.post(
         `${API_URL}/v1/user/razorpay/order`,
-        { planId: selectedPlan?.planId },
+        {planId: selectedPlan?.planId},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -300,7 +300,7 @@ const UpgradeScreen = () => {
         },
       );
 
-      const { id: orderId, amount, paymentHistoryToken } = response.data;
+      const {id: orderId, amount, paymentHistoryToken} = response.data;
 
       if (!paymentHistoryToken) {
         throw new Error('Payment history token missing');
@@ -326,7 +326,7 @@ const UpgradeScreen = () => {
           email: user?.user?.email || 'test@example.com',
           contact: user?.user?.mobileNumber || '9999999999',
         },
-        theme: { color: '#0F52BA' },
+        theme: {color: '#0F52BA'},
       };
 
       // 4. Open Razorpay payment screen
@@ -380,16 +380,16 @@ const UpgradeScreen = () => {
     setSelectedOption(option);
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     // console.log(' === renderItem ===> ', item);
 
     return (
-      <View style={{ marginHorizontal: 18 }}>
+      <View style={{marginHorizontal: 18}}>
         <TouchableHighlight
           underlayColor="#F9FBFF"
           style={[
             style.itemContainer,
-            pressed && { backgroundColor: 'white' }, // Change background color when pressed
+            pressed && {backgroundColor: 'white'}, // Change background color when pressed
           ]}
           activeOpacity={0.7}
           onPress={() => openBottomSheet(item)}>
@@ -426,7 +426,7 @@ const UpgradeScreen = () => {
                 </Text>
                 {userPlan?.planId?.planName === item.planName &&
                   Math.round(userPlan?.planId?.totalPrice) ===
-                  Number(item.NewPrice) && (
+                    Number(item.NewPrice) && (
                     <Text
                       style={{
                         color: '#AAAAAA',
@@ -572,7 +572,7 @@ const UpgradeScreen = () => {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 1}}>
         <View
           style={{
             backgroundColor: isBottomSheetOpen
@@ -602,11 +602,11 @@ const UpgradeScreen = () => {
               borderTopRightRadius: 20,
             },
           }}>
-          <View style={{ flex: 1 }}>
-            <View style={{ marginHorizontal: 24 }}>
+          <View style={{flex: 1}}>
+            <View style={{marginHorizontal: 24}}>
               <Text style={style.bottomSheetOneMonthText}>
                 {selectedPlan?.label}{' '}
-                <Text style={{ color: colors.black }}>Month</Text>
+                <Text style={{color: colors.black}}>Month</Text>
               </Text>
 
               <View
@@ -633,7 +633,7 @@ const UpgradeScreen = () => {
 
             <View style={style.headingLine} />
 
-            <View style={{ marginHorizontal: 24 }}>
+            <View style={{marginHorizontal: 24}}>
               <Text style={style.bodyTittleText}>Plan Benefits</Text>
 
               <View style={style.tittleBodyContainer}>
@@ -675,9 +675,9 @@ const UpgradeScreen = () => {
               </View>
             </View>
 
-            <View style={[style.headingLine, { marginBottom: 0 }]} />
+            <View style={[style.headingLine, {marginBottom: 0}]} />
 
-            <View style={{ backgroundColor: '#F9F9F9' }}>
+            <View style={{backgroundColor: '#F9F9F9'}}>
               <View
                 style={{
                   marginHorizontal: 24,
@@ -718,7 +718,7 @@ const UpgradeScreen = () => {
               </View>
             </View>
 
-            <View style={[style.headingLine, { marginTop: 0 }]} />
+            <View style={[style.headingLine, {marginTop: 0}]} />
 
             <View
               style={{
@@ -787,8 +787,8 @@ const UpgradeScreen = () => {
                 }}>
                 <LinearGradient
                   colors={['#7045EB', '#4819CB']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 0}}
                   style={style.payButtonColorGradient}>
                   <Text style={style.payButtonText}>
                     {canShowAlreadyPurchased
@@ -804,8 +804,8 @@ const UpgradeScreen = () => {
         <LinearGradient
           colors={['#7045EB', '#4819CB']}
           style={style.headerContainer}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1.1, y: 0 }}>
+          start={{x: 0, y: 0}}
+          end={{x: 1.1, y: 0}}>
           <View>
             <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
           </View>
@@ -821,15 +821,15 @@ const UpgradeScreen = () => {
           </View>
         </LinearGradient>
 
-        <View style={{ marginHorizontal: 18 }}>
+        <View style={{marginHorizontal: 18}}>
           <View
             style={{
               width: '100%',
               height: hp(60),
-              borderRadius: 30,
+              borderRadius: hp(30),
               backgroundColor: colors.white,
               flexDirection: 'row',
-              padding: 4,
+              padding: hp(4),
               justifyContent: 'space-between',
               alignItems: 'center',
               borderColor: '#2D40BA',
@@ -841,10 +841,10 @@ const UpgradeScreen = () => {
               onPress={() => handleOptionClick('silver')}
               style={{
                 flex: 1,
-                borderRadius: 25,
+                borderRadius: hp(25),
                 overflow: 'hidden',
                 height: '100%',
-                marginRight: 5,
+                marginRight: hp(5),
               }}>
               <LinearGradient
                 colors={
@@ -852,11 +852,11 @@ const UpgradeScreen = () => {
                     ? ['#7045EB', '#4819CB']
                     : ['transparent', 'transparent']
                 }
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 0.5}}
                 style={{
                   flex: 1,
-                  borderRadius: 25,
+                  borderRadius: hp(25),
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -877,10 +877,10 @@ const UpgradeScreen = () => {
               onPress={() => handleOptionClick('gold')}
               style={{
                 flex: 1,
-                borderRadius: 25,
+                borderRadius: hp(25),
                 overflow: 'hidden',
                 height: '100%',
-                marginLeft: 5,
+                marginLeft: hp(5),
               }}>
               <LinearGradient
                 colors={
@@ -888,8 +888,8 @@ const UpgradeScreen = () => {
                     ? ['#7045EB', '#4819CB']
                     : ['transparent', 'transparent']
                 }
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 0.5}}
                 style={{
                   flex: 1,
                   borderRadius: 25,
@@ -941,7 +941,7 @@ const UpgradeScreen = () => {
                 Frequently Asked Questions
               </Text>
 
-              <View style={{ marginHorizontal: 18 }}>
+              <View style={{marginHorizontal: 18}}>
                 <View style={style.bottomQueryBody}>
                   {/* Question 1 */}
                   <TouchableOpacity
@@ -995,7 +995,7 @@ const UpgradeScreen = () => {
                           />
 
                           <Text
-                            style={[style.querySubTittle, { marginLeft: hp(8) }]}>
+                            style={[style.querySubTittle, {marginLeft: hp(8)}]}>
                             Credit/Debit Cards (Visa, MasterCard,{'\n'}American
                             Express)
                           </Text>
@@ -1018,7 +1018,7 @@ const UpgradeScreen = () => {
                           />
 
                           <Text
-                            style={[style.querySubTittle, { marginLeft: hp(8) }]}>
+                            style={[style.querySubTittle, {marginLeft: hp(8)}]}>
                             Digital Wallets (PayPal, Google Pay, Apple Pay)
                           </Text>
                         </View>
@@ -1040,7 +1040,7 @@ const UpgradeScreen = () => {
                           />
 
                           <Text
-                            style={[style.querySubTittle, { marginLeft: hp(8) }]}>
+                            style={[style.querySubTittle, {marginLeft: hp(8)}]}>
                             Net Banking and UPI (for users in supported{'\n'}
                             regions)
                           </Text>
@@ -1063,7 +1063,7 @@ const UpgradeScreen = () => {
                           />
 
                           <Text
-                            style={[style.querySubTittle, { marginLeft: hp(8) }]}>
+                            style={[style.querySubTittle, {marginLeft: hp(8)}]}>
                             Mobile Payments (where available)
                           </Text>
                         </View>
@@ -1202,7 +1202,7 @@ const UpgradeScreen = () => {
                 </View>
               </View>
 
-              <View style={{ height: 50 }} />
+              <View style={{height: 50}} />
             </ScrollView>
           </>
         )}
@@ -1228,7 +1228,7 @@ const UpgradeScreen = () => {
               width: '90%',
               alignItems: 'center',
             }}>
-            <View style={{ marginTop: hp(49), marginHorizontal: 18 }}>
+            <View style={{marginTop: hp(49), marginHorizontal: 18}}>
               <Text
                 style={{
                   fontSize: fontSize(16),

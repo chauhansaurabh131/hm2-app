@@ -26,6 +26,7 @@ import {non_friend_Blocked} from '../../../actions/homeActions';
 import Toast from 'react-native-toast-message';
 import {style} from './style';
 import ProfileAvatar from '../../../components/letterProfileComponent';
+import {BASE_URL} from '../../../utils/constants';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
@@ -94,7 +95,7 @@ const MatchesInBlockedScreen = () => {
 
       // Call the API to get match details
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/user/get-match-user/${item?.friend?._id}`,
+        `${BASE_URL}/api/v1/user/user/get-match-user/${item?.friend?._id}`,
         {
           method: 'GET',
           headers: {
@@ -143,7 +144,7 @@ const MatchesInBlockedScreen = () => {
 
     try {
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/friend/get-block-list?page=${pageNumber}`,
+        `${BASE_URL}/api/v1/user/friend/get-block-list?page=${pageNumber}`,
         {
           method: 'GET',
           headers: {
@@ -253,7 +254,7 @@ const MatchesInBlockedScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {
@@ -363,7 +364,7 @@ const MatchesInBlockedScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -421,7 +422,7 @@ const MatchesInBlockedScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam',
+          `${BASE_URL}/api/v1/user/spam/create-spam`,
           {
             method: 'POST',
             headers: {
@@ -879,24 +880,32 @@ const MatchesInBlockedScreen = () => {
                 <View
                   style={{
                     alignItems: 'center',
-                    marginTop: hp(250),
-                    justifyContent: 'center',
+                    marginTop: hp(200),
                   }}>
-                  <Image
-                    source={icons.no_Profile_Found_img}
+                  <View
                     style={{
-                      width: hp(44),
-                      height: hp(44),
-                      resizeMode: 'contain',
-                    }}
-                  />
+                      width: hp(82),
+                      height: hp(82),
+                      borderRadius: hp(50),
+                      backgroundColor: '#F8F6FF',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      source={icons.people_Icon}
+                      style={{
+                        width: hp(38),
+                        height: hp(32),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
                   <Text
                     style={{
-                      color: colors.black,
-                      fontSize: fontSize(18),
-                      lineHeight: hp(27),
+                      fontSize: fontSize(16),
                       fontFamily: fontFamily.poppins400,
-                      marginTop: hp(12),
+                      color: '#959090',
+                      marginTop: hp(21),
                     }}>
                     No Profiles Found
                   </Text>

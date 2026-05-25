@@ -759,21 +759,31 @@ const NearByMatchDataComponent = ({toastConfigs, onShowAlert}) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Image
-            source={icons.no_Profile_Found_img} // 👈 optional
+          <View
             style={{
-              width: hp(80),
-              height: hp(80),
-              resizeMode: 'contain',
-              marginBottom: 10,
-            }}
-          />
+              width: hp(82),
+              height: hp(82),
+              borderRadius: hp(50),
+              backgroundColor: '#F8F6FF',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              source={icons.people_Icon}
+              style={{
+                width: hp(38),
+                height: hp(32),
+                resizeMode: 'contain',
+              }}
+            />
+          </View>
 
           <Text
             style={{
               fontSize: fontSize(14),
               fontFamily: fontFamily.poppins500,
               color: colors.black,
+              marginTop: hp(10),
             }}>
             No Matches Found
           </Text>

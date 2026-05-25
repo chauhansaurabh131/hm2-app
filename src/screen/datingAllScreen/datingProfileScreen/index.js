@@ -234,22 +234,22 @@ const DatingProfileScreen = () => {
         <Toast config={toastConfigs} />
       </View>
 
-      <View style={style.headingTittleContainer}>
-        <AppColorLogo />
+      {/*<View style={style.headingTittleContainer}>*/}
+      {/*  <AppColorLogo />*/}
 
-        <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>
-          {hasValidImage ? (
-            <Image source={{uri: userImage}} style={style.profileLogoStyle} />
-          ) : (
-            <ProfileAvatar
-              firstName={user?.user?.firstName || user?.user?.name}
-              lastName={user?.user?.lastName}
-              textStyle={style.profileLogoStyle}
-              profileTexts={{fontSize: fontSize(10)}}
-            />
-          )}
-        </TouchableOpacity>
-      </View>
+      {/*  <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
+      {/*    {hasValidImage ? (*/}
+      {/*      <Image source={{uri: userImage}} style={style.profileLogoStyle} />*/}
+      {/*    ) : (*/}
+      {/*      <ProfileAvatar*/}
+      {/*        firstName={user?.user?.firstName || user?.user?.name}*/}
+      {/*        lastName={user?.user?.lastName}*/}
+      {/*        textStyle={style.profileLogoStyle}*/}
+      {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+      {/*      />*/}
+      {/*    )}*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
 
       <View>
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />

@@ -1,6 +1,5 @@
 import React, {useRef, useState} from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   Image,
@@ -15,6 +14,7 @@ import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {icons, images} from '../../assets';
 import AppColorLogo from '../../components/appColorLogo';
 import ServiceHomeScreen from '../serviceHomeScreen';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const {width} = Dimensions.get('window');
 
@@ -75,15 +75,16 @@ const TestDemoScreen = () => {
             borderColor: '#C9C9C9',
             alignItems: 'center',
             overflow: 'hidden',
+            // height: '95%',
           }}>
           {/* IMAGE */}
           <Image
             source={item.image}
             style={{
               width: '100%',
-              height: hp(296),
+              height: hp(300),
             }}
-            resizeMode={item.id === '2' ? 'stretch' : ''}
+            // resizeMode={item.id === '2' ? 'cover' : ''}
           />
 
           {/* TITLE */}
@@ -93,7 +94,7 @@ const TestDemoScreen = () => {
               fontSize: hp(20),
               fontFamily: fontFamily.poppins700,
               color: colors.pureBlack,
-              marginTop: hp(15),
+              marginTop: hp(20),
               lineHeight: hp(32),
             }}>
             {item.title}
@@ -127,12 +128,12 @@ const TestDemoScreen = () => {
               alignItems: 'center',
               justifyContent: 'center',
               height: hp(45),
-              paddingHorizontal: wp(20),
+              // paddingHorizontal: wp(20),
             }}>
             <Text
               style={{
                 color: colors.white,
-                fontSize: fontSize(13),
+                fontSize: fontSize(14),
                 fontFamily: fontFamily.poppins500,
               }}>
               {item.btn1}
@@ -160,7 +161,7 @@ const TestDemoScreen = () => {
               <Text
                 style={{
                   color: '#7148E4',
-                  fontSize: fontSize(13),
+                  fontSize: fontSize(14),
                   fontFamily: fontFamily.poppins500,
                 }}>
                 {item.btn2}
@@ -169,10 +170,10 @@ const TestDemoScreen = () => {
           ) : (
             <Text
               style={{
-                fontSize: fontSize(10),
+                fontSize: fontSize(12),
                 color: '#A0A0A0',
                 textAlign: 'center',
-                marginTop: hp(18),
+                marginTop: hp(27),
                 marginBottom: hp(32),
                 fontFamily: fontFamily.poppins400,
                 lineHeight: hp(16),
@@ -194,12 +195,19 @@ const TestDemoScreen = () => {
       {/* LOGO */}
       <View
         style={{
-          alignSelf: 'center',
+          // alignSelf: 'center',
           marginTop: hp(30),
-          marginBottom: hp(20),
+          marginBottom: hp(30),
+          marginHorizontal: wp(30),
         }}>
-        <AppColorLogo />
+        {/*<AppColorLogo />*/}
+        <Image
+          source={images.happyMilanColorLogo}
+          style={{width: wp(124), height: hp(24), resizeMode: 'contain'}}
+        />
       </View>
+
+      {/*<Text style={{marginTop: hp(50), color: 'black'}}>svknds</Text>*/}
 
       {/* SLIDER */}
       <FlatList

@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
@@ -116,6 +116,9 @@ import VendorSignUpScreen from '../screen/vendorSignUpScreen';
 import {colors} from '../utils/colors';
 import VendorSearchFilterScreen from '../screen/vendorSearchFilterScreen';
 import VendorSavedScreen from '../screen/vendorSavedScreen';
+import VendorAlertScreen from '../screen/vendorAlertScreen';
+import LongTermUserDataScreen from '../screen/longTermUserDataScreen';
+import SignInOrLogInComponent from '../components/signInOrLogInComponent';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -171,7 +174,8 @@ const MainNavigator = () => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="TestDemoScreen">
-      {/*<Stack.Screen name="DemoCode" component={DemoCode} />*/}
+      {/*initialRouteName="TestDemoScreen">*/}
+      <Stack.Screen name="DemoCode" component={DemoCode} />
 
       <Stack.Screen name="TestDemoScreen" component={TestDemoScreen} />
       {/*<Stack.Screen name="ServiceHomeScreen" component={ServiceHomeScreen} />*/}
@@ -282,6 +286,7 @@ const MainNavigator = () => {
   };
 
   const ServiceTabs = () => {
+    const [loginModal, setSetLoginModal] = useState(false);
     const getIconStyle = (focused, width, height, top = 0, left = 0) => {
       return {
         width,
@@ -302,162 +307,206 @@ const MainNavigator = () => {
     };
 
     return (
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
+      <>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
 
-          tabBarStyle: {
-            height: hp(70),
-            paddingTop: hp(10),
-            paddingBottom: hp(10),
-            backgroundColor: colors.white,
+            tabBarStyle: {
+              height: hp(70),
+              paddingTop: hp(10),
+              paddingBottom: hp(10),
+              backgroundColor: colors.white,
 
-            borderTopWidth: 0,
-            elevation: 10,
+              borderTopWidth: 0,
+              elevation: 10,
 
-            shadowColor: '#000',
-            shadowOpacity: 0.08,
-            shadowRadius: 10,
-            shadowOffset: {
-              width: 0,
-              height: -2,
+              shadowColor: '#000',
+              shadowOpacity: 0.08,
+              shadowRadius: 10,
+              shadowOffset: {
+                width: 0,
+                height: -2,
+              },
             },
-          },
 
-          tabBarActiveTintColor: '#7148E4',
-          tabBarInactiveTintColor: '#8E8E8E',
-        }}>
-        {/* DISCOVER */}
-        <Tab.Screen
-          name="Discover"
-          component={ServiceHomeScreen}
-          options={{
-            tabBarIcon: ({focused}) => (
-              <Image
-                source={icons.search_icon}
-                style={getIconStyle(
-                  focused,
-                  hp(18), // width
-                  hp(18), // height
-                  -2, // top
-                  0, // left
-                )}
-              />
-            ),
+            tabBarActiveTintColor: '#7148E4',
+            tabBarInactiveTintColor: '#8E8E8E',
+          }}>
+          {/* DISCOVER */}
+          <Tab.Screen
+            name="Discover"
+            component={ServiceHomeScreen}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <Image
+                  source={icons.search_icon}
+                  style={getIconStyle(
+                    focused,
+                    hp(18), // width
+                    hp(18), // height
+                    -2, // top
+                    0, // left
+                  )}
+                />
+              ),
 
-            tabBarLabel: ({focused}) => (
-              <Text style={getLabelStyle(focused)}>Discover</Text>
-            ),
-          }}
-        />
+              tabBarLabel: ({focused}) => (
+                <Text style={getLabelStyle(focused)}>Discover</Text>
+              ),
+            }}
+          />
 
-        {/* SAVED */}
-        <Tab.Screen
-          name="VendorSavedScreen"
-          component={VendorSavedScreen}
-          options={{
-            tabBarIcon: ({focused}) => (
-              <Image
-                source={icons.heart_like_icon}
-                style={getIconStyle(focused, hp(21), hp(19), -1, 0)}
-              />
-            ),
+          {/* SAVED */}
+          <Tab.Screen
+            name="VendorSavedScreen"
+            component={VendorSavedScreen}
+            listeners={({navigation}) => ({
+              tabPress: e => {
+                e.preventDefault();
 
-            tabBarLabel: ({focused}) => (
-              <Text style={getLabelStyle(focused)}>Saved</Text>
-            ),
-          }}
-        />
-
-        {/* ALERTS */}
-        <Tab.Screen
-          name="Alerts"
-          component={AlertsScreen}
-          options={{
-            tabBarIcon: ({focused}) => (
-              <Image
-                source={icons.alertsIcon}
-                style={getIconStyle(focused, hp(15), hp(19), -2, 0)}
-              />
-            ),
-
-            tabBarLabel: ({focused}) => (
-              <Text style={getLabelStyle(focused)}>Alerts</Text>
-            ),
-          }}
-        />
-
-        {/* PROFILE */}
-        <Tab.Screen
-          name="Profile"
-          component={ServicesProfileScreen}
-          listeners={({navigation}) => ({
-            tabPress: e => {
-              e.preventDefault();
-
-              if (isLoggedIn) {
-                navigation.navigate('HomeTabs');
-              } else {
-                navigation.navigate('ServicesProfileScreen');
-              }
-            },
-          })}
-          options={{
-            tabBarIcon: ({focused}) => (
-              // <Image
-              //   source={icons.profileLogo}
-              //   style={getIconStyle(focused, hp(24), hp(24), -3, 0)}
-              // />
-              <Image
-                source={
-                  isLoggedIn
-                    ? icons.hm_Logo_Icon // after login
-                    : icons.view_profile_icon // before login
+                // LOGIN CHECK
+                if (isLoggedIn) {
+                  navigation.navigate('VendorSavedScreen');
+                } else {
+                  setSetLoginModal(true);
+                  // navigation.replace('NewLogInScreen');
                 }
-                style={getIconStyle(focused, hp(18), hp(19), -3, 0)}
-              />
-            ),
+              },
+            })}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <Image
+                  source={icons.heart_like_icon}
+                  style={getIconStyle(focused, hp(21), hp(19), -1, 0)}
+                />
+              ),
 
-            tabBarLabel: ({focused}) => (
-              <Text style={getLabelStyle(focused)}>Profile</Text>
-            ),
+              tabBarLabel: ({focused}) => (
+                <Text style={getLabelStyle(focused)}>Saved</Text>
+              ),
+            }}
+          />
+
+          {/* ALERTS */}
+          <Tab.Screen
+            name="VendorAlertScreen"
+            component={VendorAlertScreen}
+            listeners={({navigation}) => ({
+              tabPress: e => {
+                e.preventDefault();
+
+                // LOGIN CHECK
+                if (isLoggedIn) {
+                  navigation.navigate('VendorAlertScreen');
+                } else {
+                  setSetLoginModal(true);
+                }
+              },
+            })}
+            options={{
+              tabBarIcon: ({focused}) => (
+                <Image
+                  source={icons.alertsIcon}
+                  style={getIconStyle(focused, hp(15), hp(19), -2, 0)}
+                />
+              ),
+
+              tabBarLabel: ({focused}) => (
+                <Text style={getLabelStyle(focused)}>Alerts</Text>
+              ),
+            }}
+          />
+
+          {/* PROFILE */}
+          <Tab.Screen
+            name="Profile"
+            component={ServicesProfileScreen}
+            listeners={({navigation}) => ({
+              tabPress: e => {
+                e.preventDefault();
+
+                if (isLoggedIn) {
+                  navigation.navigate('HomeTabs');
+                } else {
+                  // navigation.replace('NewLogInScreen');
+                  setSetLoginModal(true);
+                }
+              },
+            })}
+            options={{
+              tabBarIcon: ({focused}) => (
+                // <Image
+                //   source={icons.profileLogo}
+                //   style={getIconStyle(focused, hp(24), hp(24), -3, 0)}
+                // />
+                <Image
+                  source={
+                    isLoggedIn
+                      ? icons.hm_Logo_Icon // after login
+                      : icons.view_profile_icon // before login
+                  }
+                  style={getIconStyle(focused, hp(18), hp(19), -3, 0)}
+                />
+              ),
+
+              tabBarLabel: ({focused}) => (
+                <Text style={getLabelStyle(focused)}>Profile</Text>
+              ),
+            }}
+          />
+
+          <Tab.Screen
+            name="VendorSearchFilterScreen"
+            component={VendorSearchFilterScreen}
+            options={{
+              headerShown: false,
+
+              // HIDE TAB BUTTON
+              tabBarButton: () => null,
+
+              // NO LABEL
+              tabBarLabel: '',
+
+              // NO ICON
+              tabBarIcon: () => null,
+            }}
+          />
+
+          <Tab.Screen
+            name="ServicesProfileScreen"
+            component={ServicesProfileScreen}
+            options={{
+              headerShown: false,
+
+              // HIDE TAB BUTTON
+              tabBarButton: () => null,
+
+              // NO LABEL
+              tabBarLabel: '',
+
+              // NO ICON
+              tabBarIcon: () => null,
+            }}
+          />
+        </Tab.Navigator>
+
+        {/* LOGIN MODAL */}
+        <SignInOrLogInComponent
+          visible={loginModal}
+          onClose={() => setSetLoginModal(false)}
+          onSignUp={() => {
+            setSetLoginModal(false);
+
+            navigationRef.current?.navigate('NewSignUpScreen');
+          }}
+          onLogin={() => {
+            setSetLoginModal(false);
+
+            navigationRef.current?.navigate('NewLogInScreen');
           }}
         />
-
-        <Tab.Screen
-          name="VendorSearchFilterScreen"
-          component={VendorSearchFilterScreen}
-          options={{
-            headerShown: false,
-
-            // HIDE TAB BUTTON
-            tabBarButton: () => null,
-
-            // NO LABEL
-            tabBarLabel: '',
-
-            // NO ICON
-            tabBarIcon: () => null,
-          }}
-        />
-
-        <Tab.Screen
-          name="ServicesProfileScreen"
-          component={ServicesProfileScreen}
-          options={{
-            headerShown: false,
-
-            // HIDE TAB BUTTON
-            tabBarButton: () => null,
-
-            // NO LABEL
-            tabBarLabel: '',
-
-            // NO ICON
-            tabBarIcon: () => null,
-          }}
-        />
-      </Tab.Navigator>
+      </>
     );
   };
 
@@ -598,7 +647,11 @@ const MainNavigator = () => {
         {/*  component={MyNewProfileScreen}*/}
         {/*/>*/}
 
-        <Stack.Screen name="DemoCode" component={DemoCode} />
+        {/*<Stack.Screen name="DemoCode" component={DemoCode} />*/}
+        <Stack.Screen
+          name="LongTermUserDataScreen"
+          component={LongTermUserDataScreen}
+        />
 
         <Stack.Screen name="ServiceTabs" component={ServiceStackScreen} />
 
@@ -795,16 +848,6 @@ const MainNavigator = () => {
 
   const HomeTabs = ({route}) => {
     console.log(' === HomeTabs ===> ', appType);
-    // const {colors} = useTheme();
-
-    // const getIconStyle = isFocused => {
-    //   return {
-    //     width: hp(17.76),
-    //     height: hp(20),
-    //     tintColor: isFocused ? 'white' : '#120FBA',
-    //     resizeMode: 'contain',
-    //   };
-    // };
 
     const getIconStyle = isFocused => {
       return {
@@ -816,30 +859,15 @@ const MainNavigator = () => {
       };
     };
 
-    // const getDatingIconStyle = isFocused => {
-    //   return {
-    //     width: hp(24),
-    //     height: hp(20),
-    //     tintColor: isFocused ? 'white' : '#120FBA',
-    //     resizeMode: 'contain',
-    //   };
-    // };
-
     const getDatingIconStyle = isFocused => {
       return {
         width: hp(24),
         height: hp(20),
         tintColor: isFocused ? '#4819CB' : '#5F6368', // 👈 same here
         resizeMode: 'contain',
-        top: -20,
+        // top: -20,
       };
     };
-
-    // const getLabelStyle = isFocused => {
-    //   return {
-    //     color: isFocused ? 'white' : 'black',
-    //   };
-    // };
 
     const getLabelStyle = isFocused => {
       return {

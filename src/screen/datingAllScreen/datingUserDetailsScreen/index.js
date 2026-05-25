@@ -25,6 +25,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import Toast from 'react-native-toast-message';
+import {BASE_URL} from '../../../utils/constants';
 
 const customToastConfig = {
   like: ({text1}) => (
@@ -199,7 +200,7 @@ const DatingUserDetailsScreen = ({route}) => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `https://stag.mntech.website/api/v1/user/user/get-dating-user/${
+          `${BASE_URL}/api/v1/user/user/get-dating-user/${
             userData?._id || userData?.id
           }`,
           {
@@ -271,7 +272,7 @@ const DatingUserDetailsScreen = ({route}) => {
 
     try {
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
         {
           user: rejectedData[0]?.friend,
           request: rejectedData[0]?._id,
@@ -322,7 +323,7 @@ const DatingUserDetailsScreen = ({route}) => {
 
     try {
       const response = await axios.post(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
         {
           user: rejectedData[0]?.friend,
           request: rejectedData[0]?._id,
@@ -414,7 +415,7 @@ const DatingUserDetailsScreen = ({route}) => {
       if (currentLikeStatus) {
         // Unliking the user
         response = await axios.put(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentLikeStatusId}`,
+          `${BASE_URL}/api/v1/user/like/update-like/${currentLikeStatusId}`,
           {
             likedUserId: likedUserId,
             isLike: false,
@@ -439,7 +440,7 @@ const DatingUserDetailsScreen = ({route}) => {
       } else {
         // Liking the user
         response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/like/create-like?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/like/create-like?appUsesType=dating`,
           {
             likedUserId: likedUserId,
             isLike: true,
@@ -498,7 +499,7 @@ const DatingUserDetailsScreen = ({route}) => {
       // Call the API to respond to the friend request
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
           {
             // user: userDetails?.data[0]?._id, // Current user ID
             user: userDetails?.data[0]?.friendsDetails[0]?.friend, // Current user ID
@@ -555,7 +556,7 @@ const DatingUserDetailsScreen = ({route}) => {
       // Call the original send friend request API
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/create-friend?appUsesType=dating`,
           {
             friend: userDetails?.data[0]?._id, // Friend's user ID
             user: user?.user?.id, // Current user's ID
@@ -749,7 +750,7 @@ const DatingUserDetailsScreen = ({route}) => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/spam/create-spam?appUsesType=dating`,
           {
             method: 'POST',
             headers: {
@@ -794,7 +795,7 @@ const DatingUserDetailsScreen = ({route}) => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/spam/create-spam?appUsesType=dating`,
           {
             method: 'POST',
             headers: {
@@ -848,7 +849,7 @@ const DatingUserDetailsScreen = ({route}) => {
       setIsBlockModalVisible(false);
 
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
         {
           method: 'POST',
           headers: {
@@ -892,7 +893,7 @@ const DatingUserDetailsScreen = ({route}) => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/block-user?appUsesType=dating',
+        `${BASE_URL}/api/v1/user/friend/block-user?appUsesType=dating`,
         {
           method: 'POST',
           headers: {

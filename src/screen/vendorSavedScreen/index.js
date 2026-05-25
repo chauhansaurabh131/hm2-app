@@ -1,19 +1,30 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
+
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
+
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+
 import {useSelector} from 'react-redux';
+
+import LinearGradient from 'react-native-linear-gradient';
+
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
+
 import {colors} from '../../utils/colors';
+
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
+
 import {BASE_URL} from '../../utils/constants';
+
 import {icons} from '../../assets';
 
 const VendorSavedScreen = () => {
@@ -21,32 +32,50 @@ const VendorSavedScreen = () => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === var ===> ', user?.user);
-
   const accessToken = user?.tokens?.access?.token;
+
   const userId = user?.user?.id;
 
   const [savedVendors, setSavedVendors] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
+  const [page, setPage] = useState(1);
+
+  const [hasMoreData, setHasMoreData] = useState(true);
+
+  const [paginationLoading, setPaginationLoading] = useState(false);
+
   // =====================================
-  // FIRST API
+  // SCREEN FOCUS
   // =====================================
 
-  useEffect(() => {
-    getSavedVendors();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setPage(1);
+
+      setHasMoreData(true);
+
+      setSavedVendors([]);
+
+      getSavedVendors(1, true);
+    }, []),
+  );
 
   // =====================================
   // GET SAVED VENDORS
   // =====================================
 
-  const getSavedVendors = async () => {
+  const getSavedVendors = async (currentPage = 1, isFirst = false) => {
     try {
-      setLoading(true);
+      if (isFirst) {
+        setLoading(true);
+      } else {
+        setPaginationLoading(true);
+      }
 
       const response = await fetch(
-        `${BASE_URL}/api/v1/user/shortlist/get-short-list-vendor/${userId}`,
+        `${BASE_URL}/api/v1/user/shortlist/get-short-list-vendor/${userId}?page=${currentPage}&limit=10`,
         {
           method: 'GET',
 
@@ -62,12 +91,159 @@ const VendorSavedScreen = () => {
 
       console.log('SAVED VENDORS ===>', result);
 
-      setSavedVendors(result?.data || []);
+      const newData = result?.data || [];
+
+      // FIRST PAGE
+      if (isFirst) {
+        setSavedVendors(newData);
+      } else {
+        setSavedVendors(prev => [...prev, ...newData]);
+      }
+
+      // PAGINATION
+      setHasMoreData(result?.hasNextPage);
     } catch (error) {
       console.log('SAVED API ERROR ===>', error);
     } finally {
       setLoading(false);
+
+      setPaginationLoading(false);
     }
+  };
+
+  // =====================================
+  // LOAD MORE
+  // =====================================
+
+  const loadMoreData = () => {
+    if (hasMoreData && !paginationLoading) {
+      const nextPage = page + 1;
+
+      setPage(nextPage);
+
+      getSavedVendors(nextPage, false);
+    }
+  };
+
+  // =====================================
+  // SHIMMER ITEM
+  // =====================================
+
+  const renderShimmerItem = () => {
+    return (
+      <View
+        style={{
+          marginTop: hp(10),
+
+          marginHorizontal: wp(17),
+
+          backgroundColor: '#FFF',
+
+          borderRadius: 15,
+
+          borderWidth: 1,
+
+          borderColor: '#EFEFEF',
+
+          overflow: 'hidden',
+        }}>
+        {/* BG IMAGE */}
+        <ShimmerPlaceHolder
+          LinearGradient={LinearGradient}
+          style={{
+            width: '100%',
+
+            height: hp(167),
+          }}
+        />
+
+        {/* PROFILE */}
+        <View
+          style={{
+            marginTop: -25,
+
+            marginLeft: wp(17),
+          }}>
+          <ShimmerPlaceHolder
+            LinearGradient={LinearGradient}
+            style={{
+              width: hp(50),
+
+              height: hp(50),
+
+              borderRadius: hp(50),
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            paddingHorizontal: wp(17),
+
+            marginTop: hp(10),
+
+            marginBottom: hp(20),
+          }}>
+          {/* NAME */}
+          <ShimmerPlaceHolder
+            LinearGradient={LinearGradient}
+            style={{
+              width: wp(150),
+
+              height: hp(18),
+
+              borderRadius: 6,
+            }}
+          />
+
+          {/* ADDRESS */}
+          <ShimmerPlaceHolder
+            LinearGradient={LinearGradient}
+            style={{
+              width: wp(220),
+
+              height: hp(12),
+
+              borderRadius: 6,
+
+              marginTop: hp(10),
+            }}
+          />
+
+          {/* TAGS */}
+          <View
+            style={{
+              flexDirection: 'row',
+
+              marginTop: hp(18),
+            }}>
+            <ShimmerPlaceHolder
+              LinearGradient={LinearGradient}
+              style={{
+                width: wp(120),
+
+                height: hp(33),
+
+                borderRadius: 50,
+
+                marginRight: wp(10),
+              }}
+            />
+
+            <ShimmerPlaceHolder
+              LinearGradient={LinearGradient}
+              style={{
+                width: wp(60),
+
+                height: hp(33),
+
+                borderRadius: 50,
+              }}
+            />
+          </View>
+        </View>
+      </View>
+    );
   };
 
   // =====================================
@@ -126,48 +302,96 @@ const VendorSavedScreen = () => {
               width: '100%',
               borderWidth: 1,
               borderColor: '#EFEFEF',
-              borderRadius: 15,
+              borderRadius: hp(15),
               backgroundColor: '#FFF',
             }}>
-            {/* BACKGROUND IMAGE */}
-            <Image
-              source={{
-                uri:
-                  vendor?.userProfilePic?.[0]?.url ||
-                  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500',
-              }}
-              style={{
-                width: '100%',
+            {/* BG IMAGE */}
 
-                height: hp(167),
+            {vendor?.userProfilePic?.[0]?.url ? (
+              <Image
+                source={{
+                  uri: vendor?.userProfilePic?.[0]?.url,
+                }}
+                style={{
+                  width: '100%',
+                  height: hp(167),
+                  borderRadius: hp(15),
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: '100%',
+                  height: hp(167),
+                  borderRadius: hp(15),
+                  backgroundColor: '#FAF8FF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Image
+                  source={icons.box_image_Icon}
+                  style={{
+                    tintColor: '#7148E4',
+                    width: hp(20),
+                    height: hp(26),
+                    resizeMode: 'contain',
+                  }}
+                />
 
-                borderRadius: 15,
-              }}
-            />
+                <Text
+                  style={{
+                    color: '#7148E43D',
+                    fontSize: fontSize(10),
+                    fontFamily: fontFamily.poppins600,
+                  }}>
+                  No Image Found
+                </Text>
+              </View>
+            )}
 
-            {/* PROFILE IMAGE */}
+            {/* PROFILE */}
             <View
               style={{
                 top: -25,
+                marginLeft: wp(17),
               }}>
-              <Image
-                source={{
-                  uri:
-                    vendor?.profilePic ||
-                    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500',
-                }}
-                style={{
-                  width: hp(50),
-
-                  height: hp(50),
-
-                  marginLeft: wp(17),
-
-                  borderRadius: hp(50),
-
-                  backgroundColor: 'white',
-                }}
-              />
+              {vendor?.profilePic ? (
+                <Image
+                  source={{
+                    uri: vendor?.profilePic,
+                  }}
+                  style={{
+                    width: hp(50),
+                    height: hp(50),
+                    borderRadius: hp(50),
+                    backgroundColor: 'white',
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: hp(50),
+                    height: hp(50),
+                    borderRadius: hp(50),
+                    backgroundColor: '#7B2CBF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.white,
+                      fontSize: fontSize(18),
+                      fontFamily: fontFamily.poppins600,
+                      textTransform: 'uppercase',
+                    }}>
+                    {vendor?.name
+                      ?.split(' ')
+                      ?.map(word => word[0])
+                      ?.join('')
+                      ?.slice(0, 2) || 'U'}
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* DETAILS */}
@@ -359,39 +583,40 @@ const VendorSavedScreen = () => {
     <SafeAreaView
       style={{
         flex: 1,
+
         backgroundColor: colors.white,
       }}>
       {/* HEADER */}
       <View
         style={{
           width: '100%',
+
           height: hp(60),
+
           justifyContent: 'center',
-          // paddingHorizontal: wp(17),
+
           alignItems: 'center',
         }}>
         <Text
           style={{
             color: colors.pureBlack,
+
             fontSize: fontSize(14),
+
             fontFamily: fontFamily.poppins500,
           }}>
           Saved Listing
         </Text>
       </View>
 
-      {/* LOADER */}
+      {/* SHIMMER LOADER */}
       {loading ? (
-        <View
-          style={{
-            flex: 1,
-
-            justifyContent: 'center',
-
-            alignItems: 'center',
-          }}>
-          <ActivityIndicator size="large" color="#7148E4" />
-        </View>
+        <FlatList
+          data={[1, 2, 3, 4]}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={() => renderShimmerItem()}
+          showsVerticalScrollIndicator={false}
+        />
       ) : (
         <FlatList
           data={savedVendors}
@@ -403,6 +628,21 @@ const VendorSavedScreen = () => {
 
             paddingTop: hp(10),
           }}
+          onEndReached={() => {
+            loadMoreData();
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() =>
+            paginationLoading ? (
+              <ActivityIndicator
+                size="small"
+                color="#7148E4"
+                style={{
+                  marginVertical: hp(20),
+                }}
+              />
+            ) : null
+          }
           ListEmptyComponent={() => (
             <View
               style={{
@@ -412,7 +652,7 @@ const VendorSavedScreen = () => {
 
                 alignItems: 'center',
 
-                marginTop: hp(100),
+                marginTop: hp(250),
               }}>
               <Image
                 source={icons.black_heart_icon}

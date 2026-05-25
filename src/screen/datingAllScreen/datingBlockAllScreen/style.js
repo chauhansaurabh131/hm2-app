@@ -28,7 +28,7 @@ export const style = StyleSheet.create({
   headingTittleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: hp(31),
+    marginTop: hp(20),
     // backgroundColor: 'orange',
     justifyContent: 'space-between',
   },

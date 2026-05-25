@@ -181,34 +181,29 @@ const StepForAuthenticationOnScreen = () => {
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={style.container}>
       <View style={style.headerContainerView}>
-        <View style={style.headerContainerStyle}>
-          <Image
-            source={images.happyMilanColorLogo}
-            style={style.customerHeaderImage}
-          />
-          {/*<TouchableOpacity onPress={openTopSheetModal}>*/}
-          <TouchableOpacity onPress={openBottomSheet}>
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={style.profileImageStyle}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName}
-                lastName={user?.user?.lastName}
-                textStyle={style.profileImageStyle}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-            {/*<Image*/}
-            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-            {/*  style={style.profileImageStyle}*/}
-            {/*/>*/}
-          </TouchableOpacity>
-        </View>
+        {/*<View style={style.headerContainerStyle}>*/}
+        {/*  <Image*/}
+        {/*    source={images.happyMilanColorLogo}*/}
+        {/*    style={style.customerHeaderImage}*/}
+        {/*  />*/}
+        {/*  <TouchableOpacity onPress={openBottomSheet}>*/}
+        {/*    {userImage ? (*/}
+        {/*      <Image*/}
+        {/*        source={{uri: userImage}}*/}
+        {/*        style={style.profileImageStyle}*/}
+        {/*      />*/}
+        {/*    ) : (*/}
+        {/*      <ProfileAvatar*/}
+        {/*        firstName={user?.user?.firstName}*/}
+        {/*        lastName={user?.user?.lastName}*/}
+        {/*        textStyle={style.profileImageStyle}*/}
+        {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*      />*/}
+        {/*    )}*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
 
-        <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
+        {/*<NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
 
         <View style={style.headingTittleContainer}>
           <Text style={style.headingCredentialsText}>

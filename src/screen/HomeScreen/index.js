@@ -44,6 +44,7 @@ import Abc from '../abc';
 import HomeCardProfileComponent from '../../components/homeCardProfileComponent';
 import HomeRemainingDataComponent from '../../components/homeRemainingDataComponent';
 import {BASE_URL} from '../../utils/constants';
+import LongTermUserDataScreen from '../longTermUserDataScreen';
 
 const HomeScreen = ({route}) => {
   const insets = useSafeAreaInsets();
@@ -632,7 +633,7 @@ const HomeScreen = ({route}) => {
         {/*</TouchableOpacity>*/}
 
         <View style={{marginTop: hp(38)}}>
-          <DemoCode onShowAlert={showCustomAlert} />
+          <LongTermUserDataScreen onShowAlert={showCustomAlert} />
         </View>
 
         {/*<View style={{width: '100%', height: 4, backgroundColor: '#F8F8F8'}} />*/}

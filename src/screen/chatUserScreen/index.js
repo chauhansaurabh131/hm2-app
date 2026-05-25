@@ -38,6 +38,7 @@ import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import Toast from 'react-native-toast-message';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {BASE_URL} from '../../utils/constants';
 
 const formatTime = timestamp => {
   const date = new Date(timestamp);
@@ -153,7 +154,7 @@ const ChatUserScreen = ({route}) => {
       }
 
       const response = await fetch(
-        `https://stag.mntech.website/api/v1/user/message-consent/get-message-consent/${friendId}`,
+        `${BASE_URL}/api/v1/user/message-consent/get-message-consent/${friendId}`,
         {
           method: 'GET',
           headers: {
@@ -193,7 +194,7 @@ const ChatUserScreen = ({route}) => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/message-consent/create-message-consent',
+        `${BASE_URL}/api/v1/user/message-consent/create-message-consent`,
         {
           method: 'POST',
           headers: {
@@ -260,7 +261,7 @@ const ChatUserScreen = ({route}) => {
   useEffect(() => {
     if (accessToken) {
       // const socket = io('https://happymilan.tech', {
-      const socket = io('https://stag.mntech.website', {
+      const socket = io(`${BASE_URL}`, {
         path: '/api/socket.io',
         query: {
           token: accessToken,
@@ -1524,7 +1525,7 @@ const ChatUserScreen = ({route}) => {
                       style={{
                         width: hp(10),
                         height: hp(10),
-                        borderRadius: 5,
+                        borderRadius: hp(5),
                         backgroundColor:
                           tipIndex === index ? '#8225AF' : '#D3C1E4',
                       }}

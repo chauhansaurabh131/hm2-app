@@ -9,7 +9,7 @@ const style = StyleSheet.create({
   },
   headerContainer: {
     width: '100%',
-    height: hp(218),
+    height: hp(170),
   },
   headerTittleStyle: {
     flexDirection: 'row',

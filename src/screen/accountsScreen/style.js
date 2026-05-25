@@ -27,7 +27,7 @@ const style = StyleSheet.create({
     borderRadius: 50,
   },
   headerTittleStyle: {
-    marginTop: hp(31),
+    marginTop: hp(10),
     fontSize: fontSize(14),
     lineHeight: hp(21),
     fontFamily: fontFamily.poppins500,

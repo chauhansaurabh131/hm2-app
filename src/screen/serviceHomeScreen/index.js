@@ -17,6 +17,7 @@ import VendorSearchLocationComponent from '../../components/vendorSearchLocation
 import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 import {useSelector} from 'react-redux';
+import ProfileAvatar from '../../components/letterProfileComponent';
 
 const ServiceHomeScreen = () => {
   const [text, setText] = useState('');
@@ -26,7 +27,7 @@ const ServiceHomeScreen = () => {
 
   const {user} = useSelector(state => state.auth);
 
-  // console.log(' === user***** ===> ', user?.user?.profilePic);
+  console.log(' === user***** ===> ', user?.user?.profilePic);
 
   const items = [
     {icon: icons.wedding_Planner_icon, label: 'Wedding Planner'},
@@ -89,23 +90,84 @@ const ServiceHomeScreen = () => {
             Search Nearby Vendors
           </Text>
 
-          <TouchableOpacity
+          {/*<TouchableOpacity*/}
+          {/*  style={{*/}
+          {/*    width: wp(50),*/}
+          {/*    height: hp(50),*/}
+          {/*    alignItems: 'center',*/}
+          {/*    justifyContent: 'center',*/}
+          {/*  }}>*/}
+          {/*  <Image*/}
+          {/*    source={icons.view_profile_icon}*/}
+          {/*    style={{*/}
+          {/*      width: hp(18),*/}
+          {/*      height: hp(18),*/}
+          {/*      resizeMode: 'contain',*/}
+          {/*      tintColor: '#7148E4',*/}
+          {/*    }}*/}
+          {/*  />*/}
+          {/*</TouchableOpacity>*/}
+
+          <View
             style={{
               width: wp(50),
               height: hp(50),
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Image
-              source={icons.view_profile_icon}
-              style={{
-                width: hp(18),
-                height: hp(18),
-                resizeMode: 'contain',
-                tintColor: '#7148E4',
-              }}
-            />
-          </TouchableOpacity>
+            {/* USER NOT LOGIN */}
+            {!user ? (
+              <Image
+                source={icons.view_profile_icon}
+                style={{
+                  width: hp(18),
+                  height: hp(18),
+                  resizeMode: 'contain',
+                  tintColor: '#7148E4',
+                }}
+              />
+            ) : /* USER LOGIN + PROFILE IMAGE */
+            user?.user?.profilePic ? (
+              <Image
+                source={{
+                  uri: user?.user?.profilePic,
+                }}
+                style={{
+                  width: hp(20),
+                  height: hp(20),
+                  borderRadius: hp(40),
+                  resizeMode: 'cover',
+                }}
+              />
+            ) : (
+              /* USER LOGIN BUT NO PROFILE IMAGE */
+
+              <View
+                style={{
+                  width: hp(20),
+                  height: hp(20),
+                  borderRadius: hp(20),
+                  backgroundColor: '#7148E4',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: fontSize(12),
+                    fontFamily: fontFamily.poppins500,
+                    textTransform: 'uppercase',
+                    top: 1,
+                  }}>
+                  {`${user?.user?.firstName?.charAt(0) || ''}${
+                    user?.user?.lastName?.charAt(0) ||
+                    user?.user?.name?.split(' ')?.[1]?.charAt(0) ||
+                    ''
+                  }`}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       </View>
 

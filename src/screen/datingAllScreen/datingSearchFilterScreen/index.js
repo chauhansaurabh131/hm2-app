@@ -26,6 +26,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import ProfileAvatar from '../../../components/letterProfileComponent';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import Toast from 'react-native-toast-message';
+import {BASE_URL} from '../../../utils/constants';
 
 const customToastConfig = {
   like: ({text1}) => (
@@ -227,7 +228,7 @@ const DatingSearchFilterScreen = ({route}) => {
       const normalizedCity = city.charAt(0).toLowerCase() + city.slice(1);
 
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/user/search-user-dating',
+        `${BASE_URL}/api/v1/user/user/search-user-dating`,
         {
           method: 'POST',
           headers: {
@@ -269,7 +270,7 @@ const DatingSearchFilterScreen = ({route}) => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/user/getUserByGenderDatingAge',
+        `${BASE_URL}/api/v1/user/user/getUserByGenderDatingAge`,
         {
           method: 'POST',
           headers: {
@@ -338,7 +339,7 @@ const DatingSearchFilterScreen = ({route}) => {
       if (currentLikeStatus) {
         // Unlike user
         const response = await axios.put(
-          `https://stag.mntech.website/api/v1/user/like/update-like/${currentLikeStatusId}`,
+          `${BASE_URL}/api/v1/user/like/update-like/${currentLikeStatusId}`,
           {
             likedUserId: likedUserId,
             isLike: false,
@@ -382,7 +383,7 @@ const DatingSearchFilterScreen = ({route}) => {
       } else {
         // Like user
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/like/create-like?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/like/create-like?appUsesType=dating`,
           {
             likedUserId: likedUserId,
             isLike: true,
@@ -570,7 +571,7 @@ const DatingSearchFilterScreen = ({route}) => {
       // ✅ Send friend request
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/create-friend?appUsesType=dating`,
           {
             friend: card._id,
             user: userId,
@@ -640,7 +641,7 @@ const DatingSearchFilterScreen = ({route}) => {
 
       try {
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
           {
             user: card._id,
             request: requestedId,

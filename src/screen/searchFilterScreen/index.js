@@ -589,82 +589,69 @@ const SearchFilterScreen = () => {
 
   return (
     <SafeAreaView
-      edges={['top', 'left', 'right']}
+      // edges={['top', 'left', 'right']}
       style={{flex: 1, backgroundColor: colors.white}}>
       <Image
         source={images.gradient_header_background_img}
-        style={{height: hp(128), width: '100%', resizeMode: 'cover'}}
+        style={{height: hp(100), width: '100%', resizeMode: 'cover'}}
       />
 
       <View
         style={{
           position: 'absolute',
           width: '100%',
-          marginTop: isIOS ? hp(60) : hp(30),
+          // marginTop: isIOS ? hp(60) : hp(50),
         }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 17,
-          }}>
-          <Image
-            source={icons.headerIconWhite}
-            style={{
-              width: wp(96),
-              height: hp(24),
-              resizeMode: 'contain',
-              marginTop: hp(2),
-            }}
-          />
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={openTopBottomSheet}
-            style={{alignSelf: 'center'}}>
-            {userImage ? (
-              <Image
-                source={{uri: userImage}}
-                style={{
-                  width: hp(24),
-                  height: hp(24),
-                  borderRadius: 50,
-                  marginRight: hp(10.5),
-                  resizeMode: 'cover',
-                  right: -7,
-                  marginTop: hp(2),
-                }}
-              />
-            ) : (
-              <ProfileAvatar
-                firstName={user?.user?.firstName || user?.user?.name}
-                lastName={user?.user?.lastName}
-                textStyle={{
-                  width: hp(24),
-                  height: hp(24),
-                  borderRadius: 50,
-                  marginRight: hp(10.5),
-                  resizeMode: 'cover',
-                  right: -7,
-                  marginTop: hp(2),
-                }}
-                profileTexts={{fontSize: fontSize(10)}}
-              />
-            )}
-
-            {/*<Image*/}
-            {/*  source={userImage ? {uri: userImage} : images.empty_male_Image}*/}
-            {/*  style={{*/}
-            {/*    width: hp(24),*/}
-            {/*    height: hp(24),*/}
-            {/*    borderRadius: 50,*/}
-            {/*    marginRight: hp(10.5),*/}
-            {/*    resizeMode: 'cover',*/}
-            {/*    right: -7,*/}
-            {/*    marginTop: hp(2),*/}
-            {/*  }}*/}
-            {/*/>*/}
-          </TouchableOpacity>
-        </View>
+        {/*<View*/}
+        {/*  style={{*/}
+        {/*    flexDirection: 'row',*/}
+        {/*    justifyContent: 'space-between',*/}
+        {/*    marginHorizontal: 17,*/}
+        {/*  }}>*/}
+        {/*  <Image*/}
+        {/*    source={icons.headerIconWhite}*/}
+        {/*    style={{*/}
+        {/*      width: wp(96),*/}
+        {/*      height: hp(24),*/}
+        {/*      resizeMode: 'contain',*/}
+        {/*      marginTop: hp(2),*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*  <TouchableOpacity*/}
+        {/*    activeOpacity={0.7}*/}
+        {/*    onPress={openTopBottomSheet}*/}
+        {/*    style={{alignSelf: 'center'}}>*/}
+        {/*    {userImage ? (*/}
+        {/*      <Image*/}
+        {/*        source={{uri: userImage}}*/}
+        {/*        style={{*/}
+        {/*          width: hp(24),*/}
+        {/*          height: hp(24),*/}
+        {/*          borderRadius: 50,*/}
+        {/*          marginRight: hp(10.5),*/}
+        {/*          resizeMode: 'cover',*/}
+        {/*          right: -7,*/}
+        {/*          marginTop: hp(2),*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*    ) : (*/}
+        {/*      <ProfileAvatar*/}
+        {/*        firstName={user?.user?.firstName || user?.user?.name}*/}
+        {/*        lastName={user?.user?.lastName}*/}
+        {/*        textStyle={{*/}
+        {/*          width: hp(24),*/}
+        {/*          height: hp(24),*/}
+        {/*          borderRadius: 50,*/}
+        {/*          marginRight: hp(10.5),*/}
+        {/*          resizeMode: 'cover',*/}
+        {/*          right: -7,*/}
+        {/*          marginTop: hp(2),*/}
+        {/*        }}*/}
+        {/*        profileTexts={{fontSize: fontSize(10)}}*/}
+        {/*      />*/}
+        {/*    )}*/}
+        {/*  </TouchableOpacity>*/}
+        {/*</View>*/}
 
         <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />
 
@@ -672,11 +659,12 @@ const SearchFilterScreen = () => {
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            marginHorizontal: 17,
-            marginTop: hp(22),
+            marginHorizontal: hp(17),
+            // marginTop: hp(22),
             backgroundColor: '#7A55E5',
-            borderRadius: 100,
-            paddingHorizontal: 20,
+            borderRadius: hp(100),
+            paddingHorizontal: hp(15),
+            top: 52,
           }}>
           <TextInput
             style={{
@@ -708,6 +696,7 @@ const SearchFilterScreen = () => {
               height: hp(30),
               justifyContent: 'center',
               alignItems: 'center',
+              right: -5,
             }}>
             <Image
               source={icons.search_icon}

@@ -402,7 +402,7 @@ const VendorSearchLocationComponent = ({onLocationChange}) => {
 
       <RBSheet
         ref={refRBSheet}
-        height={hp(550)}
+        height={hp(480)}
         openDuration={250}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -578,7 +578,7 @@ const VendorSearchLocationComponent = ({onLocationChange}) => {
               color: colors.pureBlack,
               fontSize: fontSize(16),
               fontFamily: fontFamily.poppins600,
-              marginTop: hp(10),
+              marginTop: hp(8),
             }}>
             Select Vendor
           </Text>

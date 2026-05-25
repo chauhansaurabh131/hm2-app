@@ -31,6 +31,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import Abc from '../abc';
+import {BASE_URL} from '../../utils/constants';
 
 const imageData = [
   {id: '1', source: images.meet_new_friends_img, title: 'Meet New Friends'},
@@ -109,7 +110,7 @@ const DatingExploreScreen = () => {
       }
 
       const response = await axios.get(
-        'https://stag.mntech.website/api/v1/user/friend/get-frd-dating-req-v2',
+        `${BASE_URL}/api/v1/user/friend/get-frd-dating-req-v2`,
         {
           params: {
             appUsesType: 'dating',
@@ -165,7 +166,7 @@ const DatingExploreScreen = () => {
       }
 
       const response = await axios.get(
-        `https://stag.mntech.website/api/v1/user/friend/get-frd-mobile?page=${pageNum}&limit=10`,
+        `${BASE_URL}/api/v1/user/friend/get-frd-mobile?page=${pageNum}&limit=10`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -204,7 +205,7 @@ const DatingExploreScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (filteredUsers.length === 0) {
+      if (filteredUsers?.length === 0) {
         setPages(1);
         fetchAccepted(1, false);
       }
@@ -271,7 +272,7 @@ const DatingExploreScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/block-user?appUsesType=dating',
+        `${BASE_URL}/api/v1/user/friend/block-user?appUsesType=dating`,
         {
           method: 'POST',
           headers: {
@@ -537,7 +538,7 @@ const DatingExploreScreen = () => {
       try {
         // Make the API call to reject the request
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
           {
             user: userId, // Assuming you want to reject for the logged-in user
             request: item._id, // Assuming item._id is the request id
@@ -571,7 +572,7 @@ const DatingExploreScreen = () => {
       try {
         // Make the API call to reject the request
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
           {
             user: userId, // Assuming you want to reject for the logged-in user
             request: item._id, // Assuming item._id is the request id
@@ -755,7 +756,7 @@ const DatingExploreScreen = () => {
       setIsBlockModalVisible(false);
 
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req?appUsesType=dating`,
         {
           method: 'POST',
           headers: {
@@ -906,7 +907,7 @@ const DatingExploreScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/spam/create-spam?appUsesType=dating`,
           {
             method: 'POST',
             headers: {
@@ -950,7 +951,7 @@ const DatingExploreScreen = () => {
     const submitReport = async () => {
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/spam/create-spam?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/spam/create-spam?appUsesType=dating`,
           {
             method: 'POST',
             headers: {
@@ -1145,9 +1146,39 @@ const DatingExploreScreen = () => {
                     onEndReached={loadMores} // triggered when scrolling to bottom
                     onEndReachedThreshold={0.5} // load more when 50% away from bottom
                     ListEmptyComponent={
-                      <Text style={{textAlign: 'center', marginTop: 20}}>
-                        No requests found
-                      </Text>
+                      <View
+                        style={{
+                          alignItems: 'center',
+                          marginTop: hp(200),
+                        }}>
+                        <View
+                          style={{
+                            width: hp(82),
+                            height: hp(82),
+                            borderRadius: hp(50),
+                            backgroundColor: '#F8F6FF',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Image
+                            source={icons.people_Icon}
+                            style={{
+                              width: hp(38),
+                              height: hp(32),
+                              resizeMode: 'contain',
+                            }}
+                          />
+                        </View>
+                        <Text
+                          style={{
+                            fontSize: fontSize(16),
+                            fontFamily: fontFamily.poppins400,
+                            color: '#959090',
+                            marginTop: hp(21),
+                          }}>
+                          No Profiles Found
+                        </Text>
+                      </View>
                     }
                     ListFooterComponent={
                       loadingMores ? (
@@ -1934,17 +1965,35 @@ const DatingExploreScreen = () => {
               {users?.length === 0 ? (
                 <View
                   style={{
-                    justifyContent: 'center',
                     alignItems: 'center',
-                    paddingTop: hp(10),
+                    marginTop: hp(270),
                   }}>
+                  <View
+                    style={{
+                      width: hp(82),
+                      height: hp(82),
+                      borderRadius: hp(50),
+                      backgroundColor: '#F8F6FF',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      source={icons.people_Message_Icon}
+                      style={{
+                        width: hp(38),
+                        height: hp(32),
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  </View>
                   <Text
                     style={{
-                      fontSize: 16,
-                      color: '#999',
+                      fontSize: fontSize(16),
                       fontFamily: fontFamily.poppins400,
+                      color: '#959090',
+                      marginTop: hp(21),
                     }}>
-                    No Data Found
+                    No Requests Found
                   </Text>
                 </View>
               ) : (
