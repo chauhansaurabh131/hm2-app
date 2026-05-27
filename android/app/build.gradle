@@ -76,7 +76,7 @@ android {
 
     packaging {
         jniLibs {
-            useLegacyPackaging = false
+            useLegacyPackaging = true
         }
     }
 
@@ -89,8 +89,8 @@ android {
         applicationId "com.happymilan2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 36
-        versionName "3.5.5"
+        versionCode 39
+        versionName "3.5.8"
         multiDexEnabled= true
         externalNativeBuild {
             cmake {
