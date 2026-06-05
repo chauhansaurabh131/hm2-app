@@ -31,7 +31,7 @@ export const images = {
   plan_background_img: require('./images/plan_background_img.png'),
   meet_new_friends_img: require('./images/meet_new_friend_img.png'),
   looking_love_img: require('./images/looking_love_img.png'),
-  movie_date_img: require('./images/movie_Date_img.png'),
+  movie_date_img: require('./images/movie_date_img.png'),
   foodies_img: require('./images/foodies_img.png'),
   travel_Buddies_img: require('./images/travel_Buddies_img.png'),
   game_lover_img: require('./images/game_lover_img.png'),
@@ -252,6 +252,18 @@ export const icons = {
   no_Vendor_Icon: require('./icons/no_Vendor_Icon.png'),
   people_Icon: require('./icons/people_Icon.png'),
   people_Message_Icon: require('./icons/people_Message_Icon.png'),
+  gradient_Cancel_Btn: require('./icons/gradient_Cancel_Btn.png'),
+  image_Gallery_Icon: require('./icons/image_Gallery_Icon.png'),
+  new_Upgrade_Icon: require('./icons/new_Upgrade_Icon.png'),
+  new_Dating_Dis_Like_Icon: require('./icons/new_Dating_Dis_Like_Icon.png'),
+  new_dating_Like_Icon: require('./icons/new_dating_Like_Icon.png'),
+  dating_new_Filter_Icon: require('./icons/dating_New_Filter_Icon.png'),
+  dating_Send_Icon: require('./icons/dating_Send_Icon.png'),
+  dating_Sended_Icon: require('./icons/dating_Sended_Icon.png'),
+  dating_New_Dis_Like_Icon: require('./icons/dating_New_Dis_Like_Icon.png'),
+  dating_New_Like_Icon: require('./icons/dating_New_Like_icon.png'),
+  dating_Cancel_New_Icon: require('./icons/dating_Cancel_New_Icon.png'),
+  dating_New_Upgrade_Icon: require('./icons/dating_New_Upgrade_Icon.png'),
 };
 
 export const gif = {

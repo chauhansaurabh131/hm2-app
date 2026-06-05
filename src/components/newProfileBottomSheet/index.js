@@ -392,7 +392,7 @@ const NewProfileBottomSheet = ({bottomSheetRef}) => {
                 onPress={() => {
                   {
                     appType === 'dating'
-                      ? navigation.navigate('DatingProfileScreen')
+                      ? navigation.navigate('DatingProfileScreens')
                       : navigation.navigate('MyNewProfileScreen');
                     // : navigation.navigate('MyProfileScreen');
                   }

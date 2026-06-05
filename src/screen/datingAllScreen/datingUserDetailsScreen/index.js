@@ -490,11 +490,6 @@ const DatingUserDetailsScreen = ({route}) => {
   const onSendRequest = async () => {
     const friendStatus = userDetails?.data[0]?.friendsDetails[0]?.status;
 
-    // console.log(
-    //   ' === userDetails ===> ',
-    //   userDetails?.data[0]?.friendsDetails[0]?.friend,
-    // );
-
     if (friendStatus === 'requested') {
       // Call the API to respond to the friend request
       try {
@@ -839,12 +834,6 @@ const DatingUserDetailsScreen = ({route}) => {
   };
 
   const handleConfirmBlock = async () => {
-    // console.log(
-    //   ' === var ===> ',
-    //   userDetails?.data[0]?.friendsDetails[0]?.friend,
-    // );
-
-    // console.log(' === var ===> ', userDetails?.data[0]?._id);
     try {
       setIsBlockModalVisible(false);
 
@@ -883,14 +872,6 @@ const DatingUserDetailsScreen = ({route}) => {
   };
 
   const handleConfirmBlockUnfriend = async () => {
-    // console.log(
-    //   ' === userDetails__ ===> ',
-    //   userDetails?.data[0]?.friendsDetails[0]?._id,
-    // );
-
-    // userDetails?.data[0]?._id
-    // userDetails?.data[0]?.friendsDetails[0]?._id
-
     try {
       const response = await fetch(
         `${BASE_URL}/api/v1/user/friend/block-user?appUsesType=dating`,

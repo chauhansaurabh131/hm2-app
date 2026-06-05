@@ -127,7 +127,7 @@ const DatingUpgradeScreen = () => {
   // console.log(' === planDetails ===> ', planDetails?.status);
   // console.log(' === planDetails___ ===> ', planDetails);
 
-  const API_URL = Config.API_URL || `${BASE_URL}/api`;
+  const API_URL = Config.API_URL || 'https://stag.mntech.website/api';
 
   const bottomSheetRef = useRef(null);
 
@@ -135,7 +135,7 @@ const DatingUpgradeScreen = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${BASE_URL}/api/v1/user/plan/get-plan-dating`,
+        'https://stag.mntech.website/api/v1/user/plan/get-plan-dating',
         {headers: {Authorization: `Bearer ${accessToken}`}},
       );
       setPlans(response.data?.data || []);
@@ -156,7 +156,7 @@ const DatingUpgradeScreen = () => {
 
     try {
       const response = await fetch(
-        `${BASE_URL}/api/v1/user/user-plan/get-user-planbyId`,
+        'https://stag.mntech.website/api/v1/user/user-plan/get-user-planbyId',
         {
           method: 'GET',
           headers: {
@@ -189,7 +189,7 @@ const DatingUpgradeScreen = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASE_URL}/api/v1/user/user/get-credit/${userId}`,
+        `https://stag.mntech.website/api/v1/user/user/get-credit/${userId}`,
         {
           method: 'GET',
           headers: {
@@ -227,10 +227,12 @@ const DatingUpgradeScreen = () => {
   const handlePayment = async plan => {
     bottomSheetRef.current?.close();
 
+    console.log(' === handlePayment ---- ===> ', accessToken);
+
     try {
       // 1️⃣ Create Razorpay Order on backend
       const response = await axios.post(
-        `${API_URL}/v1/user/razorpay/order`,
+        'https://stag.mntech.website/api/v1/user/razorpay/order',
         {planId: plan?.id},
         {headers: {Authorization: `Bearer ${accessToken}`}},
       );
@@ -244,7 +246,7 @@ const DatingUpgradeScreen = () => {
 
       // 2️⃣ Razorpay Checkout options
       const options = {
-        key: 'rzp_live_OyWOR7Tj1c7Vnh',
+        key: 'rzp_live_SvC2X4PLdruq0d',
         name: 'Hapmeet',
         description: 'Credits towards consultation',
         image: 'https://i.imgur.com/3g7nmJC.png',
@@ -264,7 +266,7 @@ const DatingUpgradeScreen = () => {
         .then(async paymentResult => {
           console.log('✅ Payment Success:', paymentResult);
 
-          const callbackUrl = `${API_URL}/v1/user/razorpay/is-order-complete?authToken=${encodeURIComponent(
+          const callbackUrl = `https://stag.mntech.website/api/v1/user/razorpay/is-order-complete?authToken=${encodeURIComponent(
             accessToken,
           )}&paymentHistoryToken=${encodeURIComponent(
             paymentHistoryToken,
@@ -329,9 +331,9 @@ const DatingUpgradeScreen = () => {
         style={style.headerContainer}
         start={{x: 0, y: 0}}
         end={{x: 1.1, y: 0}}>
-        <View style={style.headerBody}>
-          <Image source={icons.headerIconWhite} style={style.appLogoStyle} />
-        </View>
+        {/*<View style={style.headerBody}>*/}
+        {/*  <Image source={icons.headerIconWhite} style={style.appLogoStyle} />*/}
+        {/*</View>*/}
 
         <View style={style.headerDescriptionContainer}>
           <Text style={style.headerTittleTextStyle}>

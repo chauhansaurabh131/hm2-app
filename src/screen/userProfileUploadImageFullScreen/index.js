@@ -14,6 +14,8 @@ import {updateDetails} from '../../actions/homeActions';
 import LinearGradient from 'react-native-linear-gradient';
 import ProfileAvatar from '../../components/letterProfileComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
+import DatingProfileScreens from '../datingAllScreen/datingProfileScreens';
+import {BASE_URL} from '../../utils/constants';
 
 const UserProfileUploadImageFullScreen = () => {
   const navigation = useNavigation();
@@ -84,7 +86,7 @@ const UserProfileUploadImageFullScreen = () => {
     // Step 2: Delete image from backend
     try {
       await axios.post(
-        `https://stag.mntech.website/api/v1/user/user/delete-profile-image/${user?.user?.id}`,
+        `${BASE_URL}/api/v1/user/user/delete-profile-image/${user?.user?.id}`,
         {
           profileImageUrl: currentImage.url,
           name: currentImage.name,

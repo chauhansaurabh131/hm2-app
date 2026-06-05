@@ -119,6 +119,13 @@ import VendorSavedScreen from '../screen/vendorSavedScreen';
 import VendorAlertScreen from '../screen/vendorAlertScreen';
 import LongTermUserDataScreen from '../screen/longTermUserDataScreen';
 import SignInOrLogInComponent from '../components/signInOrLogInComponent';
+import DatingProfileScreens from '../screen/datingAllScreen/datingProfileScreens';
+import DatingPurposeScreen from '../screen/myProfileEditFormAll/DatingPurposeScreen';
+import ModifyDatingBasicScreen from '../screen/myProfileEditFormAll/modifyDatingBasicScreen';
+import ModifyDatingProfessionalScreen from '../screen/myProfileEditFormAll/modifyDatingProfessionalScreen';
+import ModifyDatingHobbiesScreen from '../screen/myProfileEditFormAll/modifyDatingHobbiesScreen';
+import ModifyDatingPartnerPreferenceScreen from '../screen/myProfileEditFormAll/modifyDatingPartnerPreferenceScreen';
+import DatingUserProfileScreen from '../screen/datingAllScreen/datingUserProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -758,6 +765,11 @@ const MainNavigator = () => {
         />
 
         <Stack.Screen
+          name={'DatingUserProfileScreen'}
+          component={DatingUserProfileScreen}
+        />
+
+        <Stack.Screen
           name={'VerifyIdentityScreen'}
           component={VerifyIdentityScreen}
         />
@@ -836,6 +848,31 @@ const MainNavigator = () => {
         <Stack.Screen
           name="ModifyPartnerPreferenceScreen"
           component={ModifyPartnerPreferenceScreen}
+        />
+
+        <Stack.Screen
+          name="DatingPurposeScreen"
+          component={DatingPurposeScreen}
+        />
+
+        <Stack.Screen
+          name="ModifyDatingBasicScreen"
+          component={ModifyDatingBasicScreen}
+        />
+
+        <Stack.Screen
+          name="ModifyDatingProfessionalScreen"
+          component={ModifyDatingProfessionalScreen}
+        />
+
+        <Stack.Screen
+          name="ModifyDatingHobbiesScreen"
+          component={ModifyDatingHobbiesScreen}
+        />
+
+        <Stack.Screen
+          name="ModifyDatingPartnerPreferenceScreen"
+          component={ModifyDatingPartnerPreferenceScreen}
         />
 
         {/*<Stack.Screen*/}
@@ -1033,6 +1070,12 @@ const MainNavigator = () => {
         <Tab.Screen
           name="DatingProfileScreen"
           component={DatingProfileScreen}
+          options={{tabBarButton: () => null, headerShown: false}}
+        />
+
+        <Tab.Screen
+          name="DatingProfileScreens"
+          component={DatingProfileScreens}
           options={{tabBarButton: () => null, headerShown: false}}
         />
 

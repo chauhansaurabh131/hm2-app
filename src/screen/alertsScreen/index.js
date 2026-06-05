@@ -36,7 +36,7 @@ const AlertsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [requestResponses, setRequestResponses] = useState({});
 
-  // console.log(' === notifications__ ===> ', notifications);
+  console.log(' === notifications__ ===> ', notifications);
 
   // Fetch notifications page-wise
   const fetchNotifications = async (pageNumber = 1, isRefresh = false) => {
@@ -236,14 +236,36 @@ const AlertsScreen = () => {
     return `${Math.floor(days / 7)}w ago`;
   };
 
+  const appType = user?.user?.appUsesType;
+
   const handlePress = item => {
     const userData = {
       firstName: item?.otherUserId?.name,
       id: item?.otherUserId?.id,
     };
-    navigation.navigate('UserProfileDetailsScreen', {
-      matchesUserData: userData,
-    });
+
+    const userDatas = {
+      firstName: item?.otherUserId?.name,
+      id: item?.otherUserId?.id,
+    };
+
+    // navigation.navigate('UserProfileDetailsScreen', {
+    //   matchesUserData: userData,
+    // });
+    //
+    // navigation.navigate('DatingUserProfileScreen', {
+    //   userData: userDatas,
+    // });
+
+    if (appType?.toLowerCase() === 'dating') {
+      navigation.navigate('DatingUserProfileScreen', {
+        userData: userDatas,
+      });
+    } else {
+      navigation.navigate('UserProfileDetailsScreen', {
+        matchesUserData: userData,
+      });
+    }
   };
 
   const getSubtitleText = (item, requestState) => {

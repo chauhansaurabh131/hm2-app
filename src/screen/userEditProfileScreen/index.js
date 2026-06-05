@@ -210,7 +210,7 @@ const UserEditProfileScreen = () => {
 
       // Navigate after successful operation
       if (appType === 'dating') {
-        navigation.navigate('DatingProfileScreen');
+        navigation.navigate('DatingProfileScreens');
       } else if (appType === 'marriage') {
         // navigation.navigate('MyProfileScreen');
         navigation.navigate('MyNewProfileScreen');

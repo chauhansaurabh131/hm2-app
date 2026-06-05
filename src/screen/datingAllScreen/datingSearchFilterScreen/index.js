@@ -432,132 +432,6 @@ const DatingSearchFilterScreen = ({route}) => {
     }
   };
 
-  // const handleSend = async card => {
-  //   console.log(' === handleSend--- ===> ', card);
-  //   // const requestedId = card?.friendsDetails[0]?._id; // Retrieve stored request ID
-  //   const requestedId = card?._id; // Retrieve stored request ID
-  //
-  //   console.log('=== requestedId ===> ', requestedId);
-  //
-  //   if (card?.status !== 'requested') {
-  //     // Sending friend request
-  //     try {
-  //       const response = await axios.post(
-  //         'https://stag.mntech.website/api/v1/user/friend/create-friend?appUsesType=dating',
-  //         {
-  //           friend: card._id, // Friend's ID
-  //           user: userId, // Logged-in user's ID
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //             'Content-Type': 'application/json',
-  //           },
-  //         },
-  //       );
-  //
-  //       console.log('API Response for create-friend:', response?.data);
-  //
-  //       if (response?.data?.status === 'Success') {
-  //         const requestId = response?.data?.data?.id; // Extract the request ID
-  //
-  //         if (!requestId) {
-  //           console.error('Friend request ID is missing from API response.');
-  //           return;
-  //         }
-  //
-  //         // Update the card with the request ID and status
-  //         const updatedCards = cards.map(item =>
-  //           item._id === card._id
-  //             ? {
-  //                 ...item,
-  //                 friendsDetails: [
-  //                   {
-  //                     // ...item.friendsDetails[0],
-  //                     ...item.friendsDetails,
-  //                     _id: requestId, // Store request ID
-  //                     status: 'requested',
-  //                   },
-  //                 ],
-  //               }
-  //             : item,
-  //         );
-  //         setCards(updatedCards);
-  //
-  //         Toast.show({
-  //           type: 'sentReq',
-  //           text1: 'Request Sent',
-  //           position: 'top',
-  //           visibilityTime: 1500,
-  //         });
-  //       } else {
-  //         console.log('Unable to send friend request. Please try again.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error with create-friend API:', error);
-  //       Alert.alert('Error', 'Something went wrong. Please try again.');
-  //     }
-  //   } else {
-  //     console.log('Friend request already sent, now removing the request');
-  //
-  //     if (!requestedId) {
-  //       console.error('Requested ID is missing. Cannot remove friend request.');
-  //       return;
-  //     }
-  //
-  //     // Removing friend request
-  //     try {
-  //       const response = await axios.post(
-  //         'https://stag.mntech.website/api/v1/user/friend/respond-friend-req?appUsesType=dating',
-  //         {
-  //           user: card._id, // Friend's ID
-  //           request: requestedId, // Use stored request ID
-  //           status: 'removed', // Mark request as removed
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //             'Content-Type': 'application/json',
-  //           },
-  //         },
-  //       );
-  //
-  //       console.log('API Response for remove-friend-request:', response?.data);
-  //
-  //       if (response?.data?.success === true) {
-  //         // Update the card to reflect the removal
-  //         const updatedCards = cards.map(item =>
-  //           item._id === card._id
-  //             ? {
-  //                 ...item,
-  //                 friendsDetails: [
-  //                   {
-  //                     ...item.friendsDetails[0],
-  //                     _id: null, // Remove request ID
-  //                     status: 'removed',
-  //                   },
-  //                 ],
-  //               }
-  //             : item,
-  //         );
-  //         setCards(updatedCards);
-  //
-  //         Toast.show({
-  //           type: 'cancelReq',
-  //           text1: 'Cancel Request ',
-  //           position: 'top',
-  //           visibilityTime: 1500,
-  //         });
-  //       } else {
-  //         console.log('Unable to remove friend request. Please try again.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error with remove-friend-request API:', error);
-  //       Alert.alert('Error', 'Something went wrong. Please try again....');
-  //     }
-  //   }
-  // };
-
   const handleSend = async card => {
     // console.log(' === handleSend--- ===> ', card);
 
@@ -786,11 +660,12 @@ const DatingSearchFilterScreen = ({route}) => {
           onPress={() => {
             // console.log(' === card ===> ', card);
             // navigation.navigate('Abc', {userData: card});
-            navigation.navigate('DatingUserDetailsScreen', {userData: card});
+            // navigation.navigate('DatingUserDetailsScreen', {userData: card});
+            navigation.navigate('DatingUserProfileScreen', {userData: card});
           }}
           style={{
             position: 'absolute',
-            bottom: 90,
+            bottom: 75,
             left: 20,
           }}>
           <Text
@@ -836,103 +711,51 @@ const DatingSearchFilterScreen = ({route}) => {
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Upgrader');
-              }}
-              style={{
-                width: wp(69),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
               }}>
               <Image
-                source={icons.date_boost_icon}
-                style={{width: hp(14), height: hp(22), resizeMode: 'contain'}}
+                source={icons.dating_New_Upgrade_Icon}
+                style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => {
                 onSwipePress(card);
-              }}
-              style={{
-                width: wp(69),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
               }}>
               <Image
-                source={icons.date_cancel_icon}
-                style={{width: hp(19), height: hp(17)}}
+                source={icons.dating_Cancel_New_Icon}
+                style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
             {card?.userLikeDetails[0]?.isLike ? (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: '#9E28D7',
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <TouchableOpacity onPress={() => OnLikePress(card)}>
                 <Image
-                  source={icons.dating_white_heart}
-                  style={{width: hp(19), height: hp(17), tintColor: 'white'}}
+                  source={icons.dating_New_Like_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <TouchableOpacity onPress={() => OnLikePress(card)}>
                 <Image
-                  source={icons.date_like_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_New_Dis_Like_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             )}
 
             {card?.friendsDetails?.[0]?.status === 'requested' ? (
-              <TouchableOpacity
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: '#7045EB',
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                onPress={() => handleSend(card)}>
+              <TouchableOpacity onPress={() => handleSend(card)}>
                 <Image
-                  source={icons.date_white_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_Sended_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                onPress={() => handleSend(card)}>
+              <TouchableOpacity onPress={() => handleSend(card)}>
                 <Image
-                  source={icons.date_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_Send_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             )}
@@ -1383,7 +1206,7 @@ const DatingSearchFilterScreen = ({route}) => {
             </Text>
           </View>
         ) : (
-          <View style={{flex: 1, marginTop: hp(15)}}>
+          <View style={{flex: 1, marginTop: hp(30)}}>
             <Swiper
               ref={swiperRef} // Add ref to the Swiper
               key={resetKey}

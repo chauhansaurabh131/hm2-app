@@ -597,22 +597,8 @@ const MeetNewFriendsScreen = ({route}) => {
     return (
       <View
         style={{
-          // justifyContent: 'center',
-          // borderRadius: 20,
-          // // borderWidth: 2,
-          // // borderColor: '#E8E8E8',
-          // backgroundColor: '#FFF',
-          // shadowColor: '#000',
-          // shadowOffset: {width: 0, height: 1},
-          // shadowOpacity: 0.2,
-          // shadowRadius: 1.41,
-          // elevation: 2,
-          // height: hp(530),
-
           justifyContent: 'center',
           borderRadius: 20,
-          // borderWidth: 2,
-          // borderColor: '#E8E8E8',
           backgroundColor: '#FFF',
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 1},
@@ -670,11 +656,9 @@ const MeetNewFriendsScreen = ({route}) => {
 
         <TouchableOpacity
           onPress={() => {
-            // console.log(' === card ===> ', card);
-            // navigation.navigate('Abc', {userData: card});
-            navigation.navigate('DatingUserDetailsScreen', {userData: card});
+            navigation.navigate('DatingUserProfileScreen', {userData: card});
           }}
-          style={{position: 'absolute', bottom: 60, left: 15, right: 15}}>
+          style={{position: 'absolute', bottom: 75, left: 15, right: 15}}>
           {card?.isUserActive && (
             <View
               style={{
@@ -751,84 +735,41 @@ const MeetNewFriendsScreen = ({route}) => {
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Upgrader');
-              }}
-              style={{
-                width: wp(69),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: wp(30),
-                justifyContent: 'center',
-                alignItems: 'center',
               }}>
               <Image
-                source={icons.date_boost_icon}
-                style={{width: hp(14), height: hp(22), resizeMode: 'contain'}}
+                source={icons.dating_New_Upgrade_Icon}
+                style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => {
                 onSwipePress(card);
-              }}
-              style={{
-                width: wp(69),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: wp(30),
-                justifyContent: 'center',
-                alignItems: 'center',
               }}>
               <Image
-                source={icons.date_cancel_icon}
-                style={{width: hp(19), height: hp(17), resizeMode: 'contain'}}
+                source={icons.dating_Cancel_New_Icon}
+                style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
             {card?.userLikeDetails[0]?.isLike ? (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: '#9E28D7',
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <TouchableOpacity onPress={() => OnLikePress(card)}>
                 <Image
-                  source={icons.dating_white_heart}
-                  style={{width: hp(19), height: hp(17), tintColor: 'white'}}
+                  source={icons.dating_New_Like_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <TouchableOpacity onPress={() => OnLikePress(card)}>
                 <Image
-                  source={icons.date_like_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_New_Dis_Like_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             )}
 
             {card?.friendsDetails[0]?.status === 'requested' ? (
               <TouchableOpacity
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: '#7045EB',
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                // onPress={() => handleSend(card)}
                 onPress={() => {
                   const isAlreadyRequested =
                     card?.friendsDetails?.[0]?.status === 'requested';
@@ -848,27 +789,15 @@ const MeetNewFriendsScreen = ({route}) => {
                   }
                 }}>
                 <Image
-                  // source={icons.date_send_icon}
-                  source={icons.date_white_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_Sended_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                // onPress={() => handleSend(card)}
-                onPress={() => handleSendPress(card)}>
+              <TouchableOpacity onPress={() => handleSendPress(card)}>
                 <Image
-                  // source={icons.date_send_icon}
-                  source={icons.date_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_Send_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             )}
@@ -962,9 +891,11 @@ const MeetNewFriendsScreen = ({route}) => {
 
           <TouchableOpacity
             activeOpacity={0.5}
-            style={style.filterContainer}
             onPress={() => bottomSheetRef.current.open()}>
-            <Image source={icons.filter_icon} style={style.filterIcon} />
+            <Image
+              source={icons.dating_new_Filter_Icon}
+              style={style.filterIcon}
+            />
           </TouchableOpacity>
         </View>
 
@@ -1242,7 +1173,7 @@ const MeetNewFriendsScreen = ({route}) => {
                         lineHeight: hp(24),
                         fontFamily: fontFamily.poppins600,
                       }}>
-                      Show Me..
+                      Show Me
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -1342,7 +1273,7 @@ const MeetNewFriendsScreen = ({route}) => {
           </View>
         ) : (
           // <View style={{marginTop: -40}}>
-          <View style={{flex: 1, marginTop: hp(15)}}>
+          <View style={{flex: 1, marginTop: hp(20)}}>
             <Swiper
               ref={swiperRef} // Add ref to the Swiper
               key={resetKey}

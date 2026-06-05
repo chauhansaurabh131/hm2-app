@@ -535,10 +535,13 @@ const DatingSwipeDataComponent = () => {
           }}
         />
         <TouchableOpacity
-          style={{position: 'absolute', bottom: 60, left: 15, right: 15}}
+          style={{position: 'absolute', bottom: 80, left: 15, right: 15}}
           onPress={() => {
-            console.log(' === card___ ===> ', card);
-            navigation.navigate('DatingUserDetailsScreen', {userData: card});
+            // console.log(' === card___ ===> ', card);
+            // navigation.navigate('DatingUserDetailsScreen', {userData: card});
+            navigation.navigate('DatingUserProfileScreen', {userData: card});
+
+            console.log(' === userData Card ===> ', card);
           }}>
           {card?.isUserActive && (
             <View
@@ -569,6 +572,7 @@ const DatingSwipeDataComponent = () => {
               fontSize: fontSize(24),
               lineHeight: hp(36),
               fontFamily: fontFamily.poppins700,
+              // top: -10,
             }}>
             {card.name.charAt(0).toUpperCase() + card.name.slice(1)},{' '}
             {card.age || 'N.A'}
@@ -580,6 +584,7 @@ const DatingSwipeDataComponent = () => {
                 fontSize: fontSize(14),
                 lineHeight: hp(21),
                 fontFamily: fontFamily.poppins400,
+                // top: -10,
               }}>
               {formatText(card?.datingData?.[0]?.Occupation)} |{' '}
               {formatText(card?.datingData?.[0]?.Ethnicity)} ,{' '}
@@ -607,84 +612,41 @@ const DatingSwipeDataComponent = () => {
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Upgrader');
-              }}
-              style={{
-                width: wp(69),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: wp(30),
-                justifyContent: 'center',
-                alignItems: 'center',
               }}>
               <Image
-                source={icons.date_boost_icon}
-                style={{width: hp(14), height: hp(22), resizeMode: 'contain'}}
+                source={icons.dating_New_Upgrade_Icon}
+                style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => {
                 onSwipePress();
-              }}
-              style={{
-                width: wp(69),
-                height: hp(40),
-                backgroundColor: colors.white,
-                borderRadius: wp(30),
-                justifyContent: 'center',
-                alignItems: 'center',
               }}>
               <Image
-                source={icons.date_cancel_icon}
-                style={{width: hp(19), height: hp(17), resizeMode: 'contain'}}
+                source={icons.dating_Cancel_New_Icon}
+                style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
               />
             </TouchableOpacity>
 
             {card?.userLikeDetails[0]?.isLike ? (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: '#9E28D7',
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <TouchableOpacity onPress={() => OnLikePress(card)}>
                 <Image
-                  source={icons.dating_white_heart}
-                  style={{width: hp(19), height: hp(17), tintColor: 'white'}}
+                  source={icons.dating_New_Like_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                onPress={() => OnLikePress(card)}
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <TouchableOpacity onPress={() => OnLikePress(card)}>
                 <Image
-                  source={icons.date_like_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_New_Dis_Like_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             )}
 
             {card?.friendsDetails[0]?.status === 'requested' ? (
               <TouchableOpacity
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: '#7045EB',
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                // onPress={() => handleSend(card)}
                 onPress={() => {
                   const isAlreadyRequested =
                     card?.friendsDetails?.[0]?.status === 'requested';
@@ -704,27 +666,15 @@ const DatingSwipeDataComponent = () => {
                   }
                 }}>
                 <Image
-                  // source={icons.date_send_icon}
-                  source={icons.date_white_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_Sended_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={{
-                  width: wp(69),
-                  height: hp(40),
-                  backgroundColor: colors.white,
-                  borderRadius: wp(30),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                // onPress={() => handleSend(card)}
-                onPress={() => handleSendPress(card)}>
+              <TouchableOpacity onPress={() => handleSendPress(card)}>
                 <Image
-                  // source={icons.date_send_icon}
-                  source={icons.date_send_icon}
-                  style={{width: hp(19), height: hp(17)}}
+                  source={icons.dating_Send_Icon}
+                  style={{width: hp(54), height: hp(53), resizeMode: 'contain'}}
                 />
               </TouchableOpacity>
             )}
@@ -769,7 +719,7 @@ const DatingSwipeDataComponent = () => {
                 marginBottom: hp(13),
               }}
             />
-            <View style={{marginTop: -180, marginHorizontal: 17}}>
+            <View style={{marginTop: -200, marginHorizontal: 17}}>
               <ShimmerPlaceholder style={{width: 150, height: 25}} />
 
               <View style={{marginTop: 10}}>
@@ -779,40 +729,40 @@ const DatingSwipeDataComponent = () => {
               <View style={{marginTop: 50, flexDirection: 'row'}}>
                 <ShimmerPlaceholder
                   style={{
-                    width: wp(69),
-                    height: hp(40),
+                    width: wp(54),
+                    height: hp(53),
                     justifyContent: 'center',
-                    marginRight: 15,
-                    borderRadius: 20,
+                    marginRight: wp(30),
+                    borderRadius: hp(50),
                   }}
                 />
                 <ShimmerPlaceholder
                   style={{
-                    width: wp(69),
-                    height: hp(40),
+                    width: wp(54),
+                    height: hp(53),
                     justifyContent: 'center',
-                    marginRight: 15,
-                    borderRadius: 20,
-                  }}
-                />
-
-                <ShimmerPlaceholder
-                  style={{
-                    width: wp(69),
-                    height: hp(40),
-                    justifyContent: 'center',
-                    marginRight: 15,
-                    borderRadius: 20,
+                    marginRight: wp(30),
+                    borderRadius: hp(50),
                   }}
                 />
 
                 <ShimmerPlaceholder
                   style={{
-                    width: wp(69),
-                    height: hp(40),
+                    width: wp(54),
+                    height: hp(53),
                     justifyContent: 'center',
-                    marginRight: 10,
-                    borderRadius: 20,
+                    marginRight: wp(30),
+                    borderRadius: hp(50),
+                  }}
+                />
+
+                <ShimmerPlaceholder
+                  style={{
+                    width: wp(54),
+                    height: hp(53),
+                    justifyContent: 'center',
+                    marginRight: wp(30),
+                    borderRadius: hp(50),
                   }}
                 />
               </View>

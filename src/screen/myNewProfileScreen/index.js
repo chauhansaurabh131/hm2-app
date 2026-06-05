@@ -260,7 +260,6 @@ const MyNewProfileScreen = () => {
         <View
           style={{
             height: hp(186),
-            // backgroundColor: colors.white,
             borderBottomLeftRadius: hp(34),
             borderBottomRightRadius: hp(34),
 

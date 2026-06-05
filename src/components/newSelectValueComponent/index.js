@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {icons} from '../../assets';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {fontSize} from '../../utils/helpers';
+import {fontSize, hp} from '../../utils/helpers';
 import {colors} from '../../utils/colors';
 
 // Google API Key

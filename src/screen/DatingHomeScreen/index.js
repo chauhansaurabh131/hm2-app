@@ -327,10 +327,13 @@ const DatingHomeScreen = () => {
 
           <TouchableOpacity
             activeOpacity={0.5}
-            style={style.filterContainer}
+            // style={style.filterContainer}
             // onPress={() => RBSheetRef.current.open()}
             onPress={() => bottomSheetRef.current.open()}>
-            <Image source={icons.filter_icon} style={style.filterIcon} />
+            <Image
+              source={icons.dating_new_Filter_Icon}
+              style={{width: hp(29), height: hp(28), resizeMode: 'contain'}}
+            />
           </TouchableOpacity>
         </View>
 

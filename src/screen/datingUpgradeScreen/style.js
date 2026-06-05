@@ -9,11 +9,11 @@ export const style = StyleSheet.create({
   },
   headerContainer: {
     width: '100%',
-    height: hp(163),
+    height: hp(145),
   },
   headerDescriptionContainer: {
     alignItems: 'center',
-    marginTop: hp(27),
+    marginTop: hp(40),
   },
   headerTittleTextStyle: {
     color: colors.white,

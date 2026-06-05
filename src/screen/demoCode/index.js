@@ -1,39 +1,35 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Text, TouchableOpacity} from 'react-native';
-import SignInOrLogInComponent from '../../components/signInOrLogInComponent';
+import {Image, View, Pressable} from 'react-native';
 import {hp} from '../../utils/helpers';
+import {icons} from '../../assets';
 
 const DemoCode = () => {
-  const [loginModal, setSetLoginModal] = useState(false);
   return (
-    <SafeAreaView>
-      <TouchableOpacity
-        onPress={() => {
-          setSetLoginModal(true);
-        }}
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: 'white', justifyContent: 'center'}}>
+      <View
         style={{
-          width: '100%',
-          height: hp(50),
+          height: hp(150),
           backgroundColor: 'black',
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Text style={{color: 'white'}}>Open</Text>
-      </TouchableOpacity>
-
-      <SignInOrLogInComponent
-        visible={loginModal}
-        onClose={() => setSetLoginModal(false)}
-        onSignUp={() => {
-          setSetLoginModal(false);
-          // navigation.navigate('NewSignUpScreen');
-        }}
-        onLogin={() => {
-          setSetLoginModal(false);
-          // navigation.navigate('LoginScreen');
-        }}
-      />
+        <Pressable
+          style={({pressed}) => ({
+            opacity: pressed ? 0.7 : 1,
+            transform: [{scale: pressed ? 0.95 : 1}],
+          })}>
+          <Image
+            source={icons.gradient_Cancel_Btn}
+            style={{
+              width: hp(80),
+              height: hp(80),
+              resizeMode: 'contain',
+            }}
+          />
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 };

@@ -77,6 +77,7 @@ const DatingExploreScreen = () => {
   const [loadingMores, setLoadingMores] = useState(false); // for pagination loader
   const [pages, setPages] = useState(1); // current page
   const [hasMores, setHasMores] = useState(true); // check if more data exists
+  const [allAcceptedUsers, setAllAcceptedUsers] = useState([]);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -157,6 +158,47 @@ const DatingExploreScreen = () => {
     }
   };
 
+  // const fetchAccepted = async (pageNum = 1, isLoadMore = false) => {
+  //   try {
+  //     if (isLoadMore) {
+  //       setLoadingMores(true);
+  //     } else {
+  //       setLoadings(true);
+  //     }
+  //
+  //     const response = await axios.get(
+  //       `${BASE_URL}/api/v1/user/friend/get-frd-mobile?page=${pageNum}&limit=10`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       },
+  //     );
+  //
+  //     console.log(' === newData ===> ', response?.data?.data?.results[0]);
+  //
+  //     const newData = response.data?.data?.results || [];
+  //     const totalPages = response.data?.data?.totalPages || 1;
+  //
+  //     if (isLoadMore) {
+  //       setFilteredUsers(prev => [...prev, ...newData]);
+  //     } else {
+  //       setFilteredUsers(newData);
+  //     }
+  //
+  //     setHasMores(pageNum < totalPages);
+  //   } catch (error) {
+  //     console.error(
+  //       'Error fetching requests:',
+  //       error.response?.data || error.message,
+  //     );
+  //   } finally {
+  //     setLoadings(false);
+  //     setLoadingMores(false);
+  //   }
+  // };
+
   const fetchAccepted = async (pageNum = 1, isLoadMore = false) => {
     try {
       if (isLoadMore) {
@@ -175,20 +217,24 @@ const DatingExploreScreen = () => {
         },
       );
 
-      const newData = response.data?.data?.results || [];
-      const totalPages = response.data?.data?.totalPages || 1;
+      const newData = response?.data?.data?.results || [];
+      const totalPages = response?.data?.data?.totalPages || 1;
+
+      console.log('Accepted Users ===>', newData);
 
       if (isLoadMore) {
+        setAllAcceptedUsers(prev => [...prev, ...newData]);
         setFilteredUsers(prev => [...prev, ...newData]);
       } else {
+        setAllAcceptedUsers(newData);
         setFilteredUsers(newData);
       }
 
       setHasMores(pageNum < totalPages);
     } catch (error) {
-      console.error(
-        'Error fetching requests:',
-        error.response?.data || error.message,
+      console.log(
+        'Fetch Accepted Error ===>',
+        error?.response?.data || error?.message,
       );
     } finally {
       setLoadings(false);
@@ -205,33 +251,37 @@ const DatingExploreScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (filteredUsers?.length === 0) {
-        setPages(1);
-        fetchAccepted(1, false);
-      }
+      setPages(1);
+      fetchAccepted(1, false);
     }, [accessToken]),
   );
 
   const loadMores = () => {
     if (!loadingMores && hasMores) {
       const nextPage = pages + 1;
+
       setPages(nextPage);
       fetchAccepted(nextPage, true);
     }
   };
 
   useEffect(() => {
-    // Filter the `acceptedUsers` list based on `searchText`
     if (searchText.trim() === '') {
-      setFilteredUsers(getAllAccepted?.data?.results); // Show all users if search text is empty
+      setFilteredUsers(allAcceptedUsers);
     } else {
-      const filtered = acceptedUsers.filter(item => {
-        const user = item.friendList || item.userList; // Assuming `friendList` or `userList` contains the name
-        return user?.name?.toLowerCase().includes(searchText.toLowerCase());
+      const filtered = allAcceptedUsers.filter(item => {
+        const user = item?.friendList || item?.userList;
+
+        const fullName = `${user?.firstName || ''} ${
+          user?.lastName || ''
+        }`.toLowerCase();
+
+        return fullName.includes(searchText.toLowerCase());
       });
+
       setFilteredUsers(filtered);
     }
-  }, [searchText, acceptedUsers]);
+  }, [searchText, allAcceptedUsers]);
 
   const handleImagePress = title => {
     console.log('Image clicked:', title);
@@ -320,7 +370,7 @@ const DatingExploreScreen = () => {
   };
 
   const renderAcceptedItem = ({item}) => {
-    // console.log(' === var ===> ', );
+    console.log(' === item ===> ', item);
 
     const user = item.friendList || [];
     const profilePic = user?.profilePic;
@@ -360,7 +410,7 @@ const DatingExploreScreen = () => {
         activeOpacity={0.6}
         underlayColor="#F9FBFF"
         onPress={() => {
-          navigation.navigate('DatingUserDetailsScreen', {
+          navigation.navigate('DatingUserProfileScreen', {
             userData: user,
             item,
           });
@@ -605,7 +655,8 @@ const DatingExploreScreen = () => {
     const onClicked = () => {
       console.log(' === onClicked ===> ', user);
 
-      navigation.navigate('DatingUserDetailsScreen', {userData: user});
+      // navigation.navigate('DatingUserDetailsScreen', {userData: user});
+      navigation.navigate('DatingUserProfileScreen', {userData: user});
     };
 
     return (
@@ -728,9 +779,16 @@ const DatingExploreScreen = () => {
     );
   };
 
+  // const onAcceptedPress = () => {
+  //   setSelectedText('Accepted');
+  //   // dispatch(getAllAcceptedDating());
+  // };
+
   const onAcceptedPress = () => {
     setSelectedText('Accepted');
-    // dispatch(getAllAcceptedDating());
+
+    setPages(1);
+    fetchAccepted(1, false);
   };
 
   const onRequestedPress = () => {
@@ -1127,66 +1185,127 @@ const DatingExploreScreen = () => {
                     style={{
                       justifyContent: 'center',
                       alignItems: 'center',
-                      paddingTop: hp(10),
+                      // paddingTop: hp(10),
+                      marginTop: hp(200),
                     }}>
+                    <View
+                      style={{
+                        width: hp(82),
+                        height: hp(82),
+                        borderRadius: hp(50),
+                        backgroundColor: '#F8F6FF',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Image
+                        source={icons.people_Icon}
+                        style={{
+                          width: hp(38),
+                          height: hp(32),
+                          resizeMode: 'contain',
+                        }}
+                      />
+                    </View>
+
                     <Text
                       style={{
-                        fontSize: 16,
-                        color: '#999',
+                        fontSize: fontSize(16),
                         fontFamily: fontFamily.poppins400,
+                        color: '#959090',
+                        marginTop: hp(21),
                       }}>
-                      No Data Found
+                      No Profiles Found
                     </Text>
                   </View>
                 ) : (
+                  // <FlatList
+                  //   data={filteredUsers}
+                  //   keyExtractor={(item, index) => item._id || index.toString()}
+                  //   renderItem={renderAcceptedItem}
+                  //   onEndReached={loadMores} // triggered when scrolling to bottom
+                  //   onEndReachedThreshold={0.5} // load more when 50% away from bottom
+                  //   ListEmptyComponent={
+                  //     <View
+                  //       style={{
+                  //         alignItems: 'center',
+                  //         marginTop: hp(200),
+                  //       }}>
+                  //       <View
+                  //         style={{
+                  //           width: hp(82),
+                  //           height: hp(82),
+                  //           borderRadius: hp(50),
+                  //           backgroundColor: '#F8F6FF',
+                  //           alignItems: 'center',
+                  //           justifyContent: 'center',
+                  //         }}>
+                  //         <Image
+                  //           source={icons.people_Icon}
+                  //           style={{
+                  //             width: hp(38),
+                  //             height: hp(32),
+                  //             resizeMode: 'contain',
+                  //           }}
+                  //         />
+                  //       </View>
+                  //       <Text
+                  //         style={{
+                  //           fontSize: fontSize(16),
+                  //           fontFamily: fontFamily.poppins400,
+                  //           color: '#959090',
+                  //           marginTop: hp(21),
+                  //         }}>
+                  //         No Profiles Found...
+                  //       </Text>
+                  //     </View>
+                  //   }
+                  //   ListFooterComponent={
+                  //     loadingMores ? (
+                  //       <ActivityIndicator style={{margin: 10}} size="small" />
+                  //     ) : null
+                  //   }
+                  //   showsVerticalScrollIndicator={false}
+                  //   contentContainerStyle={{paddingBottom: hp(400)}}
+                  // />
+
                   <FlatList
                     data={filteredUsers}
-                    keyExtractor={(item, index) => item._id || index.toString()}
+                    keyExtractor={(item, index) =>
+                      item?._id?.toString() || index.toString()
+                    }
                     renderItem={renderAcceptedItem}
-                    onEndReached={loadMores} // triggered when scrolling to bottom
-                    onEndReachedThreshold={0.5} // load more when 50% away from bottom
+                    onEndReached={loadMores}
+                    onEndReachedThreshold={0.5}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                      paddingBottom: hp(300),
+                    }}
                     ListEmptyComponent={
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          marginTop: hp(200),
-                        }}>
+                      !loadings && (
                         <View
                           style={{
-                            width: hp(82),
-                            height: hp(82),
-                            borderRadius: hp(50),
-                            backgroundColor: '#F8F6FF',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            marginTop: hp(150),
                           }}>
-                          <Image
-                            source={icons.people_Icon}
+                          <Text
                             style={{
-                              width: hp(38),
-                              height: hp(32),
-                              resizeMode: 'contain',
-                            }}
-                          />
+                              color: '#999',
+                              fontSize: fontSize(16),
+                            }}>
+                            No Accepted Friends Found
+                          </Text>
                         </View>
-                        <Text
-                          style={{
-                            fontSize: fontSize(16),
-                            fontFamily: fontFamily.poppins400,
-                            color: '#959090',
-                            marginTop: hp(21),
-                          }}>
-                          No Profiles Found
-                        </Text>
-                      </View>
+                      )
                     }
                     ListFooterComponent={
                       loadingMores ? (
-                        <ActivityIndicator style={{margin: 10}} size="small" />
+                        <ActivityIndicator
+                          size="small"
+                          color="#7045EB"
+                          style={{marginVertical: 20}}
+                        />
                       ) : null
                     }
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{paddingBottom: hp(400)}}
                   />
                 )}
               </View>

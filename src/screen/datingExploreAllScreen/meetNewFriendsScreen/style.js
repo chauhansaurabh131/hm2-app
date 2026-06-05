@@ -57,8 +57,8 @@ const style = StyleSheet.create({
     marginRight: 2,
   },
   filterIcon: {
-    width: hp(18),
-    height: hp(18),
+    width: hp(29),
+    height: hp(28),
     resizeMode: 'contain',
   },
   bottomSheetContainer: {

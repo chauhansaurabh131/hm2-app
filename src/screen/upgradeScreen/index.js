@@ -290,7 +290,7 @@ const UpgradeScreen = () => {
     try {
       // 1. Create Razorpay Order
       const response = await axios.post(
-        `${API_URL}/v1/user/razorpay/order`,
+        'https://stag.mntech.website/api/v1/user/razorpay/order',
         {planId: selectedPlan?.planId},
         {
           headers: {
@@ -313,7 +313,7 @@ const UpgradeScreen = () => {
 
       // 3. Razorpay Options
       const options = {
-        key: 'rzp_live_OyWOR7Tj1c7Vnh',
+        key: 'rzp_live_SvC2X4PLdruq0d',
         name: 'Hapmeet',
         description: 'Credits towards consultation',
         image: 'https://i.imgur.com/3g7nmJC.png',

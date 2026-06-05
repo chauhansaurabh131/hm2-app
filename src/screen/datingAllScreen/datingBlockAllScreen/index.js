@@ -20,6 +20,7 @@ import {useEffect, useState} from 'react';
 import {colors} from '../../../utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import CommonGradientButton from '../../../components/commonGradientButton';
+import {BASE_URL} from '../../../utils/constants';
 
 const DatingBlockAllScreen = () => {
   const navigation = useNavigation();
@@ -45,7 +46,7 @@ const DatingBlockAllScreen = () => {
       setLoading(true); // Show loader
       try {
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/friend/get-block-listv2?appUsesType=dating',
+          `${BASE_URL}/api/v1/user/friend/get-block-listv2?appUsesType=dating`,
           {
             method: 'GET',
             headers: {
@@ -82,7 +83,7 @@ const DatingBlockAllScreen = () => {
       };
 
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/friend/respond-friend-req',
+        `${BASE_URL}/api/v1/user/friend/respond-friend-req`,
         {
           method: 'POST',
           headers: {
