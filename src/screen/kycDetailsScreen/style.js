@@ -139,7 +139,7 @@ export const style = StyleSheet.create({
     height: 6,
     position: 'absolute',
     right: 25,
-    top: 20,
+    top: 26,
     tintColor: 'black',
   },
   textInputContainer: {

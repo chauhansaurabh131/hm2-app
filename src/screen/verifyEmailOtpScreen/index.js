@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import {BASE_URL} from '../../utils/constants';
 
 const VerifyEmailOtpScreen = ({route}) => {
   const {email = ''} = route.params;
@@ -139,7 +140,7 @@ const VerifyEmailOtpScreen = ({route}) => {
       if (isMobile) {
         // Mobile OTP API
         const response = await axios.post(
-          'https://stag.mntech.website/api/v1/user/auth/send-verify-otp-email',
+          `${BASE_URL}/api/v1/user/auth/send-verify-otp-email`,
           {
             countryCodeId: '68709f07e33fd998c7105ad5', // replace with actual ID if required
             mobileNumber: email,

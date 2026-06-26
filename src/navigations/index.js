@@ -126,6 +126,16 @@ import ModifyDatingProfessionalScreen from '../screen/myProfileEditFormAll/modif
 import ModifyDatingHobbiesScreen from '../screen/myProfileEditFormAll/modifyDatingHobbiesScreen';
 import ModifyDatingPartnerPreferenceScreen from '../screen/myProfileEditFormAll/modifyDatingPartnerPreferenceScreen';
 import DatingUserProfileScreen from '../screen/datingAllScreen/datingUserProfileScreen';
+import VendorLoginScreen from '../screen/vendorLoginScreen';
+import VendorBasicDetailScreen from '../screen/vendorBasicDetailScreen';
+import VendorOtpVerificationScreen from '../screen/vendorOtpVerificationScreen';
+import VendorSetPasswordScreen from '../screen/vendorSetPasswordScreen';
+import VendorProfileScreen from '../screen/vendorProfileScreen';
+import VendorImageViewScreen from '../screen/vendorImageViewScreen';
+import VendorModifyDetailScreen from '../screen/vendorModifyDetailScreen';
+import VendorSocialMediaLinkScreen from '../screen/vendorSocialMediaLinkScreen';
+import VendorModifyServicesScreen from '../screen/vendorModifyServicesScreen';
+import VendorAccountSettingScreen from '../screen/VendorAccountSettingScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -142,7 +152,12 @@ export const navigationRef = React.createRef();
 const MainNavigator = () => {
   const {isLoggedIn, user} = useSelector(state => state.auth);
 
+  console.log(' === isLoggedIn ===> ', isLoggedIn);
+
   const appType = user?.user?.appUsesType;
+
+  console.log(' === appType ===> ', appType);
+
   const isReadyRef = useRef(false);
 
   useEffect(() => {
@@ -185,7 +200,8 @@ const MainNavigator = () => {
       <Stack.Screen name="DemoCode" component={DemoCode} />
 
       <Stack.Screen name="TestDemoScreen" component={TestDemoScreen} />
-      {/*<Stack.Screen name="ServiceHomeScreen" component={ServiceHomeScreen} />*/}
+
+      <Stack.Screen name="VendorLoginScreen" component={VendorLoginScreen} />
 
       {/*<Stack.Screen name="ServiceTabs" component={ServiceTabs} />*/}
       <Stack.Screen name="ServiceTabs" component={ServiceStackScreen} />
@@ -206,6 +222,11 @@ const MainNavigator = () => {
       />
 
       <Stack.Screen
+        name="VendorOtpVerificationScreen"
+        component={VendorOtpVerificationScreen}
+      />
+
+      <Stack.Screen
         name="LoginAuthenticationCodeScreen"
         component={LoginAuthenticationCodeScreen}
       />
@@ -214,6 +235,12 @@ const MainNavigator = () => {
         name="NewSetPasswordScreen"
         component={NewSetPasswordScreen}
       />
+
+      <Stack.Screen
+        name="VendorSetPasswordScreen"
+        component={VendorSetPasswordScreen}
+      />
+
       <Stack.Screen
         name="NewStartExploreScreen"
         component={NewStartExploreScreen}
@@ -237,6 +264,11 @@ const MainNavigator = () => {
       <Stack.Screen
         name="DatingNewPartnerPreferenceScreen"
         component={DatingNewPartnerPreferenceScreen}
+      />
+
+      <Stack.Screen
+        name="VendorBasicDetailScreen"
+        component={VendorBasicDetailScreen}
       />
 
       <Stack.Screen
@@ -283,10 +315,47 @@ const MainNavigator = () => {
           component={VendorSearchFilterScreen}
         />
 
+        <Tab.Screen name="Profile" component={VendorProfileScreen} />
+
         {/* PROFILE */}
         <ServiceStack.Screen
           name="ServicesProfileScreen"
           component={ServicesProfileScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorImageViewScreen"
+          component={VendorImageViewScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorModifyDetailScreen"
+          component={VendorModifyDetailScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorSocialMediaLinkScreen"
+          component={VendorSocialMediaLinkScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorModifyServicesScreen"
+          component={VendorModifyServicesScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorAccountSettingScreen"
+          component={VendorAccountSettingScreen}
+        />
+
+        <ServiceStack.Screen
+          name="CredentialsScreen"
+          component={CredentialsScreen}
+        />
+
+        <ServiceStack.Screen
+          name="KycDetailsScreen"
+          component={KycDetailsScreen}
         />
       </ServiceStack.Navigator>
     );
@@ -426,32 +495,70 @@ const MainNavigator = () => {
           />
 
           {/* PROFILE */}
+          {/*<Tab.Screen*/}
+          {/*  name="Profile"*/}
+          {/*  component={ServicesProfileScreen}*/}
+          {/*  listeners={({navigation}) => ({*/}
+          {/*    tabPress: e => {*/}
+          {/*      e.preventDefault();*/}
+
+          {/*      if (isLoggedIn) {*/}
+          {/*        navigation.navigate('HomeTabs');*/}
+          {/*      } else {*/}
+          {/*        // navigation.replace('NewLogInScreen');*/}
+          {/*        setSetLoginModal(true);*/}
+          {/*      }*/}
+          {/*    },*/}
+          {/*  })}*/}
+          {/*  options={{*/}
+          {/*    tabBarIcon: ({focused}) => (*/}
+          {/*      <Image*/}
+          {/*        source={*/}
+          {/*          isLoggedIn*/}
+          {/*            ? icons.hm_Logo_Icon // after login*/}
+          {/*            : icons.view_profile_icon // before login*/}
+          {/*        }*/}
+          {/*        style={getIconStyle(focused, hp(18), hp(19), -3, 0)}*/}
+          {/*      />*/}
+          {/*    ),*/}
+
+          {/*    tabBarLabel: ({focused}) => (*/}
+          {/*      <Text style={getLabelStyle(focused)}>Profile</Text>*/}
+          {/*    ),*/}
+          {/*  }}*/}
+          {/*/>*/}
+
           <Tab.Screen
             name="Profile"
-            component={ServicesProfileScreen}
+            component={VendorProfileScreen}
             listeners={({navigation}) => ({
               tabPress: e => {
                 e.preventDefault();
 
-                if (isLoggedIn) {
-                  navigation.navigate('HomeTabs');
-                } else {
-                  // navigation.replace('NewLogInScreen');
+                if (!isLoggedIn) {
                   setSetLoginModal(true);
+                  return;
                 }
+
+                // Vendor User
+                if (appType === 'vendor') {
+                  navigation.navigate('Profile');
+                  return;
+                }
+
+                // Normal User
+                navigation.navigate('HomeTabs');
               },
             })}
             options={{
               tabBarIcon: ({focused}) => (
-                // <Image
-                //   source={icons.profileLogo}
-                //   style={getIconStyle(focused, hp(24), hp(24), -3, 0)}
-                // />
                 <Image
                   source={
-                    isLoggedIn
-                      ? icons.hm_Logo_Icon // after login
-                      : icons.view_profile_icon // before login
+                    isLoggedIn && appType === 'vendor'
+                      ? icons.view_profile_icon
+                      : isLoggedIn
+                      ? icons.hm_Logo_Icon
+                      : icons.view_profile_icon
                   }
                   style={getIconStyle(focused, hp(18), hp(19), -3, 0)}
                 />
@@ -559,13 +666,29 @@ const MainNavigator = () => {
   };
 
   const ExtraScreens = () => {
+    const appType = user?.user?.appUsesType;
+
     return (
       <ExtraStack.Navigator>
-        <ExtraStack.Screen
-          name="AccountsScreen"
-          component={AccountsScreen}
-          options={{headerShown: false}}
-        />
+        {appType === 'vendor' ? (
+          <ExtraStack.Screen
+            name="VendorAccountSettingScreen"
+            component={VendorAccountSettingScreen}
+            options={{headerShown: false}}
+          />
+        ) : (
+          <ExtraStack.Screen
+            name="AccountsScreen"
+            component={AccountsScreen}
+            options={{headerShown: false}}
+          />
+        )}
+
+        {/*<ExtraStack.Screen*/}
+        {/*  name="AccountsScreen"*/}
+        {/*  component={AccountsScreen}*/}
+        {/*  options={{headerShown: false}}*/}
+        {/*/>*/}
 
         <ExtraStack.Screen
           name="CredentialsScreen"
@@ -1162,7 +1285,15 @@ const MainNavigator = () => {
             },
           },
         }}>
-        {isLoggedIn ? <HomeStack /> : <AuthStack />}
+        {/*{isLoggedIn ? <HomeStack /> : <AuthStack />}*/}
+
+        {!isLoggedIn ? (
+          <AuthStack />
+        ) : appType === 'vendor' ? (
+          <ServiceStackScreen />
+        ) : (
+          <HomeStack />
+        )}
       </NavigationContainer>
     ),
     [isLoggedIn],

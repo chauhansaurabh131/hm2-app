@@ -51,6 +51,7 @@ export const images = {
   cartoon_couple_one: require('./images/cartoonCoupleOne.png'),
   cartoon_couple_two: require('./images/cartoonCoupleTwo.png'),
   vendor_Poster_Img: require('./images/vendor_Poster_img.png'),
+  vendor_Basic_Banner_Img: require('./images/vendor_Basic_Banner_Img.png'),
 };
 
 export const icons = {
@@ -264,6 +265,10 @@ export const icons = {
   dating_New_Like_Icon: require('./icons/dating_New_Like_icon.png'),
   dating_Cancel_New_Icon: require('./icons/dating_Cancel_New_Icon.png'),
   dating_New_Upgrade_Icon: require('./icons/dating_New_Upgrade_Icon.png'),
+  white_Setting_Icon: require('./icons/white_Setting_Icon.png'),
+  vendor_camera_Icon: require('./icons/vendor_camera_Icon.png'),
+  vendor_Link_Icon: require('./icons/vendor_Link_Icon.png'),
+  dropDown_Icon: require('./icons/dropDown_Icon.png'),
 };
 
 export const gif = {

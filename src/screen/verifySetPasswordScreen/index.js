@@ -20,6 +20,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios'; // Import axios
 import Toast from 'react-native-toast-message';
+import {BASE_URL} from '../../utils/constants';
 
 const VerifySetPasswordScreen = ({route}) => {
   const [password, setPassword] = useState('');
@@ -52,7 +53,7 @@ const VerifySetPasswordScreen = ({route}) => {
       try {
         const response = await axios.post(
           // 'https://happymilan.tech/api/v1/user/auth/reset-password',
-          ' https://stag.mntech.website/api/v1/user/auth/reset-password',
+          `${BASE_URL}/api/v1/user/auth/reset-password`,
           {
             email,
             password,
@@ -82,7 +83,7 @@ const VerifySetPasswordScreen = ({route}) => {
 
   const closeModal = () => {
     setModalVisible(false); // Close the modal
-    navigation.navigate('NewLogInScreen'); // Navigate to login screen
+    navigation.navigate('TestDemoScreen'); // Navigate to login screen
   };
 
   const ShowToast = () => {

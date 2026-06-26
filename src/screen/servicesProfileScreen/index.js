@@ -116,7 +116,7 @@ const ServicesProfileScreen = ({route}) => {
 
   const screenWidth = Dimensions.get('window').width;
 
-  console.log(' === vendorData ===> ', vendorData?.userProfilePic);
+  // console.log(' === vendorData ===> ', vendorData?.userProfilePic);
 
   const onScroll = event => {
     const slideSize = wp(100);

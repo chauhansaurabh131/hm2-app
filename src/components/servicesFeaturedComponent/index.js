@@ -68,7 +68,7 @@ const ServicesFeaturedComponent = () => {
 
       const result = await response.json();
 
-      console.log('FEATURED API ===>', result);
+      // console.log('FEATURED API ===>', result);
 
       setFeaturedData(result?.data || []);
     } catch (error) {
@@ -298,6 +298,7 @@ const ServicesFeaturedComponent = () => {
               <View
                 style={{
                   marginHorizontal: wp(17),
+                  marginTop: hp(-10),
                 }}>
                 {/* NAME */}
                 <Text

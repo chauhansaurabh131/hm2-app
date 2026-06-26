@@ -24,6 +24,7 @@ import {changeStack, logout} from '../../actions/authActions';
 import HomeTopSheetComponent from '../../components/homeTopSheetComponent';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const CredentialsScreen = () => {
   const navigation = useNavigation();
@@ -61,6 +62,8 @@ const CredentialsScreen = () => {
   const [timer, setTimer] = useState(120); // 2 minutes
   const [loader, setLoader] = useState(false);
   const inputRefs = useRef([]);
+
+  const [loading, setLoading] = useState(false);
 
   const isMobileValid = newMobile.length === 10;
 
@@ -115,7 +118,7 @@ const CredentialsScreen = () => {
 
   const maskedMobile = currentMobile
     ? `*******${String(currentMobile).slice(-3)}`
-    : 'N/A';
+    : 'Add Number';
 
   const token = user?.tokens?.access?.token;
   const dispatch = useDispatch();
@@ -174,17 +177,14 @@ const CredentialsScreen = () => {
       },
     };
 
-    fetch(
-      'https://stag.mntech.website/api/v1/user/auth/verify-otp-change-email',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
+    fetch(`${BASE_URL}/api/v1/user/auth/verify-otp-change-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    )
+      body: JSON.stringify(payload),
+    })
       .then(response => response.json())
       .then(data => {
         console.log('✅ Success:', data);
@@ -227,17 +227,14 @@ const CredentialsScreen = () => {
       },
     };
 
-    fetch(
-      'https://stag.mntech.website/api/v1/user/auth/verify-otp-change-email',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
+    fetch(`${BASE_URL}/api/v1/user/auth/verify-otp-change-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    )
+      body: JSON.stringify(payload),
+    })
       .then(response => response.json())
       .then(data => {
         console.log('✅ Success:', data);
@@ -270,7 +267,7 @@ const CredentialsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/auth/send-otp-change-email',
+        `${BASE_URL}/api/v1/user/auth/send-otp-change-email`,
         {
           method: 'POST',
           headers: {
@@ -342,7 +339,7 @@ const CredentialsScreen = () => {
 
         // Make the API call
         const response = await fetch(
-          'https://stag.mntech.website/api/v1/user/auth/update-password',
+          `${BASE_URL}/api/v1/user/auth/update-password`,
           {
             method: 'PUT',
             headers: {
@@ -414,6 +411,38 @@ const CredentialsScreen = () => {
     ? `*******${String(currentMobile).slice(-3)}`
     : 'N/A';
 
+  const onAddNumberPress = () => {
+    if (!newMobile) {
+      return;
+    }
+
+    setLoading(true);
+
+    apiDispatch(
+      updateDetails(
+        {
+          mobileNumber: newMobile,
+        },
+        response => {
+          console.log('Success =>', response);
+
+          setLoading(false);
+
+          setNewMobile('');
+
+          bottomSheetRef.current?.close();
+        },
+        error => {
+          console.log('Error =>', error);
+
+          setLoading(false);
+
+          // BottomSheet remains open
+        },
+      ),
+    );
+  };
+
   const onMobileChangePress = async () => {
     console.log(' === var ===> ', currentMobile, newMobile);
 
@@ -421,7 +450,7 @@ const CredentialsScreen = () => {
 
     try {
       const response = await fetch(
-        'https://stag.mntech.website/api/v1/user/auth/send-otp-change-email',
+        `${BASE_URL}/api/v1/user/auth/send-otp-change-email`,
         {
           method: 'POST',
           headers: {
@@ -481,6 +510,76 @@ const CredentialsScreen = () => {
 
   const renderBottomSheetContent = () => {
     switch (selectedCredential) {
+      case 'addMobile':
+        return (
+          <View style={style.bottomSheetContainer}>
+            <View style={style.bottomSheetBodyContainer}>
+              <Text style={style.bottomSheetTittleText}>Add Mobile Number</Text>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 0.7,
+                  backgroundColor: '#E7E7E7',
+                  marginTop: 20,
+                }}
+              />
+
+              <View
+                style={{
+                  marginHorizontal: hp(30),
+                  marginTop: hp(15),
+                }}>
+                <Text
+                  style={[style.bottomSheetBodyTitleText, {marginTop: hp(10)}]}>
+                  Mobile Number
+                </Text>
+
+                <TextInput
+                  placeholder="Enter Mobile Number"
+                  keyboardType="numeric"
+                  maxLength={10}
+                  value={newMobile}
+                  onChangeText={handleNewMobileChange}
+                  style={style.textInputContainer}
+                />
+
+                <View style={style.bottomSheetButtonContainer}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => bottomSheetRef.current.close()}>
+                    <LinearGradient
+                      colors={['#0D4EB3', '#9413D0']}
+                      style={style.bottomSheetNotNowContainer}>
+                      <View style={style.notNowButtonContainer}>
+                        <Text style={style.notNowButtonTextStyle}>Not Now</Text>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    disabled={!isMobileValid}
+                    onPress={onAddNumberPress}>
+                    <LinearGradient
+                      colors={['#7045EB', '#4819CB']}
+                      style={[
+                        style.submitButtonContainer,
+                        {opacity: isMobileValid ? 1 : 0.5},
+                      ]}>
+                      {loading ? (
+                        <ActivityIndicator color="#fff" size="large" />
+                      ) : (
+                        <Text style={style.submitButtonTextStyle}>Submit</Text>
+                      )}
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        );
+
       case 'email':
         return (
           <View style={style.bottomSheetContainer}>
@@ -1223,14 +1322,25 @@ const CredentialsScreen = () => {
           <View style={style.bodyFillFullContainer}>
             <Text style={style.UserEmailTextStyle}>{maskedMobile}</Text>
 
-            <Image
-              source={icons.green_check_icon}
-              style={style.checkIconStyle}
-            />
+            {maskedMobile && maskedMobile !== 'Add Number' && (
+              <Image
+                source={icons.green_check_icon}
+                style={style.checkIconStyle}
+              />
+            )}
 
             <TouchableOpacity
               style={style.editImageContainer}
-              onPress={() => openBottomSheet('mobile')}>
+              // onPress={() => openBottomSheet('mobile')}
+              onPress={() => {
+                if (!currentMobile || currentMobile === 'N/A') {
+                  setSelectedCredential('addMobile');
+                } else {
+                  setSelectedCredential('mobile');
+                }
+
+                bottomSheetRef.current.open();
+              }}>
               <Image source={icons.edit_icon} style={style.editImageStyle} />
             </TouchableOpacity>
           </View>
@@ -1529,11 +1639,10 @@ const CredentialsScreen = () => {
                 justifyContent: 'center',
               }}>
               <TouchableOpacity
-              // onPress={() => {
-              //   // dispatch(logout(), () => dispatch(changeStack()));
-              //   dispatch(logout(), () => dispatch(changeStack()));
-              // }}
-              >
+                onPress={() => {
+                  // dispatch(logout(), () => dispatch(changeStack()));
+                  dispatch(logout(), () => dispatch(changeStack()));
+                }}>
                 <Text
                   style={{
                     color: colors.white,

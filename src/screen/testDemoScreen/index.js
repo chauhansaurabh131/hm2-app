@@ -38,6 +38,8 @@ const slides = [
     subtitle: 'Book trusted services for your\nnext events.',
     btn1: 'Explore Vendors',
     btn1Screen: 'ServiceTabs',
+    btn2: 'Login or Sign Up',
+    btn2Screen: 'VendorLoginScreen',
     showBtn2: false,
     bottomText: 'Service providers can create listings\nusing the web version.',
   },
@@ -168,18 +170,43 @@ const TestDemoScreen = () => {
               </Text>
             </TouchableOpacity>
           ) : (
-            <Text
+            // <Text
+            //   style={{
+            //     fontSize: fontSize(12),
+            //     color: '#A0A0A0',
+            //     textAlign: 'center',
+            //     marginTop: hp(27),
+            //     marginBottom: hp(32),
+            //     fontFamily: fontFamily.poppins400,
+            //     lineHeight: hp(16),
+            //   }}>
+            //   {item.bottomText}
+            // </Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate(item.btn2Screen);
+              }}
+              activeOpacity={0.7}
               style={{
-                fontSize: fontSize(12),
-                color: '#A0A0A0',
-                textAlign: 'center',
-                marginTop: hp(27),
+                borderColor: '#7148E4',
+                borderWidth: hp(1),
+                width: '80%',
+                marginTop: hp(15),
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: hp(45),
+                borderRadius: hp(30),
                 marginBottom: hp(32),
-                fontFamily: fontFamily.poppins400,
-                lineHeight: hp(16),
               }}>
-              {item.bottomText}
-            </Text>
+              <Text
+                style={{
+                  color: '#7148E4',
+                  fontSize: fontSize(14),
+                  fontFamily: fontFamily.poppins500,
+                }}>
+                {item.btn2}
+              </Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>

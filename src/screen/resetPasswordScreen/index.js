@@ -19,6 +19,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import {SetLoading} from '../../actions/authActions';
+import {BASE_URL} from '../../utils/constants';
 
 const ResetPasswordScreen = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +35,7 @@ const ResetPasswordScreen = () => {
     try {
       const response = await axios.post(
         // 'https://happymilan.tech/api/v1/user/auth/forgot-password',
-        'https://stag.mntech.website/api/v1/user/auth/forgot-password',
+        `${BASE_URL}/api/v1/user/auth/forgot-password`,
         {email},
         {headers: {'Content-Type': 'application/json'}},
       );

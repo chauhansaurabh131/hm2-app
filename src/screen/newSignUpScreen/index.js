@@ -442,7 +442,7 @@ const NewSignUpScreen = () => {
                 <TouchableOpacity onPress={openPrivacyPolicy}>
                   <Text
                     style={{
-                      color: colors.blue,
+                      color: '#7148E4',
                       fontSize: fontSize(14),
                       lineHeight: hp(20),
                       fontFamily: fontFamily.poppins400,
@@ -463,7 +463,7 @@ const NewSignUpScreen = () => {
                 <TouchableOpacity onPress={openTermAndCondition}>
                   <Text
                     style={{
-                      color: colors.blue,
+                      color: '#7148E4',
                       fontSize: fontSize(14),
                       lineHeight: hp(20),
                       fontFamily: fontFamily.poppins400,
@@ -576,7 +576,7 @@ const NewSignUpScreen = () => {
               }}>
               <Text
                 style={{
-                  color: colors.black,
+                  color: '#7148E4',
                   fontSize: fontSize(16),
                   lineHeight: hp(24),
                   fontFamily: fontFamily.poppins400,
@@ -591,7 +591,7 @@ const NewSignUpScreen = () => {
                     height: hp(16),
                     marginLeft: wp(10),
                     // top: 3,
-                    tintColor: colors.black,
+                    tintColor: '#7148E4',
                   }}
                 />
               </View>

@@ -343,53 +343,6 @@ const UserEditProfileScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      {/*<View style={{marginHorizontal: wp(17)}}>*/}
-      {/*  <View*/}
-      {/*    style={{*/}
-      {/*      flexDirection: 'row',*/}
-      {/*      justifyContent: 'space-between',*/}
-      {/*      marginTop: hp(14),*/}
-      {/*      marginBottom: hp(20),*/}
-      {/*    }}>*/}
-      {/*    <Image*/}
-      {/*      source={images.happyMilanColorLogo}*/}
-      {/*      style={{width: wp(96), height: hp(24), resizeMode: 'contain'}}*/}
-      {/*    />*/}
-
-      {/*    <TouchableOpacity activeOpacity={0.7} onPress={openBottomSheet}>*/}
-      {/*      {userImage ? (*/}
-      {/*        <Image*/}
-      {/*          source={{uri: userImage}}*/}
-      {/*          style={{*/}
-      {/*            width: hp(24),*/}
-      {/*            height: hp(24),*/}
-      {/*            borderRadius: 50,*/}
-      {/*            marginRight: wp(3),*/}
-      {/*            resizeMode: 'stretch',*/}
-      {/*          }}*/}
-      {/*        />*/}
-      {/*      ) : (*/}
-      {/*        <ProfileAvatar*/}
-      {/*          firstName={user?.user?.firstName || user?.user?.name}*/}
-      {/*          lastName={user?.user?.lastName}*/}
-      {/*          textStyle={{*/}
-      {/*            width: hp(24),*/}
-      {/*            height: hp(24),*/}
-      {/*            borderRadius: 50,*/}
-      {/*            marginRight: wp(3),*/}
-      {/*            resizeMode: 'stretch',*/}
-      {/*          }}*/}
-      {/*          profileTexts={{fontSize: fontSize(10)}}*/}
-      {/*        />*/}
-      {/*      )}*/}
-      {/*    </TouchableOpacity>*/}
-      {/*  </View>*/}
-      {/*</View>*/}
-
-      {/*<View>*/}
-      {/*  <NewProfileBottomSheet bottomSheetRef={topModalBottomSheetRef} />*/}
-      {/*</View>*/}
-
       <View
         style={{
           height: hp(50),

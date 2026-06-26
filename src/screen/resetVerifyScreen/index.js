@@ -17,6 +17,7 @@ import {colors} from '../../utils/colors';
 import {useNavigation} from '@react-navigation/native';
 import CommonGradientButton from '../../components/commonGradientButton';
 import {verifyOTP} from '../../actions/authActions';
+import {BASE_URL} from '../../utils/constants';
 
 const ResetVerifyScreen = ({route}) => {
   const {email = ''} = route.params;
@@ -62,7 +63,7 @@ const ResetVerifyScreen = ({route}) => {
     try {
       const response = await axios.post(
         // 'https://happymilan.tech/api/v1/user/auth/verify-reset-otp',
-        'https://stag.mntech.website/api/v1/user/auth/verify-reset-otp',
+        `${BASE_URL}/api/v1/user/auth/verify-reset-otp`,
         {
           email,
           otp: enteredOtp,

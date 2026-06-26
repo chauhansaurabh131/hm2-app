@@ -504,7 +504,7 @@ const NewLogInScreen = () => {
               <Text
                 style={{
                   alignSelf: 'center',
-                  color: colors.blue,
+                  color: '#7148E4',
                   marginTop: hp(40),
                   fontSize: fontSize(16),
                   lineHeight: hp(24),
@@ -624,7 +624,7 @@ const NewLogInScreen = () => {
                 }}>
                 <Text
                   style={{
-                    color: colors.blue,
+                    color: '#7148E4',
                     fontSize: fontSize(16),
                     lineHeight: hp(24),
                     fontFamily: fontFamily.poppins400,

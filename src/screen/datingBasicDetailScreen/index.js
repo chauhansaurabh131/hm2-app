@@ -19,9 +19,13 @@ import NewSelectValueComponent from '../../components/newSelectValueComponent';
 import DOBComponent from '../../components/DOBComponent ';
 import NewEnterSelectValueComponent from '../../components/newEnterSelectValueComponent';
 import {updateDetails} from '../../actions/homeActions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
-const DatingBasicDetailScreen = () => {
+const DatingBasicDetailScreen = ({route}) => {
+  // const {name = ''} = route.params;
+  //
+  // console.log(' === var ===> ', name);
+
   const [name, setName] = React.useState('');
   const [datingSelectedOption, setDatingSelectedOption] = useState([]);
   const [selectedGenderStatus, setSelectedGenderStatus] = useState('');
@@ -30,6 +34,12 @@ const DatingBasicDetailScreen = () => {
   const [selectedReligionStatus, setSelectedReligionStatus] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // const {name = ''} = route.params;
+
+  const {user} = useSelector(state => state.auth);
+
+  console.log(' === var ===> ', user);
 
   const navigation = useNavigation();
   const apiDispatch = useDispatch();

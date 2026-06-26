@@ -31,10 +31,10 @@ export const REFRESH_TOKEN = 'REFRESH_TOKEN';
 // export const BASE_URL = 'https://happymilan.tech';
 
 // MAIN URL SERVER
-// export const BASE_URL = 'https://stag.mntech.website';
+export const BASE_URL = 'https://stag.mntech.website';
 
 // TESTING URL
-export const BASE_URL = 'https://test.mntech.website';
+// export const BASE_URL = 'https://test.mntech.website';
 
 // https://happymilan.tech/api/v1/user/auth/register
 

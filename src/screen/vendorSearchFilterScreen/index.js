@@ -448,7 +448,7 @@ const VendorSearchFilterScreen = ({route}) => {
             )}
 
             {/* Profile image */}
-            <View style={{top: -35, marginLeft: wp(17)}}>
+            <View style={{top: hp(-30), marginLeft: wp(17)}}>
               {item?.profilePic ? (
                 <Image
                   source={{
@@ -503,7 +503,7 @@ const VendorSearchFilterScreen = ({route}) => {
             {/*</View>*/}
 
             {/* Studio info */}
-            <View style={{marginHorizontal: wp(17)}}>
+            <View style={{marginHorizontal: wp(17), marginTop: hp(-18)}}>
               <Text
                 style={{
                   color: colors.pureBlack,

@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import ProfileAvatar from '../../components/letterProfileComponent';
+import {BASE_URL} from '../../utils/constants';
 
 const KycDetailsScreen = ({route}) => {
   const {kycData} = route.params; // Retrieve kycData from route params
@@ -36,6 +37,8 @@ const KycDetailsScreen = ({route}) => {
   const {user} = useSelector(state => state.auth);
   const accessToken = user?.tokens?.access?.token;
   const userImage = user?.user?.profilePic;
+  const appType = user?.user?.appUsesType;
+  console.log(' === appType ===> ', appType);
 
   const topModalBottomSheetRef = useRef(null);
 
@@ -126,21 +129,18 @@ const KycDetailsScreen = ({route}) => {
       formData.append('name', 'upload');
 
       // Call your API to get the presigned URL
-      const response = await fetch(
-        'https://stag.mntech.website/api/v1/s3/uploadkycdoc',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // Use your auth token here
-          },
-          body: JSON.stringify({
-            key: imageName,
-            contentType: contentType,
-            name: 'upload',
-          }),
+      const response = await fetch(`${BASE_URL}/api/v1/s3/uploadkycdoc`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`, // Use your auth token here
         },
-      );
+        body: JSON.stringify({
+          key: imageName,
+          contentType: contentType,
+          name: 'upload',
+        }),
+      });
 
       const result = await response.json();
       console.log('API Response:', result);
@@ -169,21 +169,18 @@ const KycDetailsScreen = ({route}) => {
           console.log('Image uploaded successfully to S3');
 
           // Now call the second API with kycDocName and kycDocImagePath
-          const kycResponse = await fetch(
-            'https://stag.mntech.website/api/v1/user/kyc/',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`, // Use your auth token here
-              },
-              body: JSON.stringify({
-                kycDocName: formattedID, // This will be the selected ID type (e.g., passport, driving-license)
-                kycDocImagePath: docUrl, // The URL of the uploaded document from S3
-                // isDocUpload: true,
-              }),
+          const kycResponse = await fetch(`${BASE_URL}/api/v1/user/kyc/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`, // Use your auth token here
             },
-          );
+            body: JSON.stringify({
+              kycDocName: formattedID, // This will be the selected ID type (e.g., passport, driving-license)
+              kycDocImagePath: docUrl, // The URL of the uploaded document from S3
+              // isDocUpload: true,
+            }),
+          });
 
           const kycResult = await kycResponse.json();
           console.log('KYC API Response:', kycResult);
@@ -385,7 +382,7 @@ const KycDetailsScreen = ({route}) => {
 
               <RBSheet
                 ref={refRBSheet}
-                height={320}
+                height={hp(260)}
                 openDuration={250}
                 customStyles={{
                   container: {
@@ -434,136 +431,96 @@ const KycDetailsScreen = ({route}) => {
       </View>
 
       {/*Photo Verify*/}
-      <View style={style.horizontalLine} />
+      {appType !== 'vendor' && (
+        <>
+          <View style={style.horizontalLine} />
 
-      <View style={style.secondBodyContainer}>
-        {/*<View style={style.verifyTittleContainer}>*/}
-        {/*  <Text style={style.photoVerifyText}>Photo Verify</Text>*/}
-        {/*  {kycData?.selfie[0]?.isSelfieUpload && (*/}
-        {/*    <Text style={style.reviewProgressText}>Review In Progress</Text>*/}
-        {/*  )}*/}
-        {/*</View>*/}
+          <View style={style.secondBodyContainer}>
+            {kycData?.selfie[0]?.verify ? (
+              // ✅ CASE 3: Verified
+              <>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: hp(12),
+                  }}>
+                  <Text style={style.photoVerifyText}>Photo Verify</Text>
+                  <Image
+                    source={icons.green_check_icon}
+                    style={{
+                      width: hp(14),
+                      height: hp(14),
+                      resizeMode: 'contain',
+                      marginLeft: wp(14),
+                      top: -1,
+                    }}
+                  />
+                </View>
+                <Text style={style.kycPictureSubTittle}>
+                  Thank you for verified your identity
+                </Text>
+              </>
+            ) : kycData?.selfie[0]?.isDocRejected ||
+              !kycData?.selfie[0]?.isSelfieUpload ? (
+              // 📤 CASE 1: Not uploaded OR rejected
+              <>
+                <Text style={style.photoVerifyText}>Photo Verify</Text>
 
-        {/*<View style={{marginTop: 15}}>*/}
-        {/*  {kycData?.selfie[0]?.isSelfieUpload ? (*/}
-        {/*    <>*/}
-        {/*      <Text style={style.kycPictureSubTittle}>*/}
-        {/*        Thank you! Your selfie has been submitted successfully*/}
-        {/*      </Text>*/}
+                <Text style={[style.SubTextTittle, {marginTop: hp(12)}]}>
+                  To verify your profile photo with a selfie. Download{'\n'}app
+                  and Complete Verification
+                </Text>
 
-        {/*      <Text style={[style.kycPictureSubTittle, {marginTop: hp(15)}]}>*/}
-        {/*        We'll notify you once verification is complete. Contact{'\n'}*/}
-        {/*        support if you have questions*/}
-        {/*      </Text>*/}
-        {/*    </>*/}
-        {/*  ) : (*/}
-        {/*    <Text style={style.SubTextTittle}>*/}
-        {/*      To verify your profile photo with a selfie. Download{'\n'}app and*/}
-        {/*      Complete Verification*/}
-        {/*    </Text>*/}
-        {/*  )}*/}
-        {/*</View>*/}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={style.verifyButtonContainer}
+                  onPress={() => {
+                    navigation.navigate('VerifyIdentityScreen');
+                  }}>
+                  <LinearGradient
+                    colors={['#7045EB', '#4819CB']}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 1.5}}
+                    style={style.verifyButtonBody}>
+                    <Text style={style.verifyButtonText}>
+                      Start Verification
+                    </Text>
+                    <Image
+                      source={icons.back_arrow_icon}
+                      style={style.verifyButtonIconStyle}
+                    />
+                  </LinearGradient>
+                </TouchableOpacity>
+              </>
+            ) : (
+              // ⏳ CASE 2: Uploaded (waiting for verification)
+              <>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: hp(13),
+                  }}>
+                  <Text style={style.photoVerifyText}>Photo Verify</Text>
+                  <Text style={style.reviewProgressText}>
+                    Review In Progress
+                  </Text>
+                </View>
 
-        {/*{!kycData?.selfie[0]?.isSelfieUpload && (*/}
-        {/*  <TouchableOpacity*/}
-        {/*    activeOpacity={0.7}*/}
-        {/*    style={style.verifyButtonContainer}*/}
-        {/*    onPress={() => {*/}
-        {/*      navigation.navigate('VerifyIdentityScreen');*/}
-        {/*    }}>*/}
-        {/*    <LinearGradient*/}
-        {/*      colors={['#0D4EB3', '#9413D0']}*/}
-        {/*      start={{x: 0, y: 0}}*/}
-        {/*      end={{x: 1, y: 1.5}}*/}
-        {/*      style={style.verifyButtonBody}>*/}
-        {/*      <Text style={style.verifyButtonText}>Start Verification</Text>*/}
-        {/*      <Image*/}
-        {/*        source={icons.back_arrow_icon}*/}
-        {/*        style={style.verifyButtonIconStyle}*/}
-        {/*      />*/}
-        {/*    </LinearGradient>*/}
-        {/*  </TouchableOpacity>*/}
-        {/*)}*/}
+                <Text style={style.kycPictureSubTittle}>
+                  Thank you! Your selfie has been submitted successfully
+                </Text>
 
-        {kycData?.selfie[0]?.verify ? (
-          // ✅ CASE 3: Verified
-          <>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: hp(12),
-              }}>
-              <Text style={style.photoVerifyText}>Photo Verify</Text>
-              <Image
-                source={icons.green_check_icon}
-                style={{
-                  width: hp(14),
-                  height: hp(14),
-                  resizeMode: 'contain',
-                  marginLeft: wp(14),
-                  top: -1,
-                }}
-              />
-            </View>
-            <Text style={style.kycPictureSubTittle}>
-              Thank you for verified your identity
-            </Text>
-          </>
-        ) : kycData?.selfie[0]?.isDocRejected ||
-          !kycData?.selfie[0]?.isSelfieUpload ? (
-          // 📤 CASE 1: Not uploaded OR rejected
-          <>
-            <Text style={style.photoVerifyText}>Photo Verify</Text>
-
-            <Text style={[style.SubTextTittle, {marginTop: hp(12)}]}>
-              To verify your profile photo with a selfie. Download{'\n'}app and
-              Complete Verification
-            </Text>
-
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={style.verifyButtonContainer}
-              onPress={() => {
-                navigation.navigate('VerifyIdentityScreen');
-              }}>
-              <LinearGradient
-                colors={['#7045EB', '#4819CB']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1.5}}
-                style={style.verifyButtonBody}>
-                <Text style={style.verifyButtonText}>Start Verification</Text>
-                <Image
-                  source={icons.back_arrow_icon}
-                  style={style.verifyButtonIconStyle}
-                />
-              </LinearGradient>
-            </TouchableOpacity>
-          </>
-        ) : (
-          // ⏳ CASE 2: Uploaded (waiting for verification)
-          <>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: hp(13),
-              }}>
-              <Text style={style.photoVerifyText}>Photo Verify</Text>
-              <Text style={style.reviewProgressText}>Review In Progress</Text>
-            </View>
-
-            <Text style={style.kycPictureSubTittle}>
-              Thank you! Your selfie has been submitted successfully
-            </Text>
-
-            <Text style={[style.kycPictureSubTittle, {marginTop: hp(15)}]}>
-              We'll notify you once verification is complete. Contact{'\n'}
-              support if you have questions
-            </Text>
-          </>
-        )}
-      </View>
+                <Text style={[style.kycPictureSubTittle, {marginTop: hp(15)}]}>
+                  We'll notify you once verification is complete. Contact{'\n'}
+                  support if you have questions
+                </Text>
+              </>
+            )}
+          </View>
+        </>
+      )}
 
       <Toast ref={ref => Toast.setRef(ref)} />
     </SafeAreaView>
