@@ -167,6 +167,8 @@ const VendorLoginScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+        <Toast />
+
         <Image
           source={images.happyMilanColorLogo}
           style={{
@@ -278,8 +280,6 @@ const VendorLoginScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-
-        <Toast />
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

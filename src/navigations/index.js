@@ -136,6 +136,9 @@ import VendorModifyDetailScreen from '../screen/vendorModifyDetailScreen';
 import VendorSocialMediaLinkScreen from '../screen/vendorSocialMediaLinkScreen';
 import VendorModifyServicesScreen from '../screen/vendorModifyServicesScreen';
 import VendorAccountSettingScreen from '../screen/VendorAccountSettingScreen';
+import VendorRequestForAccessScreen from '../screen/vendorRequestForAccessScreen';
+import VendorClaimYourBusinessScreen from '../screen/vendorClaimYourBusinessScreen';
+import VendorRequestSubmitScreen from '../screen/vendorRequestSubmitScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -321,6 +324,21 @@ const MainNavigator = () => {
         <ServiceStack.Screen
           name="ServicesProfileScreen"
           component={ServicesProfileScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorRequestForAccessScreen"
+          component={VendorRequestForAccessScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorClaimYourBusinessScreen"
+          component={VendorClaimYourBusinessScreen}
+        />
+
+        <ServiceStack.Screen
+          name="VendorRequestSubmitScreen"
+          component={VendorRequestSubmitScreen}
         />
 
         <ServiceStack.Screen

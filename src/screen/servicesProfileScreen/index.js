@@ -116,15 +116,15 @@ const ServicesProfileScreen = ({route}) => {
 
   const screenWidth = Dimensions.get('window').width;
 
-  // console.log(' === vendorData ===> ', vendorData?.userProfilePic);
+  console.log(' === vendorData ===> ', vendorData?.vendorData[0]?.requested);
 
-  const onScroll = event => {
-    const slideSize = wp(100);
-
-    const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
-
-    setActiveIndex(index);
-  };
+  // const onScroll = event => {
+  //   const slideSize = wp(100);
+  //
+  //   const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+  //
+  //   setActiveIndex(index);
+  // };
 
   // =========================================
   // FIRST API
@@ -826,6 +826,58 @@ const ServicesProfileScreen = ({route}) => {
 
           {/* SIMILAR */}
           {/*<ServicesRecentlyComponent labelHeading={'More Similars'} />*/}
+
+          <View style={{marginTop: hp(50), marginHorizontal: wp(17)}}>
+            {vendorData?.vendorData?.[0]?.requested ? (
+              <TouchableOpacity
+                activeOpacity={1}
+                disabled={true}
+                style={{
+                  height: hp(40),
+                  borderRadius: hp(50),
+                  backgroundColor: '#F5F2FF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: '#7045EB',
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Request Submitted
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('VendorRequestForAccessScreen', {
+                    vendorData,
+                    vendorId,
+                    location,
+                    category,
+                    previousScreen,
+                  });
+                }}
+                activeOpacity={0.6}
+                style={{
+                  height: hp(40),
+                  borderRadius: hp(50),
+                  backgroundColor: '#7148E4',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: fontSize(14),
+                    fontFamily: fontFamily.poppins400,
+                  }}>
+                  Own this business?
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
 
           <View
             style={{
