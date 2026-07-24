@@ -1,5 +1,5 @@
-import React, {useRef, useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ActivityIndicator,
   Image,
@@ -9,13 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {colors} from '../../utils/colors';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {icons} from '../../assets';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import { colors } from '../../utils/colors';
+import { fontFamily, fontSize, hp, wp } from '../../utils/helpers';
+import { icons } from '../../assets';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import DocumentPicker from 'react-native-document-picker';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import RNBlobUtil from 'react-native-blob-util';
 import axios from 'axios';
@@ -23,7 +23,7 @@ import axios from 'axios';
 const VendorClaimYourBusinessScreen = () => {
   const route = useRoute();
 
-  const {vendorData, vendorId, location, category, previousScreen} =
+  const { vendorData, vendorId, location, category, previousScreen } =
     route.params || {};
 
   const navigation = useNavigation();
@@ -156,7 +156,7 @@ const VendorClaimYourBusinessScreen = () => {
       const contentType = getContentType(documentFile.name);
 
       // 1. Get Presigned URL
-      const {data} = await axios.post(
+      const { data } = await axios.post(
         'https://test.mntech.website/api/v1/s3/uploadclaimdoc',
         {
           name: 'claim-document',
@@ -288,7 +288,7 @@ const VendorClaimYourBusinessScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
       {/* Header */}
       <View
         style={{
@@ -326,11 +326,11 @@ const VendorClaimYourBusinessScreen = () => {
         </Text>
       </View>
       <View
-        style={{width: '100%', height: hp(1), backgroundColor: '#E6E6E6'}}
+        style={{ width: '100%', height: hp(1), backgroundColor: '#E6E6E6' }}
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{marginHorizontal: wp(18), marginTop: hp(22)}}>
+        <View style={{ marginHorizontal: wp(18), marginTop: hp(22) }}>
           <Text
             style={{
               color: colors.pureBlack,
@@ -825,7 +825,7 @@ const VendorClaimYourBusinessScreen = () => {
               textAlign: 'center',
             }}>
             By submitting, I confirm I own or am authorized to{'\n'}manage this
-            business
+            business. <TouchableOpacity><Text style={{ color: '#7148E4' }}>Term & Policy</Text></TouchableOpacity>
           </Text>
 
           <TouchableOpacity
@@ -857,7 +857,7 @@ const VendorClaimYourBusinessScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={{height: hp(30)}} />
+        <View style={{ height: hp(30) }} />
       </ScrollView>
 
       <RBSheet
@@ -890,7 +890,7 @@ const VendorClaimYourBusinessScreen = () => {
         </Text>
 
         <View
-          style={{width: '100%', height: hp(1), backgroundColor: '#DADADA'}}
+          style={{ width: '100%', height: hp(1), backgroundColor: '#DADADA' }}
         />
 
         {roles.map(role => (

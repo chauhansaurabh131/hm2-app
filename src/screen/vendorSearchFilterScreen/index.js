@@ -132,7 +132,7 @@ const renderShimmer = () => {
 const VendorSearchFilterScreen = ({route}) => {
   const {category, location} = route.params;
 
-  // console.log(' === category ===> ', category);
+  console.log(' === category ===> ', category, location);
 
   const navigation = useNavigation();
 
@@ -167,23 +167,36 @@ const VendorSearchFilterScreen = ({route}) => {
   // FIRST API CALL
   // =========================================
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // RESET FILTER
+  //     setFilteredData(false);
+  //
+  //     // RESET PAGE
+  //     setPage(1);
+  //
+  //     // CLEAR OLD DATA
+  //     setVendors([]);
+  //
+  //     // ENABLE PAGINATION
+  //     setHasMoreData(true);
+  //
+  //     // API CALL
+  //     getVendors(1, true);
+  //   }, [category]),
+  // );
+
   useFocusEffect(
     useCallback(() => {
-      // RESET FILTER
+      setPage(1);
+      setVendors([]);
+      setHasMoreData(true);
+      setSelectedAreas([]);
+      setAreas([]);
       setFilteredData(false);
 
-      // RESET PAGE
-      setPage(1);
-
-      // CLEAR OLD DATA
-      setVendors([]);
-
-      // ENABLE PAGINATION
-      setHasMoreData(true);
-
-      // API CALL
       getVendors(1, true);
-    }, [category]),
+    }, [category, location]),
   );
 
   // =========================================
@@ -197,6 +210,8 @@ const VendorSearchFilterScreen = ({route}) => {
       } else {
         setPaginationLoading(true);
       }
+
+      console.log(' === 1111111 ===> ', location);
 
       const response = await fetch(
         `${BASE_URL}/api/v1/user/user/vendors-search?businessType=${category}&city=${location}&page=${currentPage}&limit=10`,
@@ -354,7 +369,7 @@ const VendorSearchFilterScreen = ({route}) => {
   // =========================================
 
   const renderItem = ({item}) => {
-    // console.log(' === var ===> ', item?.profilePic);
+    // console.log(' === var ===> ', item?.vendorData[0]?.businessName);
 
     const services = item?.vendorData?.[0]?.servicesProvided || [];
 
@@ -510,7 +525,7 @@ const VendorSearchFilterScreen = ({route}) => {
                   fontSize: fontSize(18),
                   fontFamily: fontFamily.poppins600,
                 }}>
-                {item?.name}
+                {item?.name || item?.vendorData[0]?.businessName || 'NA'}
               </Text>
 
               <Text

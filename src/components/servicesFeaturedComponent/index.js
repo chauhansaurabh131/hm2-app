@@ -117,6 +117,8 @@ const ServicesFeaturedComponent = () => {
 
   const item = featuredData[index];
 
+  // console.log(' === item____ ===> ', item?.vendorData[0]?.businessName);
+
   // =====================================
   // SERVICES
   // =====================================
@@ -309,7 +311,9 @@ const ServicesFeaturedComponent = () => {
 
                     fontFamily: fontFamily.poppins600,
                   }}>
-                  {item?.name || 'NA'}
+                  {item?.name?.trim() ||
+                    item?.vendorData?.[0]?.businessName?.trim() ||
+                    'NA'}
                 </Text>
 
                 {/* ADDRESS */}
