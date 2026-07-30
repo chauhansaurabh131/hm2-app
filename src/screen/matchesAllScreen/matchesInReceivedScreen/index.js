@@ -43,6 +43,7 @@ const MatchesInReceivedScreen = () => {
   const [selectedFirstName, setSelectedFirstName] = useState('');
   const [selectedUniqueId, setSelectedUniqueId] = useState('');
   const [blockedFriendId, setBlockedFriendId] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [reportReasons, setReportReasons] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -306,28 +307,40 @@ const MatchesInReceivedScreen = () => {
     CopyId();
   };
 
-  const handleShare = async () => {
-    // Close the bottom sheet before sharing
-    sheetRef.current.close();
+  const handleShare = async userItem => {
+    sheetRef.current?.close();
+
+    const targetUser = userItem || selectedUser || {};
+    const profileId = targetUser?._id || blockedFriendId;
+
+    if (!profileId) {
+      Alert.alert('Error', 'Unable to find user profile to share.');
+      return;
+    }
+
+    const userName = targetUser?.firstName
+      ? `${targetUser?.firstName} ${targetUser?.lastName || ''}`.trim()
+      : targetUser?.name
+      ? targetUser?.name.trim()
+      : selectedFirstName
+      ? selectedFirstName.trim()
+      : 'User';
+
+    const appUsesType =
+      targetUser?.appUsesType || targetUser?.userType || 'marriage';
+    const role = targetUser?.role || targetUser?.userRole || 'user';
+
+    const shareUrl = `https://stag.mntech.website/share/${profileId}?appUsesType=${appUsesType}&role=${role}`;
+    const message = `Check out ${userName}'s profile on Hapmeet App: ${shareUrl}`;
 
     try {
-      // You can add a slight delay to allow the bottom sheet to close first if necessary
-      await new Promise(resolve => setTimeout(resolve, 50)); // Adjust delay as needed
-
-      // Now trigger the Share dialog
-      const result = await Share.share({
-        // message: 'Happy Milan App', // Message to share
-        message: selectedFirstName, // Message to share
-        // title: selectedFirstName,
+      await Share.share({
+        title: 'Hapmeet Profile Share',
+        message: message,
+        url: shareUrl,
       });
-
-      if (result.action === Share.sharedAction) {
-        console.log('Content shared successfully');
-      } else if (result.action === Share.dismissedAction) {
-        console.log('Share dismissed');
-      }
     } catch (error) {
-      console.error('Error sharing content:', error);
+      console.error('Error sharing profile link:', error);
     }
   };
 
@@ -761,6 +774,7 @@ const MatchesInReceivedScreen = () => {
       setSelectedFirstName(firstName || name);
       setSelectedUniqueId(uniqueId);
       setBlockedFriendId(blockedFriendIds);
+      setSelectedUser(item?.user || item);
 
       sheetRef.current.open();
     };

@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import {Image, Linking, Text, TouchableOpacity} from 'react-native';
+import {Alert, Image, Linking, Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import GeneralInformationScreen from '../screen/generalInformationScreen';
 import VerificationScreen from '../screen/verificationScreen';
@@ -20,7 +20,9 @@ import {fontSize, hp, isIOS} from '../utils/helpers';
 import ExploreScreen from '../screen/exploreScreen';
 import DemoPractiveCodeScreen from '../screen/demoPractiveCodeScreen';
 import ChatUserScreen from '../screen/chatUserScreen';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {logout} from '../actions/authActions';
+import {store} from '../reducer/store/index';
 import SetProfilePictureScreen from '../screen/setProfilePictureScreen';
 import SelectImageScreen from '../screen/selectImageScreen';
 import AddProfilePictureScreen from '../screen/addProfilePictureScreen';
@@ -153,6 +155,7 @@ export const navigationRef = React.createRef();
 // };
 
 const MainNavigator = () => {
+  const dispatch = useDispatch();
   const {isLoggedIn, user} = useSelector(state => state.auth);
 
   console.log(' === isLoggedIn ===> ', isLoggedIn);
@@ -166,12 +169,138 @@ const MainNavigator = () => {
   useEffect(() => {
     const handleDeepLink = ({url}) => {
       console.log('🔗 Deep link opened:', url);
+      if (!url) {
+        return;
+      }
       try {
-        const parsed = new URL(url);
-        const userId = parsed.searchParams.get('userId');
-        if (userId) {
-          navigationRef.current?.navigate('NewUserDetailsScreen', {userId});
+        let userId = null;
+        let sharedUserAppUsesType = null;
+        let sharedUserRole = null;
+
+        if (url.includes('?')) {
+          const queryString = url.split('?')[1];
+          const queryPairs = queryString.split('&');
+          queryPairs.forEach(pair => {
+            const [key, value] = pair.split('=');
+            const decodedValue = decodeURIComponent(value || '');
+            if (key === 'appUsesType' || key === 'appType') {
+              sharedUserAppUsesType = decodedValue;
+            }
+            if (key === 'role') {
+              sharedUserRole = decodedValue;
+            }
+            if (key === 'userId' || key === 'id') {
+              userId = decodedValue;
+            }
+          });
         }
+
+        if (!userId) {
+          const cleanUrl = url.split('#')[0].split('?')[0];
+          const parts = cleanUrl.split('/');
+          const lastPart = parts[parts.length - 1];
+          if (
+            lastPart &&
+            lastPart !== 'share' &&
+            lastPart !== 'openApp' &&
+            lastPart.length > 5
+          ) {
+            userId = lastPart;
+          }
+        }
+
+        console.log('🔗 Extracted deep link params:', {
+          userId,
+          sharedUserAppUsesType,
+          sharedUserRole,
+        });
+
+        if (!userId) {
+          return;
+        }
+
+        // Get LIVE user state directly from Redux store to avoid stale closure / hydration delays
+        const liveUser = store.getState()?.auth?.user;
+        const currentUserAppUsesType =
+          liveUser?.user?.appUsesType ||
+          liveUser?.appUsesType ||
+          user?.user?.appUsesType;
+
+        console.log(
+          '🔗 Current logged-in user appUsesType:',
+          currentUserAppUsesType,
+        );
+
+        const normalizeMode = mode => {
+          if (!mode) {
+            return null;
+          }
+          const m = mode.toLowerCase();
+          if (m === 'dating') {
+            return 'dating';
+          }
+          if (m === 'vendor') {
+            return 'vendor';
+          }
+          if (m === 'marriage' || m === 'longterm' || m === 'matrimony') {
+            return 'marriage';
+          }
+          return m;
+        };
+
+        const normalizedShared =
+          normalizeMode(sharedUserAppUsesType) || 'marriage';
+        const normalizedCurrent =
+          normalizeMode(currentUserAppUsesType) || 'marriage';
+
+        console.log('🔗 Normalized mode comparison:', {
+          normalizedShared,
+          normalizedCurrent,
+        });
+
+        // Rule 1: Vendor Profile -> Allow ANY user to view
+        if (normalizedShared === 'vendor' || sharedUserRole === 'vendor') {
+          navigationRef.current?.navigate('ServicesProfileScreen', {
+            vendorId: userId,
+            id: userId,
+          });
+          return;
+        }
+
+        // Rule 2: Matching Mode (Marriage/Longterm -> Marriage/Longterm OR Dating -> Dating)
+        if (normalizedShared === normalizedCurrent) {
+          const targetScreen =
+            normalizedCurrent === 'dating'
+              ? 'DatingUserProfileScreen'
+              : 'UserProfileDetailsScreen';
+          navigationRef.current?.navigate(targetScreen, {
+            userIds: userId,
+            matchesUserData: {id: userId, _id: userId},
+            userData: {id: userId, _id: userId},
+          });
+          return;
+        }
+
+        // Rule 3: Mismatching Mode (Marriage/Longterm link opened by Dating user or vice versa)
+        const targetModeName =
+          normalizedShared === 'dating' ? 'Dating' : 'Longterm';
+
+        Alert.alert(
+          'Mode Mismatch',
+          `This shared link belongs to a ${targetModeName} profile. To view this profile, please first create or switch to a ${targetModeName} account.`,
+          [
+            {
+              text: `Switch / Create ${targetModeName} Account`,
+              onPress: () => {
+                dispatch(logout());
+              },
+            },
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+          ],
+        );
       } catch (err) {
         console.log('URL parse error:', err);
       }
@@ -1287,19 +1416,17 @@ const MainNavigator = () => {
         }}
         linking={{
           prefixes: [
+            'hapmeet://',
             'happymilan://',
+            'https://stag.mntech.website/api',
+            'https://stag.mntech.website',
             'https://happymilan.com',
             'https://www.happymilan.com',
+            'https://happymilan.tech',
           ],
           config: {
             screens: {
               HomeScreen: 'home',
-              NewUserDetailsScreen: {
-                path: 'openApp',
-                parse: {
-                  userId: userId => `${userId}`,
-                },
-              },
             },
           },
         }}>

@@ -806,24 +806,31 @@ const DatingUserProfileScreen = ({route}) => {
     bottomNotFriendSheetRef.current.close();
     // bottomFriendSheetRef.current.close();
 
+    console.log(' === data---- ===> ', data?.firstName);
+
+    const profileId = data?._id || data?.id;
+
+    if (!profileId) {
+      Alert.alert('Error', 'Unable to find user profile to share.');
+      return;
+    }
+
+    const userName =
+      data?.firstName || data?.name
+        ? `${data?.firstName || data?.name} ${data?.lastName || ''}`.trim()
+        : 'User';
+
+    const shareUrl = `https://stag.mntech.website/share/${profileId}?appUsesType=dating&role=user`;
+    const message = `Check out ${userName}'s profile on Hapmeet App: ${shareUrl}`;
+
     try {
-      // You can add a slight delay to allow the bottom sheet to close first if necessary
-      await new Promise(resolve => setTimeout(resolve, 50)); // Adjust delay as needed
-
-      // Now trigger the Share dialog
-      const result = await Share.share({
-        // message: 'Happy Milan App', // Message to share
-        message: data, // Message to share
-        // title: selectedFirstName,
+      await Share.share({
+        title: 'Hapmeet Profile Share',
+        message: message,
+        url: shareUrl,
       });
-
-      if (result.action === Share.sharedAction) {
-        console.log('Content shared successfully');
-      } else if (result.action === Share.dismissedAction) {
-        console.log('Share dismissed');
-      }
     } catch (error) {
-      console.error('Error sharing content:', error);
+      console.error('Error sharing profile link:', error);
     }
   };
 
@@ -2099,7 +2106,8 @@ const DatingUserProfileScreen = ({route}) => {
           }}>
           <TouchableOpacity
             onPress={() => {
-              handleShare(userDetails?.data[0]?.name);
+              // handleShare(userDetails?.data[0]?.name);
+              handleShare(userDetails?.data[0]);
             }}
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image

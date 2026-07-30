@@ -46,11 +46,18 @@ const {width} = Dimensions.get('window');
 
 const UserProfileDetailsScreen = () => {
   const route = useRoute();
-  const {userIds} = route.params || {}; // 👈 get userId from deep link
-  // console.log(' === userIds******* ===> ', userIds);
-  const {matchesUserData} = route.params;
+  const {userIds, matchesUserData} = route.params || {}; // 👈 get userId/matchesUserData from params or deep link
+  const targetProfileId =
+    matchesUserData?.id || userIds || route.params?.userId;
+
+  // console.log(
+  //   ' === targetProfileId----- ===> ',
+  //   matchesUserData?.id,
+  //   userIds,
+  //   route.params?.userId,
+  // );
+
   const navigation = useNavigation();
-  // console.log(' === matchesUserData--- ===> ', matchesUserData);
   const flatListRef = useRef();
 
   const {user} = useSelector(state => state.auth);
@@ -96,7 +103,7 @@ const UserProfileDetailsScreen = () => {
   // console.log(' === userDetails---- ===> ', userDetails);
 
   const fetchUserDetails = async () => {
-    if (!matchesUserData?.id || !accessToken) {
+    if (!targetProfileId || !accessToken) {
       return;
     }
 
@@ -105,7 +112,7 @@ const UserProfileDetailsScreen = () => {
       setError(null);
 
       const response = await fetch(
-        `${BASE_URL}/api/v1/user/user/${matchesUserData.id}`,
+        `${BASE_URL}/api/v1/user/user/${targetProfileId}`,
         {
           method: 'GET',
           headers: {
@@ -349,8 +356,7 @@ const UserProfileDetailsScreen = () => {
       fetchSubscription();
       fetchAccessibleById();
       createProfileViewer();
-      // createProfileViewer();
-    }, [matchesUserData?.id, accessToken, userDetails?._id]),
+    }, [targetProfileId, accessToken, userDetails?._id]),
   );
 
   const closeModal = () => {
@@ -1082,20 +1088,31 @@ const UserProfileDetailsScreen = () => {
   };
 
   const handleShare = async () => {
-    const userId = userDetails?._id;
-    const isAndroid = Platform.OS === 'android';
-    const appDeepLink = isAndroid
-      ? `intent://user?userId=${userId}#Intent;scheme=happymilan;package=com.happymilan2;end`
-      : `happymilan://user?userId=${userId}`;
-    const webFallbackUrl = `https://happymilan.tech/openApp?userId=${userId}`;
+    const profileId = userDetails?._id || targetProfileId;
+    if (!profileId) {
+      Alert.alert('Error', 'Unable to find user profile to share.');
+      return;
+    }
+
+    const userName = userDetails?.firstName
+      ? `${userDetails?.firstName} ${userDetails?.lastName || ''}`.trim()
+      : 'User';
+
+    const appUsesType =
+      userDetails?.appUsesType || userDetails?.userType || 'marriage';
+    const role = userDetails?.role || userDetails?.userRole || 'user';
+
+    const shareUrl = `https://stag.mntech.website/share/${profileId}?appUsesType=${appUsesType}&role=${role}`;
+    const message = `Check out ${userName}'s profile on Hapmeet App: ${shareUrl}`;
 
     try {
       await Share.share({
-        message: `Check out this profile: ${appDeepLink}\nIf not opening, try this link: ${webFallbackUrl}`,
+        title: 'Hapmeet Profile Share',
+        message: message,
+        url: shareUrl,
       });
     } catch (error) {
-      console.error('Error sharing:', error);
-      Alert.alert('Error', 'Unable to share the link. Please try again.');
+      console.error('Error sharing profile link:', error);
     }
   };
 

@@ -41,6 +41,7 @@ const MatchesInSavedScreen = () => {
   const [selectUserFriendId, setSelectUserFriendId] = useState('');
   const [selectUserUnfriendId, setSelectUserUnfriendId] = useState('');
   const [allDataShare, setAllDataShare] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
   const [blockedFriendId, setBlockedFriendId] = useState('');
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [isUnFriendModalVisible, setIsUnFriendModalVisible] = useState(false);
@@ -265,29 +266,42 @@ const MatchesInSavedScreen = () => {
   };
 
   // UN-FRIEND BOTTOM SHEET SHARE FUNCTION
-  const handleShare = async () => {
-    // Close the bottom sheet before sharing
-    unFriendBottomSheet.current.close();
-    friendBottomSheet.current.close();
+  const handleShare = async userItem => {
+    unFriendBottomSheet.current?.close();
+    friendBottomSheet.current?.close();
+
+    const friendObj =
+      userItem || selectedUser || allDataShare?.friendList || allDataShare || {};
+    const profileId = friendObj?._id || selectUserFriendId || blockedFriendId;
+
+    if (!profileId) {
+      Alert.alert('Error', 'Unable to find user profile to share.');
+      return;
+    }
+
+    const userName = friendObj?.firstName
+      ? `${friendObj?.firstName} ${friendObj?.lastName || ''}`.trim()
+      : friendObj?.name
+      ? friendObj?.name.trim()
+      : selectedFirstName
+      ? selectedFirstName.trim()
+      : 'User';
+
+    const appUsesType =
+      friendObj?.appUsesType || friendObj?.userType || 'marriage';
+    const role = friendObj?.role || friendObj?.userRole || 'user';
+
+    const shareUrl = `https://stag.mntech.website/share/${profileId}?appUsesType=${appUsesType}&role=${role}`;
+    const message = `Check out ${userName}'s profile on Hapmeet App: ${shareUrl}`;
 
     try {
-      // You can add a slight delay to allow the bottom sheet to close first if necessary
-      await new Promise(resolve => setTimeout(resolve, 50)); // Adjust delay as needed
-
-      // Now trigger the Share dialog
-      const result = await Share.share({
-        // message: 'Happy Milan App', // Message to share
-        message: selectedFirstName, // Message to share
-        // title: selectedFirstName,
+      await Share.share({
+        title: 'Hapmeet Profile Share',
+        message: message,
+        url: shareUrl,
       });
-
-      if (result.action === Share.sharedAction) {
-        console.log('Content shared successfully');
-      } else if (result.action === Share.dismissedAction) {
-        console.log('Share dismissed');
-      }
     } catch (error) {
-      console.error('Error sharing content:', error);
+      console.error('Error sharing profile link:', error);
     }
   };
 
@@ -748,6 +762,7 @@ const MatchesInSavedScreen = () => {
       setAllDataShare(AllDetailsPass);
       setSelectUserFriendId(userId);
       setSelectUserUnfriendId(unFrinendRequestId);
+      setSelectedUser(item?.friendList || item);
 
       if (item?.friendsDetails?.status === 'accepted') {
         console.log('User is a friend');

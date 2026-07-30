@@ -33,16 +33,37 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
 
-          <!-- Deep link -->
-          <intent-filter android:autoVerify="true">
-              <action android:name="android.intent.action.VIEW" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <category android:name="android.intent.category.BROWSABLE" />
-              <data
-                      android:scheme="https"
-                      android:host="happymilan.com"
-                      android:pathPrefix="/openApp" />
-          </intent-filter>
+        <!-- Custom Scheme Deep Link Filter -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="hapmeet" />
+            <data android:scheme="happymilan" />
+        </intent-filter>
+
+        <!-- HTTPS App Links Filter (Direct Open Without Browser) -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+            <data android:host="stag.mntech.website" />
+            <data android:pathPrefix="/share" />
+            <data android:pathPrefix="/api/v1/user/user/share" />
+            <data android:pathPrefix="/v1/user/user/share" />
+        </intent-filter>
+
+        <!-- Existing Deep Link Filter -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data
+                android:scheme="https"
+                android:host="happymilan.com"
+                android:pathPrefix="/openApp" />
+        </intent-filter>
       </activity>
     </application>
 </manifest>

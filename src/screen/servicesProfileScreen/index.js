@@ -116,7 +116,7 @@ const ServicesProfileScreen = ({route}) => {
 
   const screenWidth = Dimensions.get('window').width;
 
-  console.log(' === vendorData ===> ', vendorData?.vendorData[0]?.requested);
+  console.log(' === vendorData ===> ', vendorData?.vendorData[0]);
 
   // const onScroll = event => {
   //   const slideSize = wp(100);
@@ -828,55 +828,56 @@ const ServicesProfileScreen = ({route}) => {
           {/*<ServicesRecentlyComponent labelHeading={'More Similars'} />*/}
 
           <View style={{marginTop: hp(50), marginHorizontal: wp(17)}}>
-            {vendorData?.vendorData?.[0]?.requested ? (
-              <TouchableOpacity
-                activeOpacity={1}
-                disabled={true}
-                style={{
-                  height: hp(40),
-                  borderRadius: hp(50),
-                  backgroundColor: '#F5F2FF',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
+            {!vendorData?.vendorData?.[0]?.claimed &&
+              (vendorData?.vendorData?.[0]?.requested ? (
+                <TouchableOpacity
+                  activeOpacity={1}
+                  disabled={true}
                   style={{
-                    color: '#7045EB',
-                    fontSize: fontSize(14),
-                    fontFamily: fontFamily.poppins400,
+                    height: hp(40),
+                    borderRadius: hp(50),
+                    backgroundColor: '#F5F2FF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  Request Submitted
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('VendorRequestForAccessScreen', {
-                    vendorData,
-                    vendorId,
-                    location,
-                    category,
-                    previousScreen,
-                  });
-                }}
-                activeOpacity={0.6}
-                style={{
-                  height: hp(40),
-                  borderRadius: hp(50),
-                  backgroundColor: '#7148E4',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text
+                  <Text
+                    style={{
+                      color: '#7045EB',
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    Request Submitted
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('VendorRequestForAccessScreen', {
+                      vendorData,
+                      vendorId,
+                      location,
+                      category,
+                      previousScreen,
+                    });
+                  }}
+                  activeOpacity={0.6}
                   style={{
-                    color: colors.white,
-                    fontSize: fontSize(14),
-                    fontFamily: fontFamily.poppins400,
+                    height: hp(40),
+                    borderRadius: hp(50),
+                    backgroundColor: '#7148E4',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  Own this business?
-                </Text>
-              </TouchableOpacity>
-            )}
+                  <Text
+                    style={{
+                      color: colors.white,
+                      fontSize: fontSize(14),
+                      fontFamily: fontFamily.poppins400,
+                    }}>
+                    Own this business?
+                  </Text>
+                </TouchableOpacity>
+              ))}
           </View>
 
           <View

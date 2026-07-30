@@ -27,6 +27,8 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>hapmeet</string>
+				<string>happymilan</string>
 				<string>com.googleusercontent.apps.562359368016-4de4ter7ddbrqmlo2idthm45re3p5ta3</string>
 			</array>
 		</dict>

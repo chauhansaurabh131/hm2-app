@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   FlatList,
   Image,
@@ -11,19 +11,19 @@ import {
   View,
 } from 'react-native';
 
-import {icons, images} from '../../assets';
-import {fontFamily, fontSize, hp, wp} from '../../utils/helpers';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { icons, images } from '../../assets';
+import { fontFamily, fontSize, hp, wp } from '../../utils/helpers';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import LinearGradient from 'react-native-linear-gradient';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DatingSwipeDataComponent from '../../components/datingSwipeDataComponent';
-import {style} from './style';
-import {colors} from '../../utils/colors';
+import { style } from './style';
+import { colors } from '../../utils/colors';
 import NewProfileBottomSheet from '../../components/newProfileBottomSheet';
 import AgeRangeSlider from '../../components/ageRangeSlider';
 import ProfileAvatar from '../../components/letterProfileComponent';
-import {updateDetails, userDatas} from '../../actions/homeActions';
+import { updateDetails, userDatas } from '../../actions/homeActions';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBaqU_1hOFIhVLm8su_caJheEChJCNBTyY';
 
@@ -50,7 +50,7 @@ const DatingHomeScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const {user} = useSelector(state => state.auth);
+  const { user } = useSelector(state => state.auth);
 
   const bottomSheetRef = useRef(null);
 
@@ -134,7 +134,7 @@ const DatingHomeScreen = () => {
       const city = text.split(',')[0].trim();
       console.log('Location Screen section', city); // Log to terminal
       if (city) {
-        navigation.navigate('DatingSearchFilterScreen', {searchData: city});
+        navigation.navigate('DatingSearchFilterScreen', { searchData: city });
         setText('');
       } else {
         console.log(' === Not Get City ===> ');
@@ -295,16 +295,16 @@ const DatingHomeScreen = () => {
                 marginRight: wp(7),
               }}
             />
-            <Text style={{color: '#7148E4'}}>Find Nearby Vendors</Text>
+            <Text style={{ color: '#7148E4' }}>Find Nearby Vendors</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={openBottomSheet}
-            style={{alignSelf: 'center'}}>
+            style={{ alignSelf: 'center' }}>
             {hasValidImage ? (
               <Image
-                source={userImage ? {uri: userImage} : images.empty_male_Image}
+                source={userImage ? { uri: userImage } : images.empty_male_Image}
                 style={style.dropDownTopImage}
               />
             ) : (
@@ -312,7 +312,7 @@ const DatingHomeScreen = () => {
                 firstName={user?.user?.firstName || user?.user?.name}
                 lastName={user?.user?.lastName}
                 textStyle={style.dropDownTopImage}
-                profileTexts={{fontSize: fontSize(10)}}
+                profileTexts={{ fontSize: fontSize(10) }}
               />
             )}
           </TouchableOpacity>
@@ -332,7 +332,7 @@ const DatingHomeScreen = () => {
             onPress={() => bottomSheetRef.current.open()}>
             <Image
               source={icons.dating_new_Filter_Icon}
-              style={{width: hp(29), height: hp(28), resizeMode: 'contain'}}
+              style={{ width: hp(29), height: hp(28), resizeMode: 'contain' }}
             />
           </TouchableOpacity>
         </View>
@@ -347,7 +347,7 @@ const DatingHomeScreen = () => {
               borderTopRightRadius: 20,
             },
           }}>
-          <View style={{flex: 1, backgroundColor: colors.white}}>
+          <View style={{ flex: 1, backgroundColor: colors.white }}>
             <View
               style={{
                 justifyContent: 'center',
@@ -427,7 +427,7 @@ const DatingHomeScreen = () => {
                     marginBottom: hp(50),
                   }}
                 />
-                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                   <Text
                     style={{
                       fontSize: fontSize(34),
@@ -454,7 +454,7 @@ const DatingHomeScreen = () => {
                   // tittleLabelText={'Select Age Range'}
                   min={18}
                   max={50}
-                  containerStyle={{width: '100%'}}
+                  containerStyle={{ width: '100%' }}
                   hideRangeLabel={true}
                   labelContainerStyle={{
                     marginHorizontal: 3,
@@ -471,14 +471,14 @@ const DatingHomeScreen = () => {
                     fontFamily: fontFamily.poppins400,
                     color: '#9A9A9A',
                   }}
-                  trackStyle={{height: 3}}
+                  trackStyle={{ height: 3 }}
                 />
               </View>
             ) : (
               // <Text style={{textAlign: 'center', marginTop: 20}}>
               //   Location Screen section
               // </Text>
-              <View style={{marginHorizontal: 17}}>
+              <View style={{ marginHorizontal: 17 }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -554,7 +554,7 @@ const DatingHomeScreen = () => {
                     <FlatList
                       data={filteredData}
                       keyExtractor={(item, index) => index.toString()}
-                      renderItem={({item}) => (
+                      renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => handleSelect(item)}>
                           <Text
                             style={{
@@ -594,8 +594,8 @@ const DatingHomeScreen = () => {
                   }}>
                   <LinearGradient
                     colors={['#7045EB', '#4819CB']}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0.5}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0.5 }}
                     style={{
                       marginTop: hp(50),
                       width: '100%',
@@ -670,8 +670,8 @@ const DatingHomeScreen = () => {
               style={style.modalButtonContainer}>
               <LinearGradient
                 colors={['#7045EB', '#4819CB']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0.5}}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.5 }}
                 style={style.modalButtonGradient}>
                 <Text style={style.modalButtonText}>{getButtpnText()}</Text>
               </LinearGradient>
@@ -722,7 +722,7 @@ const DatingHomeScreen = () => {
               Congratulations
             </Text>
 
-            <View style={{marginTop: 70, alignItems: 'center'}}>
+            <View style={{ marginTop: 70, alignItems: 'center' }}>
               <Text
                 style={{
                   color: colors.black,
@@ -763,8 +763,8 @@ const DatingHomeScreen = () => {
               }}>
               <LinearGradient
                 colors={['#7045EB', '#4819CB']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 2}}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 2 }}
                 style={{
                   marginTop: hp(50),
                   width: wp(176),
@@ -788,7 +788,7 @@ const DatingHomeScreen = () => {
         </View>
       </Modal>
 
-      <View style={{flex: 1, marginTop: hp(15)}}>
+      <View style={{ flex: 1, marginTop: hp(15) }}>
         <DatingSwipeDataComponent />
       </View>
     </SafeAreaView>
