@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Image,
   Keyboard,
@@ -10,14 +10,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { colors } from '../../utils/colors';
-import { icons, images } from '../../assets';
-import { fontFamily, fontSize, hp, isIOS, wp } from '../../utils/helpers';
+import {colors} from '../../utils/colors';
+import {icons, images} from '../../assets';
+import {fontFamily, fontSize, hp, isIOS, wp} from '../../utils/helpers';
 import NewTextInputComponent from '../../components/newTextInputComponent';
 import CommonGradientButton from '../../components/commonGradientButton';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeStack, googleLogin, register } from '../../actions/authActions';
-import { useNavigation } from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {changeStack, googleLogin, register} from '../../actions/authActions';
+import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import {
   GoogleSignin,
@@ -52,7 +52,7 @@ const NewSignUpScreen = () => {
   const navigation = useNavigation();
   const [fcmToken, setFcmToken] = useState(null);
 
-  const { loading } = useSelector(state => state.auth);
+  const {loading} = useSelector(state => state.auth);
 
   useEffect(() => {
     const RequestUserPermission = async () => {
@@ -164,14 +164,14 @@ const NewSignUpScreen = () => {
     //
 
     // // 🚫 BLOCK FAKE EMAIL DOMAINS
-    // if (emailOrMobileValid === 'email' && isBlockedEmailDomain(email)) {
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Invalid Email Address',
-    //     text2: 'Temporary or disposable email addresses are not allowed',
-    //   });
-    //   return;
-    // }
+    if (emailOrMobileValid === 'email' && isBlockedEmailDomain(email)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Email Address',
+        text2: 'Temporary or disposable email addresses are not allowed',
+      });
+      return;
+    }
 
     console.log(' === onPressLogin ===> ', name, email);
 
@@ -181,7 +181,7 @@ const NewSignUpScreen = () => {
 
       dispatch(
         register(
-          { name, email, countryCodeId: '690ab965be71921b32ea02a5' },
+          {name, email, countryCodeId: '690ab965be71921b32ea02a5'},
           () => {
             navigation.navigate('VerifyEmailOtpScreen', {
               name,
@@ -202,7 +202,7 @@ const NewSignUpScreen = () => {
             countryCodeId: '690ab965be71921b32ea02a5',
           },
           () => {
-            navigation.navigate('VerifyEmailOtpScreen', { name, email });
+            navigation.navigate('VerifyEmailOtpScreen', {name, email});
           },
         ),
       );
@@ -234,7 +234,7 @@ const NewSignUpScreen = () => {
 
       dispatch(
         googleLogin(
-          { access_token: idToken },
+          {access_token: idToken},
           () => {
             // console.log(' === Success Callback ===> ');
             dispatch(changeStack());
@@ -346,7 +346,7 @@ const NewSignUpScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
+      <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
         <Image
           source={images.happyMilanColorLogo}
           style={{
@@ -358,7 +358,7 @@ const NewSignUpScreen = () => {
           }}
         />
 
-        <View style={{ flex: 1, marginHorizontal: wp(30) }}>
+        <View style={{flex: 1, marginHorizontal: wp(30)}}>
           <Text
             style={{
               color: colors.black,
@@ -371,7 +371,7 @@ const NewSignUpScreen = () => {
             Sign Up
           </Text>
 
-          <View style={{ marginTop: hp(50) }}>
+          <View style={{marginTop: hp(50)}}>
             <NewTextInputComponent
               value={name}
               // onChangeText={text => setName(text)}
@@ -385,28 +385,28 @@ const NewSignUpScreen = () => {
               LeftIconName={icons.profileLogo}
             />
             {nameError ? (
-              <Text style={{ marginTop: 2, color: 'red' }}>{nameError}</Text>
+              <Text style={{marginTop: 2, color: 'red'}}>{nameError}</Text>
             ) : null}
 
             <NewTextInputComponent
               value={email}
               onChangeText={text => setEmail(text)}
               placeholder="Your Email or Mobile"
-              style={{ marginTop: 20 }}
+              style={{marginTop: 20}}
               LeftIconName={icons.mailLogo}
             />
             {emailError ? (
-              <Text style={{ color: 'red', marginTop: 2 }}>{emailError}</Text>
+              <Text style={{color: 'red', marginTop: 2}}>{emailError}</Text>
             ) : null}
 
             <CommonGradientButton
               buttonName={'Send Code'}
-              containerStyle={{ width: '100%', marginTop: hp(20) }}
+              containerStyle={{width: '100%', marginTop: hp(20)}}
               onPress={handleSignUp}
               loading={loading}
             />
 
-            <View style={{ alignItems: 'center', marginTop: hp(34) }}>
+            <View style={{alignItems: 'center', marginTop: hp(34)}}>
               <Text
                 style={{
                   color: colors.black,
@@ -439,7 +439,7 @@ const NewSignUpScreen = () => {
               {/*  </Text>*/}
               {/*</View>*/}
 
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity onPress={openPrivacyPolicy}>
                   <Text
                     style={{
